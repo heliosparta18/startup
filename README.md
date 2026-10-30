@@ -1,2 +1,1 @@
-KERJA WOE JANGAN NGARIT
-candi ga kerja pak
+KERJA WOE JANGAN NGARIT, candi ga kerja pak
