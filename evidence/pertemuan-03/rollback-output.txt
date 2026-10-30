@@ -1,0 +1,10 @@
+﻿
+ INFO Rolling back migrations. 
+
+ 2026_08_16_000106_create_async_audit_tables .. 159.87ms DONE
+ 2026_08_16_000105_create_payment_tables .. 174.49ms DONE
+ 2026_08_16_000104_create_order_tables .. 182.90ms DONE
+ 2026_08_16_000103_create_catalog_tables .. 245.65ms DONE
+ 2026_08_16_000102_create_table_session_tables .. 103.62ms DONE
+ 2026_08_16_000101_create_tenancy_tables .. 288.62ms DONE
+

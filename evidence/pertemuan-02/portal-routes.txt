@@ -1,0 +1,69 @@
+﻿
+ GET|HEAD .well-known/passkey-endpoints .. well-known.passkeys ÔÇ║ routes/settings.php:21
+ GET|HEAD / .. home
+ GET|HEAD admin/dashboard .. admin.dashboard ÔÇ║ routes/admin.php:12
+ GET|HEAD admin/ekspor-laporan .. admin.laporan.ekspor ÔÇ║ routes/admin.php:33
+ POST admin/tutup-periode .. admin.periode.tutup ÔÇ║ routes/admin.php:22
+ GET|POST|HEAD broadcasting/auth .. Illuminate\Broadcasting ÔÇ║ BroadcastController@authenticate
+ GET|HEAD cabang/{client}/dashboard .. tenant.dashboard ÔÇ║ routes/tenant.php:13
+ POST cabang/{client}/resep/{id}/verifikasi .. tenant.resep.verifikasi ÔÇ║ routes/tenant.php:31
+ POST cabang/{client}/stok/{id}/penyesuaian .. tenant.stok.penyesuaian ÔÇ║ routes/tenant.php:57
+ GET|HEAD dashboard .. dashboard
+ POST email/verification-notification .. verification.send ÔÇ║ Laravel\Fortify ÔÇ║ EmailVerificationNotificationController@store
+ GET|HEAD email/verify .. verification.notice ÔÇ║ Laravel\Fortify ÔÇ║ EmailVerificationPromptController@__invoke
+ GET|HEAD email/verify/{id}/{hash} .. verification.verify ÔÇ║ Laravel\Fortify ÔÇ║ VerifyEmailController@__invoke
+ GET|HEAD flux/editor.css .. Flux\AssetManager@editorCss ÔÇ║ AssetManager@editorCss
+ GET|HEAD flux/editor.js .. Flux\AssetManager@editorJs ÔÇ║ AssetManager@editorJs
+ GET|HEAD flux/editor.min.js .. Flux\AssetManager@editorMinJs ÔÇ║ AssetManager@editorMinJs
+ GET|HEAD flux/flux.js .. Flux\AssetManager@fluxJs ÔÇ║ AssetManager@fluxJs
+ GET|HEAD flux/flux.min.js .. Flux\AssetManager@fluxMinJs ÔÇ║ AssetManager@fluxMinJs
+ GET|HEAD forgot-password .. password.request ÔÇ║ Laravel\Fortify ÔÇ║ PasswordResetLinkController@create
+ POST forgot-password .. password.email ÔÇ║ Laravel\Fortify ÔÇ║ PasswordResetLinkController@store
+ GET|HEAD klien/{client} .. customer.home ÔÇ║ routes/customer.php:12
+ GET|HEAD klien/{client}/obat/{id} .. customer.obat.detail ÔÇ║ routes/customer.php:23
+ POST klien/{client}/resep/unggah .. customer.resep.upload ÔÇ║ routes/customer.php:33
+ GET|HEAD livewire-ea0cd9ff/css/{component}.css .. vendor/livewire/livewire/src/Features/SupportCssModules/SupportCssModules.php:15
+ GET|HEAD livewire-ea0cd9ff/css/{component}.global.css .. vendor/livewire/livewire/src/Features/SupportCssModules/SupportCssModules.php:48
+ GET|HEAD livewire-ea0cd9ff/js/{component}.js .. vendor/livewire/livewire/src/Features/SupportJsModules/SupportJsModules.php:14
+ GET|HEAD livewire-ea0cd9ff/livewire.csp.min.js.map .. Livewire\Mechanisms ÔÇ║ FrontendAssets@cspMaps
+ GET|HEAD livewire-ea0cd9ff/livewire.js .. Livewire\Mechanisms ÔÇ║ FrontendAssets@returnJavaScriptAsFile
+ GET|HEAD livewire-ea0cd9ff/livewire.min.js.map .. Livewire\Mechanisms ÔÇ║ FrontendAssets@maps
+ GET|HEAD livewire-ea0cd9ff/preview-file/{filename} .. livewire.preview-file ÔÇ║ Livewire\Features ÔÇ║ FilePreviewController@handle
+ POST livewire-ea0cd9ff/update .. default-livewire.update ÔÇ║ Livewire\Mechanisms ÔÇ║ HandleRequests@handleUpdate
+ POST livewire-ea0cd9ff/upload-file .. livewire.upload-file ÔÇ║ Livewire\Features ÔÇ║ FileUploadController@handle
+ GET|HEAD login .. login ÔÇ║ Laravel\Fortify ÔÇ║ AuthenticatedSessionController@create
+ POST login .. login.store ÔÇ║ Laravel\Fortify ÔÇ║ AuthenticatedSessionController@store
+ POST logout .. logout ÔÇ║ Laravel\Fortify ÔÇ║ AuthenticatedSessionController@destroy
+ POST passkeys/confirm .. passkey.confirm ÔÇ║ Laravel\Passkeys ÔÇ║ PasskeyConfirmationController@store
+ GET|HEAD passkeys/confirm/options .. passkey.confirm-options ÔÇ║ Laravel\Passkeys ÔÇ║ PasskeyConfirmationController@index
+ POST passkeys/login .. passkey.login ÔÇ║ Laravel\Passkeys ÔÇ║ PasskeyLoginController@store
+ GET|HEAD passkeys/login/options .. passkey.login-options ÔÇ║ Laravel\Passkeys ÔÇ║ PasskeyLoginController@index
+ GET|HEAD register .. register ÔÇ║ Laravel\Fortify ÔÇ║ RegisteredUserController@create
+ POST register .. register.store ÔÇ║ Laravel\Fortify ÔÇ║ RegisteredUserController@store
+ POST reset-password .. password.update ÔÇ║ Laravel\Fortify ÔÇ║ NewPasswordController@store
+ GET|HEAD reset-password/{token} .. password.reset ÔÇ║ Laravel\Fortify ÔÇ║ NewPasswordController@create
+ ANY settings .. Illuminate\Routing ÔÇ║ RedirectController
+ GET|HEAD settings/appearance .. appearance.edit ÔÇ║ Livewire\Mechanisms ÔÇ║ LivewirePageController
+ GET|HEAD settings/profile .. profile.edit ÔÇ║ Livewire\Mechanisms ÔÇ║ LivewirePageController
+ GET|HEAD settings/security .. security.edit ÔÇ║ Livewire\Mechanisms ÔÇ║ LivewirePageController
+ GET|HEAD storage/{path} .. storage.local ÔÇ║ vendor/laravel/framework/src/Illuminate/Filesystem/FilesystemServiceProvider.php:111
+ PUT storage/{path} .. storage.local.upload ÔÇ║ vendor/laravel/framework/src/Illuminate/Filesystem/FilesystemServiceProvider.php:119
+ GET|HEAD two-factor-challenge .. two-factor.login ÔÇ║ Laravel\Fortify ÔÇ║ TwoFactorAuthenticatedSessionController@create
+ POST two-factor-challenge .. two-factor.login.store ÔÇ║ Laravel\Fortify ÔÇ║ TwoFactorAuthenticatedSessionController@store
+ GET|HEAD up .. vendor/laravel/framework/src/Illuminate/Foundation/Configuration/ApplicationBuilder.php:224
+ GET|HEAD user/confirm-password .. password.confirm ÔÇ║ Laravel\Fortify ÔÇ║ ConfirmablePasswordController@show
+ POST user/confirm-password .. password.confirm.store ÔÇ║ Laravel\Fortify ÔÇ║ ConfirmablePasswordController@store
+ GET|HEAD user/confirmed-password-status .. password.confirmation ÔÇ║ Laravel\Fortify ÔÇ║ ConfirmedPasswordStatusController@show
+ POST user/confirmed-two-factor-authentication .. two-factor.confirm ÔÇ║ Laravel\Fortify ÔÇ║ ConfirmedTwoFactorAuthenticationController@store
+ POST user/passkeys .. passkey.store ÔÇ║ Laravel\Passkeys ÔÇ║ PasskeyRegistrationController@store
+ GET|HEAD user/passkeys/options .. passkey.registration-options ÔÇ║ Laravel\Passkeys ÔÇ║ PasskeyRegistrationController@index
+ DELETE user/passkeys/{passkey} .. passkey.destroy ÔÇ║ Laravel\Passkeys ÔÇ║ PasskeyRegistrationController@destroy
+ POST user/two-factor-authentication .. two-factor.enable ÔÇ║ Laravel\Fortify ÔÇ║ TwoFactorAuthenticationController@store
+ DELETE user/two-factor-authentication .. two-factor.disable ÔÇ║ Laravel\Fortify ÔÇ║ TwoFactorAuthenticationController@destroy
+ GET|HEAD user/two-factor-qr-code .. two-factor.qr-code ÔÇ║ Laravel\Fortify ÔÇ║ TwoFactorQrCodeController@show
+ GET|HEAD user/two-factor-recovery-codes .. two-factor.recovery-codes ÔÇ║ Laravel\Fortify ÔÇ║ RecoveryCodeController@index
+ POST user/two-factor-recovery-codes .. two-factor.regenerate-recovery-codes ÔÇ║ Laravel\Fortify ÔÇ║ RecoveryCodeController@store
+ GET|HEAD user/two-factor-secret-key .. two-factor.secret-key ÔÇ║ Laravel\Fortify ÔÇ║ TwoFactorSecretKeyController@show
+
+ Showing [65] routes
+

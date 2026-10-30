@@ -1,0 +1,11 @@
+﻿
+ GET|HEAD .well-known/passkey-endpoints .. well-known.passkeys › routes/settings.php:21
+ GET|HEAD / .. home
+ GET|HEAD admin/dashboard .. admin.dashboard › routes/admin.php:11
+ GET|HEAD dashboard .. dashboard
+ GET|HEAD kantin/{canteen} .. customer.home › routes/customer.php:11
+ ANY settings .. Illuminate\Routing › RedirectController
+ GET|HEAD tenant/{tenant}/dashboard .. tenant.dashboard › routes/tenant.php:11
+
+ Showing [7] routes
+

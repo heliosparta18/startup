@@ -1,0 +1,34 @@
+﻿
+ Environment .. 
+ Application Name .. OmniPharma Apotek Multi-Klien 
+ Laravel Version .. 13.25.0 
+ PHP Version .. 8.4.24 
+ Composer Version .. 2.8.12 
+ Environment .. local 
+ Debug Mode .. ENABLED 
+ URL .. localhost:8000 
+ Maintenance Mode .. OFF 
+ Timezone .. UTC 
+ Locale .. id 
+
+ Cache .. 
+ Config .. NOT CACHED 
+ Events .. NOT CACHED 
+ Routes .. NOT CACHED 
+ Views .. CACHED 
+
+ Drivers .. 
+ Broadcasting .. reverb 
+ Cache .. redis 
+ Database .. mysql 
+ Logs .. stack / single 
+ Mail .. log 
+ Queue .. redis 
+ Session .. redis 
+
+ Storage .. 
+ D:\startup\public\storage .. NOT LINKED 
+
+ Livewire .. 
+ Livewire .. v4.4.0 
+

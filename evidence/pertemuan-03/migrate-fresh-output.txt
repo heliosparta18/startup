@@ -1,0 +1,25 @@
+
+ Dropping all tables .. 653.60ms DONE
+
+ INFO Preparing database. 
+
+ Creating migration table .. 47.92ms DONE
+
+ INFO Running migrations. 
+
+ 0001_01_01_000000_create_users_table .. 213.09ms DONE
+ 0001_01_01_000001_create_cache_table .. 119.94ms DONE
+ 0001_01_01_000002_create_jobs_table .. 206.14ms DONE
+ 2024_01_01_000000_create_passkeys_table .. 199.16ms DONE
+ 2025_08_14_170933_add_two_factor_columns_to_users_table .. 256.32ms DONE
+ 2026_08_16_000001_add_role_and_status_to_users_table .. 178.21ms DONE
+ 2026_09_21_000101_create_apotek_clients_and_users_tables .. 1dt DONE
+ 2026_09_21_000102_create_apotek_drug_catalog_tables .. 653.55ms DONE
+ 2026_09_21_000103_create_apotek_order_and_prescription_tables .. 910.55ms DONE
+ 2026_09_21_000104_create_apotek_payment_and_return_tables .. 461.35ms DONE
+ 2026_09_21_000105_create_apotek_reporting_and_audit_tables .. 379.53ms DONE
+
+ INFO Seeding database. 
+
+ Database\Seeders\DemoApotekSeeder .. RUNNING 
+ Database\Seeders\DemoApotekSeeder .. 1,023 ms DONE 

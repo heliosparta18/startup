@@ -1,0 +1,101 @@
+OmniPharma
+Filter Kategori
+Wajib Resep (Keras)
+Obat Bebas
+Bebas Terbatas
+Lokasi Cabang
+Radius: < 5 km
+Cari obat, keluhan, atau suplemen...
+[ Foto Kemasan ]
+● WAJIB RESEP DOKTER
+Amodiaquine 200mg
+Dosis terapi infeksi • Strip 10 tablet
+Rp 45.000
+Ketersediaan Stok Cabang:
+✔ Cabang Bwi Kota: Tersedia (12 strip)
+✖ Cabang Rogojampi: Kosong
++ Unggah Resep
+Cabang: Banyuwangi Kota 	Keranjang (2) 	AD
+[ Foto Kemasan ]
+● OBAT BEBAS
+Paracetamol 500mg
+Pereda demam & nyeri • Strip 10 kaplet
+Rp 8.500
+Ketersediaan Stok Cabang:
+✔ Cabang Bwi Kota: Tersedia (>50 strip)
+✔ Cabang Rogojampi: Tersedia
++ Beli Langsung
+
+-- 1 of 4 --
+
+PORTAL APOTEKER — CABANG BANYUWANGI KOTA
+Verifikasi Resep Masuk (#ORD-20260917-0042)
+[ Foto Resep Dokter ]
+dr. Budi, Sp.PD
+SIP: 503/SIP/2024
+R/ Amodiaquine No. X
+S 3 dd tab I
+Data Pasien:
+Candi Chier (88 th)
+Pemeriksaan Legalitas:
+SIP Dokter Terverifikasi
+Dosis Sesuai Standar
+Catatan Apoteker:
+Resep asli dan masih berlaku.
+Perbesar Resep
+Setujui 	Tolak
+Petugas: apt. Candia Purwa, S.Farm
+Peringatan Batch Kedaluwarsa (FEFO)
+⚠️1 Batch mendekati kedaluwarsa (H-23 hari)!
+Obat / Batch
+Amodiaquine 200mg
+Batch: #BTC-2024A
+Exp Date
+10 Okt 2026
+Stok
+12 str
+Prioritas
+#1 FEFO
+Amodiaquine 200mg
+Batch: #BTC-2025B 15 Jan 2027 	80 str 	#2 Nanti
+Paracetamol 500mg
+Batch: #PCT-8891 20 Des 2027 	4 box 	Kritis <5
+
+-- 2 of 4 --
+
+APOTEK CONNECT PUSAT — EXECUTIVE DASHBOARD 	Admin: M. Daffa Ariby
+TOTAL OMZET PERIODE BERJALAN
+Rp 142.850.000
+TOTAL TRANSAKSI LINTAS CABANG
+1.840 Pesanan
+TOTAL RETUR DISETUJUI
+3 Pengajuan
+Agregasi Penjualan & Kondisi Stok Cabang (Periode 01-16 Sep 2026)
+Nama Cabang (Snapshot) 	Jumlah Pesanan 	Omzet Terkunci 	Stok Kritis 	Near-ED (H-30)
+1 batchCabang Banyuwangi Kota 	820 order Rp 68.200.000 	2 item
+Cabang Rogojampi 	5 item (!) 	3 batch (!)610 order 	Rp 45.400.000
+TUTUP PERIODE & KUNCI SNAPSHOT 	EKSPOR LAPORAN (XLSX/PDF)
+
+-- 3 of 4 --
+
+APOTEK CONNECT PUSAT - EXECUTIVE DASHBOARD
+Periode 01-16 Sep 2026
+Admin: M. Daffa Ariby
++12,4%
+TOTAL OMZET PERIODE BERJALAN
+Rp 142.850.000
++8,1%
+TOTAL TRANSAKSI LINTAS CABANG
+1.840 Pesanan
+3 aktif
+TOTAL RETUR DISETUJUI
+3 Pengajuan
+Agregasi Penjualan & Kondisi Stok Cabang (Periode 01-16 Sep 2026)
+Ringkasan performa cabang dan kondisi stok untuk periode berjalan.
+Nama Cabang (Snapshot) 	Jumlah Pesanan 	Omzet Terkunci 	Stok Kritis 	Near-ED (H-30)
+Cabang Banyuwangi Kota 	820 order 	Rp 68.200.000 	2 item 	1 batch
+Cabang Rogojampi 	610 order 	Rp 45.400.000 	5 item (!) 	3 batch (!)
+TUTUP PERIODE & KUNCI SNAPSHOT 	EKSPOR LAPORAN (XLSX/PDF)
+
+-- 4 of 4 --
+

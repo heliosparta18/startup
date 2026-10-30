@@ -1,0 +1,65 @@
+# DemoApotekSeeder Summary - Deterministic Pharmaceutical Dataset
+
+## 1. Cabang / Multi-Client Branches
+- **Cabang Banyuwangi Kota**
+  - UUID: `a1b2c3d4-0001-4000-8000-000000000001`
+  - Alamat: Jl. Ahmad Yani No. 45, Banyuwangi Kota
+  - Status: Aktif
+- **Cabang Rogojampi**
+  - UUID: `a1b2c3d4-0002-4000-8000-000000000002`
+  - Alamat: Jl. Raya Rogojampi No. 12, Rogojampi
+  - Status: Aktif
+
+## 2. Pengguna & Hierarki Peran
+- **Super Admin (Apotek Connect Pusat)**:
+  - Nama: Muhammad Daffa Ariby (`daffa@omnipharma.test`)
+  - Entitas: `pengguna`, `super_admin`
+- **Apoteker Pengelola (Cabang Banyuwangi Kota)**:
+  - Nama: apt. Candia Purwa, S.Farm (`candia@omnipharma.test`)
+  - Entitas: `pengguna`, `admin_client`, `peran_client_pengguna` (staf_klien)
+- **Staf Apotek (Cabang Rogojampi & Diawasi di Bwi Kota)**:
+  - Nama: Arya Dwi Mahendra (`arya@omnipharma.test`)
+  - Entitas: `pengguna`, `admin_client`, `peta_pengawas_staf` (pengawas: apt. Candia Purwa)
+- **Pelanggan**:
+  - Nama: Candi Chier (`candi@gmail.com`)
+  - Entitas: `pengguna` (peran: pelanggan)
+
+## 3. Kategori Obat
+1. **Wajib Resep (Keras)**: `wajib_resep = true` (Verifikasi SIP & Dosis dokter wajib)
+2. **Obat Bebas**: `wajib_resep = false` (Bisa Beli Langsung)
+3. **Bebas Terbatas**: `wajib_resep = false` (Peringatan khusus P No. 1-6)
+
+## 4. Master Data Obat & Batch FEFO
+1. **Amodiaquine 200mg** (`#BTC-2024A`):
+   - Kategori: Wajib Resep (Keras)
+   - Harga: Rp 45.000,00
+   - Kadaluwarsa: 2026-10-10 (Near-Expiry H-23 hari untuk verifikasi Layar 2)
+   - Stok: Bwi Kota = 12 strip (Tersedia), Rogojampi = 0 strip (Kosong)
+2. **Paracetamol 500mg** (`#PCT-8891`):
+   - Kategori: Obat Bebas
+   - Harga: Rp 8.500,00
+   - Kadaluwarsa: 2027-12-20
+   - Stok: Bwi Kota = 50 strip, Rogojampi = 25 strip
+3. **Amoxicillin 500mg** (`#AMX-7712`):
+   - Kategori: Wajib Resep (Keras), Harga Rp 22.000,00, Exp: 2026-11-15
+4. **Antasida Doen** (`#ANT-3310`):
+   - Kategori: Obat Bebas, Harga Rp 9.000,00, Exp: 2027-08-10
+
+## 5. Transaksi Pesanan & Verifikasi Resep (Mockup Layar 2)
+- Nomor Pesanan: `ORD-20260917-0042` (Click & Collect)
+- Pelanggan: Candi Chier (88 th)
+- Item: Amodiaquine 200mg (1 strip @ Rp 45.000, snapshot subtotal Rp 45.000)
+- Resep Digital:
+  - Dokter: dr. Budi, Sp.PD (SIP: `503/SIP/2024`)
+  - Status: `menunggu`
+  - Checklist: SIP Valid (`true`), Dosis Valid (`true`)
+  - Catatan Apoteker: "Resep asli dan masih berlaku."
+
+## 6. Ringkasan Periode Penjualan Eksekutif (Mockup Layar 3-4)
+- Periode: `2026-09-01` s/d `2026-09-16`
+- **Cabang Banyuwangi Kota**: 820 order, Rp 68.200.000,00, Retur: 1
+- **Cabang Rogojampi**: 610 order, Rp 45.400.000,00, Retur: 2
+- **Konsolidasi Pusat**: 1.430+ order (~1.840 pesanan), Omzet Rp 142.850.000, Retur 3 pengajuan
+
+## 7. Audit Logging
+- Aksi: `SEED_BASELINE_APOTEK` pada entitas `client` tercatat pada `log_audit`.

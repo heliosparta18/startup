@@ -1,0 +1,350 @@
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+super_admin
+id_super_admin 	uuid
+id_pengguna 	uuid
+nama 	varchar
+email 	varchar
+dibuat_pada 	timestamp
+diperbarui_pada 	timestamp
+admin_client
+id_admin 	uuid
+id_pengguna 	uuid
+id_client 	uuid
+nama 	varchar
+email 	varchar
+dibuat_pada 	timestamp
+diperbarui_pada 	timestamp
+client
+id_client 	uuid
+nama_client 	varchar
+alamat 	text
+aktif 	boolean
+dibuat_pada 	timestamp
+diperbarui_pada 	timestamp
+pengguna
+id_pengguna 	uuid
+nama_lengkap 	varchar
+peran 	varchar
+telepon_email 	varchar
+terdaftar_pada 	date
+aktif 	boolean
+dibuat_pada 	timestamp
+diperbarui_pada 	timestamp
+peran_client_pengguna
+id 	uuid
+id_pengguna 	uuid
+id_client 	uuid
+peran 	varchar
+ditugaskan_dari 	date
+ditugaskan_sampai 	date
+dibuat_pada 	timestamp
+peta_pengawas_staf
+id 	uuid
+id_staf 	uuid
+id_pengawas 	uuid
+id_client 	uuid
+berlaku_dari 	date
+berlaku_sampai 	date
+dibuat_pada 	timestamp
+kategori_obat
+id_kategori 	uuid
+nama_kategori 	varchar
+wajib_resep 	boolean
+deskripsi 	text
+id_client 	uuid
+dibuat_pada 	timestamp
+obat
+id_obat 	uuid
+nama_obat 	varchar
+merek 	varchar
+jenis_sediaan 	varchar
+jumlah_obat 	integer
+id_kategori 	uuid
+harga 	decimal
+expired 	date
+dibuat_pada 	timestamp
+diperbarui_pada 	timestamp
+stok_client
+id 	uuid
+id_obat 	uuid
+id_client 	uuid
+jumlah_stok 	integer
+diperbarui_pada 	timestamp
+pesanan
+id_pesanan 	uuid
+id_pengguna 	uuid
+id_client 	uuid
+status 	varchar
+dibuat_pada 	timestamp
+diperbarui_pada 	timestamp
+resep
+id_resep 	uuid
+id_pesanan 	uuid
+url_gambar 	text
+status_verifikasi 	varchar
+dibuat_pada 	timestamp
+item_pesanan
+id_item 	uuid
+id_pesanan 	uuid
+id_obat 	uuid
+kuantitas 	integer
+nama_obat 	varchar
+harga_satuan 	decimal
+subtotal 	decimal
+dibuat_pada 	timestamp
+pembayaran
+id_pembayaran 	uuid
+id_pesanan 	uuid
+metode_pembayaran 	varchar
+jumlah 	decimal
+url_lampiran 	text
+status 	varchar
+diverifikasi_oleh 	uuid
+dibuat_pada 	timestamp
+permintaan_retur
+id_retur 	uuid
+id_pesanan 	uuid
+alasan 	text
+jumlah_diajukan 	decimal
+jumlah_disetujui 	decimal
+status 	varchar
+dibuat_pada 	timestamp
+ringkasan_periode_penjualan
+id_ringkasan 	uuid
+id_client 	uuid
+nama_client 	varchar
+total_obat_terjual 	varchar
+periode_mulai 	date
+periode_selesai 	date
+total_pesanan 	integer
+total_pendapatan 	decimal
+total_retur 	integer
+dibuat_pada 	timestamp
+log_audit
+id_audit 	uuid
+id_aktor 	uuid
+aksi 	varchar
+nama_entitas 	varchar
+id_entitas 	uuid
+dibuat_pada 	timestamp
+
+-- 1 of 2 --
+
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+*
+1
+super_admin
+id_super_admin 	uuid
+id_pengguna 	uuid
+nama 	varchar
+email 	varchar
+dibuat_pada 	timestamp
+diperbarui_pada 	timestamp
+admin_client
+id_admin 	uuid
+id_pengguna 	uuid
+id_client 	uuid
+nama 	varchar
+email 	varchar
+dibuat_pada 	timestamp
+diperbarui_pada 	timestamp
+client
+id_client 	uuid
+nama_client 	varchar
+alamat 	text
+aktif 	boolean
+dibuat_pada 	timestamp
+diperbarui_pada 	timestamp
+pengguna
+id_pengguna 	uuid
+nama_lengkap 	varchar
+peran 	varchar
+telepon_email 	varchar
+terdaftar_pada 	date
+aktif 	boolean
+dibuat_pada 	timestamp
+diperbarui_pada 	timestamp
+peran_client_pengguna
+id 	uuid
+id_pengguna 	uuid
+id_client 	uuid
+peran 	varchar
+ditugaskan_dari 	date
+ditugaskan_sampai 	date
+dibuat_pada 	timestamp
+peta_pengawas_staf
+id 	uuid
+id_staf 	uuid
+id_pengawas 	uuid
+id_client 	uuid
+berlaku_dari 	date
+berlaku_sampai 	date
+dibuat_pada 	timestamp
+kategori_obat
+id_kategori 	uuid
+nama_kategori 	varchar
+wajib_resep 	boolean
+deskripsi 	text
+id_client 	uuid
+dibuat_pada 	timestamp
+obat
+id_obat 	uuid
+nama_obat 	varchar
+merek 	varchar
+jenis_sediaan 	varchar
+jumlah_obat 	integer
+id_kategori 	uuid
+harga 	decimal
+expired 	date
+dibuat_pada 	timestamp
+diperbarui_pada 	timestamp
+stok_client
+id 	uuid
+id_obat 	uuid
+id_client 	uuid
+jumlah_stok 	integer
+diperbarui_pada 	timestamp
+pesanan
+id_pesanan 	uuid
+id_pengguna 	uuid
+id_client 	uuid
+status 	varchar
+dibuat_pada 	timestamp
+diperbarui_pada 	timestamp
+resep
+id_resep 	uuid
+id_pesanan 	uuid
+url_gambar 	text
+status_verifikasi 	varchar
+dibuat_pada 	timestamp
+item_pesanan
+id_item 	uuid
+id_pesanan 	uuid
+id_obat 	uuid
+kuantitas 	integer
+nama_obat 	varchar
+harga_satuan 	decimal
+subtotal 	decimal
+dibuat_pada 	timestamp
+pembayaran
+id_pembayaran 	uuid
+id_pesanan 	uuid
+metode_pembayaran 	varchar
+jumlah 	decimal
+url_lampiran 	text
+status 	varchar
+diverifikasi_oleh 	uuid
+dibuat_pada 	timestamp
+permintaan_retur
+id_retur 	uuid
+id_pesanan 	uuid
+alasan 	text
+jumlah_diajukan 	decimal
+jumlah_disetujui 	decimal
+status 	varchar
+dibuat_pada 	timestamp
+ringkasan_periode_penjualan
+id_ringkasan 	uuid
+id_client 	uuid
+nama_client 	varchar
+total_obat_terjual 	varchar
+periode_mulai 	date
+periode_selesai 	date
+total_pesanan 	integer
+total_pendapatan 	decimal
+total_retur 	integer
+dibuat_pada 	timestamp
+log_audit
+id_audit 	uuid
+id_aktor 	uuid
+aksi 	varchar
+nama_entitas 	varchar
+id_entitas 	uuid
+dibuat_pada 	timestamp
+
+-- 2 of 2 --
+

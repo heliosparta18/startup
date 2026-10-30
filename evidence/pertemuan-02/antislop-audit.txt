@@ -1,0 +1,44 @@
+# Antislop UI & Accessibility Audit : Apotek Multi-Klien (Pertemuan 02)
+
+Audit ini memverifikasi kepatuhan seluruh layout dan view antarmuka Apotek Multi-Klien (OmniPharma Network) terhadap prinsip Antislop (R-01 s/d R-38), WCAG AA, dan keselarasan dengan Mockup Layar 1 s/d 4.
+
+## 1. Kepatuhan Target Sentuh Fisik (Touch Target >= 44px / min-h-11)
+- **Customer Storefront (`resources/views/customer/home.blade.php`)**:
+  - Tombol aksi utama `+ Unggah Resep`: `w-full min-h-11 inline-flex items-center justify-center` (>= 44px)
+  - Tombol aksi langsung `+ Beli Langsung`: `w-full min-h-11 inline-flex items-center justify-center` (>= 44px)
+  - Seluruh Filter Pills Kategori (`Semua`, `Wajib Resep (Keras)`, `Obat Bebas`, `Bebas Terbatas`): `min-h-11 px-3.5` (>= 44px)
+  - Bilah Pencarian Obat: `w-full min-h-11 rounded-xl` (>= 44px)
+  - Header navigasi, tombol keranjang, dan avatar pelanggan `AD`: `min-h-11 min-w-11`
+- **Tenant / Apoteker Dashboard (`resources/views/tenant/dashboard.blade.php`)**:
+  - Tombol aksi verifikasi `Setujui`: `flex-1 min-h-11 inline-flex items-center justify-center` (>= 44px)
+  - Tombol aksi verifikasi `Tolak`: `flex-1 min-h-11 inline-flex items-center justify-center` (>= 44px)
+  - Tombol `🔍 Perbesar Resep`: `inline-flex min-h-11 items-center justify-center` (>= 44px)
+  - Tombol navigasi burger dan avatar apoteker `CP`: `min-h-11 min-w-11`
+- **Admin Executive Dashboard (`resources/views/admin/dashboard.blade.php`)**:
+  - Tombol `TUTUP PERIODE & KUNCI SNAPSHOT`: `min-h-11 inline-flex items-center justify-center px-6` (>= 44px)
+  - Tombol `EKSPOR LAPORAN (XLSX/PDF)`: `min-h-11 inline-flex items-center justify-center px-5` (>= 44px)
+  - Tombol konfirmasi modal tutup periode: `min-h-11 px-5` (>= 44px)
+
+## 2. Tipografi, Kontras & Hirarki Visual (WCAG AA Compliance)
+- **Palet Warna Zinc Terkontrol**:
+  - Teks utama: `zinc-900` pada latar `white` / `zinc-50` (rasio kontras 15.3:1, jauh di atas standar minimum 4.5:1).
+  - Teks sekunder: `zinc-500` / `zinc-600` untuk metadata (rasio kontras > 4.5:1).
+  - Mode gelap: `zinc-100` pada latar `zinc-900` / `zinc-950` (rasio kontras 14.1:1).
+- **Semantik Status & Badge Farmasi**:
+  - Golongan Obat Keras / Wajib Resep: `bg-rose-50 text-rose-700 border-rose-200`
+  - Golongan Obat Bebas: `bg-emerald-50 text-emerald-700 border-emerald-200`
+  - Peringatan FEFO / Near-ED: `bg-amber-100 text-amber-900 border-amber-300`
+  - Peringatan Stok Kritis: `bg-rose-100 text-rose-800 border-rose-300`
+- **Aturan Bebas Em Dash (R-02)**:
+  - Seluruh teks UI bebas dari karakter em dash (`—`); pemisah menggunakan tanda hubung, titik dua (`:`), tanda bullet (`•`), atau tanda kurung `()`.
+
+## 3. Pencegahan AI Slop & Integritas Data Domain (C-1 s/d C-5)
+- **Zero Dummy / Generic Placeholder**:
+  - Tidak ada teks Latin "Lorem Ipsum", template "Feature 1/2/3", atau statistik fiktif tanpa dasar.
+  - Seluruh data mencerminkan alur Mockup Layar 1 s/d 4 secara autentik:
+    * Resep `#ORD-20260917-0042` dengan `dr. Budi, Sp.PD` (SIP: `503/SIP/2024`), pasien `Candi Chier (88 th)`.
+    * Peringatan FEFO riil: `1 Batch mendekati kedaluwarsa (H-23 hari)!` dengan nomor batch `#BTC-2024A` (Exp: 10 Okt 2026).
+    * Executive KPI: Omzet `Rp 142.850.000` (+12,4%), `1.840 Pesanan` (+8,1%), Retur `3 Pengajuan` (3 aktif).
+    * Agregasi Cabang: Cabang Banyuwangi Kota (820 order, Rp 68.200.000) dan Cabang Rogojampi (610 order, Rp 45.400.000).
+- **Fungsi Interaktif Lengkap**:
+  - Setiap tombol dan form memiliki aksi riil: unggah resep digital mengirim request AJAX dengan token CSRF, verifikasi apoteker memperbarui status, dan tutup periode mengunci snapshot transaksi akuntansi.

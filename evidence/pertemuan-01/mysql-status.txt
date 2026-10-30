@@ -1,0 +1,46 @@
+﻿
+ MySQL .. 8.4.11 
+ Connection .. mysql 
+ Database .. kantin 
+ Host .. 127.0.0.1 
+ Port .. 3306 
+ Username .. kantin 
+ URL .. 
+ Open Connections .. 1 
+ Tables .. 32 
+ Total Size .. 896.00 KB 
+
+ Schema / Table .. Size 
+ kantin / balances .. 32.00 KB 
+ kantin / cache .. 16.00 KB 
+ kantin / cache_locks .. 16.00 KB 
+ kantin / canteens .. 16.00 KB 
+ kantin / categories .. 32.00 KB 
+ kantin / commissions .. 32.00 KB 
+ kantin / customer_sessions .. 32.00 KB 
+ kantin / failed_jobs .. 16.00 KB 
+ kantin / job_batches .. 16.00 KB 
+ kantin / jobs .. 16.00 KB 
+ kantin / menu_stocks .. 16.00 KB 
+ kantin / menus .. 64.00 KB 
+ kantin / migrations .. 16.00 KB 
+ kantin / modifiers .. 48.00 KB 
+ kantin / order_items .. 64.00 KB 
+ kantin / orders .. 80.00 KB 
+ kantin / password_reset_tokens .. 16.00 KB 
+ kantin / sessions .. 16.00 KB 
+ kantin / tables .. 32.00 KB 
+ kantin / tenants .. 48.00 KB 
+ kantin / transactions .. 48.00 KB 
+ kantin / users .. 32.00 KB 
+ kantin_test / cache .. 16.00 KB 
+ kantin_test / cache_locks .. 16.00 KB 
+ kantin_test / failed_jobs .. 16.00 KB 
+ kantin_test / job_batches .. 16.00 KB 
+ kantin_test / jobs .. 16.00 KB 
+ kantin_test / migrations .. 16.00 KB 
+ kantin_test / passkeys .. 32.00 KB 
+ kantin_test / password_reset_tokens .. 16.00 KB 
+ kantin_test / sessions .. 16.00 KB 
+ kantin_test / users .. 32.00 KB 
+
