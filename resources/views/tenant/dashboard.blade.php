@@ -148,7 +148,7 @@
                 </div>
 
                 <!-- FEFO Table -->
-                <div class="overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800">
+                <div class="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800">
                     <table class="w-full text-left text-xs">
                         <thead class="bg-zinc-100 text-zinc-700 font-bold dark:bg-zinc-800 dark:text-zinc-300 border-b border-zinc-200 dark:border-zinc-700">
                             <tr>
