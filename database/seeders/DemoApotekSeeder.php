@@ -29,6 +29,7 @@ class DemoApotekSeeder extends Seeder
             ['nama_client' => 'Cabang Banyuwangi Kota'],
             [
                 'id_client' => 'a1b2c3d4-0001-4000-8000-000000000001',
+                'slug' => 'banyuwangi-kota',
                 'alamat' => 'Jl. Ahmad Yani No. 45, Banyuwangi Kota',
                 'aktif' => true,
             ]
@@ -38,6 +39,7 @@ class DemoApotekSeeder extends Seeder
             ['nama_client' => 'Cabang Rogojampi'],
             [
                 'id_client' => 'a1b2c3d4-0002-4000-8000-000000000002',
+                'slug' => 'rogojampi',
                 'alamat' => 'Jl. Raya Rogojampi No. 12, Rogojampi',
                 'aktif' => true,
             ]
@@ -250,6 +252,17 @@ class DemoApotekSeeder extends Seeder
                 'id_client' => $bwiKota->id_client,
                 'status' => 'menunggu_verifikasi',
                 'metode_layanan' => 'click_collect',
+            ]
+        );
+
+        $pesananRogojampi = Pesanan::firstOrCreate(
+            ['nomor_pesanan' => 'ORD-20260917-0099'],
+            [
+                'id_pesanan' => (string) Str::uuid(),
+                'id_pengguna' => $pelangganUser->id_pengguna,
+                'id_client' => $rogojampi->id_client,
+                'status' => 'diproses',
+                'metode_layanan' => 'ambil_di_tempat',
             ]
         );
 
