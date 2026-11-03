@@ -19,7 +19,7 @@ final class PortalRoutes
      */
     public static function customer(Closure|string $routes): void
     {
-        Route::middleware('web')
+        Route::middleware(['web', 'tenant'])
             ->prefix('klien/{client}')
             ->name('customer.')
             ->group($routes);
@@ -31,7 +31,7 @@ final class PortalRoutes
      */
     public static function tenant(Closure|string $routes): void
     {
-        Route::middleware(['web', 'auth', 'verified', 'role:apoteker'])
+        Route::middleware(['web', 'auth', 'verified', 'role:apoteker', 'tenant'])
             ->prefix('cabang/{client}')
             ->name('tenant.')
             ->group($routes);

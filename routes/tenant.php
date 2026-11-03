@@ -1,9 +1,11 @@
 <?php
 
 use App\Models\Obat;
+use App\Models\Pesanan;
 use App\Models\Resep;
 use App\Models\StokClient;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -67,3 +69,18 @@ Route::post('/stok/{id}/penyesuaian', function (string $client, string $id, Requ
         'jumlah_stok' => $stok,
     ]);
 })->name('stok.penyesuaian');
+
+Route::get('/pesanan/{id}', function (string $client, string $id) {
+    $pesanan = Pesanan::withoutGlobalScopes()->find($id);
+
+    if (! $pesanan) {
+        abort(404, 'Pesanan tidak ditemukan.');
+    }
+
+    Gate::authorize('view', $pesanan);
+
+    return response()->json([
+        'success' => true,
+        'pesanan' => $pesanan,
+    ]);
+})->name('pesanan.detail');

@@ -15,9 +15,12 @@ class ClientFactory extends Factory
 
     public function definition(): array
     {
+        $nama = 'Cabang '.fake()->city();
+
         return [
             'id_client' => (string) Str::uuid(),
-            'nama_client' => 'Cabang '.fake()->city(),
+            'nama_client' => $nama,
+            'slug' => Str::slug($nama),
             'alamat' => fake()->address(),
             'aktif' => true,
         ];
