@@ -28,6 +28,10 @@ trait BelongsToTenant
         return $this->belongsTo(Client::class, 'id_client', 'id_client');
     }
 
+    /**
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
     public function scopeWithoutTenancy(Builder $query): Builder
     {
         return $query->withoutGlobalScope(TenantScope::class);

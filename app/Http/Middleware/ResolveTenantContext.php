@@ -51,6 +51,7 @@ class ResolveTenantContext
         if ($request->is('cabang/*')) {
             $user = $request->user();
 
+            /** @phpstan-ignore function.alreadyNarrowedType */
             if ($user && method_exists($user, 'hasRole') && ! $user->hasRole('super_admin')) {
                 if (method_exists($user, 'adminClient') && $user->adminClient()->exists()) {
                     $hasAccess = $user->adminClient()
