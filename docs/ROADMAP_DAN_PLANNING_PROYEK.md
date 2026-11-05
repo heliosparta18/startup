@@ -73,10 +73,10 @@ Sesuai arahan restrukturisasi beban kerja:
 | **M05** | Administrasi Staf Cabang, RBAC, & Hierarki Pengawas APJ | **Arya** | TERJADWAL | Manajemen akun staf cabang, role middleware, dan pemetaan `peta_pengawas_staf` (5NF). |
 | **M06** | Sesi Pelanggan Anonim, Opaque Token, & Radius Cabang | **Arya** | TERJADWAL | Token tamu tanpa login (32 karakter cookie), penanda cabang terdekat, dan geo-fallback. |
 | **M07** | Katalog Obat Multi-Cabang, Filter Sediaan, Livewire Search | **Arya** | TERJADWAL | Pencarian obat real-time, filter sediaan (tablet/sirup), badge klasifikasi, & live stock. |
-| **M08** | Keranjang Belanja Redis Multi-Tenant & Revalidasi Stok | **Guntur** | TERJADWAL | Key Redis `cart:{sessionId}:{clientId}`, TTL keranjang 7 hari, dan validasi harga/stok. |
-| **M09** | Checkout Atomik, Snapshot Harga Denormalisasi & Resep | **Guntur** | TERJADWAL | `DB::transaction` + `lockForUpdate`, generate `#ORD-...`, dan snapshot unit price (ADR-0008). |
-| **M10** | Payment Gateway Interface & Dynamic QRIS Sandbox Generator | **Guntur** | TERJADWAL | `PaymentGatewayInterface`, `FakeQrisGateway`, QR string EMVCo, countdown timer 15m. |
-| **M11** | Webhook Idempoten, Verifikasi Signature & Auto-Settlement | **Guntur** | TERJADWAL | Endpoint webhook `POST /api/webhooks/qris`, HMAC-SHA256 signature, log audit & settlement. |
+| **M08** | Keranjang Belanja Redis Multi-Tenant & Revalidasi Stok | **Guntur** | SELESAI | Key Redis `cart:{sessionId}:{clientId}`, TTL keranjang 7 hari, dan validasi harga/stok. |
+| **M09** | Checkout Atomik, Snapshot Harga Denormalisasi & Resep | **Guntur** | SELESAI | `DB::transaction` + `lockForUpdate`, generate `#ORD-...`, dan snapshot unit price (ADR-0008). |
+| **M10** | Payment Gateway Interface & Dynamic QRIS Sandbox Generator | **Guntur** | SELESAI | `PaymentGatewayInterface`, `FakeQrisGateway`, QR string EMVCo, countdown timer 15m. |
+| **M11** | Webhook Idempoten, Verifikasi Signature & Auto-Settlement | **Guntur** | SELESAI | Endpoint webhook `POST /api/webhooks/qris`, HMAC-SHA256 signature, log audit & settlement. |
 | **M12** | Verifikasi Resep Dokter & Manajemen Stok FEFO | **Arya** | TERJADWAL | Form telaah resep (cek SIP dokter), reject/approve, dan urutan stok batch expired terdekat. |
 | **M12-RT**| Real-Time Order Tracking via Laravel Reverb WebSockets | **Candi** | TERJADWAL | Event broadcasting `OrderStatusUpdated`, private channel auth, dan UI live stepper. |
 | **M13** | Dashboard Analitik Penjualan, Rekonsiliasi & Ekspor Laporan| **Candi** | TERJADWAL | Aggregator omzet, penutupan periode `ringkasan_periode_penjualan`, ekspor PDF & Excel. |
