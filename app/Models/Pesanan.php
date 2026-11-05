@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Traits\BelongsToTenant;
 use Database\Factories\PesananFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -91,5 +92,35 @@ class Pesanan extends Model
     public function retur(): HasMany
     {
         return $this->hasMany(PermintaanRetur::class, 'id_pesanan', 'id_pesanan');
+    }
+
+    public function getTotalHargaAttribute(): float
+    {
+        return (float) $this->items->sum('subtotal');
+    }
+
+    public function isLunas(): bool
+    {
+        return $this->pembayaran()->where('status', 'lunas')->exists()
+            || $this->status === 'diproses'
+            || $this->status === 'selesai';
+    }
+
+    /**
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
+    public function scopeMenungguPembayaran($query)
+    {
+        return $query->where('status', 'menunggu_pembayaran');
+    }
+
+    /**
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
+    public function scopeDiproses($query)
+    {
+        return $query->where('status', 'diproses');
     }
 }

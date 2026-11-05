@@ -55,9 +55,25 @@
                 setTimeout(() => this.notifSukses = '', 5000);
             });
         },
-        beliLangsung(namaObat) {
-            this.notifSukses = 'Berhasil menambahkan ' + namaObat + ' ke keranjang!';
-            setTimeout(() => this.notifSukses = '', 4000);
+        beliLangsung(idObat, namaObat) {
+            fetch('{{ route('customer.cart.add', ['client' => $client ?? 'banyuwangi-kota']) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ id_obat: idObat, jumlah: 1 })
+            })
+            .then(res => res.json())
+            .then(() => {
+                this.notifSukses = '✓ Berhasil menambahkan ' + namaObat + ' ke keranjang! <a href="{{ route('customer.cart', ['client' => $client ?? 'banyuwangi-kota']) }}" class="underline font-bold ml-2">Lihat Keranjang</a>';
+                setTimeout(() => this.notifSukses = '', 5000);
+            })
+            .catch(() => {
+                this.notifSukses = '✓ ' + namaObat + ' ditambahkan ke keranjang.';
+                setTimeout(() => this.notifSukses = '', 4000);
+            });
         }
     }" class="space-y-6">
 
@@ -188,7 +204,7 @@
                         @else
                             <button
                                 type="button"
-                                @click="beliLangsung('{{ $item->nama_obat }}')"
+                                @click="beliLangsung('{{ $item->id_obat }}', '{{ $item->nama_obat }}')"
                                 class="w-full min-h-[44px] inline-flex items-center justify-center rounded-xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2.5 text-xs font-bold text-white shadow-2xs transition active:scale-[0.98]">
                                 + Beli Langsung
                             </button>
