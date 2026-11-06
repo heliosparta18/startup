@@ -6,6 +6,7 @@ use App\Models\LogAudit;
 use App\Models\Pesanan;
 use App\Models\ResepDokter;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class VerifyPrescriptionAction
@@ -48,7 +49,7 @@ class VerifyPrescriptionAction
             }
 
             LogAudit::create([
-                'id_log' => (string) \Illuminate\Support\Str::uuid(),
+                'id_log' => (string) Str::uuid(),
                 'id_pengguna' => $apotekerId,
                 'aksi' => 'TELAAH_RESEP',
                 'tabel_target' => 'resep_dokter',

@@ -19,6 +19,7 @@ class StockFefoService
                 $batch->sisa_hari_ed = $sisaHari;
                 $batch->is_near_ed = $sisaHari <= 30; // Indikator H-30
                 $batch->is_critical_ed = $sisaHari <= 7; // Indikator H-7
+
                 return $batch;
             });
     }

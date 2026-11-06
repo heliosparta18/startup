@@ -3,7 +3,6 @@
 namespace App\Modules\Catalog\Services;
 
 use App\Models\Obat;
-use App\Models\StokClient;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -20,7 +19,7 @@ class CatalogService
             })
             ->when($search, function (Builder $q, $search) {
                 $q->where('nama_obat', 'like', "%{$search}%")
-                  ->orWhere('komposisi', 'like', "%{$search}%");
+                    ->orWhere('komposisi', 'like', "%{$search}%");
             })
             ->when($bentukSediaan, function (Builder $q, $sediaan) {
                 $q->where('bentuk_sediaan', $sediaan);

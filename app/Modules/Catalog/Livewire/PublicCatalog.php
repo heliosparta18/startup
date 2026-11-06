@@ -11,7 +11,9 @@ class PublicCatalog extends Component
     use WithPagination;
 
     public string $clientId;
+
     public string $search = '';
+
     public string $sediaan = '';
 
     protected $queryString = ['search', 'sediaan'];
