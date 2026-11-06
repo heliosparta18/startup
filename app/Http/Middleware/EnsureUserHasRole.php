@@ -2,39 +2,45 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\PeranClientPengguna;
-use App\Support\Tenant\TenantContext;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureUserHasRole
+/**
+ * Enforcement server-side untuk konteks (admin/tenant). Menu tersembunyi bukan
+ * authorization; setiap route internal tetap ditolak 403 bila role tidak cocok.
+ * Kontrak role penuh (policy + tenant membership) menyusul Modul 4–5.
+ */
+final class EnsureUserHasRole
 {
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
         $user = $request->user();
 
-        if (! $user) {
-            return redirect()->route('login');
+        // Guest ditangani middleware auth; di sini fokus pada role/status.
+        if ($user === null) {
+            abort(403);
         }
 
-        if ($user->peran === 'super_admin') {
-            return $next($request);
+        // Cek status aktif
+        if (! $user->isActive()) {
+            abort(403);
         }
 
-        $context = app(TenantContext::class);
-        if (! $context->check()) {
-            abort(Response::HTTP_FORBIDDEN, 'Akses ditolak: Konteks cabang tidak terdefinisi.');
+        $allowed = false;
+        foreach ($roles as $rString) {
+            $splitRoles = explode(',', str_replace('|', ',', $rString));
+            foreach ($splitRoles as $role) {
+                $role = trim($role);
+                if ($user->hasRole($role)) {
+                    $allowed = true;
+                    break 2;
+                }
+            }
         }
 
-        $hasRole = PeranClientPengguna::where('id_pengguna', $user->id_pengguna)
-            ->where('id_client', $context->id())
-            ->whereIn('peran', $roles)
-            ->where('aktif', true)
-            ->exists();
-
-        if (! $hasRole) {
-            abort(Response::HTTP_FORBIDDEN, 'Akses ditolak: Anda tidak memiliki peran legal di cabang ini.');
+        if (! $allowed) {
+            abort(403);
         }
 
         return $next($request);

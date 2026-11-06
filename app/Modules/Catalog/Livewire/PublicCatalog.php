@@ -3,6 +3,7 @@
 namespace App\Modules\Catalog\Livewire;
 
 use App\Modules\Catalog\Services\CatalogService;
+use Illuminate\Contracts\View\View;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -16,14 +17,17 @@ class PublicCatalog extends Component
 
     public string $sediaan = '';
 
-    protected $queryString = ['search', 'sediaan'];
+    /**
+     * @var array<int, string>
+     */
+    protected array $queryString = ['search', 'sediaan'];
 
-    public function updatingSearch()
+    public function updatingSearch(): void
     {
         $this->resetPage();
     }
 
-    public function render(CatalogService $catalogService)
+    public function render(CatalogService $catalogService): View
     {
         $obats = $catalogService->getCatalog($this->clientId, $this->search, $this->sediaan ?: null);
 

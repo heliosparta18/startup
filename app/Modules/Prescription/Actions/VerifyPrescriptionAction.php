@@ -4,7 +4,7 @@ namespace App\Modules\Prescription\Actions;
 
 use App\Models\LogAudit;
 use App\Models\Pesanan;
-use App\Models\ResepDokter;
+use App\Models\Resep;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -14,7 +14,7 @@ class VerifyPrescriptionAction
     public function execute(Pesanan $pesanan, string $apotekerId, string $keputusan, ?string $nomorSip = null, ?string $alasan = null): void
     {
         DB::transaction(function () use ($pesanan, $apotekerId, $keputusan, $nomorSip, $alasan) {
-            $resep = ResepDokter::where('id_pesanan', $pesanan->id_pesanan)->firstOrFail();
+            $resep = Resep::where('id_pesanan', $pesanan->id_pesanan)->firstOrFail();
 
             if ($keputusan === 'disetujui') {
                 if (empty($nomorSip) || ! preg_match('/^[0-9]{3}\/SIP\/[0-9]{4}$/', $nomorSip)) {
@@ -24,13 +24,13 @@ class VerifyPrescriptionAction
                 }
 
                 $resep->update([
-                    'status_telaah' => 'disetujui',
-                    'nomor_sip_dokter' => $nomorSip,
-                    'id_apoteker_penelaah' => $apotekerId,
-                    'ditelaah_pada' => now(),
+                    'status_verifikasi' => 'disetujui',
+                    'sip_dokter' => $nomorSip,
+                    'sip_valid' => true,
+                    'diverifikasi_oleh' => $apotekerId,
                 ]);
 
-                $pesanan->update(['status_pesanan' => 'menunggu_pembayaran']);
+                $pesanan->update(['status' => 'diproses']);
             } else {
                 if (empty($alasan)) {
                     throw ValidationException::withMessages([
@@ -39,23 +39,23 @@ class VerifyPrescriptionAction
                 }
 
                 $resep->update([
-                    'status_telaah' => 'ditolak',
-                    'catatan_telaah' => $alasan,
-                    'id_apoteker_penelaah' => $apotekerId,
-                    'ditelaah_pada' => now(),
+                    'status_verifikasi' => 'ditolak',
+                    'catatan_apoteker' => $alasan,
+                    'sip_valid' => false,
+                    'diverifikasi_oleh' => $apotekerId,
                 ]);
 
-                $pesanan->update(['status_pesanan' => 'dibatalkan']);
+                $pesanan->update(['status' => 'dibatalkan']);
             }
 
             LogAudit::create([
-                'id_log' => (string) Str::uuid(),
-                'id_pengguna' => $apotekerId,
+                'id_audit' => (string) Str::uuid(),
+                'id_aktor' => $apotekerId,
                 'aksi' => 'TELAAH_RESEP',
-                'tabel_target' => 'resep_dokter',
-                'id_target' => $resep->id_resep,
-                'detail_perubahan' => json_encode(['keputusan' => $keputusan, 'nomor_sip' => $nomorSip]),
-                'waktu' => now(),
+                'nama_entitas' => 'resep',
+                'id_entitas' => $resep->id_resep,
+                'payload' => ['keputusan' => $keputusan, 'nomor_sip' => $nomorSip],
+                'dibuat_pada' => now(),
             ]);
         });
     }

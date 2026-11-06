@@ -8,6 +8,9 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class CatalogService
 {
+    /**
+     * @return LengthAwarePaginator<int, Obat>
+     */
     public function getCatalog(string $clientId, ?string $search = null, ?string $bentukSediaan = null): LengthAwarePaginator
     {
         return Obat::query()

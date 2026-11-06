@@ -7,7 +7,19 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property string $id
+ * @property string $id_obat
+ * @property string $id_client
+ * @property int $jumlah_stok
+ * @property Carbon|null $diperbarui_pada
+ * @property Carbon|string|null $tanggal_kadaluarsa
+ * @property int|null $sisa_hari_ed
+ * @property bool|null $is_near_ed
+ * @property bool|null $is_critical_ed
+ */
 class StokClient extends Model
 {
     /** @use HasFactory<StokClientFactory> */

@@ -4,6 +4,7 @@ namespace App\Modules\Admin\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Admin\Services\StaffManagementService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class StaffController extends Controller
@@ -15,7 +16,7 @@ class StaffController extends Controller
         $this->staffService = $staffService;
     }
 
-    public function assignSupervisor(Request $request, string $client)
+    public function assignSupervisor(Request $request, string $client): RedirectResponse
     {
         $validated = $request->validate([
             'id_apj' => 'required|uuid|exists:pengguna,id_pengguna',
