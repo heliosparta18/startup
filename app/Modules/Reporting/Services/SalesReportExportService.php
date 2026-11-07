@@ -3,6 +3,7 @@
 namespace App\Modules\Reporting\Services;
 
 use App\Models\Pesanan;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SalesReportExportService
@@ -17,21 +18,27 @@ class SalesReportExportService
         return new StreamedResponse(function () use ($clientId, $mulai, $selesai) {
             $handle = fopen('php://output', 'w');
 
-            // Header Kolom CSV
             fputcsv($handle, ['Nomor Pesanan', 'Tanggal', 'Metode Layanan', 'Status', 'Total Harga (Rp)']);
 
-            // Menggunakan cursor() agar hemat RAM saat data ribuan baris
             $orders = Pesanan::withoutGlobalScopes()
                 ->where('id_client', $clientId)
                 ->whereBetween('dibuat_pada', [$mulai . ' 00:00:00', $selesai . ' 23:59:59'])
-                ->cursor();
+                ->get();
+
+            $orderIds = $orders->pluck('id_pesanan');
+
+            $subtotals = DB::table('item_pesanan')
+                ->whereIn('id_pesanan', $orderIds)
+                ->groupBy('id_pesanan')
+                ->selectRaw('id_pesanan, SUM(subtotal) as total')
+                ->pluck('total', 'id_pesanan');
 
             foreach ($orders as $order) {
                 $nomorPesanan = $this->sanitizeForCsv((string) $order->nomor_pesanan);
                 $tanggal = $order->dibuat_pada ? $order->dibuat_pada->format('Y-m-d H:i') : '-';
-                $metode = (string) ($order->metode_layanan ?? $order->tipe_pengambilan ?? '-');
-                $status = (string) ($order->status ?? $order->status_pesanan ?? '-');
-                $total = (float) ($order->total_harga ?? 0);
+                $metode = (string) ($order->metode_layanan ?? '-');
+                $status = (string) ($order->status ?? '-');
+                $total = (float) ($subtotals->get($order->id_pesanan) ?? 0);
 
                 fputcsv($handle, [
                     $nomorPesanan,

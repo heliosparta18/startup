@@ -23,21 +23,24 @@ class CloseSalesPeriodAction
                 throw new RuntimeException('Periode penjualan ini sudah pernah ditutup dan berstatus terkunci.');
             }
 
-            // Ambil data client untuk mengisi nama_client
             $client = Client::withoutGlobalScopes()->where('id_client', $clientId)->first();
             $namaClient = $client ? $client->nama_client : 'Cabang Apotek';
 
-            // Agregasi transaksi pesanan yang telah valid/lunas
             $orders = Pesanan::withoutGlobalScopes()
                 ->where('id_client', $clientId)
-                ->where(function ($query) {
-                    $query->whereIn('status', ['diproses', 'siap_diambil', 'selesai'])
-                          ->orWhereIn('status_pesanan', ['diproses', 'siap_diambil', 'selesai']);
-                })
+                ->whereIn('status', ['diproses', 'siap_diambil', 'selesai'])
                 ->whereBetween('dibuat_pada', [$periodeMulai . ' 00:00:00', $periodeSelesai . ' 23:59:59'])
                 ->get();
 
-            $totalPendapatan = $orders->sum('total_harga');
+            $orderIds = $orders->pluck('id_pesanan');
+
+            $items = DB::table('item_pesanan')
+                ->whereIn('id_pesanan', $orderIds)
+                ->selectRaw('COALESCE(SUM(subtotal), 0) as total_pendapatan, COALESCE(SUM(kuantitas), 0) as total_obat_terjual')
+                ->first();
+
+            $totalPendapatan = (float) ($items->total_pendapatan ?? 0);
+            $totalObatTerjual = (int) ($items->total_obat_terjual ?? 0);
             $totalPesanan = $orders->count();
 
             return RingkasanPeriodePenjualan::updateOrCreate(
@@ -49,7 +52,7 @@ class CloseSalesPeriodAction
                 [
                     'id_ringkasan' => (string) Str::uuid(),
                     'nama_client' => $namaClient,
-                    'total_obat_terjual' => 0,
+                    'total_obat_terjual' => $totalObatTerjual,
                     'total_pesanan' => $totalPesanan,
                     'total_pendapatan' => $totalPendapatan,
                     'total_retur' => 0,
