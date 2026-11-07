@@ -59,4 +59,14 @@ class ItemPesanan extends Model
     {
         return $this->belongsTo(Obat::class, 'id_obat', 'id_obat');
     }
+
+    public function getNamaObatSnapshotAttribute(): string
+    {
+        return (string) $this->nama_obat;
+    }
+
+    public function getHargaSatuanSnapshotAttribute(): float
+    {
+        return (float) $this->harga_satuan;
+    }
 }

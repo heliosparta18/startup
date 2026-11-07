@@ -28,13 +28,12 @@
 
             <!-- Actions: Keranjang & Profile (Touch targets >= 44px) -->
             <div class="flex items-center gap-2 sm:gap-3">
-                <button type="button" class="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 transition active:scale-[0.98]" aria-label="Keranjang Belanja">
+                <a href="{{ route('customer.cart', ['client' => $client ?? 'banyuwangi-kota']) }}" class="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 transition active:scale-[0.98]" aria-label="Keranjang Belanja">
                     <svg class="h-4 w-4 text-slate-500 dark:text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                     </svg>
                     <span class="hidden sm:inline">Keranjang</span>
-                    <span class="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-white text-[11px] font-bold">2</span>
-                </button>
+                </a>
                 <div class="flex h-[44px] w-[44px] items-center justify-center rounded-full bg-emerald-100 text-emerald-800 font-bold text-sm border border-emerald-300 dark:bg-emerald-900/60 dark:text-emerald-200 cursor-default" title="Akun Pelanggan (AD)">
                     AD
                 </div>

@@ -3,6 +3,8 @@
 namespace App\Modules\Payments;
 
 use App\Modules\ModuleServiceProvider;
+use App\Modules\Payments\Contracts\PaymentGatewayInterface;
+use App\Modules\Payments\Services\FakeQrisGateway;
 
 /**
  * Modul: Payments (alias `payments`).
@@ -17,7 +19,10 @@ final class PaymentsServiceProvider extends ModuleServiceProvider
 {
     public function register(): void
     {
-        // Binding kontrak -> implementasi ditambahkan saat modul diimplementasikan.
+        $this->app->bind(
+            PaymentGatewayInterface::class,
+            FakeQrisGateway::class
+        );
     }
 
     protected function moduleAlias(): string
