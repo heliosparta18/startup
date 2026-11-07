@@ -10,7 +10,18 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property string $id_pesanan
+ * @property string $id_pengguna
+ * @property string $id_client
+ * @property string $nomor_pesanan
+ * @property string $status
+ * @property string $metode_layanan
+ * @property Carbon|null $dibuat_pada
+ * @property Carbon|null $diperbarui_pada
+ */
 class Pesanan extends Model
 {
     /** @use HasFactory<PesananFactory> */

@@ -7,7 +7,22 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property string $id_resep
+ * @property string $id_pesanan
+ * @property string $url_gambar
+ * @property string $status_verifikasi
+ * @property string|null $nama_dokter
+ * @property string|null $sip_dokter
+ * @property string|null $nama_pasien
+ * @property bool|null $sip_valid
+ * @property bool|null $dosis_valid
+ * @property string|null $catatan_apoteker
+ * @property string|null $diverifikasi_oleh
+ * @property Carbon|null $dibuat_pada
+ */
 class Resep extends Model
 {
     /** @use HasFactory<ResepFactory> */
