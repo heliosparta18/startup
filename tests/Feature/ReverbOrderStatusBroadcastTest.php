@@ -17,7 +17,7 @@ class ReverbOrderStatusBroadcastTest extends TestCase
         Event::fake([OrderStatusUpdated::class]);
 
         $pesanan = Pesanan::factory()->create([
-            'status_pesanan' => 'diproses',
+            'status' => 'diproses',
         ]);
 
         OrderStatusUpdated::dispatch($pesanan);
@@ -33,7 +33,7 @@ class ReverbOrderStatusBroadcastTest extends TestCase
     public function test_order_status_updated_broadcast_payload_structure(): void
     {
         $pesanan = Pesanan::factory()->create([
-            'status_pesanan' => 'siap_diambil',
+            'status' => 'siap_diambil',
         ]);
 
         $event = new OrderStatusUpdated($pesanan);
