@@ -24,8 +24,9 @@ class ReverbOrderStatusBroadcastTest extends TestCase
 
         Event::assertDispatched(OrderStatusUpdated::class, function ($event) use ($pesanan) {
             $channels = $event->broadcastOn();
-            $this->assertEquals('private-order.' . $pesanan->id_pesanan, $channels[0]->name);
-            $this->assertEquals('private-tenant.' . $pesanan->id_client, $channels[1]->name);
+            $this->assertEquals('private-order.'.$pesanan->id_pesanan, $channels[0]->name);
+            $this->assertEquals('private-tenant.'.$pesanan->id_client, $channels[1]->name);
+
             return true;
         });
     }

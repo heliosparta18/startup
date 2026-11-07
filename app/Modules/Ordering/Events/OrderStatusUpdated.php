@@ -13,16 +13,14 @@ class OrderStatusUpdated implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public function __construct(public Pesanan $pesanan)
-    {
-    }
+    public function __construct(public Pesanan $pesanan) {}
 
     public function broadcastOn(): array
     {
         // Cukup 'order.' dan 'tenant.', Laravel otomatis menambahkan prefix 'private-'
         return [
-            new PrivateChannel('order.' . $this->pesanan->id_pesanan),
-            new PrivateChannel('tenant.' . $this->pesanan->id_client),
+            new PrivateChannel('order.'.$this->pesanan->id_pesanan),
+            new PrivateChannel('tenant.'.$this->pesanan->id_client),
         ];
     }
 

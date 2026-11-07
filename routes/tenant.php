@@ -90,7 +90,6 @@ Route::get('/pesanan/{id}', function (string $client, string $id) {
     ]);
 })->name('pesanan.detail');
 
-
 Route::get('/laporan', function (string $client, Request $request, SalesReportService $reportService, SalesReportExportService $exportService) {
     // Menemukan UUID client berdasarkan slug cabang atau id_client
     $clientModel = Client::where('id_client', $client)->orWhere('slug', $client)->first();
@@ -129,8 +128,9 @@ Route::post('/laporan/tutup-periode', function (string $client, Request $request
 
     try {
         $action->execute((string) $clientId, $mulai, $selesai);
+
         return back()->with('success', "Periode kas {$mulai} s/d {$selesai} berhasil ditutup dan berstatus terkunci permanen.");
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
         return back()->with('error', $e->getMessage());
     }
 })->name('laporan.tutup-periode');

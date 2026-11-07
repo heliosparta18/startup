@@ -16,9 +16,7 @@ class IncomingOrderPlaced implements ShouldBroadcastNow
     /**
      * Inisialisasi instance event dengan model Pesanan.
      */
-    public function __construct(public Pesanan $pesanan)
-    {
-    }
+    public function __construct(public Pesanan $pesanan) {}
 
     /**
      * Tentukan channel siaran WebSocket.
@@ -27,7 +25,7 @@ class IncomingOrderPlaced implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('tenant.' . $this->pesanan->id_client),
+            new PrivateChannel('tenant.'.$this->pesanan->id_client),
         ];
     }
 

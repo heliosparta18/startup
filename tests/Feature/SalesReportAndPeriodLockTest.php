@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\Client;
 use App\Models\Obat;
 use App\Models\Pesanan;
-use App\Models\RingkasanPeriodePenjualan;
 use App\Modules\Reporting\Actions\CloseSalesPeriodAction;
 use App\Modules\Reporting\Services\SalesReportExportService;
 use App\Modules\Reporting\Services\SalesReportService;
@@ -26,7 +25,7 @@ class SalesReportAndPeriodLockTest extends TestCase
         $clientId = $client->id_client;
 
         // 1. Eksekusi penutupan periode kas
-        $action = new CloseSalesPeriodAction();
+        $action = new CloseSalesPeriodAction;
         $record = $action->execute($clientId, '2026-11-01', '2026-11-30');
 
         // Pastikan tersimpan dan status terkunci aktif
@@ -96,7 +95,7 @@ class SalesReportAndPeriodLockTest extends TestCase
             'dibuat_pada' => '2026-11-15 14:00:00',
         ]);
 
-        $service = new SalesReportService();
+        $service = new SalesReportService;
         $summary = $service->getSummary($clientId, '2026-11-01', '2026-11-30');
 
         $this->assertEquals(125000, $summary['total_pendapatan']);
@@ -107,12 +106,12 @@ class SalesReportAndPeriodLockTest extends TestCase
 
     public function test_csv_export_mitigates_formula_injection_characters(): void
     {
-        $exportService = new SalesReportExportService();
+        $exportService = new SalesReportExportService;
 
         $this->assertEquals("'=SUM(A1:A10)", $exportService->sanitizeForCsv('=SUM(A1:A10)'));
         $this->assertEquals("'+12345", $exportService->sanitizeForCsv('+12345'));
         $this->assertEquals("'-100", $exportService->sanitizeForCsv('-100'));
         $this->assertEquals("'@payload", $exportService->sanitizeForCsv('@payload'));
-        $this->assertEquals("ORD-20261107-001", $exportService->sanitizeForCsv('ORD-20261107-001'));
+        $this->assertEquals('ORD-20261107-001', $exportService->sanitizeForCsv('ORD-20261107-001'));
     }
 }

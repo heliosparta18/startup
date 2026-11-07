@@ -29,7 +29,7 @@ class CloseSalesPeriodAction
             $orders = Pesanan::withoutGlobalScopes()
                 ->where('id_client', $clientId)
                 ->whereIn('status', ['diproses', 'siap_diambil', 'selesai'])
-                ->whereBetween('dibuat_pada', [$periodeMulai . ' 00:00:00', $periodeSelesai . ' 23:59:59'])
+                ->whereBetween('dibuat_pada', [$periodeMulai.' 00:00:00', $periodeSelesai.' 23:59:59'])
                 ->get();
 
             $orderIds = $orders->pluck('id_pesanan');

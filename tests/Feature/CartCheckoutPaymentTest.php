@@ -271,10 +271,10 @@ class CartCheckoutPaymentTest extends TestCase
         $obat = Obat::firstOrFail();
         $sessionId = 'omni-test-session-1234567890123456';
 
-    StokClient::withoutTenancy()->updateOrCreate(
-        ['id_obat' => $obat->id_obat, 'id_client' => $client->id_client],
-        ['jumlah_stok' => 50]
-);
+        StokClient::withoutTenancy()->updateOrCreate(
+            ['id_obat' => $obat->id_obat, 'id_client' => $client->id_client],
+            ['jumlah_stok' => 50]
+        );
 
         // 1. Render halaman cart
         $cartRes = $this->withCookies(['omni_session' => $sessionId])->get('/klien/'.$client->slug.'/cart');

@@ -22,7 +22,7 @@ class SalesReportExportService
 
             $orders = Pesanan::withoutGlobalScopes()
                 ->where('id_client', $clientId)
-                ->whereBetween('dibuat_pada', [$mulai . ' 00:00:00', $selesai . ' 23:59:59'])
+                ->whereBetween('dibuat_pada', [$mulai.' 00:00:00', $selesai.' 23:59:59'])
                 ->get();
 
             $orderIds = $orders->pluck('id_pesanan');
@@ -62,7 +62,7 @@ class SalesReportExportService
     public function sanitizeForCsv(string $value): string
     {
         if (in_array(substr($value, 0, 1), ['=', '+', '-', '@'])) {
-            return "'" . $value;
+            return "'".$value;
         }
 
         return $value;
