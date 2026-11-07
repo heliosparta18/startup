@@ -6,6 +6,7 @@ use App\Models\Obat;
 use App\Models\Pengguna;
 use App\Models\Pesanan;
 use App\Modules\Ordering\Actions\CreateOrderAction;
+use App\Modules\Ordering\Actions\CancelOrderAction;
 use App\Modules\Ordering\Services\CartService;
 use App\Modules\Payments\Contracts\PaymentGatewayInterface;
 use App\Support\Tenant\TenantContext;
@@ -164,11 +165,11 @@ Route::post('/checkout', function (string $client, Request $request, CartService
 })->name('checkout.process');
 
 // PERTEMUAN 10: Dynamic QRIS Sandbox Generator (EMVCo MPM)
-Route::get('/order/{id}/payment', function (string $client, string $id, PaymentGatewayInterface $gateway) {
+Route::get('/order/{id}/payment', function (string $client, string $id, PaymentGatewayInterface $gateway, TenantContext $tenantContext) {
     $pesanan = Pesanan::withoutTenancy()->with(['items', 'pembayaran'])->find($id);
 
-    if (! $pesanan) {
-        abort(404, 'Pesanan tidak ditemukan.');
+    if (! $pesanan || $pesanan->id_client !== $tenantContext->id()) {
+        abort(404, 'Pesanan tidak ditemukan pada cabang apotek ini.');
     }
 
     $qris = $gateway->generateQris($pesanan);
@@ -179,3 +180,16 @@ Route::get('/order/{id}/payment', function (string $client, string $id, PaymentG
         'qris' => $qris,
     ]);
 })->name('order.payment');
+
+Route::post('/order/{id}/cancel', function (string $client, string $id, CancelOrderAction $cancelOrderAction, TenantContext $tenantContext) {
+    $pesanan = Pesanan::withoutTenancy()->with('items')->find($id);
+
+    if (! $pesanan || $pesanan->id_client !== $tenantContext->id()) {
+        abort(404, 'Pesanan tidak ditemukan pada cabang apotek ini.');
+    }
+
+    $cancelOrderAction->execute($pesanan, 'Dibatalkan oleh pelanggan');
+
+    return redirect()->route('customer.order.payment', ['client' => $client, 'id' => $pesanan->id_pesanan])
+        ->with('status', 'Pesanan berhasil dibatalkan dan stok telah dikembalikan ke cabang.');
+})->name('order.cancel');

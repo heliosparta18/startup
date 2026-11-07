@@ -9,6 +9,7 @@ use App\Models\Pengguna;
 use App\Models\Pesanan;
 use App\Models\StokClient;
 use App\Modules\Ordering\Actions\CreateOrderAction;
+use App\Modules\Ordering\Actions\CancelOrderAction;
 use App\Modules\Ordering\Services\CartService;
 use App\Modules\Payments\Services\QrisEmvcoBuilder;
 use Database\Seeders\DemoApotekSeeder;
@@ -302,5 +303,63 @@ class CartCheckoutPaymentTest extends TestCase
         $paymentRes->assertStatus(200);
         $paymentRes->assertSee('Pembayaran QRIS Dinamis');
         $paymentRes->assertSee($pesanan->nomor_pesanan);
+    }
+
+    public function test_order_cancellation_restores_physical_stock_atomically(): void
+    {
+        $client = Client::where('slug', 'banyuwangi-kota')->firstOrFail();
+        $obat = Obat::firstOrFail();
+        $pelanggan = Pengguna::where('peran', 'pelanggan')->firstOrFail();
+
+        StokClient::withoutTenancy()->updateOrCreate(
+            ['id_obat' => $obat->id_obat, 'id_client' => $client->id_client],
+            ['jumlah_stok' => 50]
+        );
+
+        $createAction = app(CreateOrderAction::class);
+        $pesanan = $createAction->execute($client->id_client, $pelanggan->id_pengguna, [
+            ['id_obat' => $obat->id_obat, 'nama_obat' => $obat->nama_obat, 'harga' => (float) $obat->harga, 'jumlah' => 3],
+        ]);
+
+        // Stok berkurang jadi 47
+        $stokAfterCheckout = StokClient::withoutTenancy()
+            ->where('id_obat', $obat->id_obat)
+            ->where('id_client', $client->id_client)
+            ->value('jumlah_stok');
+        $this->assertEquals(47, $stokAfterCheckout);
+
+        // Batalkan pesanan
+        $cancelAction = app(CancelOrderAction::class);
+        $cancelAction->execute($pesanan, 'Pelanggan membatalkan pesanan');
+
+        // Status berubah jadi dibatalkan
+        $freshPesanan = Pesanan::withoutTenancy()->find($pesanan->id_pesanan);
+        $this->assertNotNull($freshPesanan);
+        $this->assertEquals('dibatalkan', $freshPesanan->status);
+
+        // Stok fisik kembali jadi 50
+        $stokAfterCancel = StokClient::withoutTenancy()
+            ->where('id_obat', $obat->id_obat)
+            ->where('id_client', $client->id_client)
+            ->value('jumlah_stok');
+        $this->assertEquals(50, $stokAfterCancel);
+    }
+
+    public function test_payment_page_rejects_cross_tenant_access_preventing_idor(): void
+    {
+        $clientA = Client::where('slug', 'banyuwangi-kota')->firstOrFail();
+        $clientB = Client::where('slug', 'rogojampi')->firstOrFail();
+        $obat = Obat::firstOrFail();
+        $pelanggan = Pengguna::where('peran', 'pelanggan')->firstOrFail();
+
+        // Buat pesanan di Cabang B (Rogojampi)
+        $createAction = app(CreateOrderAction::class);
+        $pesananB = $createAction->execute($clientB->id_client, $pelanggan->id_pengguna, [
+            ['id_obat' => $obat->id_obat, 'nama_obat' => $obat->nama_obat, 'harga' => (float) $obat->harga, 'jumlah' => 1],
+        ]);
+
+        // Buka lewat URL Cabang A (Banyuwangi Kota) -> Harus 404 (IDOR dicegah)
+        $response = $this->get('/klien/'.$clientA->slug.'/order/'.$pesananB->id_pesanan.'/payment');
+        $response->assertStatus(404);
     }
 }
