@@ -27,7 +27,7 @@ class IncomingOrderPlaced implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('private-tenant.' . $this->pesanan->id_client),
+            new PrivateChannel('tenant.' . $this->pesanan->id_client),
         ];
     }
 

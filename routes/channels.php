@@ -9,7 +9,7 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 });
 
 
-Broadcast::channel('private-order.{id_pesanan}', function (?Pengguna $user, string $idPesanan) {
+Broadcast::channel('order.{id_pesanan}', function (?Pengguna $user, string $idPesanan) {
     $pesanan = Pesanan::withoutGlobalScopes()->where('id_pesanan', $idPesanan)->first();
 
     if (! $pesanan) {
@@ -31,7 +31,7 @@ Broadcast::channel('private-order.{id_pesanan}', function (?Pengguna $user, stri
 });
 
 
-Broadcast::channel('private-tenant.{id_client}', function (Pengguna $user, string $idClient) {
+Broadcast::channel('tenant.{id_client}', function (Pengguna $user, string $idClient) {
     if ($user->peran === 'super_admin') {
         return true;
     }

@@ -1,7 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-3xl mx-auto py-8 px-4" x-data="orderTracker('{{ $pesanan->id_pesanan }}', '{{ $pesanan->status_pesanan }}')">
+@php
+    $currentStatus = $pesanan->status ?? $pesanan->status_pesanan;
+@endphp
+
+<div class="max-w-3xl mx-auto py-8 px-4" x-data="orderTracker('{{ $pesanan->id_pesanan }}', '{{ $currentStatus }}')">
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <div class="flex items-center justify-between border-b pb-4 mb-6">
             <div>
@@ -9,11 +13,11 @@
                 <p class="text-sm text-gray-500">Dipesan pada {{ $pesanan->created_at->format('d M Y, H:i') }}</p>
             </div>
             <span class="px-3 py-1 text-sm font-semibold rounded-full bg-blue-50 text-blue-700 capitalize" x-text="currentStatus.replace('_', ' ')">
-                {{ str_replace('_', ' ', $pesanan->status_pesanan) }}
+                {{ str_replace('_', ' ', $currentStatus) }}
             </span>
         </div>
 
-        {{-- Stepper Pelacakan Pesanan --}}
+        {{-- Stepper Status --}}
         <div class="relative flex items-center justify-between w-full mb-8">
             <template x-for="(step, index) in steps" :key="index">
                 <div class="flex flex-col items-center flex-1">
@@ -26,7 +30,6 @@
             </template>
         </div>
 
-        {{-- Notifikasi WebSocket Live Update --}}
         <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-4 flex items-center gap-3 text-sm text-emerald-800">
             <span class="relative flex h-3 w-3">
                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -49,9 +52,9 @@ document.addEventListener('alpine:init', () => {
         ],
         init() {
             if (window.Echo) {
-                window.Echo.private(`private-order.${orderId}`)
+                window.Echo.private(`order.${orderId}`)
                     .listen('.OrderStatusUpdated', (e) => {
-                        this.currentStatus = e.status_pesanan;
+                        this.currentStatus = e.status_pesanan || e.status;
                     });
             }
         },
