@@ -8,8 +8,8 @@ use App\Models\Pembayaran;
 use App\Models\Pengguna;
 use App\Models\Pesanan;
 use App\Models\StokClient;
-use App\Modules\Ordering\Actions\CreateOrderAction;
 use App\Modules\Ordering\Actions\CancelOrderAction;
+use App\Modules\Ordering\Actions\CreateOrderAction;
 use App\Modules\Ordering\Services\CartService;
 use App\Modules\Payments\Services\QrisEmvcoBuilder;
 use Database\Seeders\DemoApotekSeeder;
@@ -271,6 +271,11 @@ class CartCheckoutPaymentTest extends TestCase
         $obat = Obat::firstOrFail();
         $sessionId = 'omni-test-session-1234567890123456';
 
+        StokClient::withoutTenancy()->updateOrCreate(
+            ['id_obat' => $obat->id_obat, 'id_client' => $client->id_client],
+            ['jumlah_stok' => 20]
+        );
+
         // 1. Render halaman cart
         $cartRes = $this->withCookies(['omni_session' => $sessionId])->get('/klien/'.$client->slug.'/cart');
         $cartRes->assertStatus(200);
@@ -351,6 +356,11 @@ class CartCheckoutPaymentTest extends TestCase
         $clientB = Client::where('slug', 'rogojampi')->firstOrFail();
         $obat = Obat::firstOrFail();
         $pelanggan = Pengguna::where('peran', 'pelanggan')->firstOrFail();
+
+        StokClient::withoutTenancy()->updateOrCreate(
+            ['id_obat' => $obat->id_obat, 'id_client' => $clientB->id_client],
+            ['jumlah_stok' => 10]
+        );
 
         // Buat pesanan di Cabang B (Rogojampi)
         $createAction = app(CreateOrderAction::class);
