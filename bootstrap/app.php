@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\EnsureUserHasRole;
 use App\Http\Middleware\ResolveTenantContext;
+use App\Http\Middleware\SecurityHeadersMiddleware;
 use App\Support\Routing\PortalRoutes;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -25,6 +26,9 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Daftarkan middleware security headers global
+        $middleware->append(SecurityHeadersMiddleware::class);
+
         $middleware->alias([
             'role' => EnsureUserHasRole::class,
             'tenant' => ResolveTenantContext::class,

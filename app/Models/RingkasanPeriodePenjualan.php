@@ -43,6 +43,7 @@ class RingkasanPeriodePenjualan extends Model
         return [
             'periode_mulai' => 'date',
             'periode_selesai' => 'date',
+            'total_obat_terjual' => 'integer',
             'total_pesanan' => 'integer',
             'total_pendapatan' => 'decimal:2',
             'total_retur' => 'integer',
@@ -57,5 +58,13 @@ class RingkasanPeriodePenjualan extends Model
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class, 'id_client', 'id_client');
+    }
+
+    /**
+     * Scope untuk memfilter laporan periode yang berstatus terkunci permanen.
+     */
+    public function scopeTerkunci($query)
+    {
+        return $query->where('status_terkunci', true);
     }
 }

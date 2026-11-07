@@ -271,10 +271,10 @@ class CartCheckoutPaymentTest extends TestCase
         $obat = Obat::firstOrFail();
         $sessionId = 'omni-test-session-1234567890123456';
 
-        StokClient::withoutTenancy()->updateOrCreate(
-            ['id_obat' => $obat->id_obat, 'id_client' => $client->id_client],
-            ['jumlah_stok' => 20]
-        );
+    StokClient::withoutTenancy()->updateOrCreate(
+        ['id_obat' => $obat->id_obat, 'id_client' => $client->id_client],
+        ['jumlah_stok' => 50]
+);
 
         // 1. Render halaman cart
         $cartRes = $this->withCookies(['omni_session' => $sessionId])->get('/klien/'.$client->slug.'/cart');
@@ -356,10 +356,9 @@ class CartCheckoutPaymentTest extends TestCase
         $clientB = Client::where('slug', 'rogojampi')->firstOrFail();
         $obat = Obat::firstOrFail();
         $pelanggan = Pengguna::where('peran', 'pelanggan')->firstOrFail();
-
         StokClient::withoutTenancy()->updateOrCreate(
             ['id_obat' => $obat->id_obat, 'id_client' => $clientB->id_client],
-            ['jumlah_stok' => 10]
+            ['jumlah_stok' => 50]
         );
 
         // Buat pesanan di Cabang B (Rogojampi)
