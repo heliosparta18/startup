@@ -6,7 +6,7 @@
 
 ---
 
-## Ringkasan Progres Proyek
+Ringkasan Progres Proyek
 
 | Metrik | Status | Keterangan |
 | :--- | :---: | :--- |
