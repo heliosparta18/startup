@@ -3,23 +3,27 @@
 namespace App\Http\Middleware;
 
 use App\Models\Client;
-use App\Support\Tenant\TenantContext;
+use App\Support\Tenant\Contracts\TenantManagerInterface;
+use App\Support\Tenant\Exceptions\TenantAccessDeniedException;
+use App\Support\Tenant\Exceptions\TenantInactiveException;
+use App\Support\Tenant\Exceptions\TenantNotFoundException;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 class ResolveTenantContext
 {
     public function __construct(
-        private readonly TenantContext $tenantContext
+        private readonly TenantManagerInterface $tenantManager
     ) {}
 
     public function handle(Request $request, Closure $next): Response
     {
-        $tenantIdentifier = $request->route('client');
+        $tenantIdentifier = (string) $request->route('client');
 
-        if (! $tenantIdentifier) {
+        if ($tenantIdentifier === '') {
             return $next($request);
         }
 
@@ -28,6 +32,7 @@ class ResolveTenantContext
             ->orWhere('nama_client', $tenantIdentifier)
             ->first();
 
+        // Fallback saat bootstrapping awal test
         if (! $client && Client::count() === 0) {
             $client = Client::firstOrCreate(
                 ['slug' => $tenantIdentifier],
@@ -41,13 +46,14 @@ class ResolveTenantContext
         }
 
         if (! $client) {
-            abort(Response::HTTP_NOT_FOUND, 'Apotek cabang tidak ditemukan.');
+            throw new TenantNotFoundException($tenantIdentifier);
         }
 
         if (! $client->aktif) {
-            abort(Response::HTTP_FORBIDDEN, 'Apotek cabang sedang dinonaktifkan.');
+            throw new TenantInactiveException($client->nama_client);
         }
 
+        // Pertahanan IDOR portal apoteker dan staf cabang
         if ($request->is('cabang/*')) {
             $user = $request->user();
 
@@ -59,13 +65,22 @@ class ResolveTenantContext
                         ->exists();
 
                     if (! $hasAccess) {
-                        abort(Response::HTTP_FORBIDDEN, 'Anda tidak memiliki hak akses operasional pada cabang apotek ini.');
+                        Log::warning('Upaya IDOR portal cabang dicegah:', [
+                            'id_pengguna' => $user->id_pengguna ?? 'unknown',
+                            'target_cabang' => $client->id_client,
+                            'path' => $request->path(),
+                            'ip' => $request->ip(),
+                        ]);
+
+                        throw new TenantAccessDeniedException(
+                            'Anda tidak memiliki izin operasional pada apotek cabang ini.'
+                        );
                     }
                 }
             }
         }
 
-        $this->tenantContext->set($client);
+        $this->tenantManager->set($client);
 
         return $next($request);
     }

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Support\Tenant\Contracts\TenantManagerInterface;
 use App\Support\Tenant\TenantContext;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
@@ -17,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->scoped(TenantContext::class, fn () => new TenantContext);
+        $this->app->scoped(TenantManagerInterface::class, fn () => $this->app->make(TenantContext::class));
     }
 
     /**
