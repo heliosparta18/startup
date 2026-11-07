@@ -271,6 +271,17 @@ class CartCheckoutPaymentTest extends TestCase
         $obat = Obat::firstOrFail();
         $sessionId = 'omni-test-session-1234567890123456';
 
+        // Pastikan stok obat tersedia di cabang ini agar checkout berhasil
+        \App\Models\StokClient::updateOrCreate(
+            [
+                'id_client' => $client->id_client,
+                'id_obat' => $obat->id_obat,
+            ],
+            [
+                'jumlah_stok' => 100,
+            ]
+        );
+
         // 1. Render halaman cart
         $cartRes = $this->withCookies(['omni_session' => $sessionId])->get('/klien/'.$client->slug.'/cart');
         $cartRes->assertStatus(200);
@@ -351,6 +362,17 @@ class CartCheckoutPaymentTest extends TestCase
         $clientB = Client::where('slug', 'rogojampi')->firstOrFail();
         $obat = Obat::firstOrFail();
         $pelanggan = Pengguna::where('peran', 'pelanggan')->firstOrFail();
+
+        // Pastikan stok obat tersedia di Cabang B sebelum membuat pesanan
+        \App\Models\StokClient::updateOrCreate(
+            [
+                'id_client' => $clientB->id_client,
+                'id_obat' => $obat->id_obat,
+            ],
+            [
+                'jumlah_stok' => 50,
+            ]
+        );
 
         // Buat pesanan di Cabang B (Rogojampi)
         $createAction = app(CreateOrderAction::class);
