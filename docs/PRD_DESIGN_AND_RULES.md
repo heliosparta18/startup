@@ -116,31 +116,43 @@ Sistem memiliki alur interaksi terpadu dari pelanggan hingga apoteker cabang dan
 
 ---
 
-## 5. Daftar 25 Artboard Desain pada FigCraft
+## 5. Daftar 22 Master Artboard Desain pada FigCraft (Struktur Lengkap 8 Modul Sidebar + QRIS + Auth)
 
-1. **D01:** Desktop Portal Pelanggan: Beranda & Katalog Obat Bersih
-2. **D02:** Desktop Pop-up Modal: Detail Obat & Cek Stok Multi-Cabang
-3. **D03:** Desktop Pop-up Modal: Form Unggah Foto Resep Dokter & SIP
-4. **D04:** Desktop Slide-over Drawer: Keranjang Belanja Redis Multi-Tenant
-5. **D05:** Desktop Halaman Checkout Atomik: Pre-Order & Snapshot Harga
-6. **D06:** Desktop Halaman Pembayaran: QRIS Dinamis Standar EMVCo 15 Menit
-7. **D07:** Desktop Pop-up Modal: Simulator Webhook Pelunasan QRIS Sandbox
-8. **D08:** Desktop Halaman Sukses Pembayaran & Tombol Lacak Pesanan
-9. **D09:** Desktop Halaman Pelacakan Live: Stepper Reverb WebSockets
-10. **D10:** Desktop Portal Apoteker: Antrean Telaah Resep Masuk (#ORD-0042)
-11. **D11:** Desktop Pop-up Modal: Pembesar Gambar Resep & Validasi Dokter
-12. **D12:** Desktop Pop-up Modal: Konfirmasi Tolak Resep (Input Alasan Wajib)
-13. **D13:** Desktop Portal Apoteker: Manajemen Batch FEFO & Warning Near-ED
-14. **D14:** Desktop Pop-up Modal: Penyesuaian Kartu Stok Fisik Batch
-15. **D15:** Desktop Super Admin: Executive KPI Dashboard & Agregasi Cabang
-16. **D16:** Desktop Pop-up Modal: Konfirmasi Tutup Periode Kas & Kunci ADR-0008
-17. **D17:** Desktop Pop-up Modal: Dialog Ekspor Laporan Penjualan (PDF/XLSX)
-18. **M01:** Mobile Web Pelanggan: Katalog Obat & Pemilih Cabang Terdekat
-19. **M02:** Mobile Web Pelanggan: Bottom Sheet Detail Obat & Resep
-20. **M03:** Mobile Web Pelanggan: Bottom Sheet Unggah Foto Resep dari Kamera
-21. **M04:** Mobile Web Pelanggan: Bottom Sheet Keranjang Belanja
-22. **M05:** Mobile Web Pelanggan: Tampilan Bayar QRIS Dinamis & Timer
-23. **M06:** Mobile Web Pelanggan: Live Stepper Pelacakan Pesanan Reverb
-24. **M07:** Mobile Web Apoteker: Kartu Verifikasi Resep Masuk & Aksi Cepat
-25. **M08:** Mobile Web Apoteker: Monitoring Batch Kedaluwarsa FEFO H-23 Hari
-26. **DS01:** Design System Foundations: Palet Warna Medis Anti-Slop, Tipografi, & Komponen
+Seluruh modul sidebar dari referensi desain telah diwujudkan secara lengkap dalam pasangan **Desktop Web (1440 × 900)** dan **Mobile Web (390 × 844)** menggunakan palet Pharmly Deep Spruce (`#0A231E`), aksen Chartreuse Lime (`#D4F94E`), dan ikon vektor SVG murni (nol emotikon):
+
+### 5.1 Modul Inti Sidebar (8 Menu Lengkap)
+1. **Overview (Super Admin Executive)**:
+   - Desktop: `ID 4676` (1440 × 900, `x=100, y=2000`)
+   - Mobile: `ID 4759` (390 × 844, `x=1580, y=2000`)
+2. **Katalog Obat (Products & Inventory)**:
+   - Desktop: `ID 5024` (1440 × 900, `x=100, y=100`)
+   - Mobile: `ID 5213` (390 × 844, `x=1580, y=100`)
+3. **Antrean Resep (Orders & FEFO Review)**:
+   - Desktop: `ID 4549` (1440 × 900, `x=100, y=1050`)
+   - Mobile: `ID 4641` (390 × 844, `x=1580, y=1050`)
+4. **Penjualan (Sales & Cashier Transactions)**:
+   - Desktop: `ID 5288` (1440 × 900, `x=100, y=2950`)
+   - Mobile: `ID 5420` (390 × 844, `x=1580, y=2950`)
+5. **Pelanggan (Customers & Patient Records)**:
+   - Desktop: `ID 5477` (1440 × 900, `x=2020, y=2950`)
+   - Mobile: `ID 5602` (390 × 844, `x=3500, y=2950`)
+6. **Pembayaran (Payments & Reconciliation Ledger)**:
+   - Desktop: `ID 5653` (1440 × 900, `x=100, y=3900`)
+   - Mobile: `ID 5759` (390 × 844, `x=1580, y=3900`)
+7. **Bantuan (Help & Support / Regulatory SOP)**:
+   - Desktop: `ID 5811` (1440 × 900, `x=2020, y=3900`)
+   - Mobile: `ID 5896` (390 × 844, `x=3500, y=3900`)
+8. **Pengaturan (Settings & Branch Config)**:
+   - Desktop: `ID 5938` (1440 × 900, `x=100, y=4850`)
+   - Mobile: `ID 6009` (390 × 844, `x=1580, y=4850`)
+
+### 5.2 Modul Transaksi & Autentikasi Tambahan
+9. **Pembayaran QRIS Dinamis Sandbox (EMVCo 15m)**:
+   - Desktop: `ID 4792` (1440 × 900, `x=2020, y=100`)
+   - Mobile: `ID 4815` (390 × 844, `x=3500, y=100`)
+10. **Autentikasi Masuk Portal (Login)**:
+    - Desktop: `ID 4839` (1440 × 900, `x=2020, y=1050`)
+    - Mobile: `ID 4897` (390 × 844, `x=3500, y=1050`)
+11. **Pendaftaran Akun Staf & Pasien (Register)**:
+    - Desktop: `ID 4935` (1440 × 900, `x=2020, y=2000`)
+    - Mobile: `ID 4991` (390 × 844, `x=3500, y=2000`)
