@@ -33,7 +33,7 @@ class AppServiceProvider extends ServiceProvider
 
         // 1. Rate limiter standar API umum (60 request/menit)
         RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by($request->user()?->id_pengguna ?? $request->ip());
+            return Limit::perMinute(60)->by($request->user()->id_pengguna ?? $request->ip());
         });
 
         // 2. Proteksi brute-force saluran otentikasi broadcast Reverb (30 request/menit)
@@ -43,7 +43,7 @@ class AppServiceProvider extends ServiceProvider
 
         // 3. Proteksi lonjakan transaksi pesanan & verifikasi resep (15 request/menit)
         RateLimiter::for('transaksi', function (Request $request) {
-            return Limit::perMinute(15)->by($request->user()?->id_pengguna ?? $request->ip());
+            return Limit::perMinute(15)->by($request->user()->id_pengguna ?? $request->ip());
         });
     }
 

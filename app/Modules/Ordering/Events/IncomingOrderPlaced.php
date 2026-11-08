@@ -32,6 +32,9 @@ class IncomingOrderPlaced implements ShouldBroadcastNow
     /**
      * Payload data ringkas pesanan baru untuk antrean dasbor apoteker.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function broadcastWith(): array
     {
         return [

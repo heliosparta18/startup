@@ -19,6 +19,8 @@ use Illuminate\Support\Carbon;
  * @property string $id_client
  * @property string $nomor_pesanan
  * @property string $status
+ * @property string $status_pesanan
+ * @property string|null $token_sesi
  * @property string $metode_layanan
  * @property Carbon|null $dibuat_pada
  * @property Carbon|null $diperbarui_pada

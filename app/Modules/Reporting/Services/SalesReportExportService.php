@@ -18,6 +18,10 @@ class SalesReportExportService
         return new StreamedResponse(function () use ($clientId, $mulai, $selesai) {
             $handle = fopen('php://output', 'w');
 
+            if (! is_resource($handle)) {
+                throw new \RuntimeException('Gagal membuka stream output CSV.');
+            }
+
             fputcsv($handle, ['Nomor Pesanan', 'Tanggal', 'Metode Layanan', 'Status', 'Total Harga (Rp)']);
 
             $orders = Pesanan::withoutGlobalScopes()

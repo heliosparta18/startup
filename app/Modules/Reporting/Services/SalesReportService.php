@@ -10,6 +10,9 @@ class SalesReportService
     /**
      * Menghitung ringkasan pendapatan dan pesanan cabang langsung dari tabel item_pesanan.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getSummary(string $clientId, string $periodeMulai, string $periodeSelesai): array
     {
         $orders = Pesanan::withoutGlobalScopes()

@@ -100,4 +100,12 @@ class Pengguna extends Authenticatable
     {
         return $this->hasMany(PeranClientPengguna::class, 'id_pengguna', 'id_pengguna');
     }
+
+    /**
+     * @return HasMany<PeranClientPengguna, $this>
+     */
+    public function peranClients(): HasMany
+    {
+        return $this->peranClient();
+    }
 }

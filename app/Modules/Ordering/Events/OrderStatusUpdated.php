@@ -24,6 +24,9 @@ class OrderStatusUpdated implements ShouldBroadcastNow
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function broadcastWith(): array
     {
         $status = $this->pesanan->status ?? $this->pesanan->status_pesanan;

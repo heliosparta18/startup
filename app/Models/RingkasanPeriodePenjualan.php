@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Traits\BelongsToTenant;
 use Database\Factories\RingkasanPeriodePenjualanFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -63,7 +64,11 @@ class RingkasanPeriodePenjualan extends Model
     /**
      * Scope untuk memfilter laporan periode yang berstatus terkunci permanen.
      */
-    public function scopeTerkunci($query)
+    /**
+     * @param  Builder<RingkasanPeriodePenjualan>  $query
+     * @return Builder<RingkasanPeriodePenjualan>
+     */
+    public function scopeTerkunci(Builder $query): Builder
     {
         return $query->where('status_terkunci', true);
     }
