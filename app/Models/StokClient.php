@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Database\Factories\StokClientFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -65,5 +66,40 @@ class StokClient extends Model
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class, 'id_client', 'id_client');
+    }
+
+    /**
+     * Scope FEFO: First-Expired, First-Out
+     * Mengurutkan stok berdasarkan tanggal kedaluwarsa terdekat dari master obat
+     */
+    public function scopeFefoOrder(Builder $query): Builder
+    {
+        return $query->select('stok_client.*')
+            ->join('obat', 'stok_client.id_obat', '=', 'obat.id_obat')
+            ->orderBy('obat.expired', 'asc');
+    }
+
+    public function getSisaHariEdAttribute(): ?int
+    {
+        $expired = $this->obat?->expired ?? $this->tanggal_kadaluarsa;
+        if (! $expired) {
+            return null;
+        }
+
+        return (int) now()->diffInDays($expired, false);
+    }
+
+    public function getIsNearEdAttribute(): bool
+    {
+        $sisa = $this->sisa_hari_ed;
+
+        return $sisa !== null && $sisa <= 30;
+    }
+
+    public function getIsCriticalEdAttribute(): bool
+    {
+        $sisa = $this->sisa_hari_ed;
+
+        return $sisa !== null && $sisa <= 7;
     }
 }

@@ -2,47 +2,80 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Client;
+use App\Models\PeranClientPengguna;
+use App\Support\Tenant\TenantContext;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * Enforcement server-side untuk konteks (admin/tenant). Menu tersembunyi bukan
- * authorization; setiap route internal tetap ditolak 403 bila role tidak cocok.
- * Kontrak role penuh (policy + tenant membership) menyusul Modul 4–5.
- */
-final class EnsureUserHasRole
+class EnsureUserHasRole
 {
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
         $user = $request->user();
 
-        // Guest ditangani middleware auth; di sini fokus pada role/status.
         if ($user === null) {
-            abort(403);
+            abort(Response::HTTP_FORBIDDEN, 'Akses ditolak: Pengguna belum terautentikasi.');
         }
 
-        // Cek status aktif
-        if (! $user->isActive()) {
-            abort(403);
+        if (method_exists($user, 'isActive') && ! $user->isActive()) {
+            abort(Response::HTTP_FORBIDDEN, 'Akses ditolak: Akun tidak aktif.');
         }
 
-        $allowed = false;
+        // Super admin memiliki hak akses penuh
+        if ($user->peran === 'super_admin' || (method_exists($user, 'hasRole') && $user->hasRole('super_admin'))) {
+            return $next($request);
+        }
+
+        $parsedRoles = [];
         foreach ($roles as $rString) {
             $splitRoles = explode(',', str_replace('|', ',', $rString));
             foreach ($splitRoles as $role) {
-                $role = trim($role);
-                if ($user->hasRole($role)) {
-                    $allowed = true;
-                    break 2;
+                $parsedRoles[] = trim($role);
+            }
+        }
+
+        // Resolusi context tenant jika request berada pada rute cabang
+        $context = app(TenantContext::class);
+        $clientId = null;
+
+        if ($context->check()) {
+            $clientId = $context->id();
+        } else {
+            $clientParam = $request->route('client');
+            if (is_string($clientParam)) {
+                $clientModel = Client::where('id_client', $clientParam)
+                    ->orWhere('slug', $clientParam)
+                    ->first();
+
+                if ($clientModel) {
+                    $context->set($clientModel);
+                    $clientId = $clientModel->id_client;
                 }
             }
         }
 
-        if (! $allowed) {
-            abort(403);
+        if ($clientId) {
+            $hasTenantRole = PeranClientPengguna::where('id_pengguna', $user->id_pengguna ?? $user->id)
+                ->where('id_client', $clientId)
+                ->whereIn('peran', $parsedRoles)
+                ->exists();
+
+            if ($hasTenantRole) {
+                return $next($request);
+            }
         }
 
-        return $next($request);
+        // Fallback pengecekan role global pada model user/pengguna
+        if (method_exists($user, 'hasRole')) {
+            foreach ($parsedRoles as $role) {
+                if ($user->hasRole($role)) {
+                    return $next($request);
+                }
+            }
+        }
+
+        abort(Response::HTTP_FORBIDDEN, 'Akses ditolak: Anda tidak memiliki peran legal untuk aksi ini.');
     }
 }

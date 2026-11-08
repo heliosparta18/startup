@@ -2,6 +2,7 @@
 
 use App\Models\Client;
 use App\Models\RingkasanPeriodePenjualan;
+use App\Modules\Admin\Http\Controllers\StaffController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -38,3 +39,7 @@ Route::get('/ekspor-laporan', function () {
         'filename' => 'Rekap_Penjualan_Apotek_Connect_01-16_Sep_2026.xlsx',
     ]);
 })->name('laporan.ekspor');
+
+Route::get('/cabang/{client}/staf', [StaffController::class, 'index'])->name('cabang.staf');
+Route::post('/cabang/{client}/staf/role', [StaffController::class, 'assignRole'])->name('cabang.staf.role');
+Route::post('/cabang/{client}/staf/pengawas', [StaffController::class, 'assignSupervisor'])->name('cabang.staf.pengawas');

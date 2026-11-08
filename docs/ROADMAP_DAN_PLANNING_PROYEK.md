@@ -48,10 +48,10 @@ Sesuai arahan restrukturisasi beban kerja:
 │                      │ Pertemuan 10 (Akan Dikerjakan - QRIS!)   │ & Webhook Settlement      │
 │                      │ Pertemuan 11 (Akan Dikerjakan)           │                           │
 ├──────────────────────┼──────────────────────────────────────────┼───────────────────────────┤
-│ ARYA DWI MAHENDRA    │ Pertemuan 05 (Akan Dikerjakan)           │ Administrasi Staf & APJ,  │
-│ (4 Tugas)            │ Pertemuan 06 (Akan Dikerjakan)           │ Sesi Tamu Opaque Token,   │
-│                      │ Pertemuan 07 (Akan Dikerjakan)           │ Katalog Obat Cabang,      │
-│                      │ Pertemuan 12 (Akan Dikerjakan)           │ & Verifikasi Resep FEFO   │
+│ ARYA DWI MAHENDRA    │ Pertemuan 05 (Selesai)                   │ Administrasi Staf & APJ,  │
+│ (4 Tugas)            │ Pertemuan 06 (Selesai)                   │ Sesi Tamu Opaque Token,   │
+│                      │ Pertemuan 07 (Selesai)                   │ Katalog Obat Cabang,      │
+│                      │ Pertemuan 12 (Selesai)                   │ & Verifikasi Resep FEFO   │
 ├──────────────────────┼──────────────────────────────────────────┼───────────────────────────┤
 │ CANDIA PURWA         │ Pertemuan 12-RT (Akan Dikerjakan)        │ Real-Time Order Reverb,   │
 │ (3 Tugas)            │ Pertemuan 13 (Akan Dikerjakan)           │ Analitik & Rekonsiliasi,  │
@@ -70,14 +70,14 @@ Sesuai arahan restrukturisasi beban kerja:
 | **M03** | Skema Database Domain (16 Tabel Inti), Seeder & Model | **Daffa** | SELESAI | Relasi Eloquent, UUID primary keys, DemoApotekSeeder, dan integritas FK. |
 | **M-UI** | Refaktor UI Katalog, Mobile Touch Target 44px, Badging | **Guntur** | SELESAI | Desain responsif, touch-friendly navigation, badge wajib resep vs bebas (PR #3). |
 | **M04** | Isolasi Multi-Tenant: TenantContext, Scope & Policy | **Daffa** | TERJADWAL | `TenantContext.php`, `TenantScope.php`, `ResolveTenantContext.php`, TenantIsolationTest. |
-| **M05** | Administrasi Staf Cabang, RBAC, & Hierarki Pengawas APJ | **Arya** | TERJADWAL | Manajemen akun staf cabang, role middleware, dan pemetaan `peta_pengawas_staf` (5NF). |
-| **M06** | Sesi Pelanggan Anonim, Opaque Token, & Radius Cabang | **Arya** | TERJADWAL | Token tamu tanpa login (32 karakter cookie), penanda cabang terdekat, dan geo-fallback. |
-| **M07** | Katalog Obat Multi-Cabang, Filter Sediaan, Livewire Search | **Arya** | TERJADWAL | Pencarian obat real-time, filter sediaan (tablet/sirup), badge klasifikasi, & live stock. |
+| **M05** | Administrasi Staf Cabang, RBAC, & Hierarki Pengawas APJ | **Arya** | SELESAI | Manajemen akun staf cabang, role middleware, dan pemetaan `peta_pengawas_staf` (5NF). |
+| **M06** | Sesi Pelanggan Anonim, Opaque Token, & Radius Cabang | **Arya** | SELESAI | Token tamu tanpa login (32 karakter cookie), penanda cabang terdekat, dan geo-fallback. |
+| **M07** | Katalog Obat Multi-Cabang, Filter Sediaan, Livewire Search | **Arya** | SELESAI | Pencarian obat real-time, filter sediaan (tablet/sirup), badge klasifikasi, & live stock. |
 | **M08** | Keranjang Belanja Redis Multi-Tenant & Revalidasi Stok | **Guntur** | TERJADWAL | Key Redis `cart:{sessionId}:{clientId}`, TTL keranjang 7 hari, dan validasi harga/stok. |
 | **M09** | Checkout Atomik, Snapshot Harga Denormalisasi & Resep | **Guntur** | TERJADWAL | `DB::transaction` + `lockForUpdate`, generate `#ORD-...`, dan snapshot unit price (ADR-0008). |
 | **M10** | Payment Gateway Interface & Dynamic QRIS Sandbox Generator | **Guntur** | TERJADWAL | `PaymentGatewayInterface`, `FakeQrisGateway`, QR string EMVCo, countdown timer 15m. |
 | **M11** | Webhook Idempoten, Verifikasi Signature & Auto-Settlement | **Guntur** | TERJADWAL | Endpoint webhook `POST /api/webhooks/qris`, HMAC-SHA256 signature, log audit & settlement. |
-| **M12** | Verifikasi Resep Dokter & Manajemen Stok FEFO | **Arya** | TERJADWAL | Form telaah resep (cek SIP dokter), reject/approve, dan urutan stok batch expired terdekat. |
+| **M12** | Verifikasi Resep Dokter & Manajemen Stok FEFO | **Arya** | SELESAI | Form telaah resep (cek SIP dokter), reject/approve, dan urutan stok batch expired terdekat. |
 | **M12-RT**| Real-Time Order Tracking via Laravel Reverb WebSockets | **Candi** | TERJADWAL | Event broadcasting `OrderStatusUpdated`, private channel auth, dan UI live stepper. |
 | **M13** | Dashboard Analitik Penjualan, Rekonsiliasi & Ekspor Laporan| **Candi** | TERJADWAL | Aggregator omzet, penutupan periode `ringkasan_periode_penjualan`, ekspor PDF & Excel. |
 | **M14** | Security Hardening, Sanitasi Input, 50+ E2E Test Suite | **Candi** | TERJADWAL | Proteksi XSS/SQLi/IDOR, audit keamanan seluruh rute, dan test regression suite demo. |

@@ -49,6 +49,18 @@ class Client extends Model
         return $this->hasMany(StokClient::class, 'id_client', 'id_client');
     }
 
+    public static function findByIdentifier(string $identifier): ?self
+    {
+        $client = static::where('id_client', $identifier)->first();
+        if ($client) {
+            return $client;
+        }
+
+        $clean = str_replace(['-', '_'], ' ', strtolower($identifier));
+
+        return static::whereRaw('LOWER(nama_client) LIKE ?', ["%{$clean}%"])->first();
+    }
+
     /**
      * @return HasMany<Pesanan, $this>
      */
