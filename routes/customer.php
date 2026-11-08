@@ -193,3 +193,16 @@ Route::post('/order/{id}/cancel', function (string $client, string $id, CancelOr
     return redirect()->route('customer.order.payment', ['client' => $client, 'id' => $pesanan->id_pesanan])
         ->with('status', 'Pesanan berhasil dibatalkan dan stok telah dikembalikan ke cabang.');
 })->name('order.cancel');
+
+Route::get('/order/{id}/track', function (string $client, string $id, TenantContext $tenantContext) {
+    $pesanan = Pesanan::withoutTenancy()->with(['items', 'pembayaran'])->find($id);
+
+    if (! $pesanan || $pesanan->id_client !== $tenantContext->id()) {
+        abort(404, 'Pesanan tidak ditemukan pada cabang apotek ini.');
+    }
+
+    return view('customer.order-track', [
+        'client' => $client,
+        'pesanan' => $pesanan,
+    ]);
+})->name('order.track');

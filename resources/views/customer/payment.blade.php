@@ -79,9 +79,14 @@
                     </div>
                 </div>
 
-                <a href="{{ route('customer.home', ['client' => $client]) }}" class="inline-flex items-center justify-center min-h-[44px] w-full py-3 px-4 bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-900 text-white font-bold rounded-xl text-sm transition">
-                    Kembali ke Beranda Katalog
-                </a>
+                <div class="space-y-3">
+                    <a href="{{ route('customer.order.track', ['client' => $client, 'id' => $pesanan->id_pesanan]) }}" class="inline-flex items-center justify-center min-h-[44px] w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm shadow-sm transition">
+                        Lacak Pesanan Real-Time (Reverb)
+                    </a>
+                    <a href="{{ route('customer.home', ['client' => $client]) }}" class="inline-flex items-center justify-center min-h-[44px] w-full py-3 px-4 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-semibold rounded-xl text-sm transition">
+                        Kembali ke Beranda Katalog
+                    </a>
+                </div>
             @elseif($pesanan->status === 'dibatalkan')
                 <!-- Tampilan DIBATALKAN -->
                 <div class="inline-flex p-4 bg-zinc-100 dark:bg-zinc-800 rounded-full text-zinc-500 mb-4">
