@@ -80,21 +80,25 @@ Progres Integrasi Sistem:
 
 ## Sisa Pekerjaan & Backlog Penyempurnaan (~5%)
 
+> 📌 **Panduan Lengkap Pembagian Tugas & Audit Desain:** Lihat berkas terdedikasi **[`SISA_TUGAS_DAN_PANDUAN_DEMO.md`](./SISA_TUGAS_DAN_PANDUAN_DEMO.md)** untuk checklist per anggota (Candia, Arya, Guntur, Daffa), status 22 artboard FigCraft, dan skenario presentasi live demo.
+
 Meskipun seluruh fondasi modul inti telah terintegrasi di `main`, berikut adalah daftar pekerjaan penyempurnaan (*polish & refinement*) yang perlu diselesaikan sebelum demonstrasi akhir:
 
-1. **Registrasi Rute Pelacakan Pesanan Pelanggan (Route Wiring):**
-   - View `resources/views/customer/order-track.blade.php` telah selesai, namun rute publik `Route::get('/klien/{client}/order/{id}/track')` perlu didaftarkan di `routes/customer.php` agar tombol pelacakan dari halaman pembayaran dapat langsung mengarahkan pelanggan ke antarmuka Reverb.
-2. **Pemisahan FormRequest Sanitasi Khusus:**
+1. **Registrasi Rute Pelacakan Pesanan Pelanggan (Route Wiring):** *(SELESAI)*
+   - Rute publik `Route::get('/klien/{client}/order/{id}/track')` telah terdaftar dan terhubung ke `resources/views/customer/order-track.blade.php`.
+2. **Pemisahan FormRequest Sanitasi Khusus (Candia):**
    - Memisahkan validasi inline pada unggah resep dan verifikasi resep ke FormRequest terdedikasi (`app/Http/Requests/Customer/UnggahResepRequest.php` dan `app/Http/Requests/Tenant/VerifikasiResepRequest.php`) dengan validasi MIME magic numbers dan strip tag anti-XSS.
-3. **Antarmuka Admin Penugasan Staf & Rute Controller:**
-   - Membangun view web `resources/views/admin/staff-management.blade.php` dan me-wire rute `StaffController::assignSupervisor` ke `routes/admin.php` untuk memfasilitasi konfigurasi pengawasan APJ secara visual.
-4. **Kelengkapan Automated Test Suite Tambahan:**
+3. **Antarmuka Admin Penugasan Staf & Rute Controller (Arya):**
+   - Membangun view web `resources/views/admin/staff-management.blade.php` dan me-wire rute `StaffController::assignSupervisor` ke `routes/admin.php` untuk memfasilitasi konfigurasi pengawasan APJ (5NF) secara visual.
+4. **Wiring Aksi Tutup Periode & Ekspor Laporan Admin (Candia):**
+   - Menyambungkan rute `POST /admin/tutup-periode` ke `CloseSalesPeriodAction` dan `GET /admin/ekspor-laporan` ke `SalesReportExportService`.
+5. **Kelengkapan Automated Test Suite Tambahan (Arya & Candia):**
    - Melengkapi pengujian spesifik yang tercantum pada PRD anggota:
      - `tests/Feature/GuestSessionAndCatalogTest.php` (Sesi tamu & katalog)
      - `tests/Feature/PrescriptionVerificationTest.php` (Telaah resep & approval)
      - `tests/Feature/FefoStockRotationTest.php` (Rotasi FEFO & peringatan ED)
      - `tests/Feature/EndToEndOrderFlowTest.php` (Alur transaksi komprehensif hulu ke hilir)
-5. **Gladi Bersih Demo Presentasi:**
+6. **Gladi Bersih Demo Presentasi (Daffa & Guntur):**
    - Menjalankan skenario alur live demo lengkap di hadapan Pak Devit Suwardiyanto: mulai dari pemilihan obat di katalog publik, unggah resep, telaah apoteker di portal cabang, checkout atomik, pembayaran via QRIS sandbox, auto-settlement webhook, hingga live order stepper Reverb dan penutupan buku analitik.
 ---
 
