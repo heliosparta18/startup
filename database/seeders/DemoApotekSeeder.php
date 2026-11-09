@@ -17,6 +17,7 @@ use App\Models\Resep;
 use App\Models\RingkasanPeriodePenjualan;
 use App\Models\StokClient;
 use App\Models\SuperAdmin;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -67,6 +68,16 @@ class DemoApotekSeeder extends Seeder
                 'email' => $superAdminUser->telepon_email,
             ]
         );
+        User::updateOrCreate(
+            ['email' => $superAdminUser->telepon_email],
+            [
+                'name' => $superAdminUser->nama_lengkap,
+                'password' => bcrypt('password'),
+                'role' => 'super_admin',
+                'status' => 'aktif',
+                'email_verified_at' => now(),
+            ]
+        );
 
         // 2b. Demo User 2: Apoteker BWI (bambang@omnipharma.test / password)
         $apotekerBwi = Pengguna::firstOrCreate(
@@ -96,6 +107,16 @@ class DemoApotekSeeder extends Seeder
                 'id' => (string) Str::uuid(),
                 'peran' => 'staf_klien',
                 'ditugaskan_dari' => '2026-08-10',
+            ]
+        );
+        User::updateOrCreate(
+            ['email' => $apotekerBwi->telepon_email],
+            [
+                'name' => $apotekerBwi->nama_lengkap,
+                'password' => bcrypt('password'),
+                'role' => 'apoteker',
+                'status' => 'aktif',
+                'email_verified_at' => now(),
             ]
         );
 
@@ -129,6 +150,16 @@ class DemoApotekSeeder extends Seeder
                 'ditugaskan_dari' => '2026-08-12',
             ]
         );
+        User::updateOrCreate(
+            ['email' => $apotekerRogo->telepon_email],
+            [
+                'name' => $apotekerRogo->nama_lengkap,
+                'password' => bcrypt('password'),
+                'role' => 'apoteker',
+                'status' => 'aktif',
+                'email_verified_at' => now(),
+            ]
+        );
 
         // 2d. Demo User 4: Kasir BWI (kasir.bwi@omnipharma.test / password)
         $kasirBwi = Pengguna::firstOrCreate(
@@ -158,6 +189,16 @@ class DemoApotekSeeder extends Seeder
                 'id' => (string) Str::uuid(),
                 'peran' => 'staf_klien',
                 'ditugaskan_dari' => '2026-08-15',
+            ]
+        );
+        User::updateOrCreate(
+            ['email' => $kasirBwi->telepon_email],
+            [
+                'name' => $kasirBwi->nama_lengkap,
+                'password' => bcrypt('password'),
+                'role' => 'admin',
+                'status' => 'aktif',
+                'email_verified_at' => now(),
             ]
         );
 
@@ -398,31 +439,29 @@ class DemoApotekSeeder extends Seeder
         );
 
         // 7. Ringkasan Periode Penjualan Eksekutif (Mockup Layar 3-4)
-        RingkasanPeriodePenjualan::updateOrCreate(
-            ['id_client' => $bwiKota->id_client, 'periode_mulai' => '2026-09-01', 'periode_selesai' => '2026-09-16'],
-            [
-                'id_ringkasan' => (string) Str::uuid(),
-                'nama_client' => 'Cabang Banyuwangi Kota',
-                'total_obat_terjual' => '820 order',
-                'total_pesanan' => 820,
-                'total_pendapatan' => 68200000.00,
-                'total_retur' => 1,
-                'status_terkunci' => false,
-            ]
-        );
+        $rkBwi = RingkasanPeriodePenjualan::firstOrNew(['id_client' => $bwiKota->id_client]);
+        $rkBwi->id_ringkasan = $rkBwi->id_ringkasan ?: (string) Str::uuid();
+        $rkBwi->nama_client = 'Cabang Banyuwangi Kota';
+        $rkBwi->periode_mulai = '2026-09-01';
+        $rkBwi->periode_selesai = '2026-09-16';
+        $rkBwi->total_obat_terjual = 820;
+        $rkBwi->total_pesanan = 820;
+        $rkBwi->total_pendapatan = 68200000.00;
+        $rkBwi->total_retur = 1;
+        $rkBwi->status_terkunci = false;
+        $rkBwi->save();
 
-        RingkasanPeriodePenjualan::updateOrCreate(
-            ['id_client' => $rogojampi->id_client, 'periode_mulai' => '2026-09-01', 'periode_selesai' => '2026-09-16'],
-            [
-                'id_ringkasan' => (string) Str::uuid(),
-                'nama_client' => 'Cabang Rogojampi',
-                'total_obat_terjual' => '610 order',
-                'total_pesanan' => 610,
-                'total_pendapatan' => 45400000.00,
-                'total_retur' => 2,
-                'status_terkunci' => false,
-            ]
-        );
+        $rkRogo = RingkasanPeriodePenjualan::firstOrNew(['id_client' => $rogojampi->id_client]);
+        $rkRogo->id_ringkasan = $rkRogo->id_ringkasan ?: (string) Str::uuid();
+        $rkRogo->nama_client = 'Cabang Rogojampi';
+        $rkRogo->periode_mulai = '2026-09-01';
+        $rkRogo->periode_selesai = '2026-09-16';
+        $rkRogo->total_obat_terjual = 610;
+        $rkRogo->total_pesanan = 610;
+        $rkRogo->total_pendapatan = 45400000.00;
+        $rkRogo->total_retur = 2;
+        $rkRogo->status_terkunci = false;
+        $rkRogo->save();
 
         // 8. Log Audit
         LogAudit::create([

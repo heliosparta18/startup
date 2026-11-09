@@ -98,6 +98,13 @@
                 this.selectedRole = roleKey;
                 this.identifier = userEmail;
                 this.password = userPass;
+                this.loadingSubmit = true;
+                if (window.OmniFirebaseAuth?.showToast) {
+                    window.OmniFirebaseAuth.showToast('Memproses masuk akun demo...', 'info');
+                }
+                setTimeout(() => {
+                    this.$refs.loginForm.submit();
+                }, 200);
             },
 
             async handleGoogleLogin() {
@@ -227,7 +234,7 @@
                 @endif
 
                 <!-- Formulir Masuk: 1 Input Email/Username + 1 Input Password -->
-                <form method="POST" action="{{ route('login.store') }}" @submit="handleLoginSubmit($event)" class="space-y-4">
+                <form x-ref="loginForm" method="POST" action="{{ route('login.store') }}" @submit="handleLoginSubmit($event)" class="space-y-4">
                     @csrf
 
                     <!-- Input 1: Email atau Username -->
@@ -330,40 +337,56 @@
                     <button
                         type="button"
                         @click="selectDemo('super_admin', 'daffa@omnipharma.test', 'password')"
-                        :class="selectedRole === 'super_admin' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-1 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
-                        class="p-2 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer"
+                        :disabled="loadingSubmit || loadingGoogle"
+                        :class="selectedRole === 'super_admin' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
+                        class="p-2 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer disabled:opacity-50"
                     >
-                        <span class="text-[11px] font-bold truncate">Super Admin</span>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-bold truncate">Super Admin</span>
+                            <span x-show="selectedRole === 'super_admin'" class="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-ping"></span>
+                        </div>
                         <span class="text-[9px] text-slate-500 truncate">daffa@omnipharma.test</span>
                     </button>
 
                     <button
                         type="button"
                         @click="selectDemo('apt_bwi', 'bambang@omnipharma.test', 'password')"
-                        :class="selectedRole === 'apt_bwi' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-1 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
-                        class="p-2 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer"
+                        :disabled="loadingSubmit || loadingGoogle"
+                        :class="selectedRole === 'apt_bwi' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
+                        class="p-2 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer disabled:opacity-50"
                     >
-                        <span class="text-[11px] font-bold truncate">Apoteker BWI</span>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-bold truncate">Apoteker BWI</span>
+                            <span x-show="selectedRole === 'apt_bwi'" class="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-ping"></span>
+                        </div>
                         <span class="text-[9px] text-slate-500 truncate">bambang@omnipharma.test</span>
                     </button>
 
                     <button
                         type="button"
                         @click="selectDemo('apt_rogo', 'dewi@omnipharma.test', 'password')"
-                        :class="selectedRole === 'apt_rogo' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-1 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
-                        class="p-2 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer"
+                        :disabled="loadingSubmit || loadingGoogle"
+                        :class="selectedRole === 'apt_rogo' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
+                        class="p-2 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer disabled:opacity-50"
                     >
-                        <span class="text-[11px] font-bold truncate">Apoteker RGO</span>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-bold truncate">Apoteker RGO</span>
+                            <span x-show="selectedRole === 'apt_rogo'" class="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-ping"></span>
+                        </div>
                         <span class="text-[9px] text-slate-500 truncate">dewi@omnipharma.test</span>
                     </button>
 
                     <button
                         type="button"
                         @click="selectDemo('kasir_bwi', 'kasir.bwi@omnipharma.test', 'password')"
-                        :class="selectedRole === 'kasir_bwi' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-1 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
-                        class="p-2 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer"
+                        :disabled="loadingSubmit || loadingGoogle"
+                        :class="selectedRole === 'kasir_bwi' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
+                        class="p-2 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer disabled:opacity-50"
                     >
-                        <span class="text-[11px] font-bold truncate">Kasir BWI</span>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-bold truncate">Kasir BWI</span>
+                            <span x-show="selectedRole === 'kasir_bwi'" class="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-ping"></span>
+                        </div>
                         <span class="text-[9px] text-slate-500 truncate">kasir.bwi@omnipharma.test</span>
                     </button>
                 </div>
