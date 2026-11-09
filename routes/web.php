@@ -2,8 +2,6 @@
 
 use App\Http\Controllers\Auth\EmailOtpAuthController;
 use App\Http\Controllers\Auth\FirebaseAuthSessionController;
-use App\Models\KategoriObat;
-use App\Models\Obat;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -19,14 +17,7 @@ Route::get('/', function () {
         return redirect()->route('dashboard');
     }
 
-    $kategori = KategoriObat::query()->orderBy('nama_kategori')->get();
-    $obat = Obat::query()->with(['kategori', 'stokClient'])->orderBy('nama_obat')->get();
-
-    return view('customer.home', [
-        'client' => 'banyuwangi-kota',
-        'kategori' => $kategori,
-        'obat' => $obat,
-    ]);
+    return view('welcome');
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
