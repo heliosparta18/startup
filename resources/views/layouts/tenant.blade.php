@@ -4,7 +4,7 @@
 <head>
     @include('partials.head')
 </head>
-<body class="min-h-screen bg-slate-100 text-slate-800 dark:bg-zinc-950 dark:text-zinc-100 font-sans flex flex-col">
+<body class="min-h-screen bg-slate-100 text-slate-800 dark:bg-zinc-950 dark:text-zinc-100 font-sans flex flex-col overflow-x-hidden">
     <div x-data="{ mobileNav: false }" class="flex min-h-screen flex-col">
         <!-- Main Top Bar -->
         <header class="sticky top-0 z-30 bg-white dark:bg-zinc-900 border-b border-slate-200 dark:border-zinc-800 shadow-2xs">

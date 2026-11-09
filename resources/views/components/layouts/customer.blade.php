@@ -4,7 +4,7 @@
 <head>
     @include('partials.head')
 </head>
-<body class="min-h-screen bg-slate-50 text-slate-800 dark:bg-zinc-950 dark:text-zinc-100 font-sans flex flex-col">
+<body class="min-h-screen bg-slate-50 text-slate-800 dark:bg-zinc-950 dark:text-zinc-100 font-sans flex flex-col overflow-x-hidden">
     <!-- Top Navigation Header: Responsive, >= 44px tap targets -->
     <header class="sticky top-0 z-30 bg-white/95 dark:bg-zinc-900/95 backdrop-blur border-b border-slate-200 dark:border-zinc-800">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">

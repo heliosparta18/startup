@@ -16,7 +16,7 @@
         [x-cloak] { display: none !important; }
     </style>
 </head>
-<body class="min-h-full bg-slate-100/90 text-slate-800 antialiased flex items-center justify-center p-4 sm:p-6 lg:p-8 font-sans">
+<body class="min-h-full bg-slate-100/90 text-slate-800 antialiased flex items-center justify-center p-3 sm:p-6 lg:p-8 font-sans overflow-x-hidden">
 
     <!-- Container Utama Split Card Register (Sesuai Referensi Visual) -->
     <div class="w-full max-w-5xl bg-white rounded-3xl shadow-xl border border-slate-200/80 overflow-hidden flex flex-col lg:flex-row min-h-[640px]">
