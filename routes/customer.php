@@ -50,7 +50,7 @@ Route::post('/resep/unggah', function (string $client, Request $request) {
 })->name('resep.upload');
 
 $resolveCustomerSession = function (Request $request): string {
-    $cookie = $request->cookie('omni_session');
+    $cookie = $request->cookie('omnipharma_customer_session') ?? $request->cookie('omni_session');
     if (is_string($cookie) && $cookie !== '') {
         return $cookie;
     }
@@ -150,7 +150,7 @@ Route::post('/checkout', function (string $client, Request $request, CartService
     $metodeLayanan = (string) $request->input('metode_layanan', 'click_collect');
 
     try {
-        $pesanan = $createOrderAction->execute($clientId, $userId, $items, $metodeLayanan);
+        $pesanan = $createOrderAction->execute($clientId, $userId, $items, $metodeLayanan, $sessionId);
         $cartService->clear($sessionId, $clientId);
 
         return redirect()->route('customer.order.payment', [

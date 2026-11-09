@@ -15,13 +15,13 @@ class CreateOrderAction
     /**
      * @param  array<int, array{id_obat: string, nama_obat: string, harga: float|int, jumlah: int}>  $items
      */
-    public function execute(string $clientId, ?string $userId, array $items, string $metodeLayanan = 'click_collect'): Pesanan
+    public function execute(string $clientId, ?string $userId, array $items, string $metodeLayanan = 'click_collect', ?string $sessionToken = null): Pesanan
     {
         if (empty($items)) {
             throw new RuntimeException('Keranjang belanja kosong.');
         }
 
-        return DB::transaction(function () use ($clientId, $userId, $items, $metodeLayanan) {
+        return DB::transaction(function () use ($clientId, $userId, $items, $metodeLayanan, $sessionToken) {
             $resolvedUserId = $userId;
             if (! $resolvedUserId) {
                 $guestUser = Pengguna::where('peran', 'pelanggan')->first();
@@ -63,6 +63,7 @@ class CreateOrderAction
                 'nomor_pesanan' => $orderNumber,
                 'status' => 'menunggu_pembayaran',
                 'metode_layanan' => $metodeLayanan,
+                'token_sesi' => $sessionToken,
             ]);
 
             // 3. Simpan Item dengan Snapshot Harga (ADR-0008) & Kurangi Stok

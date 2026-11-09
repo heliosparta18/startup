@@ -5,6 +5,7 @@ namespace App\Modules\Payments\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Pembayaran;
 use App\Models\Pesanan;
+use App\Modules\Ordering\Events\OrderStatusUpdated;
 use App\Modules\Payments\Contracts\PaymentGatewayInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -62,6 +63,8 @@ class PaymentWebhookController extends Controller
                 'url_lampiran' => json_encode($data) ?: null,
                 'dibuat_pada' => now(),
             ]);
+
+            OrderStatusUpdated::dispatch($pesanan);
 
             Log::info("Pesanan {$orderNumber} berhasil dilunasi via Webhook QRIS.");
 

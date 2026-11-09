@@ -13,6 +13,7 @@
         orderNumber: '{{ $pesanan->nomor_pesanan }}',
         isPaid: {{ $pesanan->status === 'diproses' || $pesanan->status === 'selesai' ? 'true' : 'false' }},
         simulating: false,
+        redirecting: false,
         init() {
             if (this.isPaid) return;
             const interval = setInterval(() => {
@@ -43,7 +44,10 @@
             .then(data => {
                 this.simulating = false;
                 this.isPaid = true;
-                window.location.reload();
+                this.redirecting = true;
+                setTimeout(() => {
+                    window.location.href = '{{ route('customer.order.track', ['client' => $client, 'id' => $pesanan->id_pesanan]) }}';
+                }, 1500);
             })
             .catch((err) => {
                 this.simulating = false;
@@ -52,6 +56,10 @@
         }
     }">
         <div class="bg-white dark:bg-zinc-900 rounded-3xl p-6 sm:p-8 shadow-xl border border-zinc-200 dark:border-zinc-800 text-center">
+            <div x-show="redirecting" x-cloak class="mb-4 p-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-2xl text-emerald-800 dark:text-emerald-200 text-sm font-semibold flex items-center justify-center gap-2 animate-pulse">
+                <svg class="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+                <span>Pembayaran Berhasil Dilunasi! Mengalihkan ke Pelacakan Pesanan Real-Time...</span>
+            </div>
             @if($pesanan->status === 'diproses' || $pesanan->status === 'selesai')
                 <!-- Tampilan LUNAS -->
                 <div class="inline-flex p-4 bg-emerald-100 dark:bg-emerald-950/60 rounded-full text-emerald-600 mb-4 animate-bounce">
@@ -138,9 +146,10 @@
 
                 <!-- Tombol Simulator Pelunasan Sandbox & Pembatalan untuk Demo Pak Devit -->
                 <div class="mt-6 pt-5 border-t border-zinc-100 dark:border-zinc-800 space-y-3">
-                    <button type="button" @click="simulatePayment()" :disabled="simulating" class="min-h-[44px] w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-sm disabled:opacity-50">
-                        <span x-show="!simulating">⚡ Simulasi Bayar Sekarang (Sandbox Demo)</span>
+                    <button type="button" @click="simulatePayment()" :disabled="simulating || redirecting" class="min-h-[44px] w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-sm disabled:opacity-50">
+                        <span x-show="!simulating && !redirecting">⚡ Simulasi Bayar Sekarang (Sandbox Demo)</span>
                         <span x-show="simulating">Memproses Webhook...</span>
+                        <span x-show="redirecting">Mengalihkan ke Pelacakan...</span>
                     </button>
 
                     <form method="POST" action="{{ route('customer.order.cancel', ['client' => $client, 'id' => $pesanan->id_pesanan]) }}" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pesanan ini? Stok obat akan otomatis dikembalikan ke apotek.');">

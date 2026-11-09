@@ -49,6 +49,7 @@ class Pesanan extends Model
         'nomor_pesanan',
         'status',
         'metode_layanan',
+        'token_sesi',
     ];
 
     protected function casts(): array

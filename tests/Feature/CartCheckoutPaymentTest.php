@@ -10,10 +10,12 @@ use App\Models\Pesanan;
 use App\Models\StokClient;
 use App\Modules\Ordering\Actions\CancelOrderAction;
 use App\Modules\Ordering\Actions\CreateOrderAction;
+use App\Modules\Ordering\Events\OrderStatusUpdated;
 use App\Modules\Ordering\Services\CartService;
 use App\Modules\Payments\Services\QrisEmvcoBuilder;
 use Database\Seeders\DemoApotekSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use RuntimeException;
 use Tests\TestCase;
@@ -84,13 +86,14 @@ class CartCheckoutPaymentTest extends TestCase
             ],
         ];
 
-        $pesanan = $createOrderAction->execute($client->id_client, $pelanggan->id_pengguna, $items, 'click_collect');
+        $pesanan = $createOrderAction->execute($client->id_client, $pelanggan->id_pengguna, $items, 'click_collect', 'test-session-123');
 
         $this->assertNotNull($pesanan);
         $this->assertStringStartsWith('#ORD-', $pesanan->nomor_pesanan);
         $this->assertEquals('menunggu_pembayaran', $pesanan->status);
         $this->assertEquals('click_collect', $pesanan->metode_layanan);
 
+        $this->assertSame('test-session-123', $pesanan->token_sesi);
         // Cek snapshot harga pada item_pesanan (ADR-0008)
         $this->assertDatabaseHas('item_pesanan', [
             'id_pesanan' => $pesanan->id_pesanan,
@@ -187,6 +190,7 @@ class CartCheckoutPaymentTest extends TestCase
         $payload = (string) json_encode($payloadData);
         $secret = (string) config('services.qris.webhook_secret', 'omnipharma_secret_key');
         $signature = hash_hmac('sha256', $payload, $secret);
+        Event::fake([OrderStatusUpdated::class]);
 
         $response = $this->withHeaders([
             'X-Signature' => $signature,
@@ -208,6 +212,10 @@ class CartCheckoutPaymentTest extends TestCase
             'metode_pembayaran' => 'QRIS',
             'status' => 'lunas',
         ]);
+
+        Event::assertDispatched(OrderStatusUpdated::class, function ($event) use ($pesanan) {
+            return $event->pesanan->nomor_pesanan === $pesanan->nomor_pesanan;
+        });
     }
 
     public function test_payment_webhook_with_invalid_signature_is_rejected(): void

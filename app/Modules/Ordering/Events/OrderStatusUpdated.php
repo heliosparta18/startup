@@ -24,6 +24,11 @@ class OrderStatusUpdated implements ShouldBroadcastNow
         ];
     }
 
+    public function broadcastAs(): string
+    {
+        return 'OrderStatusUpdated';
+    }
+
     /**
      * @return array<string, mixed>
      */
