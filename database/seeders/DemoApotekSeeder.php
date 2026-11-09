@@ -45,7 +45,8 @@ class DemoApotekSeeder extends Seeder
             ]
         );
 
-        // 2. Pengguna (Super Admin, Apoteker, Staf, Pelanggan)
+        // 2. Pengguna (Super Admin, Apoteker, Staf, Kasir, Pelanggan)
+        // 2a. Demo User 1: Super Admin Pusat (daffa@omnipharma.test / password)
         $superAdminUser = Pengguna::firstOrCreate(
             ['telepon_email' => 'daffa@omnipharma.test'],
             [
@@ -67,6 +68,100 @@ class DemoApotekSeeder extends Seeder
             ]
         );
 
+        // 2b. Demo User 2: Apoteker BWI (bambang@omnipharma.test / password)
+        $apotekerBwi = Pengguna::firstOrCreate(
+            ['telepon_email' => 'bambang@omnipharma.test'],
+            [
+                'id_pengguna' => (string) Str::uuid(),
+                'nama_lengkap' => 'apt. Bambang, S.Farm',
+                'peran' => 'apoteker',
+                'password' => bcrypt('password'),
+                'terdaftar_pada' => '2026-08-10',
+                'aktif' => true,
+            ]
+        );
+
+        AdminClient::firstOrCreate(
+            ['id_pengguna' => $apotekerBwi->id_pengguna, 'id_client' => $bwiKota->id_client],
+            [
+                'id_admin' => (string) Str::uuid(),
+                'nama' => $apotekerBwi->nama_lengkap,
+                'email' => $apotekerBwi->telepon_email,
+            ]
+        );
+
+        PeranClientPengguna::firstOrCreate(
+            ['id_pengguna' => $apotekerBwi->id_pengguna, 'id_client' => $bwiKota->id_client],
+            [
+                'id' => (string) Str::uuid(),
+                'peran' => 'staf_klien',
+                'ditugaskan_dari' => '2026-08-10',
+            ]
+        );
+
+        // 2c. Demo User 3: Apoteker Rogojampi (dewi@omnipharma.test / password)
+        $apotekerRogo = Pengguna::firstOrCreate(
+            ['telepon_email' => 'dewi@omnipharma.test'],
+            [
+                'id_pengguna' => (string) Str::uuid(),
+                'nama_lengkap' => 'apt. Dewi Sartika, S.Farm',
+                'peran' => 'apoteker',
+                'password' => bcrypt('password'),
+                'terdaftar_pada' => '2026-08-12',
+                'aktif' => true,
+            ]
+        );
+
+        AdminClient::firstOrCreate(
+            ['id_pengguna' => $apotekerRogo->id_pengguna, 'id_client' => $rogojampi->id_client],
+            [
+                'id_admin' => (string) Str::uuid(),
+                'nama' => $apotekerRogo->nama_lengkap,
+                'email' => $apotekerRogo->telepon_email,
+            ]
+        );
+
+        PeranClientPengguna::firstOrCreate(
+            ['id_pengguna' => $apotekerRogo->id_pengguna, 'id_client' => $rogojampi->id_client],
+            [
+                'id' => (string) Str::uuid(),
+                'peran' => 'staf_klien',
+                'ditugaskan_dari' => '2026-08-12',
+            ]
+        );
+
+        // 2d. Demo User 4: Kasir BWI (kasir.bwi@omnipharma.test / password)
+        $kasirBwi = Pengguna::firstOrCreate(
+            ['telepon_email' => 'kasir.bwi@omnipharma.test'],
+            [
+                'id_pengguna' => (string) Str::uuid(),
+                'nama_lengkap' => 'Kasir Staf Banyuwangi',
+                'peran' => 'admin',
+                'password' => bcrypt('password'),
+                'terdaftar_pada' => '2026-08-15',
+                'aktif' => true,
+            ]
+        );
+
+        AdminClient::firstOrCreate(
+            ['id_pengguna' => $kasirBwi->id_pengguna, 'id_client' => $bwiKota->id_client],
+            [
+                'id_admin' => (string) Str::uuid(),
+                'nama' => $kasirBwi->nama_lengkap,
+                'email' => $kasirBwi->telepon_email,
+            ]
+        );
+
+        PeranClientPengguna::firstOrCreate(
+            ['id_pengguna' => $kasirBwi->id_pengguna, 'id_client' => $bwiKota->id_client],
+            [
+                'id' => (string) Str::uuid(),
+                'peran' => 'staf_klien',
+                'ditugaskan_dari' => '2026-08-15',
+            ]
+        );
+
+        // Pengguna pendukung lainnya (backward compatibility untuk test suite)
         $apotekerUser = Pengguna::firstOrCreate(
             ['telepon_email' => 'candia@omnipharma.test'],
             [

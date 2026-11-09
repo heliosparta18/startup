@@ -11,6 +11,7 @@ use App\Modules\Ordering\Services\CartService;
 use App\Modules\Payments\Contracts\PaymentGatewayInterface;
 use App\Support\Tenant\TenantContext;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -52,12 +53,19 @@ Route::post('/resep/unggah', function (string $client, Request $request) {
 $resolveCustomerSession = function (Request $request): string {
     $cookie = $request->cookie('omnipharma_customer_session') ?? $request->cookie('omni_session');
     if (is_string($cookie) && $cookie !== '') {
+        if (! $request->hasCookie('omnipharma_customer_session')) {
+            Cookie::queue('omnipharma_customer_session', $cookie, 60 * 24 * 30);
+        }
+
         return $cookie;
     }
 
     $sessionId = $request->session()->getId();
+    $token = $sessionId !== '' ? $sessionId : 'guest-'.md5((string) $request->ip());
 
-    return $sessionId !== '' ? $sessionId : 'guest-'.md5((string) $request->ip());
+    Cookie::queue('omnipharma_customer_session', $token, 60 * 24 * 30);
+
+    return $token;
 };
 
 // PERTEMUAN 08: Keranjang Belanja Redis Multi-Tenant

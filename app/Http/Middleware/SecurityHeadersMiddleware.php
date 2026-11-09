@@ -30,14 +30,14 @@ class SecurityHeadersMiddleware
         // Nonaktifkan fitur perangkat keras berlebih
         $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
 
-        // Content Security Policy (CSP) aman yang mengizinkan WebSocket Reverb lokal
+        // Content Security Policy (CSP) aman yang mengizinkan WebSocket Reverb lokal dan Firebase/Google Auth
         $csp = "default-src 'self'; ".
-               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; ".
+               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://apis.google.com https://www.gstatic.com; ".
                "style-src 'self' 'unsafe-inline' https://fonts.bunny.net; ".
                "font-src 'self' https://fonts.bunny.net data:; ".
                "img-src 'self' data: https:; ".
-               "connect-src 'self' ws://127.0.0.1:8080 wss://127.0.0.1:8080 ws://localhost:8080 wss://localhost:8080;";
-
+               "connect-src 'self' ws://127.0.0.1:8080 wss://127.0.0.1:8080 ws://localhost:8080 wss://localhost:8080 https://*.googleapis.com https://*.firebaseio.com https://*.google.com https://accounts.google.com; ".
+               "frame-src 'self' https://*.firebaseapp.com https://accounts.google.com;";
         $response->headers->set('Content-Security-Policy', $csp);
 
         return $response;
