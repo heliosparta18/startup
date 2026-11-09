@@ -28,6 +28,12 @@
 
             <!-- Actions: Keranjang & Profile (Touch targets >= 44px) -->
             <div class="flex items-center gap-2 sm:gap-3">
+                <a href="{{ route('dashboard') }}" class="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 transition active:scale-[0.98]" aria-label="Kembali ke Dashboard Utama">
+                    <svg class="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    <span class="hidden sm:inline">Dashboard Utama</span>
+                </a>
                 <a href="{{ route('customer.cart', ['client' => $client ?? 'banyuwangi-kota']) }}" class="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 transition active:scale-[0.98]" aria-label="Keranjang Belanja">
                     <svg class="h-4 w-4 text-slate-500 dark:text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -53,7 +59,13 @@
                 </svg>
                 <span class="truncate">Cabang: <strong class="text-slate-900 dark:text-zinc-100 font-semibold">{{ $client ?? 'Banyuwangi Kota' }}</strong></span>
             </div>
-            <span class="shrink-0 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full dark:bg-emerald-950 dark:text-emerald-300">Radius &lt; 5 km</span>
+            <div class="flex items-center gap-2">
+                <span class="shrink-0 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full dark:bg-emerald-950 dark:text-emerald-300">Radius &lt; 5 km</span>
+                <a href="{{ route('dashboard') }}" class="shrink-0 text-[11px] font-semibold text-slate-700 bg-white hover:bg-slate-50 px-2.5 py-1 rounded-full border border-slate-200 flex items-center gap-1 shadow-2xs">
+                    <svg class="h-3 w-3 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                    <span>Dashboard</span>
+                </a>
+            </div>
         </div>
     </header>
 

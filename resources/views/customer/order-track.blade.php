@@ -44,9 +44,12 @@
             </div>
 
             {{-- Back to catalog button --}}
-            <div class="mt-8 pt-5 border-t border-zinc-100 dark:border-zinc-800">
-                <a href="{{ route('customer.home', ['client' => $client]) }}" class="inline-flex items-center justify-center min-h-[44px] w-full py-3 px-4 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-bold rounded-xl text-sm transition">
-                    Kembali ke Beranda Katalog
+            <div class="mt-8 pt-5 border-t border-zinc-100 dark:border-zinc-800 flex flex-col sm:flex-row gap-3">
+                <a href="{{ route('dashboard') }}" class="inline-flex items-center justify-center min-h-[44px] flex-1 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm shadow-sm transition">
+                    🏠 Dashboard Utama
+                </a>
+                <a href="{{ route('customer.home', ['client' => $client]) }}" class="inline-flex items-center justify-center min-h-[44px] flex-1 py-3 px-4 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-bold rounded-xl text-sm transition">
+                    Katalog Cabang
                 </a>
             </div>
         </div>

@@ -8,7 +8,10 @@
                 <p class="text-xs text-slate-500 dark:text-zinc-400 mt-1">Verifikasi Surat Izin Praktik (SIP) dokter, keabsahan klinis dosis, dan persetujuan pengeluaran obat keras</p>
             </div>
             <div class="flex items-center gap-2">
-                <a href="{{ route('tenant.stok.fefo', ['client' => $client]) }}" class="min-h-[44px] inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 text-xs font-bold text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition">
+                <a href="{{ route('tenant.dashboard', ['client' => $client]) }}" class="min-h-[44px] inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 text-xs font-bold text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition">
+                    &larr; Dashboard Cabang
+                </a>
+                <a href="{{ route('tenant.stok.fefo', ['client' => $client]) }}" class="min-h-[44px] inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 text-xs font-bold text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition">
                     📦 Kartu Stok FEFO
                 </a>
             </div>

@@ -24,6 +24,23 @@
 
     <div x-data="customerCatalog" class="space-y-6">
 
+        <!-- Breadcrumb Navigasi Kembali ke Dashboard Utama -->
+        <nav aria-label="Navigasi Halaman" class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-200 dark:border-zinc-800 text-xs">
+            <div class="flex items-center gap-2 text-slate-500 dark:text-zinc-400">
+                <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1.5 font-bold text-slate-800 dark:text-zinc-200 hover:text-emerald-600 transition min-h-[44px]">
+                    <svg class="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    <span>Dashboard Utama</span>
+                </a>
+                <span>/</span>
+                <span class="font-semibold text-emerald-700 dark:text-emerald-400">Katalog Obat Cabang {{ ucwords(str_replace('-', ' ', $client ?? 'Banyuwangi Kota')) }}</span>
+            </div>
+            <a href="{{ route('customer.cart', ['client' => $client ?? 'banyuwangi-kota']) }}" class="hidden sm:inline-flex items-center gap-1 font-semibold text-emerald-700 hover:text-emerald-800 dark:text-emerald-400 min-h-[44px]">
+                <span>Lihat Keranjang</span>
+                <span>&rarr;</span>
+            </a>
+        </nav>
         <!-- Search & Filter Controls: Stacked on phone, reflows on tablet/desktop -->
         <section class="space-y-3">
             <!-- Search Bar -->

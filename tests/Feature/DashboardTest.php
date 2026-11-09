@@ -70,4 +70,37 @@ class DashboardTest extends TestCase
 
         $response->assertRedirect(route('dashboard'));
     }
+
+    public function test_customer_portal_pages_contain_navigation_back_to_dashboard(): void
+    {
+        $resHome = $this->get(route('customer.home', ['client' => 'banyuwangi-kota']));
+        $resHome->assertOk();
+        $resHome->assertSee(route('dashboard'));
+        $resHome->assertSee('Dashboard Utama');
+
+        $resCart = $this->get(route('customer.cart', ['client' => 'banyuwangi-kota']));
+        $resCart->assertOk();
+        $resCart->assertSee(route('dashboard'));
+        $resCart->assertSee('Dashboard Utama');
+
+        $resDetail = $this->get(route('customer.obat.detail', ['client' => 'banyuwangi-kota', 'id' => 'sample-id']));
+        $resDetail->assertOk();
+        $resDetail->assertSee(route('dashboard'));
+        $resDetail->assertSee('Dashboard Utama');
+    }
+
+    public function test_tenant_and_admin_portals_contain_navigation_back_to_dashboard(): void
+    {
+        $admin = User::factory()->create(['role' => 'super_admin']);
+        $resAdmin = $this->actingAs($admin)->get(route('admin.dashboard'));
+        $resAdmin->assertOk();
+        $resAdmin->assertSee(route('dashboard'));
+        $resAdmin->assertSee('Dashboard Utama');
+
+        $apoteker = User::factory()->create(['role' => 'apoteker']);
+        $resTenant = $this->actingAs($apoteker)->get(route('tenant.dashboard', ['client' => 'banyuwangi-kota']));
+        $resTenant->assertOk();
+        $resTenant->assertSee(route('dashboard'));
+        $resTenant->assertSee('Dashboard Utama');
+    }
 }

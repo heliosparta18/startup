@@ -17,6 +17,13 @@
             </div>
 
             <div class="flex items-center gap-3 text-xs">
+                <a href="{{ route('dashboard') }}" class="inline-flex min-h-[44px] items-center gap-1.5 px-3 py-1.5 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 font-semibold dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700 shadow-2xs transition" title="Kembali ke Dashboard Utama">
+                    <svg class="h-4 w-4 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    <span class="hidden sm:inline">Dashboard Utama</span>
+                    <span class="sm:hidden">Home</span>
+                </a>
                 <div class="text-right hidden sm:block">
                     <div class="font-extrabold text-zinc-900 dark:text-zinc-100">M. Daffa Ariby</div>
                     <div class="text-[11px] text-zinc-500">Super Administrator (Headquarter)</div>
