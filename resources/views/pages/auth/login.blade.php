@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-slate-50">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-slate-100">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,129 +9,172 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
-    <style>[x-cloak] { display: none !important; }</style>
-
     @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @fluxAppearance
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
 </head>
-<body class="min-h-full bg-[#F8FAFC] text-slate-800 antialiased flex flex-col justify-center py-10 px-4 sm:px-6 lg:px-8 font-sans">
-    <div class="w-full max-w-xl mx-auto">
-        <!-- Badge Prototipe Farmasi -->
-        <div class="flex justify-center mb-4">
-            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-2xs">
-                <span class="inline-block h-2 w-2 rounded-full bg-emerald-600"></span>
-                Autentikasi Terintegrasi Firebase & Multi-Tenancy
-            </span>
-        </div>
+<body class="min-h-full bg-slate-100/90 text-slate-800 antialiased flex items-center justify-center p-4 sm:p-6 lg:p-8 font-sans">
 
-        <!-- Header Apotek -->
-        <div class="text-center mb-6">
-            <div class="flex items-center justify-center gap-3 mb-2">
-                <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-600 text-white font-bold shadow-xs">
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                    </svg>
+    <!-- Container Utama Split Card Login (Sesuai Referensi Visual) -->
+    <div class="w-full max-w-5xl bg-white rounded-3xl shadow-xl border border-slate-200/80 overflow-hidden flex flex-col lg:flex-row min-h-[640px]">
+
+        <!-- KOLOM KIRI: Visual Hero / Ilustrasi & Brand Showcase -->
+        <div class="lg:w-5/12 bg-gradient-to-br from-[#0A231E] via-[#0E352E] to-[#0A231E] p-8 sm:p-10 flex flex-col justify-between text-white relative overflow-hidden">
+            <!-- Dekorasi Garis & Lingkaran Geometris Halus (Non-Slop, Tanpa Glow Liar) -->
+            <div class="absolute -top-24 -left-24 w-72 h-72 rounded-full border border-emerald-500/10 pointer-events-none"></div>
+            <div class="absolute -bottom-24 -right-24 w-80 h-80 rounded-full border border-emerald-500/15 pointer-events-none"></div>
+
+            <!-- Header Brand Kolom Kiri -->
+            <div class="relative z-10">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 p-1.5 shadow-md shadow-emerald-950/40 border border-white/20 backdrop-blur-xs">
+                        <img src="/logo.png" alt="OmniPharma Logo" class="h-full w-full object-contain">
+                    </div>
+                    <div>
+                        <span class="block text-xs font-bold tracking-widest text-[#D4F94E] uppercase">OmniPharma Network</span>
+                        <span class="block text-sm font-semibold text-emerald-100">Sistem Informasi Farmasi Terpadu</span>
+                    </div>
                 </div>
-                <div class="text-left">
-                    <span class="block text-xs font-bold tracking-widest text-emerald-700 uppercase">OmniPharma Network</span>
-                    <span class="block text-sm font-medium text-slate-600">Sistem Farmasi Multi-Klien</span>
+
+                <div class="mt-8">
+                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-emerald-200 border border-emerald-500/30">
+                        <span class="h-1.5 w-1.5 rounded-full bg-[#D4F94E]"></span>
+                        Standar Permenkes RI No. 73/2016
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white mt-3 leading-snug">
+                        Pelayanan Farmasi Cepat, Akurat, dan Terpercaya
+                    </h2>
+                    <p class="text-xs sm:text-sm text-emerald-200/80 mt-2 leading-relaxed">
+                        Manajemen multi-cabang dengan enkripsi resep digital, rotasi stok otomatis berbasis FEFO, serta pembayaran QRIS dinamis instan.
+                    </p>
                 </div>
             </div>
-            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F172A]">Masuk Portal Apotek Multi-Klien</h1>
-            <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-md mx-auto">Gunakan akun Google atau email/username untuk masuk ke portal apotek dan dashboard pelanggan.</p>
+
+            <!-- Ilustrasi Vektor Farmasi Medis (Kompak & Elegan) -->
+            <div class="my-6 py-4 flex items-center justify-center relative z-10">
+                <div class="w-full max-w-[280px] aspect-[4/3] rounded-2xl bg-white/5 border border-white/10 p-5 flex flex-col justify-between backdrop-blur-xs shadow-inner">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-[#D4F94E] flex items-center justify-center">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                </svg>
+                            </div>
+                            <span class="text-xs font-bold text-white">Audit Trail Aktif</span>
+                        </div>
+                        <span class="text-[10px] px-2 py-0.5 rounded-md bg-emerald-500/20 text-[#D4F94E] font-mono font-bold">FEFO #1</span>
+                    </div>
+
+                    <div class="space-y-2 my-2">
+                        <div class="h-2 w-3/4 bg-white/20 rounded-full"></div>
+                        <div class="h-2 w-1/2 bg-white/15 rounded-full"></div>
+                    </div>
+
+                    <div class="pt-2 border-t border-white/10 flex items-center justify-between text-[11px] text-emerald-200">
+                        <span>Multi-Cabang: BWI & Rogojampi</span>
+                        <span class="font-bold text-white">Terhubung</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Kolom Kiri -->
+            <div class="relative z-10 text-[11px] text-emerald-300/70 flex items-center justify-between pt-4 border-t border-white/10">
+                <span>Praktikum PSI Pak Devit</span>
+                <span>v2.4 Production</span>
+            </div>
         </div>
 
-        <!-- Kartu Kontainer Putih Utama -->
-        <div class="bg-white border border-[#E2E8F0] rounded-2xl shadow-sm p-6 sm:p-8">
-            <div x-data="{
-                email: '{{ old('email', '') }}',
-                password: '',
-                showPassword: false,
-                selectedRole: '',
-                loadingFirebase: false,
-                loadingGoogle: false,
-                selectDemo(roleKey, userEmail, userPass) {
-                    this.selectedRole = roleKey;
-                    this.email = userEmail;
-                    this.password = userPass;
-                },
-                async handleGoogleLogin() {
-                    if (this.loadingGoogle || this.loadingFirebase) return;
-                    this.loadingGoogle = true;
-                    try {
-                        if (!window.OmniFirebaseAuth || typeof window.OmniFirebaseAuth.loginWithGoogle !== 'function') {
-                            throw new Error('Modul autentikasi Firebase belum siap. Silakan muat ulang halaman.');
-                        }
-                        const result = await window.OmniFirebaseAuth.loginWithGoogle();
-                        const userName = result?.user?.displayName || result?.user?.email || 'Pelanggan';
+        <!-- KOLOM KANAN: Formulir Masuk (Login Card) -->
+        <div class="lg:w-7/12 p-6 sm:p-10 lg:p-12 flex flex-col justify-between bg-white" x-data="{
+            email: '{{ old('email', '') }}',
+            password: '',
+            showPassword: false,
+            selectedRole: '',
+            loadingFirebase: false,
+            loadingGoogle: false,
+            selectDemo(roleKey, userEmail, userPass) {
+                this.selectedRole = roleKey;
+                this.email = userEmail;
+                this.password = userPass;
+            },
+            async handleGoogleLogin() {
+                if (this.loadingGoogle || this.loadingFirebase) return;
+                this.loadingGoogle = true;
+                try {
+                    if (!window.OmniFirebaseAuth || typeof window.OmniFirebaseAuth.loginWithGoogle !== 'function') {
+                        throw new Error('Modul autentikasi Firebase sedang dimuat. Silakan tunggu 1-2 detik.');
+                    }
+                    const result = await window.OmniFirebaseAuth.loginWithGoogle();
+                    const userName = result.user.displayName || result.user.email;
+                    if (window.OmniFirebaseAuth?.showToast) {
+                        window.OmniFirebaseAuth.showToast(`Selamat datang, ${userName}!`, 'success');
+                    }
+                    setTimeout(() => {
+                        window.location.href = result.session?.redirect || '{{ route('dashboard') }}';
+                    }, 600);
+                } catch (err) {
+                    console.error('Google Auth Error:', err);
+                    const errorMsg = window.OmniFirebaseAuth?.formatFirebaseError
+                        ? window.OmniFirebaseAuth.formatFirebaseError(err)
+                        : (err?.message || 'Gagal masuk dengan akun Google.');
+                    if (window.OmniFirebaseAuth?.showToast) {
+                        window.OmniFirebaseAuth.showToast(errorMsg, 'error');
+                    }
+                } finally {
+                    this.loadingGoogle = false;
+                }
+            },
+            async handleLoginSubmit(e) {
+                // Jika demo switcher dipilih, submit langsung ke Laravel Fortify backend
+                if (this.selectedRole) {
+                    return true;
+                }
+
+                e.preventDefault();
+                if (!this.email || !this.password) {
+                    if (window.OmniFirebaseAuth?.showToast) {
+                        window.OmniFirebaseAuth.showToast('Silakan masukkan email/username dan kata sandi.', 'error');
+                    }
+                    return;
+                }
+
+                this.loadingFirebase = true;
+                try {
+                    if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.loginWithEmailOrUsername === 'function') {
+                        const result = await window.OmniFirebaseAuth.loginWithEmailOrUsername(this.email, this.password);
                         if (window.OmniFirebaseAuth?.showToast) {
-                            window.OmniFirebaseAuth.showToast(`Selamat datang, ${userName}!`, 'success');
+                            window.OmniFirebaseAuth.showToast('Login berhasil! Mengalihkan ke dashboard...', 'success');
                         }
                         setTimeout(() => {
-                            window.location.href = result?.session?.redirect || '{{ route('dashboard') }}';
+                            window.location.href = result.session?.redirect || '{{ route('dashboard') }}';
                         }, 600);
-                    } catch (err) {
-                        console.error('Google Auth Error:', err);
-                        const errorMsg = window.OmniFirebaseAuth?.formatFirebaseError
-                            ? window.OmniFirebaseAuth.formatFirebaseError(err)
-                            : (err?.message || 'Gagal masuk dengan akun Google.');
-                        if (window.OmniFirebaseAuth?.showToast) {
-                            window.OmniFirebaseAuth.showToast(errorMsg, 'error');
-                        } else {
-                            alert(errorMsg);
-                        }
-                    } finally {
-                        this.loadingGoogle = false;
+                    } else {
+                        e.target.submit();
                     }
-                },
-                async handleLoginSubmit(e) {
-                    if (this.loadingFirebase || this.loadingGoogle) {
-                        e.preventDefault();
-                        return;
-                    }
-
-                    // Jika demo switcher dipilih, biarkan submit native Fortify berjalan
-                    if (this.selectedRole) {
-                        this.loadingFirebase = true;
-                        return;
-                    }
-
-                    e.preventDefault();
-                    if (!this.email || !this.password) {
-                        const emptyMsg = 'Silakan masukkan email atau nama pengguna dan kata sandi.';
-                        if (window.OmniFirebaseAuth?.showToast) {
-                            window.OmniFirebaseAuth.showToast(emptyMsg, 'error');
-                        } else {
-                            alert(emptyMsg);
-                        }
-                        return;
-                    }
-
-                    this.loadingFirebase = true;
-                    try {
-                        if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.loginWithEmailOrUsername === 'function') {
-                            const result = await window.OmniFirebaseAuth.loginWithEmailOrUsername(this.email, this.password);
-                            if (window.OmniFirebaseAuth?.showToast) {
-                                window.OmniFirebaseAuth.showToast('Login berhasil! Mengalihkan ke dashboard...', 'success');
-                            }
-                            setTimeout(() => {
-                                window.location.href = result?.session?.redirect || '{{ route('dashboard') }}';
-                            }, 600);
-                        } else {
-                            // Fallback jika modul Firebase belum siap
-                            e.target.submit();
-                        }
-                    } catch (err) {
-                        console.warn('Firebase login attempt fallback to Fortify:', err);
-                        // Jika di Firebase belum ada atau error credentials, fallback ke login native Laravel form submit
-                        const form = e.target;
-                        form.submit();
-                    } finally {
-                        // Loading tetap aktif sampai halaman berpindah
-                    }
+                } catch (err) {
+                    console.warn('Firebase login attempt fallback to Fortify:', err);
+                    // Fallback otomatis ke form submit native jika akun terdaftar di database lokal
+                    e.target.submit();
+                } finally {
+                    this.loadingFirebase = false;
                 }
-            }">
+            }
+        }">
+            <div>
+                <!-- Heading Form -->
+                <!-- Mobile Brand Header -->
+                <div class="flex items-center gap-2.5 mb-4 lg:hidden">
+                    <img src="/logo.png" alt="OmniPharma" class="h-8 w-8 object-contain">
+                    <span class="text-xs font-bold tracking-wider text-emerald-700 uppercase">OmniPharma Network</span>
+                </div>
+                <div class="mb-6">
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Masuk ke Akun Anda</h1>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1">Pilih metode masuk yang Anda kehendaki untuk mengakses portal.</p>
+                </div>
+
                 <!-- Tombol Masuk dengan Akun Google (One-Click) -->
                 <button
                     type="button"
@@ -153,105 +196,27 @@
                     </span>
                 </button>
 
-                <!-- Pembatas Visual -->
-                <div class="relative my-6">
+                <!-- Pembatas Visual "Atau" -->
+                <div class="relative my-5">
                     <div class="absolute inset-0 flex items-center">
                         <div class="w-full border-t border-slate-200"></div>
                     </div>
                     <div class="relative flex justify-center text-xs uppercase">
-                        <span class="bg-white px-3 text-slate-400 font-semibold tracking-wider">Atau Masuk dengan Kredensial</span>
+                        <span class="bg-white px-3 text-slate-400 font-semibold tracking-wider">Atau Masuk dengan Email / Kredensial</span>
                     </div>
                 </div>
 
-                <!-- Quick Demo Role Switcher -->
-                <div class="mb-6 p-4 rounded-xl bg-slate-50 border border-slate-200">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Pilih Akun Demo (Uji Cepat)</span>
-                        <span class="text-[11px] text-slate-500 font-medium">Klik untuk isi otomatis</span>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                        <!-- Super Admin -->
-                        <button
-                            type="button"
-                            @click="selectDemo('super_admin', 'daffa@omnipharma.test', 'password')"
-                            :class="selectedRole === 'super_admin' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500/20' : 'border-slate-200 bg-white hover:bg-slate-100/70 text-slate-800'"
-                            class="flex flex-col text-left p-3 rounded-lg border transition min-h-[44px] justify-center focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
-                        >
-                            <div class="flex items-center justify-between w-full">
-                                <span class="text-xs font-bold text-slate-900">Super Admin</span>
-                                <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-semibold">Pusat</span>
-                            </div>
-                            <span class="text-xs font-medium text-emerald-700 mt-0.5 truncate">daffa@omnipharma.test</span>
-                            <span class="text-[11px] text-slate-500">Muhammad Daffa Ariby</span>
-                        </button>
-
-                        <!-- Apoteker Banyuwangi -->
-                        <button
-                            type="button"
-                            @click="selectDemo('apt_bwi', 'bambang@omnipharma.test', 'password')"
-                            :class="selectedRole === 'apt_bwi' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500/20' : 'border-slate-200 bg-white hover:bg-slate-100/70 text-slate-800'"
-                            class="flex flex-col text-left p-3 rounded-lg border transition min-h-[44px] justify-center focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
-                        >
-                            <div class="flex items-center justify-between w-full">
-                                <span class="text-xs font-bold text-slate-900">Apoteker BWI</span>
-                                <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-semibold">Cabang 01</span>
-                            </div>
-                            <span class="text-xs font-medium text-emerald-700 mt-0.5 truncate">bambang@omnipharma.test</span>
-                            <span class="text-[11px] text-slate-500">apt. Bambang (Banyuwangi Kota)</span>
-                        </button>
-
-                        <!-- Apoteker Rogojampi -->
-                        <button
-                            type="button"
-                            @click="selectDemo('apt_rogo', 'dewi@omnipharma.test', 'password')"
-                            :class="selectedRole === 'apt_rogo' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500/20' : 'border-slate-200 bg-white hover:bg-slate-100/70 text-slate-800'"
-                            class="flex flex-col text-left p-3 rounded-lg border transition min-h-[44px] justify-center focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
-                        >
-                            <div class="flex items-center justify-between w-full">
-                                <span class="text-xs font-bold text-slate-900">Apoteker Rogojampi</span>
-                                <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-semibold">Cabang 02</span>
-                            </div>
-                            <span class="text-xs font-medium text-emerald-700 mt-0.5 truncate">dewi@omnipharma.test</span>
-                            <span class="text-[11px] text-slate-500">apt. Dewi Sartika (Rogojampi)</span>
-                        </button>
-
-                        <!-- Kasir Cabang -->
-                        <button
-                            type="button"
-                            @click="selectDemo('kasir_bwi', 'kasir.bwi@omnipharma.test', 'password')"
-                            :class="selectedRole === 'kasir_bwi' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500/20' : 'border-slate-200 bg-white hover:bg-slate-100/70 text-slate-800'"
-                            class="flex flex-col text-left p-3 rounded-lg border transition min-h-[44px] justify-center focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
-                        >
-                            <div class="flex items-center justify-between w-full">
-                                <span class="text-xs font-bold text-slate-900">Kasir Cabang</span>
-                                <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 font-semibold">POS Staf</span>
-                            </div>
-                            <span class="text-xs font-medium text-emerald-700 mt-0.5 truncate">kasir.bwi@omnipharma.test</span>
-                            <span class="text-[11px] text-slate-500">Kasir Staf Banyuwangi</span>
-                        </button>
-                    </div>
-
-                    <!-- Notifikasi Pilihan Demo -->
-                    <div x-show="selectedRole" x-cloak class="mt-3 flex items-center gap-2 p-2.5 rounded-lg bg-emerald-100/70 border border-emerald-300 text-xs text-emerald-900 font-medium">
-                        <svg class="h-4 w-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span>Akun demo siap digunakan: <strong x-text="email"></strong> (kata sandi terisi otomatis).</span>
-                    </div>
-                </div>
-
-                <!-- Notifikasi Sesi & Validasi Error -->
+                <!-- Notifikasi Status Sesi & Validasi Server -->
                 @if (session('status'))
-                    <div class="mb-4 p-3.5 rounded-lg bg-emerald-50 border border-emerald-200 text-sm text-emerald-800">
+                    <div class="mb-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800">
                         {{ session('status') }}
                     </div>
                 @endif
 
                 @if ($errors->any())
-                    <div class="mb-4 p-3.5 rounded-lg bg-rose-50 border border-rose-200 text-sm text-rose-800">
+                    <div class="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800">
                         <div class="font-semibold mb-1">Periksa kembali data masukan Anda:</div>
-                        <ul class="list-disc list-inside space-y-1 text-xs">
+                        <ul class="list-disc list-inside space-y-0.5">
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
                             @endforeach
@@ -259,38 +224,36 @@
                     </div>
                 @endif
 
-                <!-- Form Login (Firebase + Fallback Fortify) -->
-                <form method="POST" action="{{ route('login.store') }}" @submit="handleLoginSubmit($event)" class="space-y-5">
+                <!-- Formulir Masuk -->
+                <form method="POST" action="{{ route('login.store') }}" @submit="handleLoginSubmit($event)" class="space-y-4">
                     @csrf
 
                     <!-- Kolom Email / Username -->
                     <div>
-                        <label for="email" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                        <label for="email" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
                             Email atau Nama Pengguna
                         </label>
-                        <div class="relative">
-                            <input
-                                id="email"
-                                name="email"
-                                type="text"
-                                x-model="email"
-                                required
-                                autofocus
-                                autocomplete="email"
-                                placeholder="email@contoh.com atau username"
-                                class="block w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-slate-900 shadow-2xs placeholder:text-slate-400 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 sm:text-sm transition min-h-[44px]"
-                            />
-                        </div>
+                        <input
+                            id="email"
+                            name="email"
+                            type="text"
+                            x-model="email"
+                            required
+                            autofocus
+                            autocomplete="email"
+                            placeholder="nama@email.com atau username"
+                            class="block w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-slate-900 shadow-2xs placeholder:text-slate-400 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 sm:text-sm transition min-h-[44px]"
+                        />
                     </div>
 
                     <!-- Kolom Sandi -->
                     <div>
-                        <div class="flex items-center justify-between mb-1.5">
+                        <div class="flex items-center justify-between mb-1">
                             <label for="password" class="block text-xs font-bold uppercase tracking-wider text-slate-700">
                                 Kata Sandi
                             </label>
                             @if (Route::has('password.request'))
-                                <a href="{{ route('password.request') }}" class="inline-flex items-center min-h-[44px] py-1 text-xs font-medium text-emerald-700 hover:text-emerald-800 hover:underline">
+                                <a href="{{ route('password.request') }}" class="text-xs font-semibold text-emerald-700 hover:text-emerald-800 hover:underline min-h-[44px] inline-flex items-center">
                                     Lupa kata sandi?
                                 </a>
                             @endif
@@ -303,13 +266,13 @@
                                 x-model="password"
                                 required
                                 autocomplete="current-password"
-                                placeholder="Masukkan kata sandi akun"
-                                class="block w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 pr-11 text-slate-900 shadow-2xs placeholder:text-slate-400 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 sm:text-sm transition min-h-[44px]"
+                                placeholder="Masukkan kata sandi"
+                                class="block w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 pr-11 text-slate-900 shadow-2xs placeholder:text-slate-400 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 sm:text-sm transition min-h-[44px]"
                             />
                             <button
                                 type="button"
                                 @click="showPassword = !showPassword"
-                                class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 focus:outline-none min-h-[44px] min-w-[44px] justify-center cursor-pointer"
+                                class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 focus:outline-none min-h-[44px] min-w-[44px] justify-center"
                                 :aria-label="showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'"
                             >
                                 <svg x-show="!showPassword" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -324,24 +287,24 @@
                     </div>
 
                     <!-- Remember Me -->
-                    <div class="flex items-center justify-between">
-                        <label class="flex items-center gap-2.5 cursor-pointer select-none min-h-[44px] py-2">
+                    <div class="flex items-center justify-between py-1">
+                        <label class="flex items-center gap-2 cursor-pointer select-none min-h-[44px]">
                             <input
                                 type="checkbox"
                                 name="remember"
                                 id="remember"
-                                class="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-600 cursor-pointer"
+                                class="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-600"
                             />
-                            <span class="text-xs text-slate-700">Ingat sesi login di perangkat ini</span>
+                            <span class="text-xs text-slate-700 font-medium">Ingat sesi di perangkat ini</span>
                         </label>
                     </div>
 
-                    <!-- Tombol Submit -->
+                    <!-- Tombol Masuk Utama -->
                     <div>
                         <button
                             type="submit"
                             :disabled="loadingFirebase || loadingGoogle"
-                            class="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 active:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 transition min-h-[44px] cursor-pointer disabled:opacity-50"
+                            class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-emerald-700 active:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 transition min-h-[46px] cursor-pointer disabled:opacity-50"
                         >
                             <svg x-show="!loadingFirebase" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
@@ -350,37 +313,71 @@
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
                             </svg>
-                            <span x-show="!loadingFirebase">Masuk ke Portal</span>
+                            <span x-show="!loadingFirebase">Masuk ke Portal Apotek</span>
                             <span x-show="loadingFirebase" x-cloak>Memvalidasi Akun...</span>
                         </button>
                     </div>
                 </form>
 
-                <!-- Tautan Daftar Akun Baru -->
-                <div class="mt-5 text-center flex items-center justify-center gap-1 min-h-[44px]">
+                <!-- Tautan Daftar -->
+                <div class="mt-4 text-center">
                     <span class="text-xs text-slate-500">Belum memiliki akun pelanggan?</span>
-                    <a href="{{ route('register') }}" class="inline-flex items-center min-h-[44px] px-1 text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline">
+                    <a href="{{ route('register') }}" class="text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline ml-1 inline-flex items-center min-h-[44px]">
                         Daftar Akun Baru
                     </a>
                 </div>
+            </div>
 
-                <!-- Footer Dalam Kartu -->
-                <div class="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                    <a href="{{ route('home') }}" class="font-medium text-emerald-700 hover:text-emerald-800 hover:underline inline-flex items-center gap-1 min-h-[44px] py-1">
-                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                        <span>Kembali ke Beranda</span>
-                    </a>
-                    <span class="text-[11px] text-slate-400">OmniPharma Core v2.4</span>
+            <!-- Panel Bawah: Quick Demo Role Switcher (Praktikum Pak Devit) -->
+            <div class="mt-6 pt-5 border-t border-slate-100">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Pilih Akun Demo Praktikum:</span>
+                    <span class="text-[10px] text-slate-400">Klik untuk isi otomatis</span>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                    <button
+                        type="button"
+                        @click="selectDemo('super_admin', 'daffa@omnipharma.test', 'password')"
+                        :class="selectedRole === 'super_admin' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-1 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
+                        class="p-2 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer"
+                    >
+                        <span class="text-[11px] font-bold truncate">Super Admin</span>
+                        <span class="text-[9px] text-slate-500 truncate">daffa@omnipharma.test</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        @click="selectDemo('apt_bwi', 'bambang@omnipharma.test', 'password')"
+                        :class="selectedRole === 'apt_bwi' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-1 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
+                        class="p-2 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer"
+                    >
+                        <span class="text-[11px] font-bold truncate">Apoteker BWI</span>
+                        <span class="text-[9px] text-slate-500 truncate">bambang@omnipharma.test</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        @click="selectDemo('apt_rogo', 'dewi@omnipharma.test', 'password')"
+                        :class="selectedRole === 'apt_rogo' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-1 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
+                        class="p-2 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer"
+                    >
+                        <span class="text-[11px] font-bold truncate">Apoteker RGO</span>
+                        <span class="text-[9px] text-slate-500 truncate">dewi@omnipharma.test</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        @click="selectDemo('kasir_bwi', 'kasir.bwi@omnipharma.test', 'password')"
+                        :class="selectedRole === 'kasir_bwi' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-1 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
+                        class="p-2 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer"
+                    >
+                        <span class="text-[11px] font-bold truncate">Kasir BWI</span>
+                        <span class="text-[9px] text-slate-500 truncate">kasir.bwi@omnipharma.test</span>
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- Catatan Kepatuhan Keamanan & Akses -->
-        <p class="mt-6 text-center text-xs text-slate-500">
-            Akses resmi farmasi OmniPharma Network terenkripsi & anti-tampering.
-        </p>
     </div>
 
     @persist('toast')

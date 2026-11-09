@@ -11,7 +11,7 @@
             <!-- Brand Logo -->
             <div class="flex items-center gap-3">
                 <a href="{{ url('/') }}" class="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold text-lg tracking-tight focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded-lg p-1 min-h-[44px] min-w-[44px]">
-                    <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-600 text-white font-bold text-base shadow-xs">OP</span>
+                    <img src="/logo.png" alt="OmniPharma" class="h-9 w-9 object-contain">
                     <span class="font-bold text-slate-900 dark:text-white">OmniPharma</span>
                 </a>
             </div>

@@ -5,6 +5,7 @@ use App\Models\KategoriObat;
 use App\Models\Obat;
 use App\Models\Pengguna;
 use App\Models\Pesanan;
+use App\Modules\Catalog\Livewire\PublicCatalog;
 use App\Modules\Ordering\Actions\CancelOrderAction;
 use App\Modules\Ordering\Actions\CreateOrderAction;
 use App\Modules\Ordering\Services\CartService;
@@ -29,6 +30,7 @@ Route::get('/', function (string $client) {
         'obat' => $obat,
     ]);
 })->name('home');
+Route::get('/katalog', PublicCatalog::class)->name('catalog');
 
 Route::get('/obat/{id}', function (string $client, string $id) {
     $obat = Obat::query()->with(['kategori', 'stokClient'])->find($id);

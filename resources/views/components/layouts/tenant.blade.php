@@ -19,6 +19,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
                     </button>
+                    <img src="/logo.png" alt="OmniPharma" class="h-9 w-9 object-contain hidden sm:block">
                     <div>
                         <div class="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">Portal Apoteker Cabang</div>
                         <div class="text-sm font-extrabold text-slate-900 dark:text-zinc-100 uppercase tracking-tight">Cabang {{ $client ?? 'Banyuwangi Kota' }}</div>

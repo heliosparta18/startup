@@ -21,13 +21,27 @@ class CatalogService
                 $q->where('id_client', $clientId)->where('jumlah_stok', '>', 0);
             })
             ->when($search, function (Builder $q, $search) {
-                $q->where('nama_obat', 'like', "%{$search}%")
-                    ->orWhere('komposisi', 'like', "%{$search}%");
+                $q->where(function (Builder $sub) use ($search) {
+                    $sub->where('nama_obat', 'like', "%{$search}%")
+                        ->orWhere('merek', 'like', "%{$search}%");
+                });
             })
             ->when($bentukSediaan, function (Builder $q, $sediaan) {
-                $q->where('bentuk_sediaan', $sediaan);
+                $q->where('jenis_sediaan', $sediaan);
             })
             ->orderBy('nama_obat', 'asc')
             ->paginate(12);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function getDaftarSediaan(): array
+    {
+        return Obat::query()
+            ->distinct()
+            ->whereNotNull('jenis_sediaan')
+            ->pluck('jenis_sediaan')
+            ->toArray();
     }
 }

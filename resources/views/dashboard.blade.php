@@ -20,10 +20,8 @@
             <!-- Brand -->
             <div class="flex items-center gap-3">
                 <a href="{{ route('home') }}" class="flex items-center gap-2.5">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white font-bold shadow-xs">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                        </svg>
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-white p-1 border border-slate-200 shadow-xs">
+                        <img src="/logo.png" alt="OmniPharma Logo" class="h-full w-full object-contain">
                     </div>
                     <div>
                         <span class="block text-xs font-bold tracking-widest text-emerald-700 uppercase">OmniPharma</span>

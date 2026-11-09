@@ -6,6 +6,7 @@ use App\Models\Pesanan;
 use App\Models\Resep;
 use App\Models\RingkasanPeriodePenjualan;
 use App\Models\StokClient;
+use App\Modules\Catalog\Services\StockFefoService;
 use App\Modules\Reporting\Actions\CloseSalesPeriodAction;
 use App\Modules\Reporting\Services\SalesReportExportService;
 use App\Modules\Reporting\Services\SalesReportService;
@@ -34,6 +35,28 @@ Route::get('/dashboard', function (string $client) {
         'fefoBatches' => $fefoBatches,
     ]);
 })->name('dashboard');
+
+Route::get('/resep', function (string $client) {
+    $resepPending = Resep::query()
+        ->with(['pesanan.pengguna', 'pesanan.itemPesanan.obat'])
+        ->where('status_verifikasi', 'menunggu')
+        ->orderBy('dibuat_pada', 'desc')
+        ->get();
+
+    return view('tenant.verifikasi-resep', [
+        'client' => $client,
+        'resepPending' => $resepPending,
+    ]);
+})->name('resep.antrean');
+
+Route::get('/stok-fefo', function (string $client, StockFefoService $fefoService) {
+    $fefoBatches = $fefoService->getBatchesByFefo($client);
+
+    return view('tenant.stok-fefo', [
+        'client' => $client,
+        'fefoBatches' => $fefoBatches,
+    ]);
+})->name('stok.fefo');
 
 Route::post('/resep/{id}/verifikasi', function (string $client, string $id, Request $request) {
     $action = $request->input('action', 'disetujui');

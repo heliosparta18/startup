@@ -54,7 +54,11 @@ class VerifyPrescriptionAction
                 'aksi' => 'TELAAH_RESEP',
                 'nama_entitas' => 'resep',
                 'id_entitas' => $resep->id_resep,
-                'payload' => ['keputusan' => $keputusan, 'nomor_sip' => $nomorSip],
+                'payload' => [
+                    'keputusan' => $keputusan,
+                    'nomor_sip' => $nomorSip,
+                    'alasan' => $alasan,
+                ],
                 'dibuat_pada' => now(),
             ]);
         });
