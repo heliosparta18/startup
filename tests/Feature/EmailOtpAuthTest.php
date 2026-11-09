@@ -74,6 +74,38 @@ class EmailOtpAuthTest extends TestCase
         $this->assertGuest();
     }
 
+    public function test_register_with_otp_verifies_email_and_creates_account(): void
+    {
+        $email = 'registrasi.otp@gmail.com';
+        Cache::put("auth_otp:{$email}", '333444', now()->addMinutes(5));
+
+        $response = $this->postJson(route('auth.otp.register'), [
+            'username' => 'pasienbaru',
+            'email' => $email,
+            'password' => 'aman123',
+            'otp' => '333444',
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'success' => true,
+            'redirect' => route('dashboard'),
+        ]);
+
+        $this->assertAuthenticated();
+        $this->assertDatabaseHas('users', [
+            'name' => 'pasienbaru',
+            'email' => $email,
+            'role' => 'pelanggan',
+        ]);
+        $this->assertDatabaseHas('pengguna', [
+            'nama_lengkap' => 'pasienbaru',
+            'telepon_email' => $email,
+            'peran' => 'pelanggan',
+        ]);
+        $this->assertFalse(Cache::has("auth_otp:{$email}"));
+    }
+
     public function test_google_first_time_login_redirects_to_complete_profile(): void
     {
         $email = 'google.newuser@gmail.com';

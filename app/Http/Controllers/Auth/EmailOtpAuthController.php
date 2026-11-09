@@ -140,4 +140,77 @@ class EmailOtpAuthController extends Controller
             ],
         ]);
     }
+
+    /**
+     * Verifikasi kode OTP dan selesaikan registrasi akun baru.
+     */
+    public function registerWithOtp(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'username' => ['required', 'string', 'max:100'],
+            'email' => ['required', 'string', 'email', 'max:150'],
+            'password' => ['required', 'string', 'min:6'],
+            'otp' => ['required', 'string', 'size:6'],
+        ]);
+
+        $email = strtolower(trim($validated['email']));
+        $inputOtp = trim($validated['otp']);
+        $cachedOtp = Cache::get("auth_otp:{$email}");
+
+        if (! $cachedOtp || $cachedOtp !== $inputOtp) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kode OTP verifikasi email salah atau telah kedaluwarsa. Silakan minta kode baru.',
+            ], 422);
+        }
+
+        // Hapus OTP dari cache
+        Cache::forget("auth_otp:{$email}");
+
+        // Cek apakah email sudah terdaftar sebelumnya
+        if (User::where('email', $email)->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Email ini sudah terdaftar. Silakan langsung masuk ke akun Anda.',
+            ], 422);
+        }
+
+        $username = trim($validated['username']);
+
+        // 1. Buat User baru di tabel users
+        $user = User::create([
+            'name' => $username,
+            'email' => $email,
+            'password' => bcrypt($validated['password']),
+            'role' => 'pelanggan',
+            'status' => 'aktif',
+            'email_verified_at' => now(), // Terverifikasi via OTP email
+        ]);
+
+        // 2. Buat entitas Pengguna di tabel domain farmasi
+        Pengguna::create([
+            'id_pengguna' => (string) Str::uuid(),
+            'nama_lengkap' => $username,
+            'peran' => 'pelanggan',
+            'telepon_email' => $email,
+            'aktif' => true,
+        ]);
+
+        // 3. Masuk ke sesi Laravel
+        Auth::login($user, true);
+        $request->session()->regenerate();
+        $request->session()->put('firebase_provider', 'email_otp_verified');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Akun berhasil dibuat dan email terverifikasi OTP!',
+            'redirect' => route('dashboard'),
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+            ],
+        ]);
+    }
 }
