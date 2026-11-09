@@ -26,6 +26,8 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->trustProxies(at: '*');
+
         // Daftarkan middleware security headers global
         $middleware->append(SecurityHeadersMiddleware::class);
 
