@@ -7,20 +7,18 @@
 ---
 
 Ringkasan Progres Proyek
-
 | Metrik | Status | Keterangan |
 | :--- | :---: | :--- |
-| **Progres Ter-merge di `main`** | **~95%** | 15 dari 15 milestone modul inti telah berhasil dikonstruksi dan ter-merge di branch `main`. |
-| **Status Integrasi Pull Request** | **Lengkap** | Seluruh cabang kerja (Daffa, Guntur, Arya, Candi) telah berhasil digabungkan ke `main`. |
-| **Sisa Pekerjaan (Penyempurnaan / Polish)**| **~5%** | Route wiring pelacakan, pemisahan FormRequest, kelengkapan test suite tambahan, dan gladi demo. |
+| **Progres Ter-merge di `main`** | **~98%** | 120/120 tests passed, PHPStan Level 7 lulus, Pint PSR-12 passed, Firebase Auth, Google 1-Click, Email OTP, dan optimasi mobile tuntas. |
+| **Status Integrasi Pull Request** | **Lengkap** | Seluruh cabang kerja modul inti (Daffa, Guntur, Arya, Candi) telah berhasil digabungkan ke `main`. |
+| **Sisa Pekerjaan (Penyempurnaan / Polish)**| **~2%** | FormRequest sanitasi file resep, 1 test E2E terpadu, refactor routing closure, dan gladi resik demo. |
 
 ```
 Progres Integrasi Sistem:
-[========================-] 95% Selesai
-- Ter-merge di branch main (95%): M01 s/d M14 serta Refaktor UI Mobile (Daffa, Guntur, Arya, Candi)
-- Sisa backlog penyempurnaan (5%): Route wiring tracking, FormRequest sanitasi, dan test suite tambahan
+[=========================-] 98% Selesai
+- Ter-merge di branch main (98%): M01 s/d M14, Firebase Auth + Google Login, Email OTP, Mobile Reflow 10 Layar
+- Sisa backlog penyempurnaan (2%): FormRequest sanitasi, Test E2E terpadu, Refactor controller modular, & Gladi demo
 ```
-
 ---
 
 ## Matriks Pembagian Tugas dan Status Anggota (Struktur 4 - 4 - 4 - 3)
@@ -78,28 +76,28 @@ Progres Integrasi Sistem:
 
 ---
 
-## Sisa Pekerjaan & Backlog Penyempurnaan (~5%)
+## Sisa Pekerjaan & Backlog Penyempurnaan (~2%)
 
-> 📌 **Panduan Lengkap Pembagian Tugas & Audit Desain:** Lihat berkas terdedikasi **[`SISA_TUGAS_DAN_PANDUAN_DEMO.md`](./SISA_TUGAS_DAN_PANDUAN_DEMO.md)** untuk checklist per anggota (Candia, Arya, Guntur, Daffa), status 22 artboard FigCraft, dan skenario presentasi live demo.
+> 📌 **PANDUAN LENGKAP TUGAS ANGGOTA & BACKLOG:** Buka dokumen resmi **[`README_TUGAS_ANGGOTA_DAN_BACKLOG.md`](./README_TUGAS_ANGGOTA_DAN_BACKLOG.md)** untuk melihat rincian tugas mandiri setiap anggota (Candia, Guntur, Arya, Daffa), tugas kolaboratif barengan, checklist 22 artboard FigCraft, dan skenario presentasi live demo.
 
-Meskipun seluruh fondasi modul inti telah terintegrasi di `main`, berikut adalah daftar pekerjaan penyempurnaan (*polish & refinement*) yang perlu diselesaikan sebelum demonstrasi akhir:
+### Ringkasan Pembagian Sisa Tugas per Individu:
+1. **Candia Purwa (Security & QA):**
+   - Buat `app/Http/Requests/Customer/UnggahResepRequest.php` (validasi MIME magic bytes file foto resep).
+   - Buat `app/Http/Requests/Tenant/VerifikasiResepRequest.php` (sanitasi XSS catatan apoteker).
+   - Buat `tests/Feature/EndToEndOrderFlowTest.php` (uji terpadu 1 siklus transaksi utuh hulu ke hilir).
+2. **Guntur Afandi (Commerce & Payments):**
+   - Refactor routing closure di `routes/customer.php` ke controller modular (`CartController.php` & `CheckoutController.php`).
+   - Tambahkan cache lock idempotensi 60 detik pencegah double-submit saat checkout.
+3. **Arya Dwi Mahendra (Branch Operations):**
+   - Buat halaman rekam data pasien `resources/views/tenant/pasien.blade.php` (FigCraft Artboard #5).
+   - Buat halaman panduan SOP regulasi farmasi `resources/views/tenant/bantuan.blade.php` (FigCraft Artboard #7).
+4. **Muhammad Daffa Ariby (Lead Architect):**
+   - Tambahkan komponen navigasi sidebar terpadu di layout Admin dan Tenant (`layouts/admin.blade.php` & `tenant.blade.php`).
+   - Buat halaman konfigurasi apotek cabang `resources/views/admin/pengaturan-cabang.blade.php` (FigCraft Artboard #8).
 
-1. **Registrasi Rute Pelacakan Pesanan Pelanggan (Route Wiring):** *(SELESAI)*
-   - Rute publik `Route::get('/klien/{client}/order/{id}/track')` telah terdaftar dan terhubung ke `resources/views/customer/order-track.blade.php`.
-2. **Pemisahan FormRequest Sanitasi Khusus (Candia):**
-   - Memisahkan validasi inline pada unggah resep dan verifikasi resep ke FormRequest terdedikasi (`app/Http/Requests/Customer/UnggahResepRequest.php` dan `app/Http/Requests/Tenant/VerifikasiResepRequest.php`) dengan validasi MIME magic numbers dan strip tag anti-XSS.
-3. **Antarmuka Admin Penugasan Staf & Rute Controller (Arya):**
-   - Membangun view web `resources/views/admin/staff-management.blade.php` dan me-wire rute `StaffController::assignSupervisor` ke `routes/admin.php` untuk memfasilitasi konfigurasi pengawasan APJ (5NF) secara visual.
-4. **Wiring Aksi Tutup Periode & Ekspor Laporan Admin (Candia):**
-   - Menyambungkan rute `POST /admin/tutup-periode` ke `CloseSalesPeriodAction` dan `GET /admin/ekspor-laporan` ke `SalesReportExportService`.
-5. **Kelengkapan Automated Test Suite Tambahan (Arya & Candia):**
-   - Melengkapi pengujian spesifik yang tercantum pada PRD anggota:
-     - `tests/Feature/GuestSessionAndCatalogTest.php` (Sesi tamu & katalog)
-     - `tests/Feature/PrescriptionVerificationTest.php` (Telaah resep & approval)
-     - `tests/Feature/FefoStockRotationTest.php` (Rotasi FEFO & peringatan ED)
-     - `tests/Feature/EndToEndOrderFlowTest.php` (Alur transaksi komprehensif hulu ke hilir)
-6. **Gladi Bersih Demo Presentasi (Daffa & Guntur):**
-   - Menjalankan skenario alur live demo lengkap di hadapan Pak Devit Suwardiyanto: mulai dari pemilihan obat di katalog publik, unggah resep, telaah apoteker di portal cabang, checkout atomik, pembayaran via QRIS sandbox, auto-settlement webhook, hingga live order stepper Reverb dan penutupan buku analitik.
+### 🤝 Tugas yang Dikerjakan Barengan (Kolaboratif):
+- **Gladi Resik Demo 4 Layar (15 Menit):** Pasien (Guntur) $\rightarrow$ Apoteker (Arya) $\rightarrow$ QRIS Reverb (Candia & Guntur) $\rightarrow$ Super Admin Tutup Kas (Daffa).
+- **Pemeriksaan Quality Gate Terpadu:** Menjalankan `php artisan test`, `phpstan`, dan `pint` sebelum presentasi akhir.
 ---
 
 ## Panduan Instalasi Lokal
