@@ -7,11 +7,11 @@
                 <h1 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-zinc-100 tracking-tight">Antrean Telaah &amp; Verifikasi Resep Digital</h1>
                 <p class="text-xs text-slate-500 dark:text-zinc-400 mt-1">Verifikasi Surat Izin Praktik (SIP) dokter, keabsahan klinis dosis, dan persetujuan pengeluaran obat keras</p>
             </div>
-            <div class="flex items-center gap-2">
-                <a href="{{ route('tenant.dashboard', ['client' => $client]) }}" class="min-h-[44px] inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 text-xs font-bold text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition">
+            <div class="flex flex-wrap sm:flex-nowrap items-center gap-2">
+                <a href="{{ route('tenant.dashboard', ['client' => $client]) }}" class="flex-1 sm:flex-initial min-h-[44px] inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 text-xs font-bold text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition">
                     &larr; Dashboard Cabang
                 </a>
-                <a href="{{ route('tenant.stok.fefo', ['client' => $client]) }}" class="min-h-[44px] inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 text-xs font-bold text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition">
+                <a href="{{ route('tenant.stok.fefo', ['client' => $client]) }}" class="flex-1 sm:flex-initial min-h-[44px] inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 text-xs font-bold text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition">
                     📦 Kartu Stok FEFO
                 </a>
             </div>
@@ -46,19 +46,19 @@
                     $pesanan = $item->pesanan;
                     $items = $pesanan ? $pesanan->itemPesanan : collect();
                 @endphp
-                <div class="rounded-2xl border border-slate-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 shadow-xs">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-zinc-800">
+                <div class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 dark:border-zinc-800 dark:bg-zinc-900 shadow-xs">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-zinc-800">
                         <div>
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
                                 Menunggu Telaah Apoteker
                             </span>
-                            <h2 class="text-lg font-extrabold text-slate-900 dark:text-zinc-100 mt-1">
+                            <h2 class="text-lg font-extrabold text-slate-900 dark:text-zinc-100 mt-1 break-words">
                                 Pesanan {{ $pesanan->nomor_pesanan ?? '#ORD-'.substr($item->id_resep, 0, 8) }}
                             </h2>
                             <p class="text-xs text-slate-500">Pasien: <strong class="text-slate-800 dark:text-zinc-200">{{ $item->nama_pasien ?? 'Pasien Umum' }}</strong> • Diajukan: {{ $item->dibuat_pada ? \Carbon\Carbon::parse($item->dibuat_pada)->format('d M Y, H:i') : '-' }}</p>
                         </div>
                         <div class="text-xs text-slate-500">
-                            ID Resep: <code class="font-mono text-slate-700 dark:text-zinc-300">{{ $item->id_resep }}</code>
+                            ID Resep: <code class="font-mono text-slate-700 dark:text-zinc-300 break-all">{{ $item->id_resep }}</code>
                         </div>
                     </div>
 
@@ -91,8 +91,8 @@
                             <!-- Rincian Item Obat Keras yang Diresepkan -->
                             <div>
                                 <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Rincian Obat Keras yang Ditebus</h3>
-                                <div class="rounded-xl border border-slate-200 dark:border-zinc-800 overflow-hidden">
-                                    <table class="w-full text-left text-xs">
+                                <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-zinc-800">
+                                    <table class="w-full min-w-[320px] text-left text-xs">
                                         <thead class="bg-slate-50 dark:bg-zinc-800/60 text-slate-500 border-b border-slate-200 dark:border-zinc-800">
                                             <tr>
                                                 <th class="py-2.5 px-3">Nama Obat</th>
@@ -148,19 +148,19 @@
                                         class="w-full rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-3 text-xs font-medium text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
                                 </div>
 
-                                <div class="flex items-center gap-3 pt-2">
+                                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
                                     <button
                                         type="submit"
                                         name="action"
                                         value="disetujui"
-                                        class="flex-1 min-h-[44px] rounded-xl bg-emerald-700 text-white text-xs font-bold hover:bg-emerald-800 transition active:scale-[0.98]">
+                                        class="flex-1 min-h-[44px] inline-flex items-center justify-center px-4 rounded-xl bg-emerald-700 text-white text-xs font-bold hover:bg-emerald-800 transition active:scale-[0.98]">
                                         ✓ Setujui Resep (SIP Sah)
                                     </button>
                                     <button
                                         type="submit"
                                         name="action"
                                         value="ditolak"
-                                        class="min-h-[44px] px-5 rounded-xl border border-rose-300 bg-rose-50 text-rose-700 dark:border-rose-800 dark:bg-rose-950/60 dark:text-rose-300 text-xs font-bold hover:bg-rose-100 transition active:scale-[0.98]">
+                                        class="flex-1 sm:flex-initial min-h-[44px] px-5 inline-flex items-center justify-center rounded-xl border border-rose-300 bg-rose-50 text-rose-700 dark:border-rose-800 dark:bg-rose-950/60 dark:text-rose-300 text-xs font-bold hover:bg-rose-100 transition active:scale-[0.98]">
                                         ✕ Tolak Resep
                                     </button>
                                 </div>

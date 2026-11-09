@@ -7,11 +7,11 @@
                 <h1 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-zinc-100 tracking-tight">Kartu Stok FEFO &amp; Peringatan Kedaluwarsa</h1>
                 <p class="text-xs text-slate-500 dark:text-zinc-400 mt-1">Algoritma First-Expired, First-Out memprioritaskan batch obat mendekati kedaluwarsa keluar terlebih dahulu</p>
             </div>
-            <div class="flex items-center gap-2">
-                <a href="{{ route('tenant.dashboard', ['client' => $client]) }}" class="min-h-[44px] inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 text-xs font-bold text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition">
+            <div class="flex flex-wrap sm:flex-nowrap items-center gap-2">
+                <a href="{{ route('tenant.dashboard', ['client' => $client]) }}" class="flex-1 sm:flex-initial min-h-[44px] inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 text-xs font-bold text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition">
                     &larr; Dashboard Cabang
                 </a>
-                <a href="{{ route('tenant.resep.antrean', ['client' => $client]) }}" class="min-h-[44px] inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 text-xs font-bold text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition">
+                <a href="{{ route('tenant.resep.antrean', ['client' => $client]) }}" class="flex-1 sm:flex-initial min-h-[44px] inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 text-xs font-bold text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition">
                     📋 Antrean Resep
                 </a>
             </div>
@@ -62,7 +62,7 @@
 
         <!-- Tabel Kartu Stok Berdasarkan Urutan FEFO -->
         <div class="rounded-2xl border border-slate-200 bg-white overflow-hidden dark:border-zinc-800 dark:bg-zinc-900 shadow-xs">
-            <div class="p-5 border-b border-slate-100 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="p-4 sm:p-5 border-b border-slate-100 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                     <h2 class="text-base font-extrabold text-slate-900 dark:text-zinc-100">Daftar Batch Obat (Urutan FEFO Terdepan)</h2>
                     <p class="text-xs text-slate-500 mt-0.5">Disortir berdasarkan <code>tanggal_kadaluarsa ASC</code> sesuai regulasi kefarmasian</p>
@@ -73,7 +73,7 @@
             </div>
 
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs">
+                <table class="w-full min-w-[640px] text-left text-xs">
                     <thead class="bg-slate-50 dark:bg-zinc-800/60 text-slate-500 border-b border-slate-200 dark:border-zinc-800">
                         <tr>
                             <th class="py-3 px-4 font-bold text-center">Prioritas FEFO</th>

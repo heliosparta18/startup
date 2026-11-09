@@ -44,8 +44,8 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
             <!-- LEFT COLUMN: Verifikasi Resep Masuk (#ORD-20260917-0042) -->
-            <section class="lg:col-span-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 space-y-5">
-                <div class="flex items-center justify-between border-b border-zinc-200 pb-3 dark:border-zinc-800">
+            <section class="lg:col-span-6 rounded-2xl border border-zinc-200 bg-white p-4 sm:p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 space-y-5">
+                <div class="flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap border-b border-zinc-200 pb-3 dark:border-zinc-800">
                     <div>
                         <span class="text-xs font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400">Antrean Verifikasi Resep</span>
                         <h2 class="text-lg font-extrabold text-zinc-900 dark:text-zinc-100">#ORD-20260917-0042</h2>
@@ -60,26 +60,26 @@
                 </div>
 
                 <!-- Prescription Image Preview Box -->
-                <div class="relative flex flex-col items-center justify-center rounded-xl border border-zinc-200 bg-zinc-50 p-6 dark:border-zinc-700 dark:bg-zinc-800/60">
+                <div class="relative flex flex-col items-center justify-center rounded-xl border border-zinc-200 bg-zinc-50 p-4 sm:p-6 dark:border-zinc-700 dark:bg-zinc-800/60">
                     <div class="flex h-36 w-full items-center justify-center rounded-lg border border-dashed border-zinc-300 bg-white text-zinc-400 dark:border-zinc-600 dark:bg-zinc-800 text-xs font-medium">
                         [ Foto Resep Dokter ]
                     </div>
                     <button
                         type="button"
                         @click="modalResepBesar = true"
-                        class="mt-3 inline-flex min-h-11 items-center justify-center rounded-lg border border-zinc-300 bg-white px-4 text-xs font-semibold text-zinc-700 hover:bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-200">
+                        class="mt-3 inline-flex min-h-[44px] w-full sm:w-auto items-center justify-center rounded-lg border border-zinc-300 bg-white px-4 text-xs font-semibold text-zinc-700 hover:bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-200 transition">
                         🔍 Perbesar Resep
                     </button>
                 </div>
 
                 <!-- Doctor & Prescription Details -->
                 <div class="rounded-xl bg-zinc-50 p-4 border border-zinc-200 dark:bg-zinc-800/50 dark:border-zinc-700 space-y-2 text-xs">
-                    <div class="flex justify-between items-start">
+                    <div class="flex flex-col sm:flex-row justify-between items-start gap-2 sm:gap-0">
                         <div>
                             <div class="font-extrabold text-sm text-zinc-900 dark:text-zinc-100">dr. Budi, Sp.PD</div>
                             <div class="text-zinc-500">SIP: 503/SIP/2024</div>
                         </div>
-                        <div class="text-right">
+                        <div class="text-left sm:text-right">
                             <span class="text-zinc-500 font-medium">Data Pasien:</span>
                             <div class="font-bold text-zinc-900 dark:text-zinc-100">Candi Chier (88 th)</div>
                         </div>
@@ -94,12 +94,12 @@
                 <div class="space-y-2 text-xs">
                     <span class="font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">Pemeriksaan Legalitas Farmasi:</span>
                     <div class="space-y-1.5">
-                        <label class="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50/70 p-2.5 font-medium text-emerald-900 dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-200">
-                            <input type="checkbox" checked disabled class="h-4 w-4 rounded text-emerald-600" />
+                        <label class="flex items-start gap-2.5 rounded-lg border border-emerald-200 bg-emerald-50/70 p-2.5 font-medium text-emerald-900 dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-200">
+                            <input type="checkbox" checked disabled class="mt-0.5 h-4 w-4 shrink-0 rounded text-emerald-600" />
                             <span>✔ SIP Dokter Terverifikasi Aktif pada Konsil Kedokteran</span>
                         </label>
-                        <label class="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50/70 p-2.5 font-medium text-emerald-900 dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-200">
-                            <input type="checkbox" checked disabled class="h-4 w-4 rounded text-emerald-600" />
+                        <label class="flex items-start gap-2.5 rounded-lg border border-emerald-200 bg-emerald-50/70 p-2.5 font-medium text-emerald-900 dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-200">
+                            <input type="checkbox" checked disabled class="mt-0.5 h-4 w-4 shrink-0 rounded text-emerald-600" />
                             <span>✔ Dosis Sesuai Standar Farmakope untuk Geriatri (88 th)</span>
                         </label>
                     </div>
@@ -116,26 +116,26 @@
                 </div>
 
                 <!-- Action Verification Buttons (>= 44px target) -->
-                <div class="flex items-center gap-3 pt-2">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
                     <button
                         type="button"
                         @click="verifikasi('disetujui')"
                         :disabled="statusVerifikasi === 'disetujui'"
-                        class="flex-1 min-h-11 inline-flex items-center justify-center rounded-xl bg-emerald-600 px-4 text-xs font-bold text-white shadow hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-50">
+                        class="flex-1 min-h-[44px] inline-flex items-center justify-center rounded-xl bg-emerald-600 px-4 text-xs font-bold text-white shadow hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-50 transition active:scale-[0.98]">
                         Setujui
                     </button>
                     <button
                         type="button"
                         @click="verifikasi('ditolak')"
                         :disabled="statusVerifikasi === 'ditolak'"
-                        class="flex-1 min-h-11 inline-flex items-center justify-center rounded-xl bg-rose-600 px-4 text-xs font-bold text-white shadow hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500 disabled:opacity-50">
+                        class="flex-1 min-h-[44px] inline-flex items-center justify-center rounded-xl bg-rose-600 px-4 text-xs font-bold text-white shadow hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500 disabled:opacity-50 transition active:scale-[0.98]">
                         Tolak
                     </button>
                 </div>
             </section>
 
             <!-- RIGHT COLUMN: Peringatan Batch Kedaluwarsa (FEFO) -->
-            <section class="lg:col-span-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 space-y-5">
+            <section class="lg:col-span-6 rounded-2xl border border-zinc-200 bg-white p-4 sm:p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 space-y-5">
                 <div class="border-b border-zinc-200 pb-3 dark:border-zinc-800">
                     <span class="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">Manajemen Inventori Batch</span>
                     <h2 class="text-lg font-extrabold text-zinc-900 dark:text-zinc-100">Peringatan Batch Kedaluwarsa (FEFO)</h2>
@@ -149,7 +149,7 @@
 
                 <!-- FEFO Table -->
                 <div class="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800">
-                    <table class="w-full text-left text-xs">
+                    <table class="w-full min-w-[360px] text-left text-xs">
                         <thead class="bg-zinc-100 text-zinc-700 font-bold dark:bg-zinc-800 dark:text-zinc-300 border-b border-zinc-200 dark:border-zinc-700">
                             <tr>
                                 <th class="p-3">Obat / Batch</th>
@@ -216,16 +216,16 @@
 
         <!-- Modal Perbesar Resep -->
         <div x-show="modalResepBesar" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-            <div @click.away="modalResepBesar = false" class="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-2xl dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-4">
+            <div @click.away="modalResepBesar = false" class="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-4 sm:p-6 shadow-2xl dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-4">
                 <div class="flex items-center justify-between border-b border-zinc-200 pb-3 dark:border-zinc-800">
-                    <h3 class="text-base font-bold text-zinc-900 dark:text-zinc-100">Pratinjau Resep Dokter : #ORD-20260917-0042</h3>
-                    <button type="button" @click="modalResepBesar = false" class="min-h-11 min-w-11 inline-flex items-center justify-center text-zinc-500 hover:text-zinc-800 rounded-lg">✕</button>
+                    <h3 class="text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100">Pratinjau Resep Dokter : #ORD-20260917-0042</h3>
+                    <button type="button" @click="modalResepBesar = false" class="min-h-[44px] min-w-[44px] inline-flex items-center justify-center text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 rounded-lg">✕</button>
                 </div>
-                <div class="flex h-72 items-center justify-center rounded-xl bg-zinc-50 border border-zinc-200 text-xs font-mono text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700">
+                <div class="flex h-56 sm:h-72 items-center justify-center rounded-xl bg-zinc-50 border border-zinc-200 text-xs font-mono text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700 p-4 text-center">
                     [ Tampilan Resolusi Penuh: Resep dr. Budi Sp.PD - Pasien Candi Chier (88 th) ]
                 </div>
                 <div class="flex justify-end">
-                    <button type="button" @click="modalResepBesar = false" class="min-h-11 inline-flex items-center justify-center rounded-xl bg-zinc-800 px-5 text-xs font-bold text-white hover:bg-zinc-900">
+                    <button type="button" @click="modalResepBesar = false" class="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center rounded-xl bg-zinc-800 px-5 text-xs font-bold text-white hover:bg-zinc-900 transition">
                         Tutup Pratinjau
                     </button>
                 </div>

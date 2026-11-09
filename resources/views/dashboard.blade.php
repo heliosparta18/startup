@@ -16,21 +16,21 @@
 <body class="min-h-full bg-[#F8FAFC] text-slate-800 antialiased flex flex-col font-sans overflow-x-hidden">
     <!-- Navbar Atas -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
             <!-- Brand -->
-            <div class="flex items-center gap-3">
-                <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5">
-                    <img src="/logo.png" alt="OmniPharma Logo" class="h-10 w-10 object-contain drop-shadow-[0_2px_6px_rgba(5,150,105,0.35)] hover:scale-105 transition-transform duration-200">
-                    <div>
-                        <span class="block text-xs font-bold tracking-widest text-emerald-700 uppercase">OmniPharma</span>
-                        <span class="block text-sm font-semibold text-slate-900 leading-tight">Dashboard Pelanggan</span>
+            <div class="flex items-center min-w-0">
+                <a href="{{ route('dashboard') }}" class="flex items-center gap-2 sm:gap-2.5 min-h-[44px] py-1">
+                    <img src="/logo.png" alt="OmniPharma Logo" class="h-9 w-9 sm:h-10 sm:w-10 object-contain drop-shadow-[0_2px_6px_rgba(5,150,105,0.35)] shrink-0 hover:scale-105 transition-transform duration-200">
+                    <div class="min-w-0">
+                        <span class="block text-[10px] sm:text-xs font-bold tracking-widest text-emerald-700 uppercase">OmniPharma</span>
+                        <span class="block text-xs sm:text-sm font-semibold text-slate-900 leading-tight truncate">Dashboard <span class="hidden sm:inline">Pelanggan</span></span>
                     </div>
                 </a>
             </div>
 
             <!-- User Menu & Logout -->
-            <div class="flex items-center gap-3 sm:gap-4">
-                <div class="flex items-center gap-2.5 px-3 py-1.5 rounded-full border border-slate-200 bg-slate-50/70 text-xs">
+            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                <div class="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-full border border-slate-200 bg-slate-50/70 text-xs">
                     @php
                         $photoUrl = session('firebase_photo') ?? null;
                         $provider = session('firebase_provider', 'password');
@@ -41,17 +41,17 @@
                     @endphp
 
                     @if($photoUrl)
-                        <img src="{{ $photoUrl }}" alt="Avatar" class="w-6 h-6 rounded-full object-cover">
+                        <img src="{{ $photoUrl }}" alt="Avatar" class="w-6 h-6 rounded-full object-cover shrink-0">
                     @else
-                        <div class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-[10px]">
+                        <div class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-[10px] shrink-0">
                             {{ strtoupper(substr($userName, 0, 1)) }}
                         </div>
                     @endif
-                    <span class="font-semibold text-slate-800 hidden sm:inline">{{ $userName }}</span>
-                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-200 text-slate-700">
+                    <span class="font-semibold text-slate-800 hidden md:inline truncate max-w-[120px]">{{ $userName }}</span>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-200 text-slate-700 shrink-0">
                         {{ $userRole }}
                     </span>
-                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $provider === 'google' ? 'bg-blue-100 text-blue-800' : 'bg-emerald-100 text-emerald-800' }}">
+                    <span class="hidden sm:inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold {{ $provider === 'google' ? 'bg-blue-100 text-blue-800' : 'bg-emerald-100 text-emerald-800' }}">
                         {{ $provider === 'google' ? 'Google' : 'Email/Pass' }}
                     </span>
                 </div>
@@ -60,9 +60,10 @@
                 <button
                     type="button"
                     onclick="if(window.OmniFirebaseAuth) { window.OmniFirebaseAuth.logoutBoth(); } else { document.getElementById('native-logout-form').submit(); }"
-                    class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-semibold transition cursor-pointer"
+                    class="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 active:bg-rose-200 text-rose-700 text-xs font-semibold transition cursor-pointer min-h-[44px] min-w-[44px] shrink-0"
+                    aria-label="Keluar dari akun"
                 >
-                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                     </svg>
                     <span>Keluar</span>
@@ -76,19 +77,19 @@
     </header>
 
     <!-- Konten Utama Dashboard -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
         <!-- Hero Banner Sambutan -->
-        <div class="rounded-3xl bg-white border border-slate-200/80 p-6 sm:p-8 shadow-xs relative overflow-hidden">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 relative z-10">
-                <div class="flex items-center gap-4">
+        <div class="rounded-3xl bg-white border border-slate-200/80 p-5 sm:p-8 shadow-xs relative overflow-hidden">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 min-w-0">
                     @if($photoUrl)
-                        <img src="{{ $photoUrl }}" alt="Avatar" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-emerald-500 shadow-md">
+                        <img src="{{ $photoUrl }}" alt="Avatar" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-emerald-500 shadow-md shrink-0">
                     @else
-                        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold text-2xl sm:text-3xl shadow-md">
+                        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold text-2xl sm:text-3xl shadow-md shrink-0">
                             {{ strtoupper(substr($userName, 0, 1)) }}
                         </div>
                     @endif
-                    <div>
+                    <div class="min-w-0 w-full sm:w-auto">
                         <div class="flex flex-wrap items-center gap-2">
                             <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                                 Halo, {{ $userName }}!
@@ -110,22 +111,22 @@
                                 Aktif
                             </span>
                         </div>
-                        <p class="text-xs sm:text-sm text-slate-500 mt-1">
+                        <p class="text-xs sm:text-sm text-slate-500 mt-1 break-words">
                             {{ $userEmail }} • Terhubung melalui <span class="font-semibold text-slate-700">{{ $provider === 'google' ? 'Google Identity Services' : 'Firebase Password Auth' }}</span>
                         </p>
                         @if(session('firebase_uid'))
-                            <div class="mt-2 inline-flex items-center gap-1.5 text-[11px] font-mono text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">
-                                <span>UID:</span>
-                                <span class="select-all font-semibold text-slate-600">{{ session('firebase_uid') }}</span>
+                            <div class="mt-2 inline-flex items-center gap-1.5 text-[11px] font-mono text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md max-w-full">
+                                <span class="shrink-0 text-slate-400">UID:</span>
+                                <span class="select-all font-semibold text-slate-700 break-all">{{ session('firebase_uid') }}</span>
                             </div>
                         @endif
                     </div>
                 </div>
 
-                <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto shrink-0">
                     <a
                         href="{{ route('customer.home', ['client' => 'banyuwangi-kota']) }}"
-                        class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-xs transition min-h-[44px]"
+                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs sm:text-sm shadow-xs transition min-h-[44px]"
                     >
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -134,7 +135,7 @@
                     </a>
                     <a
                         href="{{ route('customer.cart', ['client' => 'banyuwangi-kota']) }}"
-                        class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs sm:text-sm transition min-h-[44px]"
+                        class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 font-semibold text-xs sm:text-sm transition min-h-[44px]"
                     >
                         <svg class="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -156,8 +157,7 @@
                 <!-- 1. Katalog Pasien Cabang Banyuwangi Kota -->
                 <a
                     href="{{ route('customer.home', ['client' => 'banyuwangi-kota']) }}"
-                    class="group p-5 rounded-2xl bg-white border border-slate-200 hover:border-emerald-500 hover:shadow-md transition flex flex-col justify-between"
-                >
+                    class="group p-5 rounded-2xl bg-white border border-slate-200 hover:border-emerald-500 hover:shadow-md active:bg-slate-50 transition flex flex-col justify-between min-h-[140px]"
                     <div>
                         <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-110 transition">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -176,8 +176,7 @@
                 <!-- 2. Katalog Pasien Cabang Rogojampi -->
                 <a
                     href="{{ route('customer.home', ['client' => 'rogojampi']) }}"
-                    class="group p-5 rounded-2xl bg-white border border-slate-200 hover:border-emerald-500 hover:shadow-md transition flex flex-col justify-between"
-                >
+                    class="group p-5 rounded-2xl bg-white border border-slate-200 hover:border-emerald-500 hover:shadow-md active:bg-slate-50 transition flex flex-col justify-between min-h-[140px]"
                     <div>
                         <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3 group-hover:scale-110 transition">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -196,8 +195,7 @@
                 <!-- 3. Portal Apoteker & Staf Cabang -->
                 <a
                     href="{{ route('tenant.dashboard', ['client' => 'banyuwangi-kota']) }}"
-                    class="group p-5 rounded-2xl bg-white border border-slate-200 hover:border-amber-500 hover:shadow-md transition flex flex-col justify-between"
-                >
+                    class="group p-5 rounded-2xl bg-white border border-slate-200 hover:border-amber-500 hover:shadow-md active:bg-slate-50 transition flex flex-col justify-between min-h-[140px]"
                     <div>
                         <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-3 group-hover:scale-110 transition">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -216,8 +214,7 @@
                 <!-- 4. Portal Super Admin Eksekutif -->
                 <a
                     href="{{ route('admin.dashboard') }}"
-                    class="group p-5 rounded-2xl bg-white border border-slate-200 hover:border-purple-500 hover:shadow-md transition flex flex-col justify-between"
-                >
+                    class="group p-5 rounded-2xl bg-white border border-slate-200 hover:border-purple-500 hover:shadow-md active:bg-slate-50 transition flex flex-col justify-between min-h-[140px]"
                     <div>
                         <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center mb-3 group-hover:scale-110 transition">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -236,19 +233,19 @@
         </div>
 
         <!-- Rincian Informasi Sesi & Kredensial Medis -->
-        <div class="rounded-2xl bg-white border border-slate-200 p-6">
+        <div class="rounded-2xl bg-white border border-slate-200 p-4 sm:p-6">
             <h3 class="text-sm font-bold uppercase tracking-wider text-slate-700 mb-4">Informasi Sesi Autentikasi Pengguna</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-xs">
                 <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100">
                     <span class="text-slate-400 block mb-1">Status Autentikasi</span>
                     <span class="font-bold text-emerald-700 text-sm flex items-center gap-1.5">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                        Terverifikasi Sesi
+                        <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                        <span>Terverifikasi Sesi</span>
                     </span>
                 </div>
                 <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100">
                     <span class="text-slate-400 block mb-1">Penyedia Identitas (IdP)</span>
-                    <span class="font-bold text-slate-800 text-sm">
+                    <span class="font-bold text-slate-800 text-sm break-words">
                         {{ $provider === 'google' ? 'Google OAuth 2.0 (Firebase)' : 'Email & Password (Firebase)' }}
                     </span>
                 </div>
@@ -263,7 +260,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="mt-auto border-t border-slate-200 bg-white py-4 text-center text-xs text-slate-400">
+    <footer class="mt-auto border-t border-slate-200 bg-white py-4 px-4 text-center text-xs text-slate-400">
         &copy; 2026 OmniPharma Network. Dikembangkan untuk Praktikum Pengembangan Sistem Informasi (Pak Devit Suwardiyanto).
     </footer>
 

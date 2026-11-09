@@ -16,13 +16,13 @@
         [x-cloak] { display: none !important; }
     </style>
 </head>
-<body class="min-h-full bg-slate-100/90 text-slate-800 antialiased flex items-center justify-center p-3 sm:p-6 lg:p-8 font-sans overflow-x-hidden">
+<body class="min-h-full bg-slate-100/90 text-slate-800 antialiased flex items-center justify-center p-4 sm:p-6 lg:p-8 font-sans overflow-x-hidden">
 
     <!-- Container Utama Split Card Login (Sesuai Referensi Visual) -->
-    <div class="w-full max-w-5xl bg-white rounded-3xl shadow-xl border border-slate-200/80 overflow-hidden flex flex-col lg:flex-row min-h-[600px]">
+    <div class="w-full max-w-5xl bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-slate-200/80 overflow-hidden flex flex-col lg:flex-row min-h-0 lg:min-h-[600px]">
 
         <!-- KOLOM KIRI: Visual Hero / Ilustrasi & Brand Showcase -->
-        <div class="lg:w-5/12 bg-gradient-to-br from-[#0A231E] via-[#0E352E] to-[#0A231E] p-8 sm:p-10 flex flex-col justify-between text-white relative overflow-hidden">
+        <div class="lg:w-5/12 bg-gradient-to-br from-[#0A231E] via-[#0E352E] to-[#0A231E] p-5 sm:p-8 lg:p-10 flex flex-col justify-between text-white relative overflow-hidden">
             <!-- Dekorasi Garis & Lingkaran Geometris Halus -->
             <div class="absolute -top-24 -left-24 w-72 h-72 rounded-full border border-emerald-500/10 pointer-events-none"></div>
             <div class="absolute -bottom-24 -right-24 w-80 h-80 rounded-full border border-emerald-500/15 pointer-events-none"></div>
@@ -37,12 +37,12 @@
                     </div>
                 </div>
 
-                <div class="mt-8">
+                <div class="mt-6 sm:mt-8">
                     <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-emerald-200 border border-emerald-500/30">
                         <span class="h-1.5 w-1.5 rounded-full bg-[#D4F94E]"></span>
                         Standar Permenkes RI No. 73/2016
                     </span>
-                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white mt-3 leading-snug">
+                    <h2 class="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-white mt-3 leading-snug">
                         Pelayanan Farmasi Cepat, Akurat, dan Terpercaya
                     </h2>
                     <p class="text-xs sm:text-sm text-emerald-200/80 mt-2 leading-relaxed">
@@ -52,8 +52,8 @@
             </div>
 
             <!-- Ilustrasi Vektor Medis -->
-            <div class="my-6 py-4 flex items-center justify-center relative z-10">
-                <div class="w-full max-w-[280px] aspect-[4/3] rounded-2xl bg-white/5 border border-white/10 p-5 flex flex-col justify-between backdrop-blur-xs shadow-inner">
+            <div class="my-4 sm:my-6 py-2 sm:py-4 flex items-center justify-center relative z-10">
+                <div class="w-full max-w-[280px] aspect-[4/3] rounded-2xl bg-white/5 border border-white/10 p-4 sm:p-5 flex flex-col justify-between backdrop-blur-xs shadow-inner">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-2">
                             <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-[#D4F94E] flex items-center justify-center">
@@ -71,9 +71,9 @@
                         <div class="h-2 w-1/2 bg-white/15 rounded-full"></div>
                     </div>
 
-                    <div class="pt-2 border-t border-white/10 flex items-center justify-between text-[11px] text-emerald-200">
-                        <span>Multi-Cabang: BWI & Rogojampi</span>
-                        <span class="font-bold text-white">Terhubung</span>
+                    <div class="pt-2 border-t border-white/10 flex items-center justify-between gap-2 text-[11px] text-emerald-200">
+                        <span class="truncate">Multi-Cabang: BWI & Rogojampi</span>
+                        <span class="font-bold text-white shrink-0">Terhubung</span>
                     </div>
                 </div>
             </div>
@@ -86,7 +86,7 @@
         </div>
 
         <!-- KOLOM KANAN: Formulir Masuk Sederhana (Input 1: Email/Username, Input 2: Password) -->
-        <div class="lg:w-7/12 p-6 sm:p-10 lg:p-12 flex flex-col justify-between bg-white" x-data="{
+        <div class="lg:w-7/12 p-5 sm:p-8 lg:p-12 flex flex-col justify-between bg-white" x-data="{
             identifier: '{{ old('email', '') }}',
             password: '',
             showPassword: false,
@@ -251,7 +251,7 @@
                             autofocus
                             autocomplete="username"
                             placeholder="nama@email.com atau username"
-                            class="block w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-slate-900 shadow-2xs placeholder:text-slate-400 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 sm:text-sm transition min-h-[44px]"
+                            class="block w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-base sm:text-sm text-slate-900 shadow-2xs placeholder:text-slate-400 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 transition min-h-[44px]"
                         />
                     </div>
 
@@ -276,7 +276,7 @@
                                 required
                                 autocomplete="current-password"
                                 placeholder="Masukkan kata sandi akun"
-                                class="block w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 pr-11 text-slate-900 shadow-2xs placeholder:text-slate-400 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 sm:text-sm transition min-h-[44px]"
+                                class="block w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 pr-11 text-base sm:text-sm text-slate-900 shadow-2xs placeholder:text-slate-400 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 transition min-h-[44px]"
                             />
                             <button
                                 type="button"
@@ -319,9 +319,9 @@
                 </form>
 
                 <!-- Tautan Daftar -->
-                <div class="mt-4 text-center">
+                <div class="mt-4 flex flex-wrap items-center justify-center gap-1 text-center">
                     <span class="text-xs text-slate-500">Belum memiliki akun pelanggan?</span>
-                    <a href="{{ route('register') }}" class="text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline ml-1 inline-flex items-center min-h-[44px]">
+                    <a href="{{ route('register') }}" class="text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline inline-flex items-center min-h-[44px]">
                         Daftar Akun Baru
                     </a>
                 </div>
@@ -333,13 +333,13 @@
                     <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Pilih Akun Demo Praktikum:</span>
                     <span class="text-[10px] text-slate-400">Klik untuk isi otomatis</span>
                 </div>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     <button
                         type="button"
                         @click="selectDemo('super_admin', 'daffa@omnipharma.test', 'password')"
                         :disabled="loadingSubmit || loadingGoogle"
                         :class="selectedRole === 'super_admin' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
-                        class="p-2 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer disabled:opacity-50"
+                        class="p-2 sm:p-2.5 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer disabled:opacity-50"
                     >
                         <div class="flex items-center justify-between">
                             <span class="text-[11px] font-bold truncate">Super Admin</span>
@@ -353,7 +353,7 @@
                         @click="selectDemo('apt_bwi', 'bambang@omnipharma.test', 'password')"
                         :disabled="loadingSubmit || loadingGoogle"
                         :class="selectedRole === 'apt_bwi' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
-                        class="p-2 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer disabled:opacity-50"
+                        class="p-2 sm:p-2.5 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer disabled:opacity-50"
                     >
                         <div class="flex items-center justify-between">
                             <span class="text-[11px] font-bold truncate">Apoteker BWI</span>
@@ -367,7 +367,7 @@
                         @click="selectDemo('apt_rogo', 'dewi@omnipharma.test', 'password')"
                         :disabled="loadingSubmit || loadingGoogle"
                         :class="selectedRole === 'apt_rogo' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
-                        class="p-2 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer disabled:opacity-50"
+                        class="p-2 sm:p-2.5 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer disabled:opacity-50"
                     >
                         <div class="flex items-center justify-between">
                             <span class="text-[11px] font-bold truncate">Apoteker RGO</span>
@@ -381,7 +381,7 @@
                         @click="selectDemo('kasir_bwi', 'kasir.bwi@omnipharma.test', 'password')"
                         :disabled="loadingSubmit || loadingGoogle"
                         :class="selectedRole === 'kasir_bwi' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
-                        class="p-2 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer disabled:opacity-50"
+                        class="p-2 sm:p-2.5 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer disabled:opacity-50"
                     >
                         <div class="flex items-center justify-between">
                             <span class="text-[11px] font-bold truncate">Kasir BWI</span>

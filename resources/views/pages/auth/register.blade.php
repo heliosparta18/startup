@@ -16,13 +16,13 @@
         [x-cloak] { display: none !important; }
     </style>
 </head>
-<body class="min-h-full bg-slate-100/90 text-slate-800 antialiased flex items-center justify-center p-3 sm:p-6 lg:p-8 font-sans overflow-x-hidden">
+<body class="min-h-full bg-slate-100/90 text-slate-800 antialiased flex items-center justify-center p-4 sm:p-6 lg:p-8 font-sans overflow-x-hidden">
 
     <!-- Container Utama Split Card Register (Sesuai Referensi Visual) -->
-    <div class="w-full max-w-5xl bg-white rounded-3xl shadow-xl border border-slate-200/80 overflow-hidden flex flex-col lg:flex-row min-h-[640px]">
+    <div class="w-full max-w-5xl bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-slate-200/80 overflow-hidden flex flex-col lg:flex-row min-h-0 lg:min-h-[640px]">
 
         <!-- KOLOM KIRI: Visual Hero / Ilustrasi & Brand Showcase -->
-        <div class="lg:w-5/12 bg-gradient-to-br from-[#0A231E] via-[#0E352E] to-[#0A231E] p-8 sm:p-10 flex flex-col justify-between text-white relative overflow-hidden">
+        <div class="lg:w-5/12 bg-gradient-to-br from-[#0A231E] via-[#0E352E] to-[#0A231E] p-5 sm:p-8 lg:p-10 flex flex-col justify-between text-white relative overflow-hidden">
             <!-- Dekorasi Garis & Lingkaran Geometris Halus -->
             <div class="absolute -top-24 -left-24 w-72 h-72 rounded-full border border-emerald-500/10 pointer-events-none"></div>
             <div class="absolute -bottom-24 -right-24 w-80 h-80 rounded-full border border-emerald-500/15 pointer-events-none"></div>
@@ -37,12 +37,12 @@
                     </div>
                 </div>
 
-                <div class="mt-8">
+                <div class="mt-6 sm:mt-8">
                     <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-emerald-200 border border-emerald-500/30">
                         <span class="h-1.5 w-1.5 rounded-full bg-[#D4F94E]"></span>
                         Verifikasi OTP Email Resmi
                     </span>
-                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white mt-3 leading-snug">
+                    <h2 class="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-white mt-3 leading-snug">
                         Daftar Akun Pasien & Validasi Email Terpercaya
                     </h2>
                     <p class="text-xs sm:text-sm text-emerald-200/80 mt-2 leading-relaxed">
@@ -52,8 +52,8 @@
             </div>
 
             <!-- Kartu Info Keunggulan Layanan -->
-            <div class="my-6 py-4 flex items-center justify-center relative z-10">
-                <div class="w-full max-w-[280px] rounded-2xl bg-white/5 border border-white/10 p-5 space-y-3 backdrop-blur-xs shadow-inner text-xs">
+            <div class="my-4 sm:my-6 py-2 sm:py-4 flex items-center justify-center relative z-10">
+                <div class="w-full max-w-[280px] rounded-2xl bg-white/5 border border-white/10 p-4 sm:p-5 space-y-2.5 sm:space-y-3 backdrop-blur-xs shadow-inner text-xs">
                     <div class="flex items-center gap-2.5 text-white">
                         <div class="w-6 h-6 rounded-md bg-emerald-500/20 text-[#D4F94E] flex items-center justify-center shrink-0 font-bold">✓</div>
                         <span>Email Terverifikasi Otomatis via OTP</span>
@@ -77,7 +77,7 @@
         </div>
 
         <!-- KOLOM KANAN: Formulir Pendaftaran dengan Verifikasi OTP Email -->
-        <div class="lg:w-7/12 p-6 sm:p-10 lg:p-12 flex flex-col justify-between bg-white" x-data="{
+        <div class="lg:w-7/12 p-5 sm:p-8 lg:p-12 flex flex-col justify-between bg-white" x-data="{
             username: '{{ old('name', '') }}',
             email: '{{ old('email', '') }}',
             password: '',
@@ -255,7 +255,7 @@
 
                 <!-- Heading Form -->
                 <div class="mb-5">
-                    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Buat Akun Pelanggan</h1>
+                    <h1 class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight">Buat Akun Pelanggan</h1>
                     <p class="text-xs sm:text-sm text-slate-500 mt-1">Daftar instan dengan Google atau isi username & email dengan verifikasi OTP.</p>
                 </div>
 
@@ -286,7 +286,7 @@
                         <div class="w-full border-t border-slate-200"></div>
                     </div>
                     <div class="relative flex justify-center text-xs uppercase">
-                        <span class="bg-white px-3 text-slate-400 font-semibold tracking-wider">Atau Isi Data Registrasi Pasien</span>
+                        <span class="bg-white px-2 sm:px-3 text-slate-400 font-semibold tracking-wider text-[11px] sm:text-xs">Atau Isi Data Registrasi Pasien</span>
                     </div>
                 </div>
 
@@ -294,7 +294,7 @@
                 <div x-show="otpStep && demoOtpHint" x-cloak class="mb-4 p-3.5 rounded-xl bg-emerald-50 border border-emerald-300 text-xs text-emerald-900 font-medium flex items-start gap-2.5">
                     <svg class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     <div>
-                        <div>Kode OTP verifikasi telah dikirim ke <strong x-text="email"></strong>.</div>
+                        <div>Kode OTP verifikasi telah dikirim ke <strong class="break-all" x-text="email"></strong>.</div>
                         <div class="mt-0.5 text-slate-700">Kode Verifikasi: <strong class="font-mono text-base text-emerald-700 select-all tracking-widest" x-text="demoOtpHint"></strong></div>
                     </div>
                 </div>
@@ -311,8 +311,9 @@
                             type="text"
                             x-model="username"
                             required
+                            autocomplete="username"
                             placeholder="Contoh: sasacantik12"
-                            class="block w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-slate-900 shadow-2xs placeholder:text-slate-400 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 sm:text-sm transition min-h-[44px]"
+                            class="block w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-base sm:text-sm text-slate-900 shadow-2xs placeholder:text-slate-400 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 transition min-h-[44px]"
                         />
                     </div>
 
@@ -324,10 +325,12 @@
                         <input
                             id="email"
                             type="email"
+                            inputmode="email"
+                            autocomplete="email"
                             x-model="email"
                             required
                             placeholder="nama@email.com"
-                            class="block w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-slate-900 shadow-2xs placeholder:text-slate-400 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 sm:text-sm transition min-h-[44px]"
+                            class="block w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-base sm:text-sm text-slate-900 shadow-2xs placeholder:text-slate-400 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 transition min-h-[44px]"
                         />
                     </div>
 
@@ -340,10 +343,11 @@
                             <input
                                 id="password"
                                 :type="showPassword ? 'text' : 'password'"
+                                autocomplete="new-password"
                                 x-model="password"
                                 required
                                 placeholder="Buat kata sandi aman"
-                                class="block w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 pr-11 text-slate-900 shadow-2xs placeholder:text-slate-400 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 sm:text-sm transition min-h-[44px]"
+                                class="block w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 pr-11 text-base sm:text-sm text-slate-900 shadow-2xs placeholder:text-slate-400 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 transition min-h-[44px]"
                             />
                             <button
                                 type="button"
@@ -365,10 +369,11 @@
                         <input
                             id="password_confirmation"
                             :type="showPassword ? 'text' : 'password'"
+                            autocomplete="new-password"
                             x-model="passwordConfirmation"
                             required
                             placeholder="Ulangi kata sandi"
-                            class="block w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-slate-900 shadow-2xs placeholder:text-slate-400 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 sm:text-sm transition min-h-[44px]"
+                            class="block w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-base sm:text-sm text-slate-900 shadow-2xs placeholder:text-slate-400 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 transition min-h-[44px]"
                         />
                     </div>
 
@@ -391,22 +396,31 @@
                 <!-- TAHAP 2: VALIDASI KODE OTP EMAIL -->
                 <div x-show="otpStep" x-cloak class="space-y-4 pt-1">
                     <div>
-                        <div class="flex items-center justify-between mb-1">
+                        <div class="flex items-center justify-between mb-1.5 flex-wrap gap-1">
                             <label for="reg-otp" class="block text-xs font-bold uppercase tracking-wider text-slate-700">
                                 Masukkan 6-Digit Kode OTP Email
                             </label>
-                            <span class="text-xs font-mono font-bold text-amber-600" x-text="'Sisa waktu: ' + timerStr"></span>
+                            <span class="inline-flex items-center gap-1 font-mono text-xs font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200/70">
+                                <svg class="w-3.5 h-3.5 text-amber-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <span x-text="'Sisa: ' + timerStr"></span>
+                            </span>
                         </div>
-                        <input
-                            id="reg-otp"
-                            type="text"
-                            maxlength="6"
-                            x-model="otp"
-                            placeholder="Contoh: 123456"
-                            class="block w-full text-center tracking-[0.5em] font-mono text-xl font-black rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-slate-900 shadow-2xs focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 min-h-[48px]"
-                        />
-                        <p class="text-[11px] text-slate-500 mt-1">
-                            Kode OTP dikirimkan ke <strong class="text-slate-800" x-text="email"></strong>.
+                        <div class="relative">
+                            <input
+                                id="reg-otp"
+                                type="text"
+                                inputmode="numeric"
+                                pattern="[0-9]*"
+                                autocomplete="one-time-code"
+                                maxlength="6"
+                                x-model="otp"
+                                @input="otp = otp.replace(/[^0-9]/g, '').slice(0, 6)"
+                                placeholder="000000"
+                                class="block w-full text-center tracking-[0.35em] sm:tracking-[0.5em] pl-[0.35em] sm:pl-[0.5em] font-mono text-2xl font-black rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-slate-900 shadow-2xs placeholder:text-slate-300 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 min-h-[52px]"
+                            />
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-1.5">
+                            Kode OTP dikirimkan ke <strong class="text-slate-800 break-all" x-text="email"></strong>.
                         </p>
                     </div>
 
@@ -415,7 +429,7 @@
                         type="button"
                         @click="completeRegisterWithOtp()"
                         :disabled="loadingRegister || otp.length !== 6"
-                        class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3.5 text-sm font-bold text-white shadow-sm hover:bg-emerald-700 active:bg-emerald-800 transition min-h-[46px] cursor-pointer disabled:opacity-50"
+                        class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3.5 text-sm font-bold text-white shadow-sm hover:bg-emerald-700 active:bg-emerald-800 transition min-h-[48px] cursor-pointer disabled:opacity-50"
                     >
                         <svg x-show="loadingRegister" class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
                         <span x-show="!loadingRegister">Validasi OTP & Buat Akun Sekarang</span>
@@ -423,29 +437,31 @@
                     </button>
 
                     <!-- Opsi Kirim Ulang & Ubah Data -->
-                    <div class="flex items-center justify-between text-xs pt-1">
+                    <div class="flex items-center justify-between text-xs pt-1 gap-2">
                         <button
                             type="button"
                             @click="otpStep = false; otp = ''"
-                            class="text-slate-500 hover:text-slate-700 font-medium"
+                            class="inline-flex items-center gap-1.5 min-h-[44px] px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 active:bg-slate-200 transition font-medium cursor-pointer"
                         >
-                            &larr; Ubah Email / Data
+                            <span>&larr; Ubah Email / Data</span>
                         </button>
                         <button
                             type="button"
                             @click="requestRegisterOtp()"
                             :disabled="loadingSendOtp || otpCountdown > 240"
-                            class="text-emerald-700 font-bold hover:underline disabled:text-slate-400"
+                            class="inline-flex items-center justify-center gap-1.5 min-h-[44px] px-3.5 py-2 rounded-xl text-emerald-700 font-bold hover:bg-emerald-50 active:bg-emerald-100 transition cursor-pointer disabled:opacity-40 disabled:hover:bg-transparent disabled:cursor-not-allowed"
                         >
-                            Kirim Ulang Kode OTP
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                            <span x-show="otpCountdown <= 240">Kirim Ulang OTP</span>
+                            <span x-show="otpCountdown > 240" x-text="'Tunggu ' + (otpCountdown - 240) + 's'"></span>
                         </button>
                     </div>
                 </div>
 
                 <!-- Tautan Masuk -->
-                <div class="mt-5 text-center">
+                <div class="mt-5 flex flex-wrap items-center justify-center gap-1 text-center">
                     <span class="text-xs text-slate-500">Sudah memiliki akun?</span>
-                    <a href="{{ route('login') }}" class="text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline ml-1 inline-flex items-center min-h-[44px]">
+                    <a href="{{ route('login') }}" class="text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline inline-flex items-center min-h-[44px]">
                         Masuk ke Portal
                     </a>
                 </div>
@@ -453,7 +469,7 @@
 
             <!-- Footer Bawah -->
             <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-                <a href="{{ route('home') }}" class="font-medium text-emerald-700 hover:underline inline-flex items-center gap-1">
+                <a href="{{ route('home') }}" class="font-medium text-emerald-700 hover:underline inline-flex items-center gap-1 min-h-[44px] py-2">
                     <span>&larr; Kembali ke Beranda</span>
                 </a>
                 <span>OmniPharma Network Core</span>
