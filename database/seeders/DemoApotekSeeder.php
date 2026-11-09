@@ -275,6 +275,20 @@ class DemoApotekSeeder extends Seeder
             ]
         );
 
+        // Sinkronisasi seluruh akun pengguna ke tabel users untuk login Laravel Fortify & Auth Guard
+        foreach (Pengguna::all() as $p) {
+            User::firstOrCreate(
+                ['email' => $p->telepon_email],
+                [
+                    'name' => $p->nama_lengkap,
+                    'password' => $p->password,
+                    'role' => $p->peran,
+                    'status' => $p->aktif ? 'active' : 'inactive',
+                    'email_verified_at' => now(),
+                ]
+            );
+        }
+
         // 3. Kategori Obat (Mockup Layar 1)
         $katKeras = KategoriObat::firstOrCreate(
             ['nama_kategori' => 'Wajib Resep (Keras)'],
