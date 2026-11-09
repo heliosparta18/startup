@@ -22,60 +22,7 @@
         ]);
     @endphp
 
-    <div x-data="{
-        kategoriAktif: 'semua',
-        searchQuery: '',
-        modalUnggah: false,
-        notifSukses: '',
-        unggahForm: {
-            namaDokter: 'dr. Budi, Sp.PD',
-            sipDokter: '503/SIP/2024',
-            namaPasien: 'Candi Chier',
-            umurPasien: '88 th',
-            catatan: 'Resep dokter untuk verifikasi apoteker'
-        },
-        unggahResep() {
-            fetch('{{ route('customer.resep.upload', ['client' => $client ?? 'banyuwangi-kota']) }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify(this.unggahForm)
-            })
-            .then(res => res.json())
-            .then(data => {
-                this.modalUnggah = false;
-                this.notifSukses = data.message || 'Resep berhasil diunggah!';
-                setTimeout(() => this.notifSukses = '', 5000);
-            })
-            .catch(() => {
-                this.modalUnggah = false;
-                this.notifSukses = 'Resep berhasil diunggah ke antrean apoteker.';
-                setTimeout(() => this.notifSukses = '', 5000);
-            });
-        },
-        beliLangsung(idObat, namaObat) {
-            fetch('{{ route('customer.cart.add', ['client' => $client ?? 'banyuwangi-kota']) }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({ id_obat: idObat, jumlah: 1 })
-            })
-            .then(res => res.json())
-            .then(() => {
-                this.notifSukses = '✓ Berhasil menambahkan ' + namaObat + ' ke keranjang! <a href="{{ route('customer.cart', ['client' => $client ?? 'banyuwangi-kota']) }}" class="underline font-bold ml-2">Lihat Keranjang</a>';
-                setTimeout(() => this.notifSukses = '', 5000);
-            })
-            .catch(() => {
-                this.notifSukses = '✓ ' + namaObat + ' ditambahkan ke keranjang.';
-                setTimeout(() => this.notifSukses = '', 4000);
-            });
-        }
-    }" class="space-y-6">
+    <div x-data="customerCatalog" class="space-y-6">
 
         <!-- Search & Filter Controls: Stacked on phone, reflows on tablet/desktop -->
         <section class="space-y-3">
@@ -136,11 +83,16 @@
         </section>
 
         <!-- Notification Banner -->
-        <div x-show="notifSukses" x-cloak class="rounded-xl border border-emerald-300 bg-emerald-50 p-4 text-xs font-medium text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200 flex items-center gap-2.5">
-            <svg class="h-5 w-5 shrink-0 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-            </svg>
-            <span x-text="notifSukses"></span>
+        <div x-show="notifSukses" x-cloak class="rounded-xl border border-emerald-300 bg-emerald-50 p-4 text-xs font-medium text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200 flex items-center justify-between gap-2.5">
+            <div class="flex items-center gap-2.5">
+                <svg class="h-5 w-5 shrink-0 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+                <span x-text="notifSukses"></span>
+            </div>
+            <a href="{{ route('customer.cart', ['client' => $client ?? 'banyuwangi-kota']) }}" class="underline font-bold text-emerald-700 hover:text-emerald-800 shrink-0">
+                Lihat Keranjang &rarr;
+            </a>
         </div>
 
         <!-- Product Grid: Reflows 1 col (phone) -> 2 cols (tablet) -> 3 cols (desktop) -->
@@ -301,4 +253,63 @@
         </div>
 
     </div>
+
+    <script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('customerCatalog', () => ({
+            kategoriAktif: 'semua',
+            searchQuery: '',
+            modalUnggah: false,
+            notifSukses: '',
+            unggahForm: {
+                namaDokter: 'dr. Budi, Sp.PD',
+                sipDokter: '503/SIP/2024',
+                namaPasien: 'Candi Chier',
+                umurPasien: '88 th',
+                catatan: 'Resep dokter untuk verifikasi apoteker'
+            },
+            unggahResep() {
+                fetch('{{ route('customer.resep.upload', ['client' => $client ?? 'banyuwangi-kota']) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify(this.unggahForm)
+                })
+                .then(res => res.json())
+                .then(data => {
+                    this.modalUnggah = false;
+                    this.notifSukses = data.message || 'Resep berhasil diunggah!';
+                    setTimeout(() => this.notifSukses = '', 5000);
+                })
+                .catch(() => {
+                    this.modalUnggah = false;
+                    this.notifSukses = 'Resep berhasil diunggah ke antrean apoteker.';
+                    setTimeout(() => this.notifSukses = '', 5000);
+                });
+            },
+            beliLangsung(idObat, namaObat) {
+                fetch('{{ route('customer.cart.add', ['client' => $client ?? 'banyuwangi-kota']) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ id_obat: idObat, jumlah: 1 })
+                })
+                .then(res => res.json())
+                .then(() => {
+                    this.notifSukses = '✓ Berhasil menambahkan ' + namaObat + ' ke keranjang!';
+                    setTimeout(() => this.notifSukses = '', 5000);
+                })
+                .catch(() => {
+                    this.notifSukses = '✓ ' + namaObat + ' ditambahkan ke keranjang.';
+                    setTimeout(() => this.notifSukses = '', 4000);
+                });
+            }
+        }));
+    });
+    </script>
 </x-layouts.customer>
