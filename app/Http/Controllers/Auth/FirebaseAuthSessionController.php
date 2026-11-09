@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Pengguna;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 class FirebaseAuthSessionController extends Controller
 {
@@ -116,7 +118,7 @@ class FirebaseAuthSessionController extends Controller
     /**
      * Tampilkan formulir lengkapi data profil setelah login Google pertama kali.
      */
-    public function showCompleteProfile(Request $request)
+    public function showCompleteProfile(Request $request): View|RedirectResponse
     {
         $user = Auth::user();
         if (! $user) {
@@ -132,7 +134,7 @@ class FirebaseAuthSessionController extends Controller
     /**
      * Simpan data formulir profil dan buat kata sandi akun.
      */
-    public function saveCompleteProfile(Request $request)
+    public function saveCompleteProfile(Request $request): RedirectResponse
     {
         $user = Auth::user();
         if (! $user) {

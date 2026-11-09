@@ -30,7 +30,7 @@ class StockFefoService
         return $query->orderBy('obat.expired', 'asc') // FEFO Sort
             ->get()
             ->each(function (StokClient $batch): void {
-                $expiredDate = $batch->obat?->expired ?? $batch->tanggal_kadaluarsa;
+                $expiredDate = $batch->obat->expired ?? $batch->tanggal_kadaluarsa;
                 if ($expiredDate) {
                     $sisaHari = (int) now()->diffInDays($expiredDate, false);
                     $batch->sisa_hari_ed = $sisaHari;

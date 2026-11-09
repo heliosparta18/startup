@@ -11,7 +11,7 @@ class CatalogService
     /**
      * @return LengthAwarePaginator<int, Obat>
      */
-    public function getCatalog(string $clientId, ?string $search = null, ?string $bentukSediaan = null): LengthAwarePaginator
+    public function getCatalog(string $clientId, ?string $search = null, ?string $bentukSediaan = null, ?string $kategori = null): LengthAwarePaginator
     {
         return Obat::query()
             ->with(['stokClient' => function ($q) use ($clientId) {
@@ -28,6 +28,14 @@ class CatalogService
             })
             ->when($bentukSediaan, function (Builder $q, $sediaan) {
                 $q->where('jenis_sediaan', $sediaan);
+            })
+            ->when($kategori, function (Builder $q, $kat) {
+                $q->where(function (Builder $sub) use ($kat) {
+                    $sub->where('id_kategori', $kat)
+                        ->orWhereHas('kategori', function (Builder $kq) use ($kat) {
+                            $kq->where('nama_kategori', $kat);
+                        });
+                });
             })
             ->orderBy('nama_obat', 'asc')
             ->paginate(12);

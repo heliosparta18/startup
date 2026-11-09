@@ -444,7 +444,7 @@ class DemoApotekSeeder extends Seeder
         $rkBwi->nama_client = 'Cabang Banyuwangi Kota';
         $rkBwi->periode_mulai = '2026-09-01';
         $rkBwi->periode_selesai = '2026-09-16';
-        $rkBwi->total_obat_terjual = 820;
+        $rkBwi->total_obat_terjual = '820';
         $rkBwi->total_pesanan = 820;
         $rkBwi->total_pendapatan = 68200000.00;
         $rkBwi->total_retur = 1;
@@ -456,7 +456,7 @@ class DemoApotekSeeder extends Seeder
         $rkRogo->nama_client = 'Cabang Rogojampi';
         $rkRogo->periode_mulai = '2026-09-01';
         $rkRogo->periode_selesai = '2026-09-16';
-        $rkRogo->total_obat_terjual = 610;
+        $rkRogo->total_obat_terjual = '610';
         $rkRogo->total_pesanan = 610;
         $rkRogo->total_pendapatan = 45400000.00;
         $rkRogo->total_retur = 2;

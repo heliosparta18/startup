@@ -20,7 +20,7 @@ class PublicCatalog extends Component
     public string $kategori = '';
 
     /**
-     * @var array<int, string>
+     * @var array<string, array<string, string>>
      */
     protected array $queryString = [
         'search' => ['except' => ''],

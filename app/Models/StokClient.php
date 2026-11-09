@@ -72,6 +72,9 @@ class StokClient extends Model
     /**
      * Scope FEFO: First-Expired, First-Out
      * Mengurutkan stok berdasarkan tanggal kedaluwarsa terdekat dari master obat
+     *
+     * @param  Builder<StokClient>  $query
+     * @return Builder<StokClient>
      */
     public function scopeFefoOrder(Builder $query): Builder
     {
@@ -82,7 +85,7 @@ class StokClient extends Model
 
     public function getSisaHariEdAttribute(): ?int
     {
-        $expired = $this->obat?->expired ?? $this->tanggal_kadaluarsa;
+        $expired = $this->obat->expired ?? $this->tanggal_kadaluarsa;
         if (! $expired) {
             return null;
         }
