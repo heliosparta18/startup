@@ -32,7 +32,7 @@ class FirebaseAuthTest extends TestCase
         $response->assertStatus(200);
         $response->assertJson([
             'success' => true,
-            'redirect' => route('dashboard'),
+            'redirect' => route('auth.complete-profile'),
             'user' => [
                 'id' => auth()->id(),
                 'name' => 'Sasa Cantika',

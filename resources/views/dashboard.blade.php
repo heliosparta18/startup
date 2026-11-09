@@ -20,9 +20,7 @@
             <!-- Brand -->
             <div class="flex items-center gap-3">
                 <a href="{{ route('home') }}" class="flex items-center gap-2.5">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-white p-1 border border-slate-200 shadow-xs">
-                        <img src="/logo.png" alt="OmniPharma Logo" class="h-full w-full object-contain">
-                    </div>
+                    <img src="/logo.png" alt="OmniPharma Logo" class="h-10 w-10 object-contain drop-shadow-[0_2px_6px_rgba(5,150,105,0.35)] hover:scale-105 transition-transform duration-200">
                     <div>
                         <span class="block text-xs font-bold tracking-widest text-emerald-700 uppercase">OmniPharma</span>
                         <span class="block text-sm font-semibold text-slate-900 leading-tight">Dashboard Pelanggan</span>

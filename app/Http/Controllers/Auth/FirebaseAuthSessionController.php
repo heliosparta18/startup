@@ -30,8 +30,10 @@ class FirebaseAuthSessionController extends Controller
         $provider = $validated['provider'] ?? 'password';
 
         // 1. Temukan atau buat User pada tabel users
+        $isFirstTime = false;
         $user = User::where('email', $email)->first();
         if (! $user) {
+            $isFirstTime = true;
             $user = User::create([
                 'name' => $name,
                 'email' => $email,
@@ -69,10 +71,15 @@ class FirebaseAuthSessionController extends Controller
         $request->session()->put('firebase_provider', $provider);
         $request->session()->put('firebase_photo', $validated['photo_url'] ?? null);
 
-        // 5. Tentukan tujuan redirect
-        $redirectUrl = route('dashboard');
-        if ($user->role === 'super_admin') {
-            $redirectUrl = route('admin.dashboard');
+        // 5. Tentukan tujuan redirect (jika Google pertama kali -> lengkapi profil)
+        if ($isFirstTime && $provider === 'google') {
+            $request->session()->put('google_first_time', true);
+            $redirectUrl = route('auth.complete-profile');
+        } else {
+            $redirectUrl = route('dashboard');
+            if ($user->role === 'super_admin') {
+                $redirectUrl = route('admin.dashboard');
+            }
         }
 
         return response()->json([
@@ -104,5 +111,56 @@ class FirebaseAuthSessionController extends Controller
             'message' => 'Sesi berhasil diakhiri.',
             'redirect' => route('login'),
         ]);
+    }
+
+    /**
+     * Tampilkan formulir lengkapi data profil setelah login Google pertama kali.
+     */
+    public function showCompleteProfile(Request $request)
+    {
+        $user = Auth::user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
+
+        return view('pages.auth.complete-profile', [
+            'user' => $user,
+            'photoUrl' => session('firebase_photo'),
+        ]);
+    }
+
+    /**
+     * Simpan data formulir profil dan buat kata sandi akun.
+     */
+    public function saveCompleteProfile(Request $request)
+    {
+        $user = Auth::user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:150'],
+            'telepon' => ['required', 'string', 'max:30'],
+            'alamat' => ['required', 'string', 'max:500'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
+        ]);
+
+        $user->update([
+            'name' => $validated['name'],
+            'password' => bcrypt($validated['password']),
+        ]);
+
+        $pengguna = Pengguna::where('telepon_email', $user->email)->first();
+        if ($pengguna) {
+            $pengguna->update([
+                'nama_lengkap' => $validated['name'],
+            ]);
+        }
+
+        $request->session()->forget('google_first_time');
+        $request->session()->put('profile_completed', true);
+
+        return redirect()->route('dashboard')->with('status', 'Profil pasien berhasil dilengkapi! Selamat datang di OmniPharma Network.');
     }
 }

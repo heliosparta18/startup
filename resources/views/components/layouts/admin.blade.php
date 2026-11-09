@@ -9,7 +9,7 @@
         <!-- Main Top Bar -->
         <header class="sticky top-0 z-30 flex min-h-16 items-center justify-between border-b border-zinc-200 bg-white px-6 lg:px-10 dark:border-zinc-800 dark:bg-zinc-900 shadow-xs">
             <div class="flex items-center gap-3">
-                <img src="/logo.png" alt="OmniPharma Logo" class="h-9 w-9 object-contain">
+                <img src="/logo.png" alt="OmniPharma Logo" class="h-9 w-9 object-contain drop-shadow-[0_2px_4px_rgba(15,23,42,0.25)]">
                 <div>
                     <h1 class="text-sm font-extrabold uppercase tracking-tight text-zinc-900 dark:text-zinc-100">Apotek Connect Pusat : Executive Dashboard</h1>
                     <div class="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400">Periode 01-16 Sep 2026</div>

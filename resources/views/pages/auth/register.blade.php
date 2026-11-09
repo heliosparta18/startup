@@ -30,9 +30,7 @@
             <!-- Header Brand Kolom Kiri -->
             <div class="relative z-10">
                 <div class="flex items-center gap-3">
-                    <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 p-1.5 shadow-md shadow-emerald-950/40 border border-white/20 backdrop-blur-xs">
-                        <img src="/logo.png" alt="OmniPharma Logo" class="h-full w-full object-contain">
-                    </div>
+                    <img src="/logo.png" alt="OmniPharma Logo" class="h-12 w-12 object-contain drop-shadow-[0_4px_10px_rgba(0,0,0,0.45)] hover:scale-105 transition-transform duration-200">
                     <div>
                         <span class="block text-xs font-bold tracking-widest text-[#D4F94E] uppercase">OmniPharma Network</span>
                         <span class="block text-sm font-semibold text-emerald-100">Portal Pasien & Pelanggan</span>
@@ -165,7 +163,7 @@
                 <!-- Heading Form -->
                 <!-- Mobile Brand Header -->
                 <div class="flex items-center gap-2.5 mb-4 lg:hidden">
-                    <img src="/logo.png" alt="OmniPharma" class="h-8 w-8 object-contain">
+                    <img src="/logo.png" alt="OmniPharma" class="h-9 w-9 object-contain drop-shadow-[0_2px_6px_rgba(5,150,105,0.35)]">
                     <span class="text-xs font-bold tracking-wider text-emerald-700 uppercase">OmniPharma Network</span>
                 </div>
                 <div class="mb-6">
