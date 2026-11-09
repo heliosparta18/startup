@@ -24,3 +24,19 @@ yarn-error.log
 .env.testing
 .DS_Store
 /references/PDM revisi.pdf
+
+# AI & Agent configurations, prompts, and skills
+.agent/
+.agents/
+.claude/
+.cursor/
+.copilot/
+.gemini/
+skills/
+*.skill
+.cursorrules
+.copilot-instructions.md
+CLAUDE.md
+AGENTS.md
+GEMINI.md
+
