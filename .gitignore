@@ -24,3 +24,4 @@ yarn-error.log
 /.zed
 .env.testing
 .DS_Store
+/references/PDM revisi.pdf

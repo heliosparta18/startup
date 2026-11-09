@@ -1,10 +1,29 @@
 * text=auto eol=lf
 
+# Berkas Binary (jangan pernah dihitung sebagai baris teks)
+*.pdf binary
+*.docx binary
+*.doc binary
+*.xlsx binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.zip binary
+
+# Format diff kode
 *.blade.php diff=html
 *.css diff=css
 *.html diff=html
 *.md diff=markdown
 *.php diff=php
+
+# GitHub Linguist Flags (abaikan dari kontribusi bahasa dan baris kode)
+composer.lock linguist-generated=true -diff
+package-lock.json linguist-generated=true -diff
+references/* linguist-documentation=true
+modul_praktikum/* linguist-documentation=true
+evidence/* linguist-documentation=true
 
 CHANGELOG.md export-ignore
 README.md export-ignore
