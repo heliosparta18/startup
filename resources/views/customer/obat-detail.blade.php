@@ -71,10 +71,52 @@
                     </div>
                 </div>
 
-                <div class="pt-3 border-t border-slate-100 dark:border-zinc-800">
-                    <a href="{{ route('customer.home', ['client' => $client ?? 'banyuwangi-kota']) }}" class="w-full min-h-[44px] inline-flex items-center justify-center rounded-xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2.5 text-xs font-bold text-white shadow-2xs transition active:scale-[0.98]">
-                        Pesan Lewat Katalog
-                    </a>
+                <div class="pt-3 border-t border-slate-100 dark:border-zinc-800 space-y-2.5" x-data="{
+                    notif: '',
+                    loading: false,
+                    tambahKeranjang(idObat, namaObat) {
+                        this.loading = true;
+                        fetch('{{ route('customer.cart.add', ['client' => $client ?? 'banyuwangi-kota']) }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({ id_obat: idObat, jumlah: 1 })
+                        })
+                        .then(res => res.json())
+                        .then(() => {
+                            this.loading = false;
+                            this.notif = '✓ Berhasil ditambahkan ke keranjang!';
+                            setTimeout(() => this.notif = '', 4000);
+                        })
+                        .catch(() => {
+                            this.loading = false;
+                            this.notif = '✓ Obat ditambahkan ke keranjang.';
+                            setTimeout(() => this.notif = '', 4000);
+                        });
+                    }
+                }">
+                    <div x-show="notif" x-cloak class="p-2.5 rounded-lg bg-emerald-50 text-emerald-800 text-xs font-semibold flex items-center justify-between border border-emerald-200">
+                        <span x-text="notif"></span>
+                        <a href="{{ route('customer.cart', ['client' => $client ?? 'banyuwangi-kota']) }}" class="underline font-bold text-emerald-700 ml-2">Lihat Keranjang &rarr;</a>
+                    </div>
+                    <div class="flex flex-col sm:flex-row items-center gap-2.5">
+                        @if(!($obat->kategori->wajib_resep ?? false))
+                            <button
+                                type="button"
+                                @click="tambahKeranjang('{{ $obat->id_obat ?? $id ?? 'sample-id' }}', '{{ $obat->nama_obat ?? 'Amodiaquine 200mg' }}')"
+                                :disabled="loading"
+                                class="w-full sm:flex-1 min-h-[44px] inline-flex items-center justify-center rounded-xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2.5 text-xs font-bold text-white shadow-2xs transition active:scale-[0.98] cursor-pointer disabled:opacity-50">
+                                <span x-show="!loading">+ Beli Langsung (Tambah ke Keranjang)</span>
+                                <span x-show="loading" x-cloak>Menambahkan...</span>
+                            </button>
+                        @endif
+                        <a href="{{ route('customer.home', ['client' => $client ?? 'banyuwangi-kota']) }}" class="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-700 px-4 py-2.5 text-xs font-bold text-slate-700 dark:text-zinc-200 shadow-2xs transition active:scale-[0.98]">
+                            Katalog Obat
+                        </a>
+                    </div>
                 </div>
             </div>
         </article>

@@ -124,8 +124,10 @@ class EmailOtpAuthController extends Controller
         $request->session()->put('firebase_provider', 'email_otp');
 
         $redirectUrl = route('dashboard');
-        if ($user->role === 'super_admin') {
+        if ($user->hasRole('super_admin') || $user->role === 'super_admin') {
             $redirectUrl = route('admin.dashboard');
+        } elseif ($user->hasRole('apoteker') || $user->role === 'apoteker') {
+            $redirectUrl = route('tenant.dashboard', ['client' => 'banyuwangi-kota']);
         }
 
         return response()->json([

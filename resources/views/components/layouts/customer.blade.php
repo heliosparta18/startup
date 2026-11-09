@@ -10,7 +10,7 @@
         <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
             <!-- Brand Logo -->
             <div class="flex items-center gap-3">
-                <a href="{{ url('/') }}" class="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold text-lg tracking-tight focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded-lg p-1 min-h-[44px] min-w-[44px]">
+                <a href="{{ route('customer.home', ['client' => $client ?? 'banyuwangi-kota']) }}" class="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold text-lg tracking-tight focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded-lg p-1 min-h-[44px] min-w-[44px]">
                     <img src="/logo.png" alt="OmniPharma" class="h-9 w-9 object-contain drop-shadow-[0_2px_4px_rgba(5,150,105,0.3)]">
                     <span class="font-bold text-slate-900 dark:text-white">OmniPharma</span>
                 </a>
@@ -28,16 +28,21 @@
 
             <!-- Actions: Keranjang & Profile (Touch targets >= 44px) -->
             <div class="flex items-center gap-2 sm:gap-3">
-                <button type="button" class="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 transition active:scale-[0.98]" aria-label="Keranjang Belanja">
+                <a href="{{ route('customer.cart', ['client' => $client ?? 'banyuwangi-kota']) }}" class="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 transition active:scale-[0.98]" aria-label="Keranjang Belanja">
                     <svg class="h-4 w-4 text-slate-500 dark:text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                     </svg>
                     <span class="hidden sm:inline">Keranjang</span>
-                    <span class="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-white text-[11px] font-bold">2</span>
-                </button>
-                <div class="flex h-[44px] w-[44px] items-center justify-center rounded-full bg-emerald-100 text-emerald-800 font-bold text-sm border border-emerald-300 dark:bg-emerald-900/60 dark:text-emerald-200 cursor-default" title="Akun Pelanggan (AD)">
-                    AD
-                </div>
+                </a>
+                @auth
+                    <a href="{{ route('dashboard') }}" class="flex h-[44px] w-[44px] items-center justify-center rounded-full bg-emerald-100 text-emerald-800 font-bold text-sm border border-emerald-300 dark:bg-emerald-900/60 dark:text-emerald-200 cursor-pointer hover:scale-105 transition" title="Dashboard Pengguna ({{ auth()->user()->name }})">
+                        {{ strtoupper(substr(auth()->user()->name ?? 'Pengguna', 0, 2)) }}
+                    </a>
+                @else
+                    <a href="{{ route('login') }}" class="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg bg-emerald-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-emerald-700 transition" title="Masuk ke Akun">
+                        Masuk
+                    </a>
+                @endauth
             </div>
         </div>
 

@@ -10,6 +10,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property string $id_ringkasan
+ * @property string $id_client
+ * @property string $nama_client
+ * @property string|int $total_obat_terjual
+ * @property string $periode_mulai
+ * @property string $periode_selesai
+ * @property int $total_pesanan
+ * @property float $total_pendapatan
+ * @property int $total_retur
+ * @property bool $status_terkunci
+ */
 class RingkasanPeriodePenjualan extends Model
 {
     /** @use HasFactory<RingkasanPeriodePenjualanFactory> */

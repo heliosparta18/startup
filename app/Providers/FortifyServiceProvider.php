@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 use Laravel\Fortify\Fortify;
 
 class FortifyServiceProvider extends ServiceProvider
@@ -18,7 +19,31 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(LoginResponseContract::class, function () {
+            return new class implements LoginResponseContract
+            {
+                public function toResponse($request)
+                {
+                    $user = $request->user();
+                    $redirectUrl = route('dashboard');
+
+                    if ($user?->hasRole('super_admin') || $user?->role === 'super_admin') {
+                        $redirectUrl = route('admin.dashboard');
+                    } elseif ($user?->hasRole('apoteker') || $user?->role === 'apoteker') {
+                        $redirectUrl = route('tenant.dashboard', ['client' => 'banyuwangi-kota']);
+                    }
+
+                    $intended = session()->get('url.intended');
+                    if ($intended && (url($intended) === url('/') || $intended === '/')) {
+                        session()->forget('url.intended');
+                    }
+
+                    return $request->wantsJson()
+                        ? response()->json(['two_factor' => false, 'redirect' => $redirectUrl])
+                        : redirect()->intended($redirectUrl);
+                }
+            };
+        });
     }
 
     /**

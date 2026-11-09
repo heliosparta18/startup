@@ -2,9 +2,32 @@
 
 use App\Http\Controllers\Auth\EmailOtpAuthController;
 use App\Http\Controllers\Auth\FirebaseAuthSessionController;
+use App\Models\KategoriObat;
+use App\Models\Obat;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'welcome')->name('home');
+Route::get('/', function () {
+    if (auth()->check()) {
+        $user = auth()->user();
+        if ($user->hasRole('super_admin') || $user->role === 'super_admin') {
+            return redirect()->route('admin.dashboard');
+        }
+        if ($user->hasRole('apoteker') || $user->role === 'apoteker') {
+            return redirect()->route('tenant.dashboard', ['client' => 'banyuwangi-kota']);
+        }
+
+        return redirect()->route('dashboard');
+    }
+
+    $kategori = KategoriObat::query()->orderBy('nama_kategori')->get();
+    $obat = Obat::query()->with(['kategori', 'stokClient'])->orderBy('nama_obat')->get();
+
+    return view('customer.home', [
+        'client' => 'banyuwangi-kota',
+        'kategori' => $kategori,
+        'obat' => $obat,
+    ]);
+})->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');

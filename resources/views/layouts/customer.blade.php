@@ -10,7 +10,7 @@
         <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
             <!-- Brand Logo -->
             <div class="flex items-center gap-3">
-                <a href="{{ url('/') }}" class="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold text-lg tracking-tight focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded-lg p-1 min-h-[44px] min-w-[44px]">
+                <a href="{{ route('customer.home', ['client' => $client ?? 'banyuwangi-kota']) }}" class="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold text-lg tracking-tight focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded-lg p-1 min-h-[44px] min-w-[44px]">
                     <img src="/logo.png" alt="OmniPharma" class="h-9 w-9 object-contain drop-shadow-[0_2px_4px_rgba(5,150,105,0.3)]">
                     <span class="font-bold text-slate-900 dark:text-white">OmniPharma</span>
                 </a>
@@ -34,10 +34,15 @@
                     </svg>
                     <span class="hidden sm:inline">Keranjang</span>
                 </a>
-                <div class="flex h-[44px] w-[44px] items-center justify-center rounded-full bg-emerald-100 text-emerald-800 font-bold text-sm border border-emerald-300 dark:bg-emerald-900/60 dark:text-emerald-200 cursor-default" title="Akun Pelanggan (AD)">
-                    AD
-                </div>
-            </div>
+                @auth
+                    <a href="{{ route('dashboard') }}" class="flex h-[44px] w-[44px] items-center justify-center rounded-full bg-emerald-100 text-emerald-800 font-bold text-sm border border-emerald-300 dark:bg-emerald-900/60 dark:text-emerald-200 cursor-pointer hover:scale-105 transition" title="Dashboard Pengguna ({{ auth()->user()->name }})">
+                        {{ strtoupper(substr(auth()->user()->name ?? 'Pengguna', 0, 2)) }}
+                    </a>
+                @else
+                    <a href="{{ route('login') }}" class="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg bg-emerald-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-emerald-700 transition" title="Masuk ke Akun">
+                        Masuk
+                    </a>
+                @endauth
         </div>
 
         <!-- Mobile Location Sub-bar (visible only on mobile screens < md) -->

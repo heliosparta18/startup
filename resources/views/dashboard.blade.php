@@ -19,7 +19,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <!-- Brand -->
             <div class="flex items-center gap-3">
-                <a href="{{ route('home') }}" class="flex items-center gap-2.5">
+                <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5">
                     <img src="/logo.png" alt="OmniPharma Logo" class="h-10 w-10 object-contain drop-shadow-[0_2px_6px_rgba(5,150,105,0.35)] hover:scale-105 transition-transform duration-200">
                     <div>
                         <span class="block text-xs font-bold tracking-widest text-emerald-700 uppercase">OmniPharma</span>

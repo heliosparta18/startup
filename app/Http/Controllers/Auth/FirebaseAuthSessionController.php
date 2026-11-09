@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -46,7 +47,7 @@ class FirebaseAuthSessionController extends Controller
             ]);
         } else {
             if (! $user->email_verified_at) {
-                $user->email_verified_at = now();
+                $user->email_verified_at = Carbon::now();
             }
             if ($validated['name'] && $user->name !== $name) {
                 $user->name = $name;
@@ -79,8 +80,10 @@ class FirebaseAuthSessionController extends Controller
             $redirectUrl = route('auth.complete-profile');
         } else {
             $redirectUrl = route('dashboard');
-            if ($user->role === 'super_admin') {
+            if ($user->hasRole('super_admin') || $user->role === 'super_admin') {
                 $redirectUrl = route('admin.dashboard');
+            } elseif ($user->hasRole('apoteker') || $user->role === 'apoteker') {
+                $redirectUrl = route('tenant.dashboard', ['client' => 'banyuwangi-kota']);
             }
         }
 
