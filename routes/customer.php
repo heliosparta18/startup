@@ -1,16 +1,13 @@
 <?php
 
+use App\Http\Requests\Customer\UnggahResepRequest;
 use App\Models\Client;
 use App\Models\KategoriObat;
 use App\Models\Obat;
-use App\Models\Pengguna;
-use App\Models\Pesanan;
 use App\Modules\Catalog\Livewire\PublicCatalog;
-use App\Modules\Ordering\Actions\CancelOrderAction;
-use App\Modules\Ordering\Actions\CreateOrderAction;
-use App\Modules\Ordering\Services\CartService;
-use App\Modules\Payments\Contracts\PaymentGatewayInterface;
-use App\Support\Tenant\TenantContext;
+use App\Modules\Ordering\Http\Controllers\CartController;
+use App\Modules\Ordering\Http\Controllers\CheckoutController;
+use App\Modules\Ordering\Http\Controllers\OrderTrackingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Route;
@@ -42,7 +39,7 @@ Route::get('/obat/{id}', function (string $client, string $id) {
     ]);
 })->name('obat.detail');
 
-Route::post('/resep/unggah', function (string $client, Request $request) {
+Route::post('/resep/unggah', function (string $client, UnggahResepRequest $request) {
     return response()->json([
         'success' => true,
         'message' => 'Resep dokter berhasil diunggah dan masuk antrean verifikasi apoteker.',
@@ -71,148 +68,16 @@ $resolveCustomerSession = function (Request $request): string {
 };
 
 // PERTEMUAN 08: Keranjang Belanja Redis Multi-Tenant
-Route::get('/cart', function (string $client, Request $request, CartService $cartService, TenantContext $tenantContext) use ($resolveCustomerSession) {
-    $clientId = $tenantContext->id();
-    $sessionId = $resolveCustomerSession($request);
-    $items = $cartService->getItems($sessionId, $clientId);
-    $total = $cartService->getTotal($sessionId, $clientId);
+Route::get('/cart', [CartController::class, 'index'])->name('cart');
+Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
+Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
 
-    return view('customer.cart', [
-        'client' => $client,
-        'items' => $items,
-        'total' => $total,
-    ]);
-})->name('cart');
+// PERTEMUAN 09: Checkout Atomik dengan Pessimistic Lock & Idempotency
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
 
-Route::post('/cart/add', function (string $client, Request $request, CartService $cartService, TenantContext $tenantContext) use ($resolveCustomerSession) {
-    $clientId = $tenantContext->id();
-    $sessionId = $resolveCustomerSession($request);
-    $obatId = (string) $request->input('id_obat');
-    $qty = (int) $request->input('jumlah', 1);
-
-    $cartService->addItem($sessionId, $clientId, $obatId, $qty);
-
-    if ($request->wantsJson()) {
-        return response()->json([
-            'success' => true,
-            'message' => 'Obat berhasil ditambahkan ke keranjang.',
-        ]);
-    }
-
-    return redirect()->route('customer.cart', ['client' => $client]);
-})->name('cart.add');
-
-Route::post('/cart/update', function (string $client, Request $request, CartService $cartService, TenantContext $tenantContext) use ($resolveCustomerSession) {
-    $clientId = $tenantContext->id();
-    $sessionId = $resolveCustomerSession($request);
-    $obatId = (string) $request->input('id_obat');
-    $qty = (int) $request->input('jumlah', 1);
-
-    $cartService->updateItem($sessionId, $clientId, $obatId, $qty);
-
-    return response()->json(['success' => true]);
-})->name('cart.update');
-
-Route::post('/cart/remove', function (string $client, Request $request, CartService $cartService, TenantContext $tenantContext) use ($resolveCustomerSession) {
-    $clientId = $tenantContext->id();
-    $sessionId = $resolveCustomerSession($request);
-    $obatId = (string) $request->input('id_obat');
-
-    $cartService->removeItem($sessionId, $clientId, $obatId);
-
-    return response()->json(['success' => true]);
-})->name('cart.remove');
-
-// PERTEMUAN 09: Checkout Atomik dengan Pessimistic Lock & Snapshot Harga
-Route::get('/checkout', function (string $client, Request $request, CartService $cartService, TenantContext $tenantContext) use ($resolveCustomerSession) {
-    $clientId = $tenantContext->id();
-    $sessionId = $resolveCustomerSession($request);
-    $items = $cartService->getItems($sessionId, $clientId);
-
-    if (empty($items)) {
-        return redirect()->route('customer.cart', ['client' => $client])
-            ->with('error', 'Keranjang belanja Anda masih kosong.');
-    }
-
-    $total = $cartService->getTotal($sessionId, $clientId);
-    $clientModel = $tenantContext->get();
-
-    return view('customer.checkout', [
-        'client' => $client,
-        'clientModel' => $clientModel,
-        'items' => $items,
-        'total' => $total,
-    ]);
-})->name('checkout');
-
-Route::post('/checkout', function (string $client, Request $request, CartService $cartService, CreateOrderAction $createOrderAction, TenantContext $tenantContext) use ($resolveCustomerSession) {
-    $clientId = $tenantContext->id();
-    $sessionId = $resolveCustomerSession($request);
-    $items = $cartService->getItems($sessionId, $clientId);
-
-    if (empty($items)) {
-        return redirect()->route('customer.cart', ['client' => $client])
-            ->with('error', 'Keranjang belanja Anda kosong.');
-    }
-
-    $user = $request->user();
-    $userId = $user ? Pengguna::where('telepon_email', $user->email)->value('id_pengguna') : null;
-    $metodeLayanan = (string) $request->input('metode_layanan', 'click_collect');
-
-    try {
-        $pesanan = $createOrderAction->execute($clientId, $userId, $items, $metodeLayanan, $sessionId);
-        $cartService->clear($sessionId, $clientId);
-
-        return redirect()->route('customer.order.payment', [
-            'client' => $client,
-            'id' => $pesanan->id_pesanan,
-        ]);
-
-    } catch (Throwable $e) {
-        return redirect()->route('customer.checkout', ['client' => $client])
-            ->with('error', $e->getMessage());
-    }
-})->name('checkout.process');
-
-// PERTEMUAN 10: Dynamic QRIS Sandbox Generator (EMVCo MPM)
-Route::get('/order/{id}/payment', function (string $client, string $id, PaymentGatewayInterface $gateway, TenantContext $tenantContext) {
-    $pesanan = Pesanan::withoutTenancy()->with(['items', 'pembayaran'])->find($id);
-
-    if (! $pesanan || $pesanan->id_client !== $tenantContext->id()) {
-        abort(404, 'Pesanan tidak ditemukan pada cabang apotek ini.');
-    }
-
-    $qris = $gateway->generateQris($pesanan);
-
-    return view('customer.payment', [
-        'client' => $client,
-        'pesanan' => $pesanan,
-        'qris' => $qris,
-    ]);
-})->name('order.payment');
-
-Route::post('/order/{id}/cancel', function (string $client, string $id, CancelOrderAction $cancelOrderAction, TenantContext $tenantContext) {
-    $pesanan = Pesanan::withoutTenancy()->with('items')->find($id);
-
-    if (! $pesanan || $pesanan->id_client !== $tenantContext->id()) {
-        abort(404, 'Pesanan tidak ditemukan pada cabang apotek ini.');
-    }
-
-    $cancelOrderAction->execute($pesanan, 'Dibatalkan oleh pelanggan');
-
-    return redirect()->route('customer.order.payment', ['client' => $client, 'id' => $pesanan->id_pesanan])
-        ->with('status', 'Pesanan berhasil dibatalkan dan stok telah dikembalikan ke cabang.');
-})->name('order.cancel');
-
-Route::get('/order/{id}/track', function (string $client, string $id, TenantContext $tenantContext) {
-    $pesanan = Pesanan::withoutTenancy()->with(['items', 'pembayaran'])->find($id);
-
-    if (! $pesanan || $pesanan->id_client !== $tenantContext->id()) {
-        abort(404, 'Pesanan tidak ditemukan pada cabang apotek ini.');
-    }
-
-    return view('customer.order-track', [
-        'client' => $client,
-        'pesanan' => $pesanan,
-    ]);
-})->name('order.track');
+// PERTEMUAN 10 & 12: Dynamic QRIS Sandbox Generator & Reverb Order Tracking
+Route::get('/order/{id}/payment', [OrderTrackingController::class, 'payment'])->name('order.payment');
+Route::post('/order/{id}/cancel', [OrderTrackingController::class, 'cancel'])->name('order.cancel');
+Route::get('/order/{id}/track', [OrderTrackingController::class, 'track'])->name('order.track');

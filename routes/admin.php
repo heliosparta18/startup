@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Client;
+use App\Models\Pembayaran;
 use App\Models\RingkasanPeriodePenjualan;
 use App\Modules\Admin\Http\Controllers\StaffController;
 use App\Modules\Reporting\Actions\CloseSalesPeriodAction;
@@ -74,3 +75,30 @@ Route::get('/ekspor-laporan', function (Request $request, SalesReportExportServi
 Route::get('/cabang/{client}/staf', [StaffController::class, 'index'])->name('cabang.staf');
 Route::post('/cabang/{client}/staf/role', [StaffController::class, 'assignRole'])->name('cabang.staf.role');
 Route::post('/cabang/{client}/staf/pengawas', [StaffController::class, 'assignSupervisor'])->name('cabang.staf.pengawas');
+
+Route::get('/kasir-ledger', function () {
+    $pembayarans = Pembayaran::query()->with('pesanan')->orderBy('dibuat_pada', 'desc')->take(50)->get();
+
+    return view('admin.kasir-ledger', [
+        'pembayarans' => $pembayarans,
+    ]);
+})->name('kasir.ledger');
+
+Route::get('/cabang/{client}/pengaturan', function (string $client) {
+    $clients = Client::all();
+
+    return view('admin.pengaturan-cabang', [
+        'client' => $client,
+        'clients' => $clients,
+    ]);
+})->name('cabang.pengaturan');
+
+Route::post('/cabang/{client}/pengaturan', function (string $client, Request $request) {
+    $clientModel = Client::where('id_client', $client)->orWhere('slug', $client)->firstOrFail();
+    $clientModel->update([
+        'nama_client' => (string) $request->input('nama_client', $clientModel->nama_client),
+        'alamat' => (string) $request->input('alamat', $clientModel->alamat),
+    ]);
+
+    return back()->with('success', "Konfigurasi cabang {$clientModel->nama_client} berhasil diperbarui.");
+})->name('cabang.pengaturan.save');

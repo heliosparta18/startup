@@ -40,6 +40,24 @@
             </div>
         </header>
 
+        <!-- Admin Navigation Ribbon -->
+        <nav class="bg-white border-b border-slate-200/80 px-6 lg:px-10 overflow-x-auto no-scrollbar">
+            <div class="max-w-7xl mx-auto flex items-center gap-1 sm:gap-2 text-xs font-bold py-1.5 whitespace-nowrap">
+                <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl {{ request()->routeIs('admin.dashboard') ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'text-slate-600 hover:bg-slate-50' }} min-h-[44px]">
+                    <span>📊 Overview Omzet</span>
+                </a>
+                <a href="{{ route('admin.cabang.staf', ['client' => 'banyuwangi-kota']) }}" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl {{ request()->routeIs('admin.cabang.staf*') ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'text-slate-600 hover:bg-slate-50' }} min-h-[44px]">
+                    <span>👥 Staf &amp; Supervisi APJ</span>
+                </a>
+                <a href="{{ route('admin.kasir.ledger') }}" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl {{ request()->routeIs('admin.kasir.ledger*') ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'text-slate-600 hover:bg-slate-50' }} min-h-[44px]">
+                    <span>💳 Buku Kasir &amp; Ledger</span>
+                </a>
+                <a href="{{ route('admin.cabang.pengaturan', ['client' => 'banyuwangi-kota']) }}" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl {{ request()->routeIs('admin.cabang.pengaturan*') ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'text-slate-600 hover:bg-slate-50' }} min-h-[44px]">
+                    <span>⚙️ Pengaturan Cabang</span>
+                </a>
+            </div>
+        </nav>
+
         <!-- Main Content Body -->
         <main class="flex-1 p-6 lg:p-10 max-w-7xl mx-auto w-full">
             {{ $slot }}

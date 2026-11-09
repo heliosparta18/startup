@@ -63,16 +63,47 @@
                 <a href="{{ route('tenant.dashboard', ['client' => $client ?? 'banyuwangi-kota']) }}" class="flex items-center gap-2 min-h-[44px] px-3 py-2 rounded-xl bg-emerald-50 text-emerald-800 font-bold border border-emerald-200">
                     <span>📋 Verifikasi Resep &amp; Stok FEFO</span>
                 </a>
+                <a href="{{ route('tenant.resep.antrean', ['client' => $client ?? 'banyuwangi-kota']) }}" class="flex items-center gap-2 min-h-[44px] px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-50 font-bold">
+                    <span>📥 Antrean Resep Masuk</span>
+                </a>
+                <a href="{{ route('tenant.stok.fefo', ['client' => $client ?? 'banyuwangi-kota']) }}" class="flex items-center gap-2 min-h-[44px] px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-50 font-bold">
+                    <span>📦 Manajemen Batch FEFO</span>
+                </a>
+                <a href="{{ route('tenant.pasien.index', ['client' => $client ?? 'banyuwangi-kota']) }}" class="flex items-center gap-2 min-h-[44px] px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-50 font-bold">
+                    <span>👤 Rekam Data Pasien</span>
+                </a>
+                <a href="{{ route('tenant.bantuan.index', ['client' => $client ?? 'banyuwangi-kota']) }}" class="flex items-center gap-2 min-h-[44px] px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-50 font-bold">
+                    <span>📖 Panduan SOP Farmasi</span>
+                </a>
                 <a href="{{ route('dashboard') }}" class="flex items-center gap-2 min-h-[44px] px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-50 font-bold">
                     <span>&larr; Kembali ke Dashboard Utama</span>
                 </a>
-                    <span>📋 Verifikasi Resep &amp; Stok FEFO</span>
-                </a>
-                <a href="{{ route('dashboard') }}" class="flex items-center gap-2 min-h-[44px] px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-50 font-bold">
-                    <span>&larr; Kembali ke Dashboard Terpadu</span>
-                </a>
             </div>
         </header>
+
+        <!-- Tenant Pharmacist Navigation Ribbon -->
+        <nav class="bg-white border-b border-slate-200/80 px-4 sm:px-6 lg:px-8 overflow-x-auto no-scrollbar">
+            <div class="max-w-7xl mx-auto flex items-center gap-1 sm:gap-2 text-xs font-bold py-1.5 whitespace-nowrap">
+                <a href="{{ route('tenant.dashboard', ['client' => $client ?? 'banyuwangi-kota']) }}" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl {{ request()->routeIs('tenant.dashboard') ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'text-slate-600 hover:bg-slate-50' }} min-h-[44px]">
+                    <span>📋 Telaah Resep &amp; FEFO</span>
+                </a>
+                <a href="{{ route('tenant.resep.antrean', ['client' => $client ?? 'banyuwangi-kota']) }}" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl {{ request()->routeIs('tenant.resep.antrean*') ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'text-slate-600 hover:bg-slate-50' }} min-h-[44px]">
+                    <span>📥 Antrean Masuk</span>
+                </a>
+                <a href="{{ route('tenant.stok.fefo', ['client' => $client ?? 'banyuwangi-kota']) }}" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl {{ request()->routeIs('tenant.stok.fefo*') ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'text-slate-600 hover:bg-slate-50' }} min-h-[44px]">
+                    <span>📦 Stok Batch FEFO</span>
+                </a>
+                <a href="{{ route('tenant.pasien.index', ['client' => $client ?? 'banyuwangi-kota']) }}" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl {{ request()->routeIs('tenant.pasien.index*') ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'text-slate-600 hover:bg-slate-50' }} min-h-[44px]">
+                    <span>👤 Rekam Pasien</span>
+                </a>
+                <a href="{{ route('tenant.bantuan.index', ['client' => $client ?? 'banyuwangi-kota']) }}" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl {{ request()->routeIs('tenant.bantuan.index*') ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'text-slate-600 hover:bg-slate-50' }} min-h-[44px]">
+                    <span>📖 Panduan SOP</span>
+                </a>
+                <a href="{{ route('customer.home', ['client' => $client ?? 'banyuwangi-kota']) }}" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-50 min-h-[44px]">
+                    <span>🛒 Buka Katalog</span>
+                </a>
+            </div>
+        </nav>
 
         <!-- Main Content Area -->
         <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">

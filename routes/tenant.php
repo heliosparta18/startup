@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Requests\Tenant\VerifikasiResepRequest;
 use App\Models\Client;
 use App\Models\Obat;
+use App\Models\Pengguna;
 use App\Models\Pesanan;
 use App\Models\Resep;
 use App\Models\RingkasanPeriodePenjualan;
@@ -58,7 +60,22 @@ Route::get('/stok-fefo', function (string $client, StockFefoService $fefoService
     ]);
 })->name('stok.fefo');
 
-Route::post('/resep/{id}/verifikasi', function (string $client, string $id, Request $request) {
+Route::get('/bantuan', function (string $client) {
+    return view('tenant.bantuan', [
+        'client' => $client,
+    ]);
+})->name('bantuan.index');
+
+Route::get('/pasien', function (string $client) {
+    $pasiens = Pengguna::where('peran', 'pelanggan')->get();
+
+    return view('tenant.pasien', [
+        'client' => $client,
+        'pasiens' => $pasiens,
+    ]);
+})->name('pasien.index');
+
+Route::post('/resep/{id}/verifikasi', function (string $client, string $id, VerifikasiResepRequest $request) {
     $action = $request->input('action', 'disetujui');
     $catatan = $request->input('catatan', 'Resep asli dan masih berlaku.');
 
