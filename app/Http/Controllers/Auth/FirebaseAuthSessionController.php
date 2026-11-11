@@ -83,7 +83,7 @@ class FirebaseAuthSessionController extends Controller
             if ($user->hasRole('super_admin') || $user->role === 'super_admin') {
                 $redirectUrl = route('admin.dashboard');
             } elseif ($user->hasRole('apoteker') || $user->role === 'apoteker') {
-                $branchSlug = method_exists($user, 'getClientSlug') ? $user->getClientSlug() : 'banyuwangi-kota';
+                $branchSlug = $user->getClientSlug();
                 $redirectUrl = route('tenant.dashboard', ['client' => $branchSlug]);
             }
         }
