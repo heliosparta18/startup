@@ -118,6 +118,7 @@
                     const userName = result.user.displayName || result.user.email;
                     if (window.OmniFirebaseAuth?.showToast) {
                         window.OmniFirebaseAuth.showToast(`Selamat datang, ${userName}!`, 'success');
+                    }
                     this.isRedirecting = true;
                     setTimeout(() => {
                         window.location.href = result.session?.redirect || '{{ route('dashboard') }}';
@@ -186,37 +187,6 @@
                     <p class="text-xs sm:text-sm text-slate-500 mt-1">Masukkan email atau username dan kata sandi untuk mengakses portal.</p>
                 </div>
 
-                <!-- Tombol Masuk dengan Akun Google (One-Click Langsung) -->
-                <button
-                    type="button"
-                    @click="handleGoogleLogin()"
-                    :disabled="loadingGoogle || loadingSubmit"
-                    aria-label="Masuk Cepat dengan Akun Google"
-                    class="w-full inline-flex items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 hover:border-slate-400 active:bg-slate-100 transition min-h-[46px] cursor-pointer disabled:opacity-50"
-                >
-                    <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
-                        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.27 21.39 7.35 24 12 24z"/>
-                        <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
-                        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.35 0 3.27 2.61 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-                    </svg>
-                    <span x-show="!loadingGoogle">Masuk Cepat dengan Akun Google</span>
-                    <span x-show="loadingGoogle" x-cloak class="flex items-center gap-2">
-                        <svg class="animate-spin h-4 w-4 text-emerald-600" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
-                        <span>Menghubungkan Akun Google...</span>
-                    </span>
-                </button>
-
-                <!-- Pembatas Visual "Atau" -->
-                <div class="relative my-5">
-                    <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t border-slate-200"></div>
-                    </div>
-                    <div class="relative flex justify-center text-xs uppercase">
-                        <span class="bg-white px-3 text-slate-400 font-semibold tracking-wider">Atau Masuk dengan Kredensial</span>
-                    </div>
-                </div>
-
                 <!-- Notifikasi Status Sesi & Validasi Server -->
                 @if (session('status'))
                     <div class="mb-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800">
@@ -241,11 +211,11 @@
 
                     <!-- Input 1: Email atau Username -->
                     <div>
-                        <label for="identifier" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                        <label for="login_identifier" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
                             Email atau Username
                         </label>
                         <input
-                            id="identifier"
+                            id="login_identifier"
                             name="email"
                             type="text"
                             x-model="identifier"
@@ -260,7 +230,7 @@
                     <!-- Input 2: Kata Sandi -->
                     <div>
                         <div class="flex items-center justify-between mb-1">
-                            <label for="password" class="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                            <label for="login_password" class="block text-xs font-bold uppercase tracking-wider text-slate-700">
                                 Kata Sandi
                             </label>
                             @if (Route::has('password.request'))
@@ -271,7 +241,7 @@
                         </div>
                         <div class="relative">
                             <input
-                                id="password"
+                                id="login_password"
                                 name="password"
                                 :type="showPassword ? 'text' : 'password'"
                                 x-model="password"
@@ -298,7 +268,7 @@
                             <input
                                 type="checkbox"
                                 name="remember"
-                                id="remember"
+                                id="login_remember"
                                 class="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-600"
                             />
                             <span class="text-xs text-slate-700 font-medium">Ingat sesi di perangkat ini</span>
@@ -310,7 +280,7 @@
                         <button
                             type="submit"
                             :disabled="loadingSubmit || loadingGoogle"
-                            class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3.5 text-sm font-bold text-white shadow-sm hover:bg-emerald-700 active:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 transition min-h-[46px] cursor-pointer disabled:opacity-50"
+                            class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3.5 text-sm font-bold text-white shadow-xs hover:bg-emerald-700 active:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 transition min-h-[46px] cursor-pointer disabled:opacity-50"
                         >
                             <svg x-show="!loadingSubmit" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
                             <svg x-show="loadingSubmit" x-cloak class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
@@ -319,6 +289,37 @@
                         </button>
                     </div>
                 </form>
+
+                <!-- Pembatas Visual "Atau Masuk dengan" -->
+                <div class="relative my-4">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-slate-200"></div>
+                    </div>
+                    <div class="relative flex justify-center text-xs uppercase">
+                        <span class="bg-white px-3 text-slate-400 font-semibold tracking-wider">Atau Masuk dengan</span>
+                    </div>
+                </div>
+
+                <!-- Tombol Masuk dengan Akun Google (Di Bawah Form) -->
+                <button
+                    type="button"
+                    @click="handleGoogleLogin()"
+                    :disabled="loadingGoogle || loadingSubmit"
+                    aria-label="Masuk dengan Akun Google"
+                    class="w-full inline-flex items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 hover:border-slate-400 active:bg-slate-100 transition min-h-[46px] cursor-pointer disabled:opacity-50"
+                >
+                    <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+                        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.27 21.39 7.35 24 12 24z"/>
+                        <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+                        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.35 0 3.27 2.61 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+                    </svg>
+                    <span x-show="!loadingGoogle">Masuk dengan Akun Google</span>
+                    <span x-show="loadingGoogle" x-cloak class="flex items-center gap-2">
+                        <svg class="animate-spin h-4 w-4 text-emerald-600" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+                        <span>Menghubungkan Akun Google...</span>
+                    </span>
+                </button>
 
                 <!-- Tautan Daftar -->
                 <div class="mt-4 flex flex-wrap items-center justify-center gap-1 text-center">

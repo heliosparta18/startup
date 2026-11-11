@@ -265,35 +265,9 @@
                     <p class="text-xs sm:text-sm text-slate-500 mt-1">Daftar instan dengan Google atau isi username & email dengan verifikasi OTP.</p>
                 </div>
 
-                <!-- Tombol Daftar Cepat dengan Google -->
-                <button
-                    type="button"
-                    @click="handleGoogleRegister()"
-                    :disabled="loadingGoogle || loadingRegister || loadingSendOtp"
-                    aria-label="Daftar cepat dengan Akun Google"
-                    class="w-full inline-flex items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 hover:border-slate-400 active:bg-slate-100 transition min-h-[46px] cursor-pointer disabled:opacity-50"
-                >
-                    <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
-                        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.27 21.39 7.35 24 12 24z"/>
-                        <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
-                        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.35 0 3.27 2.61 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-                    </svg>
-                    <span x-show="!loadingGoogle">Daftar Cepat dengan Akun Google</span>
-                    <span x-show="loadingGoogle" x-cloak class="flex items-center gap-2">
-                        <svg class="animate-spin h-4 w-4 text-emerald-600" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
-                        <span>Menghubungkan Akun Google...</span>
-                    </span>
-                </button>
-
-                <!-- Pembatas Visual -->
-                <div class="relative my-5">
-                    <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t border-slate-200"></div>
-                    </div>
-                    <div class="relative flex justify-center text-xs uppercase">
-                        <span class="bg-white px-2 sm:px-3 text-slate-400 font-semibold tracking-wider text-[11px] sm:text-xs">Atau Isi Data Registrasi Pasien</span>
-                    </div>
+                <!-- Heading Subtitle -->
+                <div class="mb-4">
+                    <span class="text-xs uppercase font-bold text-slate-400 tracking-wider">Isi Data Registrasi Pasien</span>
                 </div>
 
                 <!-- Banner Informasi OTP Mode Demo (Jika sudah dikirim) -->
@@ -309,11 +283,11 @@
                 <div x-show="!otpStep" class="space-y-3.5">
                     <!-- Input 1: Username -->
                     <div>
-                        <label for="username" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                        <label for="reg_username" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
                             Username Pasien
                         </label>
                         <input
-                            id="username"
+                            id="reg_username"
                             type="text"
                             x-model="username"
                             required
@@ -325,11 +299,11 @@
 
                     <!-- Input 2: Email -->
                     <div>
-                        <label for="email" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                        <label for="reg_email" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
                             Alamat Email (Untuk Pengiriman OTP)
                         </label>
                         <input
-                            id="email"
+                            id="reg_email"
                             type="email"
                             inputmode="email"
                             autocomplete="email"
@@ -342,12 +316,12 @@
 
                     <!-- Input 3: Kata Sandi -->
                     <div>
-                        <label for="password" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                        <label for="reg_password" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
                             Kata Sandi (Min. 6 Karakter)
                         </label>
                         <div class="relative">
                             <input
-                                id="password"
+                                id="reg_password"
                                 :type="showPassword ? 'text' : 'password'"
                                 autocomplete="new-password"
                                 x-model="password"
@@ -369,11 +343,11 @@
 
                     <!-- Input 4: Konfirmasi Kata Sandi -->
                     <div>
-                        <label for="password_confirmation" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                        <label for="reg_password_confirmation" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
                             Konfirmasi Kata Sandi
                         </label>
                         <input
-                            id="password_confirmation"
+                            id="reg_password_confirmation"
                             :type="showPassword ? 'text' : 'password'"
                             autocomplete="new-password"
                             x-model="passwordConfirmation"
@@ -397,6 +371,37 @@
                             <span x-show="loadingSendOtp" x-cloak>Mengirimkan Kode OTP...</span>
                         </button>
                     </div>
+
+                    <!-- Pembatas Visual "Atau Daftar dengan" -->
+                    <div class="relative my-4">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-slate-200"></div>
+                        </div>
+                        <div class="relative flex justify-center text-xs uppercase">
+                            <span class="bg-white px-3 text-slate-400 font-semibold tracking-wider">Atau Daftar dengan</span>
+                        </div>
+                    </div>
+
+                    <!-- Tombol Daftar Cepat dengan Google (Di Bawah Form) -->
+                    <button
+                        type="button"
+                        @click="handleGoogleRegister()"
+                        :disabled="loadingGoogle || loadingRegister || loadingSendOtp"
+                        aria-label="Daftar dengan Akun Google"
+                        class="w-full inline-flex items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 hover:border-slate-400 active:bg-slate-100 transition min-h-[46px] cursor-pointer disabled:opacity-50"
+                    >
+                        <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+                            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.27 21.39 7.35 24 12 24z"/>
+                            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+                            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.35 0 3.27 2.61 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+                        </svg>
+                        <span x-show="!loadingGoogle">Daftar Cepat dengan Akun Google</span>
+                        <span x-show="loadingGoogle" x-cloak class="flex items-center gap-2">
+                            <svg class="animate-spin h-4 w-4 text-emerald-600" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+                            <span>Menghubungkan Akun Google...</span>
+                        </span>
+                    </button>
                 </div>
 
                 <!-- TAHAP 2: VALIDASI KODE OTP EMAIL -->
