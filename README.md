@@ -74,6 +74,24 @@ Progres Integrasi Sistem:
   - Perbaikan dan integrasi stok obat cabang pada skenario pengujian checkout (`tests/Feature/CartCheckoutPaymentTest.php`).
   - Standarisasi kode menggunakan Laravel Pint (`c397112`).
 
+### 5. Progresi Status Pesanan & Sistem Antrean Virtual (Click & Collect)
+- [x] **Tombol Progresi Status Pesanan di Tenant (FR-APT-01 / UC-05):**
+  - Antarmuka aksi bagi apoteker/staf cabang untuk memajukan siklus penyiapan obat: `menunggu_pembayaran` $\rightarrow$ `diproses` $\rightarrow$ `siap_diambil` $\rightarrow$ `selesai` (atau `dibatalkan`).
+  - Endpoint `POST /cabang/{client}/pesanan/{id}/progres-status` dengan pemancaran event real-time Laravel Reverb `OrderStatusUpdated`.
+  - Akses cepat tombol progresi status langsung dari Dashboard Cabang (`tenant/dashboard.blade.php`) dan Panel Antrean (`tenant/antrean.blade.php`).
+- [x] **Slot Jam Pengambilan Click & Collect (FR-PEL-06 / UC-11):**
+  - Pemilihan jadwal slot jam pengambilan obat pada form checkout (`customer/checkout.blade.php`) saat metode "Ambil di Apotek" dipilih (pilihan: *15 Menit Lagi (Segera)*, *10:00 - 12:00*, *13:00 - 15:00*, *16:00 - 18:00*, *19:00 - 21:00 WIB*).
+  - Penyimpanan nilai `slot_waktu` secara atomik di tabel `pesanan`.
+- [x] **Antrean Virtual Apotek & Tiket Pasien (Fitur Unggulan SRS 2.3):**
+  - Penomoran antrean otomatis (`A-001`, `A-002`, dst.) per hari per cabang pada transaksi baru.
+  - Kartu Antrean Virtual di layar pelacakan pelanggan (`customer/order-track.blade.php`) yang menampilkan: Nomor Antrean Anda, Antrean Berjalan (sedang dilayani), Sisa Giliran di Depan Pasien, Estimasi Waktu Penyiapan Obat (~5 menit/antrean), dan Rincian Obat yang Sedang Dipersiapkan.
+- [x] **Manajemen Antrean & Walk-In untuk Apoteker:**
+  - Panel kontrol apoteker di `/cabang/{client}/antrean` untuk memanggil antrean berikutnya (*Panggil Berikutnya +1* via `POST /antrean/update`), mengatur nomor antrean manual, dan menerbitkan tiket antrean baru untuk pasien datang langsung (*Walk-In* via `POST /antrean/tambah-walkin`).
+- [x] **Live Monitoring Progres Obat Super Admin (Read-Only Mode):**
+  - Portal pengawasan eksekutif di `/admin/monitoring-progres` (`admin.progres.index`) dengan KPI akumulasi obat sedang diracik lintas cabang, filter cabang apotek, serta rincian nama obat & kuantitas yang sedang diproses. Super Admin murni berada dalam status pengawasan (*read-only*) tanpa tombol manipulasi status.
+- [x] **Automated Test Suite:**
+  - `tests/Feature/QueueAndStatusProgressionTest.php` memvalidasi seluruh alur penomoran antrean, pemilihan slot waktu, progresi status apoteker, mutasi antrean berjalan, penerbitan tiket walk-in, dan akses monitoring Super Admin.
+
 ---
 
 ## Sisa Pekerjaan & Backlog Penyempurnaan (~2%)
@@ -154,3 +172,64 @@ Progres Integrasi Sistem:
 ```bash
 php artisan test
 ```
+
+---
+
+## Pembaruan Antarmuka & RBAC Dashboard (Sesuai Desain Halaman Login)
+
+1. **Penyelarasan Desain Visual (Theme Harmonization):**
+   - Mengadopsi palet warna resmi halaman login: **Deep Forest Spruce** (`#0A231E` s/d `#0E352E`), aksen **Citron/Lime** (`#D4F94E`), dan tombol aksi utama **Emerald Green** (`bg-emerald-600 hover:bg-emerald-700`).
+   - Menghilangkan warna pelangi yang acak (ungu, kuning/amber, biru) pada dashboard utama, digantikan dengan kartu-kartu bersih berstandar medis farmasi (`rounded-3xl border-slate-200/90 hover:border-emerald-500 hover:shadow-lg`).
+   - Penambahan badge kepatuhan legal: `Standar Permenkes RI No. 73/2016` dan status verifikasi SIA/SIPA.
+
+2. **Pembatasan Hak Akses Menu Dashboard (Role-Based Access Control):**
+   - **Role Apoteker Cabang (Banyuwangi Kota & Rogojampi):**
+     - Menu **Super Admin Eksekutif** dan **Live Monitoring Pusat** disembunyikan total.
+     - Hanya menampilkan modul operasional apoteker cabang masing-masing: *Telaah Resep Dokter & FEFO*, *Antrean & Progres Status Cabang*, *Manajemen Stok Batch FEFO*, *Antrean Resep Masuk*, *Rekam Data Pasien*, dan *Katalog Publik Cabang*.
+   - **Role Super Admin:**
+     - Menampilkan modul manajerial pusat: *Super Admin Eksekutif & KPI*, *Live Monitoring Obat Lintas Cabang (Read-Only)*, *Buku Kasir & Ledger Finansial*, *Inspeksi Cabang BWI & Rogojampi*, serta *Supervisi Staf & SIPA*.
+   - **Role Pelanggan (Customer):**
+     - Menampilkan katalog belanja multi-cabang, keranjang dengan slot jam ambil (*Click & Collect*), dan lacak nomor antrean virtual.
+
+
+---
+
+## Panduan Push ke Git Remote (Branch Per Fitur)
+
+Untuk mendorong fitur-fitur baru ke remote repository sesuai pembagian branch:
+
+### 1. Fitur Tombol Progresi Status (`feat/status-progress`)
+```bash
+git checkout -b feat/status-progress
+git add app/Http/Controllers/TenantController.php routes/tenant.php resources/views/tenant/antrean.blade.php resources/views/tenant/dashboard.blade.php resources/views/admin/monitoring-progres.blade.php tests/Feature/QueueAndStatusProgressionTest.php
+git commit -m "feat(tenant): implementasi tombol progresi status pesanan apoteker dan live monitoring read-only super admin"
+git push -u origin feat/status-progress
+```
+
+### 2. Fitur Slot Jam Ambil & Antrean Virtual (`feat/antrean`)
+```bash
+git checkout -b feat/antrean
+git add database/migrations/2026_11_11_000002_add_antrean_and_slot_waktu_to_pesanan_table.php app/Models/Pesanan.php app/Modules/Ordering/Http/Controllers/CheckoutController.php app/Modules/Ordering/Actions/CreateOrderAction.php app/Modules/Ordering/Http/Controllers/OrderTrackingController.php resources/views/customer/checkout.blade.php resources/views/customer/order-track.blade.php resources/views/tenant/antrean.blade.php
+git commit -m "feat(antrean): tambahkan slot jam pengambilan click & collect serta antrean virtual pasien dan manajemen loket apoteker"
+git push -u origin feat/antrean
+```
+
+### 3. Fitur Penyelarasan Desain & RBAC Dashboard (`feat/roles-dashboard`)
+```bash
+git checkout feat/roles-dashboard
+git add .
+git commit -m "feat(ui): harmonisasi visual palet hijau login permenkes dan pengetatan RBAC dashboard multi-role"
+git push -u origin feat/roles-dashboard
+```
+
+---
+
+## Akun Demo Praktikum
+
+| Role | Email / Akun | Cabang Terhubung | Kata Sandi |
+| :--- | :--- | :--- | :--- |
+| **Super Admin** | `daffa@omnipharma.test` | Kantor Pusat (Headquarter) | `password` |
+| **Apoteker Banyuwangi** | `bambang@omnipharma.test` | Cabang Banyuwangi Kota (`banyuwangi-kota`) | `password` |
+| **Apoteker Rogojampi** | `dewi@omnipharma.test` | Cabang Rogojampi (`rogojampi`) | `password` |
+| **Kasir Banyuwangi** | `kasir.bwi@omnipharma.test` | Cabang Banyuwangi Kota (`banyuwangi-kota`) | `password` |
+| **Pelanggan / Pasien** | `candi@omnipharma.test` | Pelanggan Publik | `password` |

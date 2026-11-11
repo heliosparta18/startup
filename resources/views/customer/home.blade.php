@@ -41,6 +41,36 @@
                 <span>&rarr;</span>
             </a>
         </nav>
+
+        <!-- Hero Banner Publik: Nuansa Hijau Deep Spruce Sesuai Halaman Login -->
+        <div class="rounded-3xl bg-gradient-to-br from-[#0A231E] via-[#0E352E] to-[#0A231E] text-white p-6 sm:p-8 lg:p-10 shadow-xl border border-emerald-500/20 relative overflow-hidden">
+            <div class="absolute -top-24 -left-24 w-72 h-72 rounded-full border border-emerald-500/10 pointer-events-none"></div>
+            <div class="absolute -bottom-24 -right-24 w-80 h-80 rounded-full border border-emerald-500/15 pointer-events-none"></div>
+
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+                <div>
+                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-emerald-200 border border-emerald-500/30">
+                        <span class="h-1.5 w-1.5 rounded-full bg-[#D4F94E]"></span>
+                        Standar Permenkes RI No. 73/2016 • SIA &amp; SIP Terverifikasi
+                    </span>
+
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white mt-3 leading-tight">
+                        Pelayanan Farmasi Terpercaya &amp; Cepat
+                    </h1>
+                    <p class="text-xs sm:text-sm text-emerald-200/90 mt-1 max-w-2xl leading-relaxed">
+                        Sedia obat bebas, suplemen, serta penebusan resep dokter resmi dari gerai <strong>Cabang {{ ucwords(str_replace('-', ' ', $client ?? 'Banyuwangi Kota')) }}</strong>.
+                    </p>
+                </div>
+
+                <div class="shrink-0 flex items-center gap-2">
+                    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-[#D4F94E] font-bold text-xs backdrop-blur-xs">
+                        <span class="w-2 h-2 rounded-full bg-[#D4F94E] animate-pulse"></span>
+                        Loket Cabang Buka
+                    </span>
+                </div>
+            </div>
+        </div>
+
         <!-- Search & Filter Controls: Stacked on phone, reflows on tablet/desktop -->
         <section class="space-y-3">
             <!-- Search Bar -->

@@ -55,6 +55,38 @@
             </div>
         </div>
 
+        <!-- Hero Banner Eksekutif Super Admin: Nuansa Hijau Deep Spruce Sesuai Menu Login -->
+        <div class="rounded-3xl bg-gradient-to-br from-[#0A231E] via-[#0E352E] to-[#0A231E] text-white p-6 sm:p-8 lg:p-10 shadow-xl border border-emerald-500/20 relative overflow-hidden">
+            <div class="absolute -top-24 -left-24 w-72 h-72 rounded-full border border-emerald-500/10 pointer-events-none"></div>
+            <div class="absolute -bottom-24 -right-24 w-80 h-80 rounded-full border border-emerald-500/15 pointer-events-none"></div>
+
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+                <div>
+                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-emerald-200 border border-emerald-500/30">
+                        <span class="h-1.5 w-1.5 rounded-full bg-[#D4F94E]"></span>
+                        Standar Permenkes RI No. 73/2016 • Konsolidasi Multi-Cabang
+                    </span>
+
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white mt-3 leading-tight">
+                        Ringkasan Eksekutif &amp; Audit Finansial
+                    </h1>
+                    <p class="text-xs sm:text-sm text-emerald-200/90 mt-1 max-w-2xl leading-relaxed">
+                        Konsolidasi omzet real-time, audit rekonsiliasi kasir, pengawasan APJ, dan manajemen multi-cabang farmasi terintegrasi.
+                    </p>
+                </div>
+
+                <div class="shrink-0 flex flex-wrap items-center gap-3">
+                    <a href="{{ route('admin.progres.index') }}" class="inline-flex min-h-[44px] items-center gap-2 px-4 py-2.5 rounded-xl bg-[#D4F94E] hover:bg-[#c2e83b] text-[#0A231E] font-black text-xs shadow-xs transition">
+                        <span>Monitoring Progres Obat</span>
+                        <span class="text-xs">&rarr;</span>
+                    </a>
+                    <a href="{{ route('admin.kasir.ledger') }}" class="inline-flex min-h-[44px] items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs backdrop-blur-xs transition">
+                        <span>Buku Kasir &amp; Ledger</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <!-- 3 Summary KPI Cards: Nuansa Hijau & Putih Bersih Sesuai Login -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
@@ -106,6 +138,26 @@
                 </div>
             </div>
 
+        </div>
+
+        <!-- Banner Monitoring Progres Obat Real-Time (Super Admin View) -->
+        <div class="rounded-2xl bg-gradient-to-r from-[#0A231E] via-[#0E352E] to-emerald-950 p-5 text-white shadow-xs border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-3.5">
+                <div class="h-12 w-12 rounded-xl bg-[#D4F94E] text-[#0A231E] flex items-center justify-center font-black text-xl shadow-xs shrink-0">
+                    ⏱️
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-[#D4F94E]">Live Feed Antrean &amp; Peracikan Farmasi</span>
+                        <span class="h-1.5 w-1.5 rounded-full bg-[#D4F94E] animate-ping"></span>
+                    </div>
+                    <h2 class="text-base font-bold text-white mt-0.5">Pantau Obat yang Sedang Diproses &amp; Antrean Berjalan</h2>
+                    <p class="text-xs text-zinc-300">Lihat status penyiapan obat dan antrean aktif pasien di seluruh cabang apotek secara transparan.</p>
+                </div>
+            </div>
+            <a href="{{ route('admin.progres.index') }}" class="inline-flex min-h-[44px] items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#D4F94E] hover:bg-[#c2e83b] text-[#0A231E] font-black text-xs shadow-xs transition shrink-0">
+                <span>Buka Monitoring Progres &rarr;</span>
+            </a>
         </div>
 
         <!-- Section: Agregasi Penjualan & Kondisi Stok Cabang (Periode 01-16 Sep 2026) -->

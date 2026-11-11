@@ -11,7 +11,9 @@ Route::get('/', function () {
             return redirect()->route('admin.dashboard');
         }
         if ($user->hasRole('apoteker') || $user->role === 'apoteker') {
-            return redirect()->route('tenant.dashboard', ['client' => 'banyuwangi-kota']);
+            $branchSlug = method_exists($user, 'getClientSlug') ? $user->getClientSlug() : 'banyuwangi-kota';
+
+            return redirect()->route('tenant.dashboard', ['client' => $branchSlug]);
         }
 
         return redirect()->route('dashboard');

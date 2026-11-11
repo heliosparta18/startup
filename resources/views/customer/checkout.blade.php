@@ -77,6 +77,41 @@
                                 <span class="text-xs text-zinc-500 dark:text-zinc-400 mt-2">Diantar langsung ke alamat Anda (radius 10km).</span>
                             </label>
                         </div>
+
+                        <!-- Pilihan Slot Jadwal Pengambilan (Click & Collect — FR-PEL-06) -->
+                        <div x-show="metodeLayanan === 'click_collect'" class="mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-800 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <label class="block text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+                                    ⏱️ Pilih Slot Jam Pengambilan Obat
+                                </label>
+                                <span class="text-[11px] font-semibold text-zinc-500">Nomor antrean virtual otomatis diterbitkan</span>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                @php
+                                    $slots = [
+                                        '15 Menit Lagi (Segera)',
+                                        'Hari ini, 10:00 - 12:00 WIB',
+                                        'Hari ini, 13:00 - 15:00 WIB',
+                                        'Hari ini, 16:00 - 18:00 WIB',
+                                        'Hari ini, 19:00 - 21:00 WIB',
+                                    ];
+                                @endphp
+                                @foreach($slots as $idx => $slot)
+                                    <label class="cursor-pointer border rounded-xl p-3 flex items-center gap-3 transition min-h-[44px] hover:border-emerald-500 hover:bg-emerald-50/20 dark:border-zinc-700">
+                                        <input type="radio" name="slot_waktu" value="{{ $slot }}" {{ $idx === 0 ? 'checked' : '' }} class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
+                                        <span class="text-xs font-semibold text-zinc-800 dark:text-zinc-200">{{ $slot }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <!-- Input Alamat Pengantaran (Delivery) -->
+                        <div x-show="metodeLayanan === 'delivery'" x-cloak class="mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-800 space-y-2">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+                                🛵 Alamat Pengantaran Obat
+                            </label>
+                            <textarea name="alamat_pengantaran" rows="2" placeholder="Tuliskan alamat lengkap pengantaran dan patokan rumah..." class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+                        </div>
                     </div>
 
                     <!-- Informasi Pemesan -->
@@ -90,7 +125,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">Nomor WhatsApp / HP</label>
-                            <input type="tel" name="telepon" required value="081234567890" class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <input type="tel" name="telepon" required value="{{ auth()->user()->phone ?? old('telepon', '') }}" placeholder="Contoh: 081234567890" class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">Catatan Tambahan untuk Apoteker (Opsional)</label>
