@@ -17,15 +17,14 @@
 | **FR-PEL-03** | Riwayat Pesanan Pribadi Pelanggan | UC-03 | `Ordering` | `routes/customer.php`, `customer/order-track.blade.php` | `EndToEndOrderFlowTest.php` | **SEBAGIAN** (Track by ID) |
 | **FR-PEL-04** | Lacak Status Pesanan Real-Time (WebSockets) | UC-04 | `Ordering`, `Prescription` | `OrderTrackingController.php`, `customer/order-track.blade.php`, `OrderStatusUpdated.php` | `ReverbOrderStatusBroadcastTest.php` | **LULUS** |
 | **FR-PEL-05** | Cek Status Resep (Badge Bebas/Wajib Resep) & Stok | UC-10 | `Catalog` | `customer/home.blade.php`, `customer/obat-detail.blade.php`, `KategoriObat.php` | `GuestSessionAndCatalogTest.php` | **LULUS** |
-| **FR-PEL-06** | Reservasi & Ambil Tanpa Antre (*Click & Collect*) | UC-11 | `Ordering` | `checkout.blade.php`, `CreateOrderAction.php` (`metode_layanan: click_collect`) | `CartCheckoutPaymentTest.php` | **LULUS** |
-
+| **FR-PEL-06** | Reservasi & Ambil Tanpa Antre (*Click & Collect*) + Slot Waktu & Antrean Virtual | UC-11 | `Ordering` | `checkout.blade.php`, `CreateOrderAction.php`, `order-track.blade.php` | `CartCheckoutPaymentTest.php`, `QueueAndStatusProgressionTest.php` | **LULUS** |
 ---
 
 ### 2. Peran Apoteker & Staf Cabang (Tenant)
 
 | Kode Req | Ringkasan Kebutuhan SRS | Use Case | Bounded Context | File Implementasi | File Automated Test | Status |
 |---|---|---|---|---|---|:---:|
-| **FR-APT-01** | Papan Pesanan Masuk & Antrean Pemrosesan | UC-05 | `Ordering`, `Prescription` | `tenant/dashboard.blade.php`, `routes/tenant.php` | `EndToEndOrderFlowTest.php` | **LULUS** |
+| **FR-APT-01** | Papan Pesanan Masuk, Tombol Progresi Status & Antrean Berjalan | UC-05 | `Ordering`, `Prescription` | `tenant/dashboard.blade.php`, `tenant/antrean.blade.php`, `routes/tenant.php` | `EndToEndOrderFlowTest.php`, `QueueAndStatusProgressionTest.php` | **LULUS** |
 | **FR-APT-02** | Verifikasi Resep Dokter & Keabsahan SIP | UC-02 | `Prescription` | `VerifyPrescriptionAction.php`, `VerifikasiResepRequest.php`, `tenant/verifikasi-resep.blade.php` | `EndToEndOrderFlowTest.php` | **LULUS** |
 | **FR-APT-03** | Kelola Stok & Rotasi FEFO (*First Expired First Out*) | UC-06 | `Catalog` | `StockFefoService.php`, `tenant/stok-fefo.blade.php`, `tenant/dashboard.blade.php` | `FefoStockRotationTest.php` | **LULUS** |
 | **FR-APT-04** | Peringatan Stok Kritis & Kedaluwarsa Dini (H-30/H-7) | UC-12 | `Catalog` | `StockFefoService.php`, `tenant/stok-fefo.blade.php` | `FefoStockRotationTest.php` | **LULUS** |

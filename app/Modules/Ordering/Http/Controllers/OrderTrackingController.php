@@ -8,6 +8,7 @@ use App\Modules\Ordering\Actions\CancelOrderAction;
 use App\Modules\Payments\Contracts\PaymentGatewayInterface;
 use App\Support\Tenant\TenantContext;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class OrderTrackingController extends Controller
@@ -60,9 +61,17 @@ class OrderTrackingController extends Controller
             abort(404, 'Pesanan tidak ditemukan pada cabang apotek ini.');
         }
 
+        $antreanBerjalan = Cache::get("antrean_berjalan:{$pesanan->id_client}", 'A-001');
+
+        $nomorSaya = (int) preg_replace('/\D/', '', (string) ($pesanan->nomor_antrean ?? '1'));
+        $nomorAktif = (int) preg_replace('/\D/', '', (string) $antreanBerjalan);
+        $sisaAntrean = max(0, $nomorSaya - $nomorAktif);
+
         return view('customer.order-track', [
             'client' => $client,
             'pesanan' => $pesanan,
+            'antreanBerjalan' => $antreanBerjalan,
+            'sisaAntrean' => $sisaAntrean,
         ]);
     }
 }
