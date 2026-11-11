@@ -83,7 +83,8 @@ class FirebaseAuthSessionController extends Controller
             if ($user->hasRole('super_admin') || $user->role === 'super_admin') {
                 $redirectUrl = route('admin.dashboard');
             } elseif ($user->hasRole('apoteker') || $user->role === 'apoteker') {
-                $redirectUrl = route('tenant.dashboard', ['client' => 'banyuwangi-kota']);
+                $branchSlug = $user->getClientSlug();
+                $redirectUrl = route('tenant.dashboard', ['client' => $branchSlug]);
             }
         }
 
@@ -104,18 +105,22 @@ class FirebaseAuthSessionController extends Controller
     /**
      * Keluarkan sesi pengguna dari Laravel.
      */
-    public function destroy(Request $request): JsonResponse
+    public function destroy(Request $request): JsonResponse|RedirectResponse
     {
         Auth::logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Sesi berhasil diakhiri.',
-            'redirect' => route('login'),
-        ]);
+        if ($request->ajax() || $request->isJson() || $request->header('X-Requested-With') === 'XMLHttpRequest' || ($request->wantsJson() && ! $request->acceptsHtml())) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Sesi berhasil diakhiri.',
+                'redirect' => route('login'),
+            ]);
+        }
+
+        return redirect()->route('login')->with('status', 'Sesi berhasil diakhiri.');
     }
 
     /**

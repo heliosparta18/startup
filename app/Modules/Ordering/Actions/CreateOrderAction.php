@@ -15,13 +15,21 @@ class CreateOrderAction
     /**
      * @param  array<int, array{id_obat: string, nama_obat: string, harga: float|int, jumlah: int}>  $items
      */
-    public function execute(string $clientId, ?string $userId, array $items, string $metodeLayanan = 'click_collect', ?string $sessionToken = null): Pesanan
-    {
+    public function execute(
+        string $clientId,
+        ?string $userId,
+        array $items,
+        string $metodeLayanan = 'click_collect',
+        ?string $sessionToken = null,
+        ?string $slotWaktu = null,
+        ?string $nomorAntrean = null,
+        ?string $catatanPesanan = null
+    ): Pesanan {
         if (empty($items)) {
             throw new RuntimeException('Keranjang belanja kosong.');
         }
 
-        return DB::transaction(function () use ($clientId, $userId, $items, $metodeLayanan, $sessionToken) {
+        return DB::transaction(function () use ($clientId, $userId, $items, $metodeLayanan, $sessionToken, $slotWaktu, $nomorAntrean, $catatanPesanan) {
             $resolvedUserId = $userId;
             if (! $resolvedUserId) {
                 $guestUser = Pengguna::where('peran', 'pelanggan')->first();
@@ -53,8 +61,18 @@ class CreateOrderAction
                 $stokRecords[] = [$stok, $item['jumlah']];
             }
 
-            // 2. Terbitkan Nomor Pesanan Standar (#ORD-YYYYMMDD-XXXX)
+            // 2. Terbitkan Nomor Pesanan Standar (#ORD-YYYYMMDD-XXXX) & Nomor Antrean Virtual
             $orderNumber = '#ORD-'.date('Ymd').'-'.strtoupper(Str::random(4));
+
+            if (! $nomorAntrean) {
+                $todayCount = Pesanan::withoutTenancy()
+                    ->where('id_client', $clientId)
+                    ->whereDate('dibuat_pada', now()->toDateString())
+                    ->count();
+                $nomorAntrean = 'A-'.str_pad((string) ($todayCount + 1), 3, '0', STR_PAD_LEFT);
+            }
+
+            $resolvedSlotWaktu = $slotWaktu ?: ($metodeLayanan === 'click_collect' ? '15 Menit Lagi (Segera)' : 'Pengantaran Kurir Langsung');
 
             $pesanan = Pesanan::withoutTenancy()->create([
                 'id_pesanan' => (string) Str::uuid(),
@@ -64,6 +82,9 @@ class CreateOrderAction
                 'status' => 'menunggu_pembayaran',
                 'metode_layanan' => $metodeLayanan,
                 'token_sesi' => $sessionToken,
+                'slot_waktu' => $resolvedSlotWaktu,
+                'nomor_antrean' => $nomorAntrean,
+                'catatan_pesanan' => $catatanPesanan,
             ]);
 
             // 3. Simpan Item dengan Snapshot Harga (ADR-0008) & Kurangi Stok

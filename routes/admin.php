@@ -2,11 +2,13 @@
 
 use App\Models\Client;
 use App\Models\Pembayaran;
+use App\Models\Pesanan;
 use App\Models\RingkasanPeriodePenjualan;
 use App\Modules\Admin\Http\Controllers\StaffController;
 use App\Modules\Reporting\Actions\CloseSalesPeriodAction;
 use App\Modules\Reporting\Services\SalesReportExportService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -102,3 +104,41 @@ Route::post('/cabang/{client}/pengaturan', function (string $client, Request $re
 
     return back()->with('success', "Konfigurasi cabang {$clientModel->nama_client} berhasil diperbarui.");
 })->name('cabang.pengaturan.save');
+
+Route::get('/monitoring-progres', function (Request $request) {
+    $clients = Client::all();
+    $selectedClient = $request->query('client');
+
+    $query = Pesanan::withoutGlobalScopes()
+        ->with(['items.obat', 'client', 'pengguna'])
+        ->orderBy('dibuat_pada', 'desc');
+
+    if ($selectedClient && $selectedClient !== 'all') {
+        $clientModel = Client::where('id_client', $selectedClient)->orWhere('slug', $selectedClient)->first();
+        if ($clientModel) {
+            $query->where('id_client', $clientModel->id_client);
+        }
+    }
+
+    $pesanans = $query->take(60)->get();
+
+    // Map antrean berjalan per cabang
+    $antreanMap = [];
+    foreach ($clients as $c) {
+        $antreanMap[$c->id_client] = Cache::get("antrean_berjalan:{$c->id_client}", 'A-001');
+    }
+
+    $totalDiproses = $pesanans->where('status', 'diproses')->count();
+    $totalSiap = $pesanans->where('status', 'siap_diambil')->count();
+    $totalObatDiproses = $pesanans->where('status', 'diproses')->sum(fn ($p) => $p->items->sum('kuantitas'));
+
+    return view('admin.monitoring-progres', [
+        'clients' => $clients,
+        'selectedClient' => $selectedClient,
+        'pesanans' => $pesanans,
+        'antreanMap' => $antreanMap,
+        'totalDiproses' => $totalDiproses,
+        'totalSiap' => $totalSiap,
+        'totalObatDiproses' => $totalObatDiproses,
+    ]);
+})->name('progres.index');

@@ -11,7 +11,9 @@ Route::get('/', function () {
             return redirect()->route('admin.dashboard');
         }
         if ($user->hasRole('apoteker') || $user->role === 'apoteker') {
-            return redirect()->route('tenant.dashboard', ['client' => 'banyuwangi-kota']);
+            $branchSlug = method_exists($user, 'getClientSlug') ? $user->getClientSlug() : 'banyuwangi-kota';
+
+            return redirect()->route('tenant.dashboard', ['client' => $branchSlug]);
         }
 
         return redirect()->route('dashboard');
@@ -34,7 +36,8 @@ Route::middleware(['throttle:10,1'])->group(function () {
 });
 
 Route::post('/auth/firebase-session', [FirebaseAuthSessionController::class, 'store'])->name('auth.firebase.session');
-Route::post('/auth/firebase-logout', [FirebaseAuthSessionController::class, 'destroy'])->name('auth.firebase.logout');
+Route::match(['GET', 'POST'], '/auth/firebase-logout', [FirebaseAuthSessionController::class, 'destroy'])->name('auth.firebase.logout');
+Route::get('/logout', [FirebaseAuthSessionController::class, 'destroy']);
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/auth/complete-profile', [FirebaseAuthSessionController::class, 'showCompleteProfile'])->name('auth.complete-profile');
