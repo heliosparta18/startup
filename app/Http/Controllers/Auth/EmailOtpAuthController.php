@@ -198,15 +198,13 @@ class EmailOtpAuthController extends Controller
             'aktif' => true,
         ]);
 
-        // 3. Masuk ke sesi Laravel
-        Auth::login($user, true);
-        $request->session()->regenerate();
-        $request->session()->put('firebase_provider', 'email_otp_verified');
+        // Sesuai alur baru: setelah pendaftaran selesai, pengguna diarahkan untuk login terlebih dahulu
+        session()->flash('status', 'Pendaftaran akun berhasil! Silakan masuk menggunakan email dan kata sandi yang baru Anda daftarkan.');
 
         return response()->json([
             'success' => true,
-            'message' => 'Akun berhasil dibuat dan email terverifikasi OTP!',
-            'redirect' => route('dashboard'),
+            'message' => 'Pendaftaran akun berhasil! Silakan masuk menggunakan email dan kata sandi Anda.',
+            'redirect' => route('login'),
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,

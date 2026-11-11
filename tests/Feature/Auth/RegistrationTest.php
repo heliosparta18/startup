@@ -34,8 +34,8 @@ class RegistrationTest extends TestCase
         ]);
 
         $response->assertSessionHasNoErrors()
-            ->assertRedirect(route('dashboard', absolute: false));
+            ->assertRedirect(route('login', absolute: false));
 
-        $this->assertAuthenticated();
+        $this->assertGuest();
     }
 }

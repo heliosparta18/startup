@@ -18,10 +18,10 @@ class MultiRoleDashboardFlowTest extends TestCase
     }
 
     /**
-     * 1. Tamu dapat mengakses halaman sambutan dengan logo OmniPharma, informasi cabang,
-     * serta panel pilihan login demo 1-klik untuk 4 peran pengguna.
+     * 1. Tamu dapat mengakses halaman sambutan yang bersih dan profesional,
+     * sedangkan kredensial akun pengujian terdokumentasi terpusat pada AKUN_LOGIN.md.
      */
-    public function test_guest_can_access_welcome_page_with_demo_login_options(): void
+    public function test_guest_can_access_clean_welcome_page_and_credentials_are_documented(): void
     {
         $response = $this->get(route('home'));
 
@@ -29,14 +29,20 @@ class MultiRoleDashboardFlowTest extends TestCase
         $response->assertSee('OmniPharma');
         $response->assertSee('Apotek Terdaftar');
         $response->assertSee('Banyuwangi &amp; Rogojampi', false);
-        $response->assertSee('Masuk');
+        $response->assertSee('Mulai Belanja');
         $response->assertSee('Daftar');
 
-        // Memastikan tombol demo login 1-klik untuk 4 peran pengguna tersedia pada halaman sambutan
-        $response->assertSee('daffa@omnipharma.test');
-        $response->assertSee('bambang@omnipharma.test');
-        $response->assertSee('dewi@omnipharma.test');
-        $response->assertSee('gunturafandy5@gmail.com');
+        // Memastikan halaman sambutan bersih dari data login mentah
+        $response->assertDontSee('daffa@omnipharma.test');
+        $response->assertDontSee('bambang@omnipharma.test');
+
+        // Memastikan berkas dokumentasi akun pengujian tim tersedia
+        $this->assertFileExists(base_path('AKUN_LOGIN.md'));
+        $content = (string) file_get_contents(base_path('AKUN_LOGIN.md'));
+        $this->assertStringContainsString('daffa@omnipharma.test', $content);
+        $this->assertStringContainsString('bambang@omnipharma.test', $content);
+        $this->assertStringContainsString('dewi@omnipharma.test', $content);
+        $this->assertStringContainsString('gunturafandy5@gmail.com', $content);
     }
 
     /**

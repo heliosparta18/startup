@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
+use Laravel\Fortify\Contracts\RegisterResponse as RegisterResponseContract;
 use Laravel\Fortify\Fortify;
 
 class FortifyServiceProvider extends ServiceProvider
@@ -46,6 +47,21 @@ class FortifyServiceProvider extends ServiceProvider
                     return $request->wantsJson()
                         ? response()->json(['two_factor' => false, 'redirect' => $redirectUrl])
                         : redirect()->intended($redirectUrl);
+                }
+            };
+        });
+
+        $this->app->singleton(RegisterResponseContract::class, function () {
+            return new class implements RegisterResponseContract
+            {
+                public function toResponse($request)
+                {
+                    auth()->logout();
+                    session()->flash('status', 'Pendaftaran akun berhasil! Silakan masuk menggunakan email dan kata sandi Anda.');
+
+                    return $request->wantsJson()
+                        ? response()->json(['redirect' => route('login')])
+                        : redirect()->route('login');
                 }
             };
         });

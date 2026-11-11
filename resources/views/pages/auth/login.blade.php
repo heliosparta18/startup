@@ -7,9 +7,10 @@
     <title>Masuk Portal Apotek Multi-Klien - OmniPharma Network</title>
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 
-    @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @fluxAppearance
     <style>
@@ -32,7 +33,7 @@
                 <div class="flex items-center gap-3.5">
                     <img src="/logo.png" alt="OmniPharma Logo" class="h-12 w-12 object-contain drop-shadow-[0_4px_10px_rgba(0,0,0,0.45)] hover:scale-105 transition-transform duration-200">
                     <div>
-                        <span class="block text-xs font-bold tracking-widest text-[#D4F94E] uppercase">OmniPharma Network</span>
+                        <span class="block text-xs font-bold tracking-widest text-emerald-300 uppercase">OmniPharma</span>
                         <span class="block text-sm font-semibold text-emerald-100">Sistem Informasi Farmasi Terpadu</span>
                     </div>
                 </div>
@@ -93,12 +94,14 @@
             selectedRole: '',
             loadingSubmit: false,
             loadingGoogle: false,
+            isRedirecting: false,
 
             selectDemo(roleKey, userEmail, userPass) {
                 this.selectedRole = roleKey;
                 this.identifier = userEmail;
                 this.password = userPass;
                 this.loadingSubmit = true;
+                this.isRedirecting = true;
                 if (window.OmniFirebaseAuth?.showToast) {
                     window.OmniFirebaseAuth.showToast('Memproses masuk akun demo...', 'info');
                 }
@@ -118,7 +121,7 @@
                     const userName = result.user.displayName || result.user.email;
                     if (window.OmniFirebaseAuth?.showToast) {
                         window.OmniFirebaseAuth.showToast(`Selamat datang, ${userName}!`, 'success');
-                    }
+                    this.isRedirecting = true;
                     setTimeout(() => {
                         window.location.href = result.session?.redirect || '{{ route('dashboard') }}';
                     }, 600);
@@ -156,17 +159,19 @@
                         if (window.OmniFirebaseAuth?.showToast) {
                             window.OmniFirebaseAuth.showToast('Login berhasil! Mengalihkan ke dashboard...', 'success');
                         }
+                        this.isRedirecting = true;
                         setTimeout(() => {
                             window.location.href = result.session?.redirect || '{{ route('dashboard') }}';
                         }, 600);
                     } else {
+                        this.isRedirecting = true;
                         e.target.submit();
                     }
                 } catch (err) {
                     console.warn('Firebase login attempt fallback to Fortify:', err);
                     // Fallback form submit native jika akun terdaftar di database server lokal
+                    this.isRedirecting = true;
                     e.target.submit();
-                } finally {
                     this.loadingSubmit = false;
                 }
             }
@@ -175,7 +180,7 @@
                 <!-- Mobile Brand Header -->
                 <div class="flex items-center gap-2.5 mb-4 lg:hidden">
                     <img src="/logo.png" alt="OmniPharma" class="h-9 w-9 object-contain drop-shadow-[0_2px_6px_rgba(5,150,105,0.35)]">
-                    <span class="text-xs font-bold tracking-wider text-emerald-700 uppercase">OmniPharma Network</span>
+                    <span class="text-xs font-bold tracking-wider text-emerald-700 uppercase">OmniPharma</span>
                 </div>
 
                 <!-- Heading Form -->
@@ -393,8 +398,30 @@
             </div>
         </div>
 
-    </div>
+        <!-- Overlay Animasi Loading Muter Menuju Dashboard -->
+        <div
+            x-show="isRedirecting || loadingSubmit || loadingGoogle"
+            x-cloak
+            class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-900/60 backdrop-blur-xs transition-opacity duration-300"
+        >
+            <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-2xl border border-slate-200/90 flex flex-col items-center text-center max-w-xs mx-4 space-y-4">
+                <!-- Spinner Muter dengan Logo Apotek di Tengah -->
+                <div class="relative w-16 h-16 flex items-center justify-center">
+                    <svg class="animate-spin w-16 h-16 text-emerald-600" viewBox="0 0 24 24" fill="none">
+                        <circle class="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                    </svg>
+                    <img src="/logo.png" alt="OmniPharma" class="w-7 h-7 object-contain absolute pointer-events-none">
+                </div>
 
+                <div>
+                    <h3 class="font-extrabold text-slate-900 text-base">Memvalidasi Akun...</h3>
+                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Menyiapkan dashboard apotek Anda, mohon tunggu sebentar.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
     @persist('toast')
         <flux:toast.group>
             <flux:toast />
