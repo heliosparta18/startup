@@ -9,8 +9,7 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @fluxAppearance
     <style>
@@ -27,7 +26,6 @@
                 <img src="/logo.png" alt="OmniPharma Logo" class="h-9 w-9 sm:h-11 sm:w-11 object-contain drop-shadow-[0_2px_6px_rgba(5,150,105,0.3)] group-hover:scale-105 transition-transform duration-200">
                 <span class="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">OmniPharma</span>
             </a>
-
             <!-- Navigasi Pintar Cabang & Kredensial -->
             <div class="flex items-center gap-2 sm:gap-3 shrink-0">
                 <div class="hidden lg:flex items-center gap-2.5 text-xs text-slate-700 bg-white border border-slate-200/90 px-3.5 py-1.5 rounded-xl shadow-2xs">
@@ -79,19 +77,6 @@
                             Keluar
                         </button>
                     </form>
-                @else
-                    <a
-                        href="{{ route('login') }}"
-                        class="inline-flex items-center justify-center px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold text-slate-700 hover:text-emerald-700 hover:bg-slate-100 transition min-h-[44px]"
-                    >
-                        Masuk
-                    </a>
-                    <a
-                        href="{{ route('register') }}"
-                        class="inline-flex items-center justify-center px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold shadow-xs transition min-h-[44px]"
-                    >
-                        <span>Daftar<span class="hidden sm:inline"> Pasien</span></span>
-                    </a>
                 @endauth
             </div>
         </div>
@@ -110,9 +95,8 @@
 
                     <!-- Teks Hero Kiri -->
                     <div class="lg:col-span-7 space-y-5 sm:space-y-6 text-center lg:text-left">
-                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-900 text-xs font-semibold border border-emerald-200/90 shadow-2xs">
-                            <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
-                            <span>Apotek Resmi Berlisensi SIPA • Jaminan Obat Asli 100%</span>
+                        <div class="inline-block text-xs font-bold uppercase tracking-wider text-emerald-700 mb-1">
+                            Apotek Resmi Berlisensi SIPA • Jaminan Obat Asli 100%
                         </div>
 
                         <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
@@ -122,7 +106,6 @@
                         <p class="text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl mx-auto lg:mx-0">
                             Layanan obat bebas, vitamin, dan resep dokter dengan jaminan keaslian obat dari apotek berizin di Banyuwangi dan Rogojampi. Pemeriksaan dan verifikasi langsung oleh apoteker.
                         </p>
-
                         <!-- Tombol CTA Utama -->
                         <div class="pt-2">
                             <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3">
@@ -149,16 +132,16 @@
                                     </a>
                                 @else
                                     <a
-                                        href="#demo-login"
+                                        href="{{ route('login') }}"
                                         class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition min-h-[48px]"
                                     >
                                         <span>Mulai Belanja</span>
                                     </a>
                                     <a
-                                        href="{{ route('login') }}"
+                                        href="{{ route('register') }}"
                                         class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm shadow-2xs transition min-h-[48px]"
                                     >
-                                        <span>Masuk</span>
+                                        <span>Daftar Akun</span>
                                     </a>
                                 @endauth
                             </div>
@@ -179,6 +162,7 @@
                                 Konsultasi Apoteker Berlisensi
                             </span>
                         </div>
+
                     </div>
 
                     <!-- Kartu Ringkasan Apotek Cabang Resmi -->
@@ -193,22 +177,20 @@
                                         <p class="text-[11px] text-slate-500">Jaringan Apotek Berlisensi Resmi</p>
                                     </div>
                                 </div>
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/80">
                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                                    SIPA Aktif
+                                    6 Cabang Aktif
                                 </span>
                             </div>
+
 
                             <!-- Daftar Cabang Resmi -->
                             <div class="space-y-2">
                                 <div class="flex items-center justify-between">
                                     <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Lokasi Pelayanan Obat:</span>
-                                    <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100 flex items-center gap-1">
-                                        6 Cabang &bull; Geser &darr;
-                                    </span>
                                 </div>
 
-                                <div class="max-h-[215px] overflow-y-auto space-y-2.5 pr-1.5 focus:outline-none" style="scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent;">
+                                <div class="space-y-2 pr-1.5 focus:outline-none" style="max-height: 168px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #94a3b8 #f1f5f9;">
                                     <!-- Cabang 1: Banyuwangi Kota -->
                                     <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-emerald-300 transition flex items-start justify-between gap-3">
                                         <div class="min-w-0">
@@ -324,379 +306,249 @@
                         </div>
                     </div>
                 </div>
+                <!-- Teks Berjalan Dukungan Resmi Pemerintah & Regulasi (Full Width) -->
+                <div class="mt-8 sm:mt-10 pt-4 border-t border-slate-200/60 overflow-hidden relative rounded-2xl bg-white/70 border border-slate-200/70 p-3 shadow-2xs">
+                    <div class="flex items-center gap-3">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/90 px-2.5 py-1 rounded-md shrink-0">
+                            Lisensi &amp; Regulasi:
+                        </span>
+                        <div class="overflow-hidden relative w-full select-none" style="mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);">
+                            <div class="animate-marquee flex items-center gap-8 whitespace-nowrap text-xs font-medium text-slate-600">
+                                <span class="inline-flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Kementerian Kesehatan RI (Kemenkes)
+                                </span>
+                                <span class="inline-flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Badan Pengawas Obat &amp; Makanan (BPOM)
+                                </span>
+                                <span class="inline-flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Ikatan Apoteker Indonesia (IAI)
+                                </span>
+                                <span class="inline-flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Standar Cara Distribusi Obat yang Baik (CDOB)
+                                </span>
+                                <span class="inline-flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Dinas Kesehatan Kabupaten Banyuwangi
+                                </span>
+                                <span class="inline-flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Standar Pembayaran QRIS (Bank Indonesia)
+                                </span>
+                                <span class="inline-flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Pedagang Besar Farmasi (PBF) Resmi Terdaftar
+                                </span>
+                                <!-- Duplicate for infinite marquee loop -->
+                                <span class="inline-flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Kementerian Kesehatan RI (Kemenkes)
+                                </span>
+                                <span class="inline-flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Badan Pengawas Obat &amp; Makanan (BPOM)
+                                </span>
+                                <span class="inline-flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Ikatan Apoteker Indonesia (IAI)
+                                </span>
+                                <span class="inline-flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Standar Cara Distribusi Obat yang Baik (CDOB)
+                                </span>
+                                <span class="inline-flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Dinas Kesehatan Kabupaten Banyuwangi
+                                </span>
+                                <span class="inline-flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Standar Pembayaran QRIS (Bank Indonesia)
+                                </span>
+                                <span class="inline-flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Pedagang Besar Farmasi (PBF) Terdaftar
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- PANDUAN: Cara Cari & Pesan Obat Sesuai Proyek OmniPharma -->
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- PANDUAN: Alur Pelayanan Pasien di Apotek -->
+        <section id="cara-tebus" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-2xl mx-auto mb-8 sm:mb-12">
-                <span class="text-xs font-bold uppercase tracking-widest text-emerald-700">Alur Pelayanan Pasien</span>
-                <h2 class="text-xl sm:text-3xl font-black text-slate-900 tracking-tight mt-1">
-                    Cara Tebus &amp; Pesan Obat di OmniPharma
+                <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Pelayanan Resep &amp; Obat</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">
+                    Alur Pelayanan Pasien di Apotek
                 </h2>
                 <p class="text-xs sm:text-sm text-slate-500 mt-2">
-                    Proses pemesanan obat dirancang sistematis sesuai standar pelayanan kefarmasian di apotek.
+                    Empat langkah mudah untuk mendapatkan obat dan menebus resep dokter dengan aman.
                 </p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                 <!-- Langkah 1: Pilih Cabang -->
-                <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200 shadow-2xs flex flex-col justify-between">
+                <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
                     <div>
-                        <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 font-black text-sm flex items-center justify-center mb-4">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-800 font-extrabold text-xs flex items-center justify-center mb-4 border border-emerald-200/60">
                             01
                         </div>
-                        <h3 class="font-bold text-slate-900 text-base mb-2">Pilih Cabang Apotek</h3>
+                        <h3 class="font-bold text-slate-900 text-sm mb-2">Pilih Cabang Apotek</h3>
                         <p class="text-xs text-slate-500 leading-relaxed">
-                            Pilih cabang apotek terdekat (Banyuwangi Kota atau Rogojampi) untuk mengecek ketersediaan stok fisik obat secara akurat.
+                            Pilih lokasi apotek terdekat di Banyuwangi Kota atau Rogojampi untuk mengecek ketersediaan stok fisik obat secara akurat.
                         </p>
                     </div>
-                    <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-semibold text-emerald-700">
-                        Stok Fisik Tersedia
+                    <div class="mt-4 pt-3 border-t border-slate-100">
+                        <span class="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md inline-block">
+                            Stok Fisik Tersedia
+                        </span>
                     </div>
                 </div>
 
                 <!-- Langkah 2: Cari Obat / Unggah Resep -->
-                <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200 shadow-2xs flex flex-col justify-between">
+                <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
                     <div>
-                        <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-800 font-black text-sm flex items-center justify-center mb-4">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-800 font-extrabold text-xs flex items-center justify-center mb-4 border border-emerald-200/60">
                             02
                         </div>
-                        <h3 class="font-bold text-slate-900 text-base mb-2">Cari Obat atau Unggah Resep</h3>
+                        <h3 class="font-bold text-slate-900 text-sm mb-2">Pilih Obat / Unggah Resep</h3>
                         <p class="text-xs text-slate-500 leading-relaxed">
-                            Obat bebas dapat langsung dibeli. Untuk obat keras (bertanda lingkaran K merah), unggah foto resep dokter untuk diverifikasi apoteker.
+                            Pilih obat bebas langsung atau unggah foto resep dokter untuk ditelaah keabsahan dan dosisnya oleh apoteker.
                         </p>
                     </div>
-                    <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-semibold text-blue-700">
-                        Pemeriksaan Apoteker
+                    <div class="mt-4 pt-3 border-t border-slate-100">
+                        <span class="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md inline-block">
+                            Pemeriksaan Apoteker
+                        </span>
                     </div>
                 </div>
 
                 <!-- Langkah 3: Bayar dengan QRIS -->
-                <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200 shadow-2xs flex flex-col justify-between">
+                <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
                     <div>
-                        <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 font-black text-sm flex items-center justify-center mb-4">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-800 font-extrabold text-xs flex items-center justify-center mb-4 border border-emerald-200/60">
                             03
                         </div>
-                        <h3 class="font-bold text-slate-900 text-base mb-2">Checkout &amp; Bayar QRIS</h3>
+                        <h3 class="font-bold text-slate-900 text-sm mb-2">Pembayaran Mudah</h3>
                         <p class="text-xs text-slate-500 leading-relaxed">
-                            Stok obat dikunci secara pesimistik saat checkout. Lakukan pembayaran instan menggunakan QRIS dinamis standar EMVCo.
+                            Selesaikan transaksi praktis menggunakan pembayaran digital QRIS instan atau bayar tunai di kasir apotek.
                         </p>
                     </div>
-                    <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-semibold text-amber-700">
-                        QRIS &amp; Kasir Apotek
+                    <div class="mt-4 pt-3 border-t border-slate-100">
+                        <span class="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md inline-block">
+                            QRIS &amp; Tunai Kasir
+                        </span>
                     </div>
                 </div>
 
-                <!-- Langkah 4: Live Tracking Reverb -->
-                <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200 shadow-2xs flex flex-col justify-between">
+                <!-- Langkah 4: Obat Diserahkan -->
+                <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
                     <div>
-                        <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-800 font-black text-sm flex items-center justify-center mb-4">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-800 font-extrabold text-xs flex items-center justify-center mb-4 border border-emerald-200/60">
                             04
                         </div>
-                        <h3 class="font-bold text-slate-900 text-base mb-2">Lacak Pesanan Real-Time</h3>
+                        <h3 class="font-bold text-slate-900 text-sm mb-2">Obat Siap Diserahkan</h3>
                         <p class="text-xs text-slate-500 leading-relaxed">
-                            Pantau tahapan persiapan obat di apotek melalui live stepper WebSocket Reverb hingga pesanan siap diambil di kasir.
+                            Obat disiapkan rapi lengkap dengan etiket aturan pakai resmi dan siap diambil di apotek atau dikirim ke lokasi Anda.
                         </p>
                     </div>
-                    <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-semibold text-purple-700">
-                        Etiket &amp; Aturan Pakai
+                    <div class="mt-4 pt-3 border-t border-slate-100">
+                        <span class="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md inline-block">
+                            Etiket Resmi SIPA
+                        </span>
                     </div>
                 </div>
             </div>
         </section>
-        <!-- KARTU AKSES 4 PORTAL DEMO PRAKTIKUM (PAK DEVIT) -->
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="rounded-3xl bg-slate-900 text-white p-5 sm:p-8 lg:p-12 shadow-xl relative overflow-hidden">
-                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Pusat Layanan Farmasi</span>
-                    <h2 class="text-xl sm:text-3xl font-extrabold tracking-tight text-white mt-1">
-                        Akses Portal OmniPharma Network
+
+        <!-- INFORMASI KEUNGGULAN LAYANAN APOTEK -->
+        <section id="keunggulan" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="rounded-3xl bg-slate-50/80 border border-slate-200/90 p-6 sm:p-8 lg:p-10 shadow-xs relative overflow-hidden">
+                <div class="max-w-2xl mb-8">
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Komitmen Layanan Farmasi</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mt-1">
+                        Standar Pelayanan Kefarmasian Resmi
                     </h2>
-                    <p class="text-xs sm:text-sm text-slate-400 mt-2">
-                        Pilih portal layanan sesuai kebutuhan Anda: pembelian obat pasien, telaah resep apoteker cabang, atau manajemen pusat.
+                    <p class="text-xs sm:text-sm text-slate-500 mt-2">
+                        Setiap resep dan sediaan obat ditangani langsung sesuai ketentuan izin operasional SIA dan pengawasan Apoteker SIPA.
                     </p>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-slate-900">
-                    <!-- 1. Katalog / Dashboard Pasien -->
-                    @auth
-                        <a href="{{ route('dashboard') }}" class="min-h-[44px] p-5 rounded-2xl bg-white hover:bg-slate-50 transition flex flex-col justify-between group focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                            <div>
-                                <span class="inline-block text-[10px] font-bold text-emerald-700 uppercase bg-emerald-50 px-2 py-0.5 rounded-md">Layar 1 • Pasien</span>
-                                <h3 class="font-bold text-sm text-slate-900 mt-2 group-hover:text-emerald-700">Dashboard Pasien</h3>
-                                <p class="text-[11px] text-slate-500 mt-1">Akses keranjang obat, unggah resep dokter, dan status pesanan.</p>
-                            </div>
-                            <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-bold text-emerald-600 flex items-center justify-between min-h-[44px]">
-                                <span>Buka Dashboard</span>
-                                <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
-                            </div>
-                        </a>
-                    @else
-                        <div class="min-h-[44px] p-5 rounded-2xl bg-white flex flex-col justify-between">
-                            <div>
-                                <span class="inline-block text-[10px] font-bold text-emerald-700 uppercase bg-emerald-50 px-2 py-0.5 rounded-md">Layar 1 • Pasien</span>
-                                <h3 class="font-bold text-sm text-slate-900 mt-2">Dashboard Pasien</h3>
-                                <p class="text-[11px] text-slate-500 mt-1">Wajib login terlebih dahulu untuk mengakses keranjang, beli obat, &amp; tebus resep.</p>
-                            </div>
-                            <div class="mt-4 pt-3 border-t border-slate-100">
-                                <form method="POST" action="{{ route('login.store') }}">
-                                    @csrf
-                                    <input type="hidden" name="email" value="gunturafandy5@gmail.com">
-                                    <input type="hidden" name="password" value="password">
-                                    <button type="submit" class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs shadow-xs transition cursor-pointer min-h-[44px]">
-                                        <span>Masuk Pasien (1-Klik)</span>
-                                        <span aria-hidden="true">&rarr;</span>
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    @endauth
-
-                    <!-- 2. Portal Apoteker (APJ) -->
-                    @auth
-                        <a href="{{ route('tenant.dashboard', ['client' => (auth()->user()->email === 'dewi@omnipharma.test' ? 'rogojampi' : 'banyuwangi-kota')]) }}" class="min-h-[44px] p-5 rounded-2xl bg-white hover:bg-slate-50 transition flex flex-col justify-between group focus:outline-none focus:ring-2 focus:ring-amber-500">
-                            <div>
-                                <span class="inline-block text-[10px] font-bold text-amber-700 uppercase bg-amber-50 px-2 py-0.5 rounded-md">Layar 2 • Apoteker</span>
-                                <h3 class="font-bold text-sm text-slate-900 mt-2 group-hover:text-amber-700">Antrean Resep &amp; FEFO</h3>
-                                <p class="text-[11px] text-slate-500 mt-1">Telaah resep dokter, validasi SIP, dan pantau batch mendekati ED.</p>
-                            </div>
-                            <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-bold text-amber-600 flex items-center justify-between min-h-[44px]">
-                                <span>Buka Portal Cabang</span>
-                                <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
-                            </div>
-                        </a>
-                    @else
-                        <div class="min-h-[44px] p-5 rounded-2xl bg-white flex flex-col justify-between">
-                            <div>
-                                <span class="inline-block text-[10px] font-bold text-amber-700 uppercase bg-amber-50 px-2 py-0.5 rounded-md">Layar 2 • Apoteker</span>
-                                <h3 class="font-bold text-sm text-slate-900 mt-2">Antrean Resep &amp; FEFO</h3>
-                                <p class="text-[11px] text-slate-500 mt-1">Telaah resep dokter, validasi SIP, dan pantau batch mendekati ED.</p>
-                            </div>
-                            <div class="mt-4 pt-3 border-t border-slate-100">
-                                <form method="POST" action="{{ route('login.store') }}">
-                                    @csrf
-                                    <input type="hidden" name="email" value="bambang@omnipharma.test">
-                                    <input type="hidden" name="password" value="password">
-                                    <button type="submit" class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white font-bold text-xs shadow-xs transition cursor-pointer min-h-[44px]">
-                                        <span>Masuk Apoteker (1-Klik)</span>
-                                        <span aria-hidden="true">&rarr;</span>
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    @endauth
-
-                    <!-- 3. Super Admin Eksekutif -->
-                    @auth
-                        <a href="{{ route('admin.dashboard') }}" class="min-h-[44px] p-5 rounded-2xl bg-white hover:bg-slate-50 transition flex flex-col justify-between group focus:outline-none focus:ring-2 focus:ring-purple-500">
-                            <div>
-                                <span class="inline-block text-[10px] font-bold text-purple-700 uppercase bg-purple-50 px-2 py-0.5 rounded-md">Layar 3-4 • Admin</span>
-                                <h3 class="font-bold text-sm text-slate-900 mt-2 group-hover:text-purple-700">Executive Dashboard</h3>
-                                <p class="text-[11px] text-slate-500 mt-1">Agregasi omzet cabang, tutup periode akuntansi, dan ekspor CSV.</p>
-                            </div>
-                            <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-bold text-purple-600 flex items-center justify-between min-h-[44px]">
-                                <span>Buka Super Admin</span>
-                                <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
-                            </div>
-                        </a>
-                    @else
-                        <div class="min-h-[44px] p-5 rounded-2xl bg-white flex flex-col justify-between">
-                            <div>
-                                <span class="inline-block text-[10px] font-bold text-purple-700 uppercase bg-purple-50 px-2 py-0.5 rounded-md">Layar 3-4 • Admin</span>
-                                <h3 class="font-bold text-sm text-slate-900 mt-2">Executive Dashboard</h3>
-                                <p class="text-[11px] text-slate-500 mt-1">Agregasi omzet cabang, tutup periode akuntansi, dan ekspor CSV.</p>
-                            </div>
-                            <div class="mt-4 pt-3 border-t border-slate-100">
-                                <form method="POST" action="{{ route('login.store') }}">
-                                    @csrf
-                                    <input type="hidden" name="email" value="daffa@omnipharma.test">
-                                    <input type="hidden" name="password" value="password">
-                                    <button type="submit" class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white font-bold text-xs shadow-xs transition cursor-pointer min-h-[44px]">
-                                        <span>Masuk Admin (1-Klik)</span>
-                                        <span aria-hidden="true">&rarr;</span>
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    @endauth
-
-                    <!-- 4. Portal Otentikasi -->
-                    <a href="{{ route('login') }}" class="min-h-[44px] p-5 rounded-2xl bg-white hover:bg-slate-50 transition flex flex-col justify-between group focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 text-slate-900">
+                    <!-- 1. Telaah Resep Dokter -->
+                    <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
                         <div>
-                            <span class="inline-block text-[10px] font-bold text-blue-700 uppercase bg-blue-50 px-2 py-0.5 rounded-md">Otentikasi • Akun</span>
-                            <h3 class="font-bold text-sm text-slate-900 mt-2 group-hover:text-blue-700">Masuk &amp; Registrasi</h3>
-                            <p class="text-[11px] text-slate-500 mt-1">Login 1-klik Google, verifikasi OTP email, atau akun demo praktikum.</p>
-                        </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-bold text-blue-600 flex items-center justify-between min-h-[44px]">
-                            <span>Masuk Portal</span>
-                            <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <!-- PANEL KHUSUS DEMO PRAKTIKUM (1-KLIK MASUK MULTI-PERAN) -->
-        <section id="demo-login" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="rounded-3xl bg-white border border-slate-200/90 p-5 sm:p-8 lg:p-10 shadow-xs space-y-6">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
-                    <div>
-                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200 mb-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                            <span>Akses Cepat Pengujian: Akun Demo 4 Peran</span>
-                        </div>
-                        <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                            Pilih Akun Demo untuk Masuk Cepat
-                        </h2>
-                        <p class="text-xs sm:text-sm text-slate-500 mt-1">
-                            Gunakan akun di bawah ini untuk mencoba hak akses dan fitur masing-masing peran secara instan tanpa mengetik manual.
-                        </p>
-                    </div>
-                    @auth
-                        <div class="shrink-0 flex items-center gap-2 text-xs">
-                            <span class="text-slate-500">Akun Aktif:</span>
-                            <span class="font-bold text-slate-900">{{ auth()->user()->name }}</span>
-                            <span class="px-2 py-0.5 rounded-full font-bold uppercase text-[10px] bg-emerald-100 text-emerald-800">
-                                {{ auth()->user()->role ?? 'pelanggan' }}
-                            </span>
-                        </div>
-                    @endauth
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <!-- Peran 1: Super Admin Eksekutif -->
-                    <div class="p-5 rounded-2xl border border-purple-200/80 bg-purple-50/40 hover:bg-purple-50/70 transition flex flex-col justify-between">
-                        <div class="space-y-3">
-                            <div class="flex items-center justify-between gap-2">
-                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-purple-100 text-purple-800 border border-purple-200">
-                                    Super Admin
-                                </span>
-                                <span class="text-lg">👑</span>
+                            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-4">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
                             </div>
-                            <div>
-                                <h3 class="font-bold text-slate-900 text-sm">Muhammad Daffa Ariby</h3>
-                                <p class="text-xs font-mono text-purple-900/80 mt-0.5">daffa@omnipharma.test</p>
-                            </div>
-                            <p class="text-[11px] text-slate-600 leading-relaxed">
-                                Akses penuh omzet agregat lintas cabang, tutup periode akuntansi, dan ekspor laporan CSV.
+                            <h3 class="font-bold text-slate-900 text-sm">Telaah Resep Dokter</h3>
+                            <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+                                Pemeriksaan kelengkapan resep, keabsahan SIP dokter, dosis, dan ada tidaknya interaksi obat oleh Apoteker resmi.
                             </p>
                         </div>
-
-                        <div class="mt-4 pt-3 border-t border-purple-200/60">
-                            <form method="POST" action="{{ route('login.store') }}">
-                                @csrf
-                                <input type="hidden" name="email" value="daffa@omnipharma.test">
-                                <input type="hidden" name="password" value="password">
-                                <button
-                                    type="submit"
-                                    class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white font-bold text-xs shadow-xs transition cursor-pointer min-h-[44px]"
-                                >
-                                    <span>Masuk Super Admin</span>
-                                    <span aria-hidden="true">&rarr;</span>
-                                </button>
-                            </form>
+                        <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-semibold text-emerald-700">
+                            Apoteker Berlisensi SIPA
                         </div>
                     </div>
 
-                    <!-- Peran 2: Apoteker APJ Banyuwangi Kota -->
-                    <div class="p-5 rounded-2xl border border-amber-200/80 bg-amber-50/40 hover:bg-amber-50/70 transition flex flex-col justify-between">
-                        <div class="space-y-3">
-                            <div class="flex items-center justify-between gap-2">
-                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-200">
-                                    Apoteker (BWI)
-                                </span>
-                                <span class="text-lg">🩺</span>
+                    <!-- 2. Jaminan 100% Obat Asli -->
+                    <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-4">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                </svg>
                             </div>
-                            <div>
-                                <h3 class="font-bold text-slate-900 text-sm">apt. Bambang, S.Farm</h3>
-                                <p class="text-xs font-mono text-amber-900/80 mt-0.5">bambang@omnipharma.test</p>
-                            </div>
-                            <p class="text-[11px] text-slate-600 leading-relaxed">
-                                Telaah resep dokter, validasi SIP, dan rotasi stok FEFO cabang Banyuwangi Kota.
+                            <h3 class="font-bold text-slate-900 text-sm">Jaminan Obat Asli</h3>
+                            <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+                                Pasokan obat bersumber langsung dari Pedagang Besar Farmasi (PBF) resmi berizin Kemenkes RI dan terdaftar di BPOM.
                             </p>
                         </div>
-
-                        <div class="mt-4 pt-3 border-t border-amber-200/60">
-                            <form method="POST" action="{{ route('login.store') }}">
-                                @csrf
-                                <input type="hidden" name="email" value="bambang@omnipharma.test">
-                                <input type="hidden" name="password" value="password">
-                                <button
-                                    type="submit"
-                                    class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white font-bold text-xs shadow-xs transition cursor-pointer min-h-[44px]"
-                                >
-                                    <span>Masuk Apoteker (Kota)</span>
-                                    <span aria-hidden="true">&rarr;</span>
-                                </button>
-                            </form>
+                        <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-semibold text-emerald-700">
+                            Distributor PBF Terdaftar
                         </div>
                     </div>
 
-                    <!-- Peran 3: Apoteker APJ Rogojampi -->
-                    <div class="p-5 rounded-2xl border border-emerald-200/80 bg-emerald-50/40 hover:bg-emerald-50/70 transition flex flex-col justify-between">
-                        <div class="space-y-3">
-                            <div class="flex items-center justify-between gap-2">
-                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-200">
-                                    Apoteker (Rogojampi)
-                                </span>
-                                <span class="text-lg">💊</span>
+                    <!-- 3. Penyimpanan Standar Rantai Dingin -->
+                    <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-4">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                </svg>
                             </div>
-                            <div>
-                                <h3 class="font-bold text-slate-900 text-sm">apt. Dewi Sartika, S.Farm</h3>
-                                <p class="text-xs font-mono text-emerald-900/80 mt-0.5">dewi@omnipharma.test</p>
-                            </div>
-                            <p class="text-[11px] text-slate-600 leading-relaxed">
-                                Manajemen resep dan pemantauan masa kedaluwarsa rantai dingin cabang Rogojampi.
+                            <h3 class="font-bold text-slate-900 text-sm">Penyimpanan Terjaga</h3>
+                            <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+                                Pengawasan suhu ruang dan rantai dingin berstandar CDOB untuk menjaga mutu dan stabilitas sediaan obat.
                             </p>
                         </div>
-
-                        <div class="mt-4 pt-3 border-t border-emerald-200/60">
-                            <form method="POST" action="{{ route('login.store') }}">
-                                @csrf
-                                <input type="hidden" name="email" value="dewi@omnipharma.test">
-                                <input type="hidden" name="password" value="password">
-                                <button
-                                    type="submit"
-                                    class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs shadow-xs transition cursor-pointer min-h-[44px]"
-                                >
-                                    <span>Masuk Apoteker (Rogo)</span>
-                                    <span aria-hidden="true">&rarr;</span>
-                                </button>
-                            </form>
+                        <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-semibold text-emerald-700">
+                            Standar CDOB &amp; Suhu Mutu
                         </div>
                     </div>
 
-                    <!-- Peran 4: Pasien / Pelanggan Biasa -->
-                    <div class="p-5 rounded-2xl border border-blue-200/80 bg-blue-50/40 hover:bg-blue-50/70 transition flex flex-col justify-between">
-                        <div class="space-y-3">
-                            <div class="flex items-center justify-between gap-2">
-                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-800 border border-blue-200">
-                                    Pasien / Pelanggan
-                                </span>
-                                <span class="text-lg">🛒</span>
+                    <!-- 4. Pelayanan & Pengambilan Fleksibel -->
+                    <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-4">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
                             </div>
-                            <div>
-                                <h3 class="font-bold text-slate-900 text-sm">Guntur Afandy</h3>
-                                <p class="text-xs font-mono text-blue-900/80 mt-0.5">gunturafandy5@gmail.com</p>
-                            </div>
-                            <p class="text-[11px] text-slate-600 leading-relaxed">
-                                Belanja obat bebas, unggah foto resep, checkout dengan QRIS EMVCo &amp; pelacakan Reverb.
+                            <h3 class="font-bold text-slate-900 text-sm">Ambil di Cabang / Antar</h3>
+                            <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+                                Obat siap diambil di cabang apotek terdekat atau dikirim dengan pengemasan rapi dan terjaga kerahasiaannya.
                             </p>
                         </div>
-
-                        <div class="mt-4 pt-3 border-t border-blue-200/60">
-                            <form method="POST" action="{{ route('login.store') }}">
-                                @csrf
-                                <input type="hidden" name="email" value="gunturafandy5@gmail.com">
-                                <input type="hidden" name="password" value="password">
-                                <button
-                                    type="submit"
-                                    class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-xs shadow-xs transition cursor-pointer min-h-[44px]"
-                                >
-                                    <span>Masuk Pasien</span>
-                                    <span aria-hidden="true">&rarr;</span>
-                                </button>
-                            </form>
+                        <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-semibold text-emerald-700">
+                            Pengemasan Privasi Aman
                         </div>
                     </div>
                 </div>
@@ -705,14 +557,64 @@
 
     </main>
 
-    <!-- Footer -->
-    <footer class="border-t border-slate-200 bg-white py-8 px-4 text-center text-xs text-slate-500 space-y-2">
-        <div class="flex items-center justify-center gap-2">
-            <img src="/logo.png" alt="OmniPharma" class="h-6 w-6 object-contain">
-            <span class="font-bold text-slate-800">OmniPharma</span>
+    <!-- Footer Resmi Apotek -->
+    <footer class="border-t border-slate-200 bg-white py-12 px-4 text-xs text-slate-600">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <!-- Kolom 1: Profil -->
+            <div class="space-y-3">
+                <div class="flex items-center gap-2">
+                    <img src="/logo.png" alt="OmniPharma" class="h-7 w-7 object-contain">
+                    <span class="font-extrabold text-base text-slate-900 tracking-tight">OmniPharma</span>
+                </div>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                    Jaringan apotek resmi berizin melayani kebutuhan obat bebas, suplemen, dan tebus resep dokter dengan pendampingan Apoteker berlisensi SIPA.
+                </p>
+                <div class="text-[11px] text-slate-400">
+                    SIA: 503/SIA/BWI/2026 • Standar Kemenkes RI
+                </div>
+            </div>
+
+            <!-- Kolom 2: Layanan -->
+            <div class="space-y-2.5">
+                <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider">Layanan Farmasi</h4>
+                <ul class="space-y-1.5 text-xs text-slate-500">
+                    <li>Tebus Resep Dokter</li>
+                    <li>Sediaan Obat Bebas &amp; Rutin</li>
+                    <li>Vitamin &amp; Nutrisi Kesehatan</li>
+                    <li>Konsultasi Obat Apoteker</li>
+                </ul>
+            </div>
+
+            <!-- Kolom 3: Lokasi Cabang -->
+            <div class="space-y-2.5">
+                <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider">Cabang Apotek</h4>
+                <ul class="space-y-2 text-xs text-slate-500">
+                    <li>
+                        <strong class="text-slate-800 block">Cabang Banyuwangi Kota</strong>
+                        <span>Jl. Ahmad Yani No. 45 • Layanan 24 Jam</span>
+                    </li>
+                    <li>
+                        <strong class="text-slate-800 block">Cabang Rogojampi</strong>
+                        <span>Jl. Raya Rogojampi No. 12 • 07:00 - 22:00 WIB</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Kolom 4: Kontak & Bantuan -->
+            <div class="space-y-2.5">
+                <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider">Bantuan &amp; Kontak</h4>
+                <ul class="space-y-1.5 text-xs text-slate-500">
+                    <li>Layanan Apotek: (0333) 412345</li>
+                    <li>Email Layanan: apotek@omnipharma.co.id</li>
+                    <li>Metode Bayar: QRIS &amp; Tunai Kasir</li>
+                </ul>
+            </div>
         </div>
-        <p>Proyek Sistem Informasi Apotek Jaringan OmniPharma • Dosen Pengampu: Pak Devit Suwardiyanto</p>
-        <p class="text-slate-400 text-[11px]">&copy; 2026 OmniPharma. Hak Cipta Dilindungi.</p>
+
+        <div class="max-w-7xl mx-auto pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-slate-400 text-[11px]">
+            <p>&copy; 2026 Apotek OmniPharma. Seluruh hak cipta dilindungi undang-undang.</p>
+            <p>Standar Pelayanan Kefarmasian • Permenkes RI No. 73/2016</p>
+        </div>
     </footer>
 
     @fluxScripts
