@@ -22,6 +22,9 @@ use Illuminate\Support\Carbon;
  * @property string $status_pesanan
  * @property string|null $token_sesi
  * @property string $metode_layanan
+ * @property string|null $slot_waktu
+ * @property string|null $nomor_antrean
+ * @property string|null $catatan_pesanan
  * @property Carbon|null $dibuat_pada
  * @property Carbon|null $diperbarui_pada
  */
@@ -50,6 +53,9 @@ class Pesanan extends Model
         'status',
         'metode_layanan',
         'token_sesi',
+        'slot_waktu',
+        'nomor_antrean',
+        'catatan_pesanan',
     ];
 
     protected function casts(): array
@@ -93,11 +99,13 @@ class Pesanan extends Model
     }
 
     /**
+     * Alias relasi item pesanan untuk kompatibilitas PDM.
+     *
      * @return HasMany<ItemPesanan, $this>
      */
     public function itemPesanan(): HasMany
     {
-        return $this->hasMany(ItemPesanan::class, 'id_pesanan', 'id_pesanan');
+        return $this->items();
     }
 
     /**

@@ -40,12 +40,26 @@ Route::get('/obat/{id}', function (string $client, string $id) {
 })->name('obat.detail');
 
 Route::post('/resep/unggah', function (string $client, UnggahResepRequest $request) {
+    $urlGambar = null;
+    $namaBerkas = null;
+
+    if ($request->hasFile('foto_resep')) {
+        $file = $request->file('foto_resep');
+        if ($file->isValid()) {
+            $namaBerkas = $file->getClientOriginalName();
+            $path = $file->store('resep', 'public');
+            $urlGambar = '/storage/'.$path;
+        }
+    }
+
     return response()->json([
         'success' => true,
         'message' => 'Resep dokter berhasil diunggah dan masuk antrean verifikasi apoteker.',
         'nomor_pesanan' => '#ORD-'.date('Ymd').'-'.str_pad((string) rand(1, 9999), 4, '0', STR_PAD_LEFT),
         'client' => $client,
         'status' => 'menunggu_verifikasi',
+        'url_gambar' => $urlGambar,
+        'nama_berkas' => $namaBerkas,
     ]);
 })->name('resep.upload');
 

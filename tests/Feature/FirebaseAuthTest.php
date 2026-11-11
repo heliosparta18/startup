@@ -103,4 +103,14 @@ class FirebaseAuthTest extends TestCase
 
         $this->assertGuest();
     }
+
+    public function test_firebase_logout_redirects_for_html_requests(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->post(route('auth.firebase.logout'));
+
+        $response->assertRedirect(route('login'));
+        $this->assertGuest();
+    }
 }

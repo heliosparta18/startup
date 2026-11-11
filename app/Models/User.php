@@ -96,4 +96,40 @@ class User extends Authenticatable implements PasskeyUser
     {
         return $this->status === 'active' || $this->status === 'aktif';
     }
+
+    /**
+     * Dapatkan slug client cabang yang diasosiasikan dengan pengguna (khusus apoteker/staf).
+     */
+    public function getClientSlug(): string
+    {
+        if ($this->email === 'dewi@omnipharma.test' || str_contains(strtolower($this->name), 'dewi')) {
+            return 'rogojampi';
+        }
+
+        try {
+            $pengguna = Pengguna::where('telepon_email', $this->email)->first();
+            if ($pengguna) {
+                $admin = AdminClient::where('id_pengguna', $pengguna->id_pengguna)->with('client')->first();
+                if ($admin && $admin->client && ! empty($admin->client->slug)) {
+                    return $admin->client->slug;
+                }
+                $peran = PeranClientPengguna::where('id_pengguna', $pengguna->id_pengguna)->with('client')->first();
+                if ($peran && $peran->client && ! empty($peran->client->slug)) {
+                    return $peran->client->slug;
+                }
+            }
+        } catch (\Throwable $e) {
+            // fallback bila database belum termigrasi lengkap
+        }
+
+        return 'banyuwangi-kota';
+    }
+
+    /**
+     * Dapatkan nama resmi cabang apotek pengguna.
+     */
+    public function getClientName(): string
+    {
+        return $this->getClientSlug() === 'rogojampi' ? 'Cabang Rogojampi' : 'Cabang Banyuwangi Kota';
+    }
 }

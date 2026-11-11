@@ -62,91 +62,73 @@
     }">
         <!-- Breadcrumb & Back -->
         <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
-            <nav class="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-zinc-500 dark:text-zinc-400" aria-label="Breadcrumb">
-                <a href="{{ route('dashboard') }}" class="hover:text-emerald-600 transition flex items-center gap-1 font-semibold text-zinc-700 dark:text-zinc-200 min-h-[44px] py-2">
+            <nav class="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-slate-500" aria-label="Breadcrumb">
+                <a href="{{ route('dashboard') }}" class="hover:text-emerald-700 transition flex items-center gap-1 font-semibold text-slate-800 min-h-[44px] py-2">
                     <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                     </svg>
                     <span>Dashboard Utama</span>
                 </a>
-                <span class="text-zinc-400">/</span>
-                <a href="{{ route('customer.home', ['client' => $client]) }}" class="hover:text-emerald-600 transition flex items-center gap-1 min-h-[44px] py-2 truncate max-w-[200px] sm:max-w-none">
+                <span class="text-slate-400">/</span>
+                <a href="{{ route('customer.home', ['client' => $client]) }}" class="hover:text-emerald-700 transition flex items-center gap-1 min-h-[44px] py-2 truncate max-w-[200px] sm:max-w-none">
                     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
                     <span>Katalog Cabang {{ ucwords(str_replace('-', ' ', $client)) }}</span>
                 </a>
             </nav>
-            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 shrink-0">
-                ⚡ Redis Multi-Tenant Cache
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-900 border border-emerald-200 shrink-0">
+                Redis Multi-Tenant Cache
             </span>
         </div>
 
-        <h1 class="text-xl sm:text-3xl font-extrabold text-zinc-900 dark:text-zinc-100 mb-6 flex flex-wrap items-center gap-2 sm:gap-3">
-            <span>🛒 Keranjang Belanja</span>
-            <span x-show="items.length > 0" class="text-xs sm:text-sm font-normal px-2.5 py-0.5 rounded-full bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
+        <h1 class="text-2xl sm:text-3xl font-black text-slate-900 mb-6 flex flex-wrap items-center gap-2 sm:gap-3">
+            <span>Keranjang Belanja</span>
+            <span x-show="items.length > 0" class="text-xs sm:text-sm font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
                 <span x-text="items.length"></span> Obat
             </span>
         </h1>
 
-        <!-- Tampilan Kosong -->
-        <div x-show="items.length === 0" class="bg-white dark:bg-zinc-900 rounded-2xl sm:rounded-3xl p-6 sm:p-12 text-center border border-zinc-200 dark:border-zinc-800 shadow-sm">
-            <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 bg-emerald-50 dark:bg-emerald-950/40 rounded-full flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+        <!-- Tampilan Kosong: Bersih Putih, Bebas Tema Gelap -->
+        <div x-show="items.length === 0" class="bg-white rounded-3xl p-8 sm:p-14 text-center border border-slate-200/90 shadow-xs">
+            <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-700 border border-emerald-200/60 shadow-2xs">
                 <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
             </div>
-            <h3 class="text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">Keranjang Belanja Masih Kosong</h3>
-            <p class="text-zinc-500 dark:text-zinc-400 max-w-md mx-auto mb-6 text-xs sm:text-sm">
+            <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 mb-2">Keranjang Belanja Masih Kosong</h3>
+            <p class="text-slate-500 max-w-md mx-auto mb-6 text-xs sm:text-sm leading-relaxed">
                 Pilih obat bebas atau sediaan kebutuhan kesehatan dari katalog cabang {{ ucwords(str_replace('-', ' ', $client)) }}.
             </p>
-            <a href="{{ route('customer.home', ['client' => $client]) }}" class="inline-flex items-center justify-center min-h-[44px] px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl text-sm transition shadow-sm w-full sm:w-auto">
+            <a href="{{ route('customer.home', ['client' => $client]) }}" class="inline-flex items-center justify-center min-h-[44px] px-6 py-3 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold rounded-xl text-xs sm:text-sm transition shadow-xs w-full sm:w-auto cursor-pointer">
                 Jelajahi Katalog Obat
             </a>
         </div>
 
         <!-- Tampilan Berisi Item -->
         <div x-show="items.length > 0" class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 items-start">
-            <!-- Daftar Item Keranjang -->
+            <!-- List Item -->
             <div class="lg:col-span-2 space-y-4">
                 <template x-for="item in items" :key="item.id_obat">
-                    <div class="bg-white dark:bg-zinc-900 rounded-2xl p-4 sm:p-5 border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div class="flex items-start gap-3 sm:gap-4 min-w-0">
-                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-emerald-50 dark:bg-emerald-950/50 rounded-xl flex items-center justify-center text-emerald-600 shrink-0">
-                                <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                            </div>
-                            <div class="min-w-0 flex-1">
-                                <h4 class="font-bold text-zinc-900 dark:text-zinc-100 text-sm sm:text-base break-words" x-text="item.nama_obat"></h4>
-                                <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                                    Harga Satuan: <span class="font-medium text-zinc-700 dark:text-zinc-300" x-text="formatRp(item.harga)"></span>
-                                </p>
-                                <template x-if="item.sedia === false">
-                                    <span class="inline-block mt-1 text-[11px] font-semibold text-rose-600 bg-rose-50 dark:bg-rose-950/40 px-2 py-0.5 rounded">
-                                        Sisa Stok Hanya <span x-text="item.stok_tersedia || 0"></span>
-                                    </span>
-                                </template>
-                                <template x-if="item.sedia !== false">
-                                    <span class="inline-block mt-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
-                                        ✓ Stok Tersedia (<span x-text="item.stok_tersedia || 10"></span>)
-                                    </span>
-                                </template>
-                            </div>
+                    <div class="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/90 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-slate-900 text-base" x-text="item.nama_obat"></h4>
+                            <div class="text-xs text-slate-500 mt-0.5" x-text="formatRp(item.harga) + ' / unit'"></div>
                         </div>
 
-                        <!-- Kontrol Kuantitas & Subtotal (Stack vertically or compactly on mobile without overflowing) -->
-                        <div class="flex flex-wrap sm:flex-nowrap items-center justify-between sm:justify-end gap-3 sm:gap-6 pt-3 sm:pt-0 border-t sm:border-t-0 border-zinc-100 dark:border-zinc-800">
-                            <!-- Plus / Minus buttons with min-w-[44px] min-h-[44px] -->
-                            <div class="flex items-center border border-zinc-200 dark:border-zinc-700 rounded-xl overflow-hidden bg-zinc-50 dark:bg-zinc-800 shrink-0">
-                                <button type="button" @click="updateQty(item.id_obat, item.jumlah - 1)" class="min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:bg-zinc-300 transition cursor-pointer" aria-label="Kurangi kuantitas">
+                        <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-4 sm:gap-6">
+                            <!-- Kuantitas Counter -->
+                            <div class="flex items-center border border-slate-200 rounded-xl overflow-hidden bg-slate-50">
+                                <button type="button" @click="updateQty(item.id_obat, item.jumlah - 1)" class="min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center text-slate-600 hover:bg-slate-200 active:bg-slate-300 transition cursor-pointer" aria-label="Kurangi kuantitas">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"/></svg>
                                 </button>
-                                <span class="w-10 text-center font-semibold text-sm text-zinc-900 dark:text-zinc-100 select-none" x-text="item.jumlah"></span>
-                                <button type="button" @click="updateQty(item.id_obat, item.jumlah + 1)" class="min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:bg-zinc-300 transition cursor-pointer" aria-label="Tambah kuantitas">
+                                <span class="w-12 text-center text-sm font-extrabold text-slate-900" x-text="item.jumlah"></span>
+                                <button type="button" @click="updateQty(item.id_obat, item.jumlah + 1)" class="min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center text-slate-600 hover:bg-slate-200 active:bg-slate-300 transition cursor-pointer" aria-label="Tambah kuantitas">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
                                 </button>
                             </div>
 
                             <!-- Subtotal & Hapus -->
                             <div class="text-right shrink-0 flex flex-col items-end">
-                                <div class="text-xs text-zinc-400 sm:hidden">Subtotal</div>
-                                <div class="text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100" x-text="formatRp(item.subtotal)"></div>
-                                <button type="button" @click="removeItem(item.id_obat)" class="text-xs text-rose-500 hover:text-rose-700 active:text-rose-800 transition min-h-[44px] min-w-[44px] inline-flex items-center justify-end gap-1 cursor-pointer" aria-label="Hapus obat dari keranjang">
+                                <div class="text-xs text-slate-400 sm:hidden">Subtotal</div>
+                                <div class="text-sm sm:text-base font-extrabold text-slate-900" x-text="formatRp(item.subtotal)"></div>
+                                <button type="button" @click="removeItem(item.id_obat)" class="text-xs font-bold text-rose-600 hover:text-rose-800 transition min-h-[44px] min-w-[44px] inline-flex items-center justify-end gap-1 cursor-pointer" aria-label="Hapus obat dari keranjang">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                     <span>Hapus</span>
                                 </button>
@@ -157,31 +139,31 @@
             </div>
 
             <!-- Ringkasan Pesanan -->
-            <div class="bg-white dark:bg-zinc-900 rounded-2xl p-5 sm:p-6 border border-zinc-200 dark:border-zinc-800 shadow-sm sticky top-6">
-                <h3 class="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-4">Ringkasan Belanja</h3>
+            <div class="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-xs sticky top-6">
+                <h3 class="text-base sm:text-lg font-extrabold text-slate-900 mb-4">Ringkasan Belanja</h3>
 
-                <div class="space-y-3 text-sm border-b border-zinc-100 dark:border-zinc-800 pb-4">
-                    <div class="flex justify-between text-zinc-600 dark:text-zinc-400">
+                <div class="space-y-3 text-xs sm:text-sm border-b border-slate-100 pb-4">
+                    <div class="flex justify-between text-slate-600">
                         <span>Subtotal Obat</span>
-                        <span class="font-medium text-zinc-900 dark:text-zinc-100" x-text="formatRp(total)"></span>
+                        <span class="font-bold text-slate-900" x-text="formatRp(total)"></span>
                     </div>
-                    <div class="flex justify-between text-zinc-600 dark:text-zinc-400">
+                    <div class="flex justify-between text-slate-600">
                         <span>Biaya Layanan Apotek</span>
-                        <span class="font-medium text-emerald-600">GRATIS</span>
+                        <span class="font-bold text-emerald-700">GRATIS</span>
                     </div>
                 </div>
 
-                <div class="flex justify-between text-base font-extrabold text-zinc-900 dark:text-zinc-100 pt-4 mb-6">
+                <div class="flex justify-between text-base font-black text-slate-900 pt-4 mb-6">
                     <span>Total Pembayaran</span>
-                    <span class="text-emerald-600" x-text="formatRp(total)"></span>
+                    <span class="text-emerald-700" x-text="formatRp(total)"></span>
                 </div>
 
-                <a href="{{ route('customer.checkout', ['client' => $client]) }}" class="w-full min-h-[44px] py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-center text-sm transition flex items-center justify-center gap-2 shadow-sm">
+                <a href="{{ route('customer.checkout', ['client' => $client]) }}" class="w-full min-h-[46px] py-3 px-4 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold rounded-xl text-center text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-xs cursor-pointer">
                     <span>Lanjut ke Checkout</span>
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                 </a>
 
-                <div class="mt-4 p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
+                <div class="mt-4 p-3 bg-emerald-50/70 border border-emerald-200/80 rounded-xl text-xs text-emerald-900 flex items-center gap-2 font-medium">
                     <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
                     <span>Stok dikunci otomatis saat Anda menyelesaikan checkout.</span>
                 </div>

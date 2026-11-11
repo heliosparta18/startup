@@ -73,8 +73,19 @@ class CheckoutController extends Controller
             $user = $request->user();
             $userId = $user ? Pengguna::where('telepon_email', $user->email)->value('id_pengguna') : null;
             $metodeLayanan = (string) $request->input('metode_layanan', 'click_collect');
+            $slotWaktu = $request->input('slot_waktu');
+            $catatan = $request->input('catatan');
 
-            $pesanan = $createOrderAction->execute($clientId, $userId, $items, $metodeLayanan, $sessionId);
+            $pesanan = $createOrderAction->execute(
+                $clientId,
+                $userId,
+                $items,
+                $metodeLayanan,
+                $sessionId,
+                $slotWaktu,
+                null,
+                $catatan
+            );
             $cartService->clear($sessionId, $clientId);
 
             Cache::forget($lockKey);
