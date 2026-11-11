@@ -15,7 +15,7 @@
                 <div>
                     <div class="flex items-center gap-1.5">
                         <span class="block text-xs font-black tracking-widest text-emerald-700 uppercase">OmniPharma Network</span>
-                        <span class="text-[10px] font-bold px-1.5 py-0.2 rounded bg-[#0A231E] text-[#D4F94E]">PUSAT</span>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-950 text-emerald-300 border border-emerald-700/50">PUSAT</span>
                     </div>
                     <h1 class="text-sm font-extrabold uppercase tracking-tight text-slate-900">Executive Dashboard : Agregasi Cabang</h1>
                     <div class="text-[11px] font-semibold text-emerald-700">Periode 01-16 Sep 2026 • Standar Permenkes RI No. 73/2016</div>
@@ -34,7 +34,7 @@
                     <div class="font-extrabold text-slate-900">M. Daffa Ariby</div>
                     <div class="text-[11px] text-emerald-700 font-semibold">Super Administrator (Headquarter)</div>
                 </div>
-                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-[#0A231E] text-[#D4F94E] font-extrabold text-sm border border-emerald-500/30 shadow-xs" title="Super Administrator">
+                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-950 text-emerald-300 font-extrabold text-sm border border-emerald-600/40 shadow-xs" title="Super Administrator">
                     DA
                 </div>
             </div>

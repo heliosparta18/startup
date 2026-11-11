@@ -2,16 +2,23 @@
 
 use App\Http\Controllers\Auth\EmailOtpAuthController;
 use App\Http\Controllers\Auth\FirebaseAuthSessionController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
+Route::get('/', function (Request $request) {
     if (auth()->check()) {
+        if ($request->has('welcome') || $request->has('sambutan')) {
+            return view('welcome');
+        }
+
         $user = auth()->user();
         if ($user->hasRole('super_admin') || $user->role === 'super_admin') {
             return redirect()->route('admin.dashboard');
         }
         if ($user->hasRole('apoteker') || $user->role === 'apoteker') {
-            return redirect()->route('tenant.dashboard', ['client' => 'banyuwangi-kota']);
+            $clientSlug = ($user->email === 'dewi@omnipharma.test') ? 'rogojampi' : 'banyuwangi-kota';
+
+            return redirect()->route('tenant.dashboard', ['client' => $clientSlug]);
         }
 
         return redirect()->route('dashboard');
@@ -20,7 +27,7 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
 });
 

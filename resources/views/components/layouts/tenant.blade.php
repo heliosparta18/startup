@@ -25,7 +25,7 @@
                     <div>
                         <div class="flex items-center gap-1.5">
                             <span class="block text-xs font-black tracking-widest text-emerald-700 uppercase">OmniPharma Network</span>
-                            <span class="text-[10px] font-bold px-1.5 py-0.2 rounded bg-[#0A231E] text-[#D4F94E]">APJ</span>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-950 text-emerald-300 border border-emerald-700/50">APJ</span>
                         </div>
                         <div class="text-xs font-bold uppercase tracking-wider text-emerald-700">Portal Apoteker Cabang</div>
                         <div class="text-sm font-extrabold text-slate-900 uppercase tracking-tight">Cabang {{ $client ?? 'Banyuwangi Kota' }}</div>
@@ -44,7 +44,7 @@
                         <div class="font-bold text-slate-900">apt. Candia Purwa, S.Farm</div>
                         <div class="text-[11px] text-emerald-700 font-semibold">Apoteker Penanggung Jawab (SIPA)</div>
                     </div>
-                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-[#0A231E] text-[#D4F94E] font-extrabold text-sm border border-emerald-500/30 shadow-xs cursor-default" title="Petugas Farmasi">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-950 text-emerald-300 font-extrabold text-sm border border-emerald-600/40 shadow-xs cursor-default" title="Petugas Farmasi">
                         CP
                     </div>
                 </div>

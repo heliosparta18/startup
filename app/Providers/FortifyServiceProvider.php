@@ -30,11 +30,16 @@ class FortifyServiceProvider extends ServiceProvider
                     if ($user?->hasRole('super_admin') || $user?->role === 'super_admin') {
                         $redirectUrl = route('admin.dashboard');
                     } elseif ($user?->hasRole('apoteker') || $user?->role === 'apoteker') {
-                        $redirectUrl = route('tenant.dashboard', ['client' => 'banyuwangi-kota']);
+                        $clientSlug = ($user->email === 'dewi@omnipharma.test') ? 'rogojampi' : 'banyuwangi-kota';
+                        $redirectUrl = route('tenant.dashboard', ['client' => $clientSlug]);
                     }
 
                     $intended = session()->get('url.intended');
-                    if ($intended && (url($intended) === url('/') || $intended === '/')) {
+                    if ($intended && (
+                        url($intended) === url('/')
+                        || $intended === '/'
+                        || str_contains($intended, '/klien/')
+                    )) {
                         session()->forget('url.intended');
                     }
 

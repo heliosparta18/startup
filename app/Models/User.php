@@ -94,6 +94,6 @@ class User extends Authenticatable implements PasskeyUser
 
     public function isActive(): bool
     {
-        return $this->status === 'active';
+        return $this->status === 'active' || $this->status === 'aktif';
     }
 }

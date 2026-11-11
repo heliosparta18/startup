@@ -93,6 +93,14 @@ class Pesanan extends Model
     }
 
     /**
+     * @return HasMany<ItemPesanan, $this>
+     */
+    public function itemPesanan(): HasMany
+    {
+        return $this->hasMany(ItemPesanan::class, 'id_pesanan', 'id_pesanan');
+    }
+
+    /**
      * @return HasOne<Pembayaran, $this>
      */
     public function pembayaran(): HasOne

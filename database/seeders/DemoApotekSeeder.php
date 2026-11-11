@@ -74,7 +74,7 @@ class DemoApotekSeeder extends Seeder
                 'name' => $superAdminUser->nama_lengkap,
                 'password' => bcrypt('password'),
                 'role' => 'super_admin',
-                'status' => 'aktif',
+                'status' => 'active',
                 'email_verified_at' => now(),
             ]
         );
@@ -115,7 +115,7 @@ class DemoApotekSeeder extends Seeder
                 'name' => $apotekerBwi->nama_lengkap,
                 'password' => bcrypt('password'),
                 'role' => 'apoteker',
-                'status' => 'aktif',
+                'status' => 'active',
                 'email_verified_at' => now(),
             ]
         );
@@ -156,7 +156,7 @@ class DemoApotekSeeder extends Seeder
                 'name' => $apotekerRogo->nama_lengkap,
                 'password' => bcrypt('password'),
                 'role' => 'apoteker',
-                'status' => 'aktif',
+                'status' => 'active',
                 'email_verified_at' => now(),
             ]
         );
@@ -197,7 +197,7 @@ class DemoApotekSeeder extends Seeder
                 'name' => $kasirBwi->nama_lengkap,
                 'password' => bcrypt('password'),
                 'role' => 'admin',
-                'status' => 'aktif',
+                'status' => 'active',
                 'email_verified_at' => now(),
             ]
         );
@@ -262,6 +262,17 @@ class DemoApotekSeeder extends Seeder
                 'berlaku_dari' => '2026-08-15',
             ]
         );
+        $pelangganGuntur = Pengguna::firstOrCreate(
+            ['telepon_email' => 'gunturafandy5@gmail.com'],
+            [
+                'id_pengguna' => (string) Str::uuid(),
+                'nama_lengkap' => 'Guntur Afandy',
+                'peran' => 'pelanggan',
+                'password' => bcrypt('password'),
+                'terdaftar_pada' => '2026-09-01',
+                'aktif' => true,
+            ]
+        );
 
         $pelangganUser = Pengguna::firstOrCreate(
             ['telepon_email' => 'candi@gmail.com'],
@@ -277,7 +288,7 @@ class DemoApotekSeeder extends Seeder
 
         // Sinkronisasi seluruh akun pengguna ke tabel users untuk login Laravel Fortify & Auth Guard
         foreach (Pengguna::all() as $p) {
-            User::firstOrCreate(
+            User::updateOrCreate(
                 ['email' => $p->telepon_email],
                 [
                     'name' => $p->nama_lengkap,
