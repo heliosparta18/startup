@@ -62,19 +62,19 @@
         <nav class="bg-white border-b border-slate-200/80 px-6 lg:px-10 overflow-x-auto no-scrollbar shadow-2xs">
             <div class="max-w-7xl mx-auto flex items-center gap-1.5 sm:gap-2 text-xs font-bold py-2 whitespace-nowrap">
                 <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl {{ request()->routeIs('admin.dashboard') ? 'bg-gradient-to-r from-[#0A231E] to-[#0E352E] text-[#D4F94E] border border-emerald-500/30 shadow-xs font-black' : 'text-slate-600 hover:text-slate-900 hover:bg-emerald-50/50' }} min-h-[44px] transition">
-                    <span>📊 Overview Omzet</span>
+                    <span>Overview Omzet</span>
                 </a>
                 <a href="{{ route('admin.progres.index') }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl {{ request()->routeIs('admin.progres.index*') ? 'bg-gradient-to-r from-[#0A231E] to-[#0E352E] text-[#D4F94E] border border-emerald-500/30 shadow-xs font-black' : 'text-slate-600 hover:text-slate-900 hover:bg-emerald-50/50' }} min-h-[44px] transition">
-                    <span>⏱️ Monitoring Progres Obat</span>
+                    <span>Monitoring Progres Obat</span>
                 </a>
                 <a href="{{ route('admin.cabang.staf', ['client' => 'banyuwangi-kota']) }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl {{ request()->routeIs('admin.cabang.staf*') ? 'bg-gradient-to-r from-[#0A231E] to-[#0E352E] text-[#D4F94E] border border-emerald-500/30 shadow-xs font-black' : 'text-slate-600 hover:text-slate-900 hover:bg-emerald-50/50' }} min-h-[44px] transition">
-                    <span>👥 Staf &amp; Supervisi APJ</span>
+                    <span>Staf &amp; Supervisi APJ</span>
                 </a>
                 <a href="{{ route('admin.kasir.ledger') }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl {{ request()->routeIs('admin.kasir.ledger*') ? 'bg-gradient-to-r from-[#0A231E] to-[#0E352E] text-[#D4F94E] border border-emerald-500/30 shadow-xs font-black' : 'text-slate-600 hover:text-slate-900 hover:bg-emerald-50/50' }} min-h-[44px] transition">
-                    <span>💳 Buku Kasir &amp; Ledger</span>
+                    <span>Buku Kasir &amp; Ledger</span>
                 </a>
                 <a href="{{ route('admin.cabang.pengaturan', ['client' => 'banyuwangi-kota']) }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl {{ request()->routeIs('admin.cabang.pengaturan*') ? 'bg-gradient-to-r from-[#0A231E] to-[#0E352E] text-[#D4F94E] border border-emerald-500/30 shadow-xs font-black' : 'text-slate-600 hover:text-slate-900 hover:bg-emerald-50/50' }} min-h-[44px] transition">
-                    <span>⚙️ Pengaturan Cabang</span>
+                    <span>Pengaturan Cabang</span>
                 </a>
             </div>
         </nav>

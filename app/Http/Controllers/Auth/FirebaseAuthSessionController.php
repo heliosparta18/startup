@@ -112,7 +112,7 @@ class FirebaseAuthSessionController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        if ($request->expectsJson() || $request->wantsJson()) {
+        if ($request->ajax() || $request->isJson() || $request->header('X-Requested-With') === 'XMLHttpRequest' || ($request->wantsJson() && ! $request->acceptsHtml())) {
             return response()->json([
                 'success' => true,
                 'message' => 'Sesi berhasil diakhiri.',

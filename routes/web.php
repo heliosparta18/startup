@@ -36,7 +36,8 @@ Route::middleware(['throttle:10,1'])->group(function () {
 });
 
 Route::post('/auth/firebase-session', [FirebaseAuthSessionController::class, 'store'])->name('auth.firebase.session');
-Route::post('/auth/firebase-logout', [FirebaseAuthSessionController::class, 'destroy'])->name('auth.firebase.logout');
+Route::match(['GET', 'POST'], '/auth/firebase-logout', [FirebaseAuthSessionController::class, 'destroy'])->name('auth.firebase.logout');
+Route::match(['GET', 'POST'], '/logout', [FirebaseAuthSessionController::class, 'destroy'])->name('logout');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/auth/complete-profile', [FirebaseAuthSessionController::class, 'showCompleteProfile'])->name('auth.complete-profile');

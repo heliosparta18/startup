@@ -66,7 +66,7 @@
                         <span class="text-xs">&rarr;</span>
                     </a>
                     <a href="{{ route('tenant.stok.fefo', ['client' => $client]) }}" class="inline-flex min-h-[44px] items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs backdrop-blur-xs transition">
-                        <span>📦 Kartu Stok FEFO</span>
+                        <span>Kartu Stok FEFO</span>
                     </a>
                 </div>
             </div>
@@ -100,7 +100,7 @@
                         type="button"
                         @click="modalResepBesar = true"
                         class="mt-3 inline-flex min-h-[44px] items-center justify-center rounded-xl border border-slate-300 bg-white px-4 text-xs font-bold text-slate-700 hover:bg-slate-50 transition cursor-pointer shadow-2xs">
-                        🔍 Perbesar Resep
+                        <span>Perbesar Resep</span>
                     </button>
                 </div>
 
@@ -237,18 +237,20 @@
         </div>
 
         <!-- SECTION 3: Antrean Virtual Berjalan & Tombol Cepat Progresi Status Pesanan -->
-        <section class="rounded-3xl border border-slate-200/90 bg-white dark:bg-zinc-900 p-6 sm:p-8 shadow-xs space-y-5">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-zinc-800 pb-4">
+        <section class="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs space-y-5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
                 <div class="flex items-center gap-3">
-                    <div class="h-10 w-10 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-lg border border-emerald-200 shrink-0">
-                        ⏱️
+                    <div class="h-10 w-10 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-sm border border-emerald-200 shrink-0">
+                        <svg class="w-5 h-5 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
-                            <span class="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">Antrean Berjalan:</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-emerald-800">Antrean Berjalan:</span>
                             <span class="px-2.5 py-0.5 rounded-lg bg-[#0A231E] text-[#D4F94E] font-mono font-black text-xs">{{ $antreanBerjalan ?? 'A-001' }}</span>
                         </div>
-                        <h2 class="text-lg font-extrabold text-slate-900 dark:text-zinc-100">Pesanan Aktif &amp; Kontrol Progresi Status</h2>
+                        <h2 class="text-lg font-extrabold text-slate-900">Pesanan Aktif &amp; Kontrol Progresi Status</h2>
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
@@ -258,9 +260,9 @@
                 </div>
             </div>
 
-            <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-zinc-800">
+            <div class="overflow-x-auto rounded-2xl border border-slate-200">
                 <table class="w-full text-left text-xs min-w-[46rem]">
-                    <thead class="bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 font-extrabold uppercase border-b border-slate-200 dark:border-zinc-700">
+                    <thead class="bg-slate-50 text-slate-700 font-extrabold uppercase border-b border-slate-200">
                         <tr>
                             <th class="p-3">Antrean / Order</th>
                             <th class="p-3">Pasien</th>
@@ -270,7 +272,7 @@
                             <th class="p-3 text-right">Aksi Progresi Status</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-200 dark:divide-zinc-800 font-medium">
+                    <tbody class="divide-y divide-slate-100 font-medium">
                         @forelse($pesanansAktif ?? [] as $activeOrder)
                             @php
                                 $curStatus = $activeOrder->status ?? 'diproses';
@@ -278,17 +280,17 @@
                             <tr class="hover:bg-slate-50/80 transition">
                                 <td class="p-3">
                                     <div class="flex items-center gap-2">
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-lg font-bold text-xs bg-slate-200 dark:bg-zinc-700 text-slate-900 dark:text-zinc-100">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-lg font-bold text-xs bg-slate-100 text-slate-800">
                                             {{ $activeOrder->nomor_antrean ?? 'A-001' }}
                                         </span>
-                                        <span class="font-bold text-slate-900 dark:text-zinc-100">{{ $activeOrder->nomor_pesanan }}</span>
+                                        <span class="font-bold text-slate-900">{{ $activeOrder->nomor_pesanan }}</span>
                                     </div>
                                 </td>
                                 <td class="p-3">
-                                    <div class="font-bold text-slate-900 dark:text-zinc-100">{{ $activeOrder->pengguna->nama_lengkap ?? 'Pasien Umum' }}</div>
+                                    <div class="font-bold text-slate-900">{{ $activeOrder->pengguna->nama_lengkap ?? 'Pasien Umum' }}</div>
                                 </td>
-                                <td class="p-3 font-semibold text-slate-700 dark:text-zinc-300">
-                                    ⏱️ {{ $activeOrder->slot_waktu ?? '15 Menit Lagi' }}
+                                <td class="p-3 font-semibold text-slate-700">
+                                    {{ $activeOrder->slot_waktu ?? '15 Menit Lagi' }}
                                 </td>
                                 <td class="p-3 max-w-[200px]">
                                     @foreach($activeOrder->items->take(2) as $item)
@@ -303,12 +305,10 @@
                                         </span>
                                     @elseif($curStatus === 'siap_diambil')
                                         <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-100 text-emerald-900 border border-emerald-300">
-                                            <span>📦</span>
                                             Siap Diambil
                                         </span>
                                     @elseif($curStatus === 'selesai')
                                         <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#0A231E] text-[#D4F94E] border border-emerald-500/20">
-                                            <span>✓</span>
                                             Selesai
                                         </span>
                                     @else

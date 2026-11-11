@@ -143,8 +143,10 @@
         <!-- Banner Monitoring Progres Obat Real-Time (Super Admin View) -->
         <div class="rounded-2xl bg-gradient-to-r from-[#0A231E] via-[#0E352E] to-emerald-950 p-5 text-white shadow-xs border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div class="flex items-center gap-3.5">
-                <div class="h-12 w-12 rounded-xl bg-[#D4F94E] text-[#0A231E] flex items-center justify-center font-black text-xl shadow-xs shrink-0">
-                    ⏱️
+                <div class="h-12 w-12 rounded-xl bg-[#D4F94E] text-[#0A231E] flex items-center justify-center shadow-xs shrink-0">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
                 </div>
                 <div>
                     <div class="flex items-center gap-2">

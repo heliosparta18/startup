@@ -39,7 +39,7 @@
 
                     <div class="flex flex-wrap items-center gap-2 mt-4 text-xs">
                         <span class="px-3 py-1 rounded-xl bg-white/10 border border-white/15 text-white font-bold">
-                            🏢 {{ $clientModel->nama_client }}
+                            {{ $clientModel->nama_client }}
                         </span>
                         <span class="px-3 py-1 rounded-xl bg-white/10 border border-white/15 text-emerald-200 font-mono">
                             Kode Cabang: {{ $clientModel->slug ?? $clientModel->id_client }}

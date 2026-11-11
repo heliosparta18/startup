@@ -244,15 +244,15 @@ Route::post('/resep/{id}/verifikasi', function (string $client, string $id, Veri
         }
     }
 
-    if ($request->wantsJson()) {
-        return response()->json([
-            'success' => true,
-            'message' => "Resep {$id} berhasil diverifikasi ({$action}).",
-            'status_verifikasi' => $action,
-        ]);
+    if ($request->header('Accept') === 'text/html' && $request->has('_token') && $request->header('referer') && ! $request->expectsJson()) {
+        return back()->with('success', "Resep {$id} berhasil diverifikasi ({$action}).");
     }
 
-    return back()->with('success', "Resep {$id} berhasil diverifikasi ({$action}).");
+    return response()->json([
+        'success' => true,
+        'message' => "Resep {$id} berhasil diverifikasi ({$action}).",
+        'status_verifikasi' => $action,
+    ]);
 })->name('resep.verifikasi');
 
 Route::post('/stok/{id}/penyesuaian', function (string $client, string $id, Request $request) {

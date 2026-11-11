@@ -12,7 +12,7 @@
                     &larr; Dashboard Cabang
                 </a>
                 <a href="{{ route('tenant.stok.fefo', ['client' => $client]) }}" class="flex-1 sm:flex-initial min-h-[44px] inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-2xs transition">
-                    📦 Kartu Stok FEFO
+                    Kartu Stok FEFO
                 </a>
             </div>
         </div>

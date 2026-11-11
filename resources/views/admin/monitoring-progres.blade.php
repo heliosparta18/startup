@@ -92,7 +92,7 @@
         <!-- Filter Cabang -->
         <div class="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div class="flex items-center gap-2 text-xs font-bold text-slate-700">
-                <span>📍 Filter Cabang Apotek:</span>
+                <span>Filter Cabang Apotek:</span>
                 <a href="{{ route('admin.progres.index', ['client' => 'all']) }}" class="px-3 py-1.5 rounded-xl {{ empty($selectedClient) || $selectedClient === 'all' ? 'bg-[#0A231E] text-[#D4F94E]' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }} transition">
                     Semua Cabang
                 </a>
@@ -167,7 +167,7 @@
                                     </div>
                                 </td>
                                 <td class="p-3.5">
-                                    <div class="font-semibold text-slate-700">⏱️ {{ $order->slot_waktu ?? '15 Menit Lagi (Segera)' }}</div>
+                                    <div class="font-semibold text-slate-700">{{ $order->slot_waktu ?? '15 Menit Lagi (Segera)' }}</div>
                                     <div class="text-[11px] text-slate-400 capitalize">{{ str_replace('_', ' ', $order->metode_layanan) }}</div>
                                 </td>
                                 <td class="p-3.5">
@@ -178,12 +178,10 @@
                                         </span>
                                     @elseif($status === 'siap_diambil')
                                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-950 border border-emerald-300">
-                                            <span>📦</span>
                                             Siap Diambil
                                         </span>
                                     @elseif($status === 'selesai')
                                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-[#0A231E] text-[#D4F94E] border border-emerald-500/20">
-                                            <span>✓</span>
                                             Selesai Diserahkan
                                         </span>
                                     @elseif($status === 'menunggu_pembayaran')

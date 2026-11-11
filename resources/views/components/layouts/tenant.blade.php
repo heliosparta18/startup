@@ -80,22 +80,22 @@
                     Apoteker: <strong class="text-slate-900">{{ $aptName }}</strong> ({{ $clientDisplay }})
                 </div>
                 <a href="{{ route('tenant.dashboard', ['client' => $clientSlug]) }}" class="flex items-center gap-2 min-h-[44px] px-3 py-2 rounded-xl bg-emerald-50 text-emerald-900 font-bold border border-emerald-200">
-                    <span>📋 Verifikasi Resep &amp; Stok FEFO</span>
+                    <span>Verifikasi Resep &amp; Stok FEFO</span>
                 </a>
                 <a href="{{ route('tenant.antrean.index', ['client' => $clientSlug]) }}" class="flex items-center gap-2 min-h-[44px] px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-50 font-bold">
-                    <span>⏱️ Antrean &amp; Progres Status</span>
+                    <span>Antrean &amp; Progres Status</span>
                 </a>
                 <a href="{{ route('tenant.resep.antrean', ['client' => $clientSlug]) }}" class="flex items-center gap-2 min-h-[44px] px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-50 font-bold">
-                    <span>📥 Antrean Resep Masuk</span>
+                    <span>Antrean Resep Masuk</span>
                 </a>
                 <a href="{{ route('tenant.stok.fefo', ['client' => $clientSlug]) }}" class="flex items-center gap-2 min-h-[44px] px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-50 font-bold">
-                    <span>📦 Manajemen Batch FEFO</span>
+                    <span>Manajemen Batch FEFO</span>
                 </a>
                 <a href="{{ route('tenant.pasien.index', ['client' => $clientSlug]) }}" class="flex items-center gap-2 min-h-[44px] px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-50 font-bold">
-                    <span>👤 Rekam Data Pasien</span>
+                    <span>Rekam Data Pasien</span>
                 </a>
                 <a href="{{ route('tenant.bantuan.index', ['client' => $clientSlug]) }}" class="flex items-center gap-2 min-h-[44px] px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-50 font-bold">
-                    <span>📖 Panduan SOP Farmasi</span>
+                    <span>Panduan SOP Farmasi</span>
                 </a>
                 <a href="{{ route('dashboard') }}" class="flex items-center gap-2 min-h-[44px] px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-50 font-bold">
                     <span>&larr; Kembali ke Dashboard Utama</span>
@@ -107,25 +107,25 @@
         <nav class="bg-white border-b border-slate-200/80 px-4 sm:px-6 lg:px-8 overflow-x-auto no-scrollbar shadow-2xs">
             <div class="max-w-7xl mx-auto flex items-center gap-1.5 sm:gap-2 text-xs font-bold py-2 whitespace-nowrap">
                 <a href="{{ route('tenant.dashboard', ['client' => $clientSlug]) }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl {{ request()->routeIs('tenant.dashboard') ? 'bg-gradient-to-r from-[#0A231E] to-[#0E352E] text-[#D4F94E] border border-emerald-500/30 shadow-xs font-black' : 'text-slate-600 hover:text-slate-900 hover:bg-emerald-50/50' }} min-h-[44px] transition">
-                    <span>📋 Telaah Resep &amp; FEFO</span>
+                    <span>Telaah Resep &amp; FEFO</span>
                 </a>
                 <a href="{{ route('tenant.antrean.index', ['client' => $clientSlug]) }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl {{ request()->routeIs('tenant.antrean.index*') ? 'bg-gradient-to-r from-[#0A231E] to-[#0E352E] text-[#D4F94E] border border-emerald-500/30 shadow-xs font-black' : 'text-slate-600 hover:text-slate-900 hover:bg-emerald-50/50' }} min-h-[44px] transition">
-                    <span>⏱️ Antrean &amp; Progres Status</span>
+                    <span>Antrean &amp; Progres Status</span>
                 </a>
                 <a href="{{ route('tenant.resep.antrean', ['client' => $clientSlug]) }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl {{ request()->routeIs('tenant.resep.antrean*') ? 'bg-gradient-to-r from-[#0A231E] to-[#0E352E] text-[#D4F94E] border border-emerald-500/30 shadow-xs font-black' : 'text-slate-600 hover:text-slate-900 hover:bg-emerald-50/50' }} min-h-[44px] transition">
-                    <span>📥 Antrean Masuk</span>
+                    <span>Antrean Masuk</span>
                 </a>
                 <a href="{{ route('tenant.stok.fefo', ['client' => $clientSlug]) }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl {{ request()->routeIs('tenant.stok.fefo*') ? 'bg-gradient-to-r from-[#0A231E] to-[#0E352E] text-[#D4F94E] border border-emerald-500/30 shadow-xs font-black' : 'text-slate-600 hover:text-slate-900 hover:bg-emerald-50/50' }} min-h-[44px] transition">
-                    <span>📦 Stok Batch FEFO</span>
+                    <span>Stok Batch FEFO</span>
                 </a>
                 <a href="{{ route('tenant.pasien.index', ['client' => $clientSlug]) }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl {{ request()->routeIs('tenant.pasien.index*') ? 'bg-gradient-to-r from-[#0A231E] to-[#0E352E] text-[#D4F94E] border border-emerald-500/30 shadow-xs font-black' : 'text-slate-600 hover:text-slate-900 hover:bg-emerald-50/50' }} min-h-[44px] transition">
-                    <span>👤 Rekam Pasien</span>
+                    <span>Rekam Pasien</span>
                 </a>
                 <a href="{{ route('tenant.bantuan.index', ['client' => $clientSlug]) }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl {{ request()->routeIs('tenant.bantuan.index*') ? 'bg-gradient-to-r from-[#0A231E] to-[#0E352E] text-[#D4F94E] border border-emerald-500/30 shadow-xs font-black' : 'text-slate-600 hover:text-slate-900 hover:bg-emerald-50/50' }} min-h-[44px] transition">
-                    <span>📖 SOP Farmasi</span>
+                    <span>SOP Farmasi</span>
                 </a>
                 <a href="{{ route('customer.home', ['client' => $clientSlug]) }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-emerald-50/50 min-h-[44px] transition">
-                    <span>🛒 Buka Katalog</span>
+                    <span>Katalog Publik</span>
                 </a>
             </div>
         </nav>

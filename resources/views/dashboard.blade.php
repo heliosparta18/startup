@@ -142,7 +142,7 @@
                             </span>
                             @if($isApoteker)
                                 <span class="px-2.5 py-1 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-[#D4F94E] font-bold">
-                                    🏢 {{ $userClientName }}
+                                    {{ $userClientName }}
                                 </span>
                             @endif
                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/10 border border-white/15 text-emerald-200 font-semibold">
@@ -160,26 +160,26 @@
                             href="{{ route('admin.dashboard') }}"
                             class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs sm:text-sm shadow-md transition min-h-[46px] cursor-pointer"
                         >
-                            <span>📊 Overview Omzet &amp; KPI</span>
+                            <span>Overview Omzet &amp; KPI</span>
                         </a>
                         <a
                             href="{{ route('admin.progres.index') }}"
                             class="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-white/20 bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm transition min-h-[46px] cursor-pointer"
                         >
-                            <span>⏱️ Live Monitoring Obat</span>
+                            <span>Live Monitoring Obat</span>
                         </a>
                     @elseif($isApoteker)
                         <a
                             href="{{ route('tenant.dashboard', ['client' => $userClientSlug]) }}"
                             class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs sm:text-sm shadow-md transition min-h-[46px] cursor-pointer"
                         >
-                            <span>📋 Telaah Resep &amp; FEFO</span>
+                            <span>Telaah Resep &amp; FEFO</span>
                         </a>
                         <a
                             href="{{ route('tenant.antrean.index', ['client' => $userClientSlug]) }}"
                             class="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-white/20 bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm transition min-h-[46px] cursor-pointer"
                         >
-                            <span>⏱️ Kelola Antrean Cabang</span>
+                            <span>Kelola Antrean Cabang</span>
                         </a>
                     @else
                         <a
@@ -284,7 +284,9 @@
                     >
                         <div>
                             <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center mb-4 group-hover:bg-[#0A231E] group-hover:text-[#D4F94E] transition shadow-xs">
-                                <span class="text-xl">💳</span>
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                </svg>
                             </div>
                             <h3 class="font-extrabold text-slate-900 text-base group-hover:text-emerald-800 transition">Buku Kasir &amp; Ledger Lintas Cabang</h3>
                             <p class="text-xs text-slate-500 mt-1 leading-relaxed">Pencatatan kas masuk, rekonsiliasi QRIS, dan arus kas penutupan harian kasir.</p>
@@ -302,7 +304,9 @@
                     >
                         <div>
                             <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center mb-4 group-hover:bg-[#0A231E] group-hover:text-[#D4F94E] transition shadow-xs">
-                                <span class="text-xl">🏥</span>
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                </svg>
                             </div>
                             <h3 class="font-extrabold text-slate-900 text-base group-hover:text-emerald-800 transition">Inspeksi Cabang Banyuwangi Kota</h3>
                             <p class="text-xs text-slate-500 mt-1 leading-relaxed">Supervisi stok FEFO, antrean masuk, dan verifikasi SIP Apoteker Penanggung Jawab BWI.</p>
@@ -320,7 +324,9 @@
                     >
                         <div>
                             <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center mb-4 group-hover:bg-[#0A231E] group-hover:text-[#D4F94E] transition shadow-xs">
-                                <span class="text-xl">🏬</span>
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                </svg>
                             </div>
                             <h3 class="font-extrabold text-slate-900 text-base group-hover:text-emerald-800 transition">Inspeksi Cabang Rogojampi</h3>
                             <p class="text-xs text-slate-500 mt-1 leading-relaxed">Supervisi operasional dan perputaran batch obat Cabang Rogojampi.</p>
@@ -338,7 +344,9 @@
                     >
                         <div>
                             <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center mb-4 group-hover:bg-[#0A231E] group-hover:text-[#D4F94E] transition shadow-xs">
-                                <span class="text-xl">👥</span>
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
                             </div>
                             <h3 class="font-extrabold text-slate-900 text-base group-hover:text-emerald-800 transition">Supervisi Staf &amp; SIPA Apoteker</h3>
                             <p class="text-xs text-slate-500 mt-1 leading-relaxed">Kelola data tenaga kefarmasian, validitas legalitas SIPA, dan penugasan cabang.</p>
@@ -386,7 +394,9 @@
                     >
                         <div>
                             <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center mb-4 group-hover:bg-[#0A231E] group-hover:text-[#D4F94E] transition shadow-xs">
-                                <span class="text-xl">⏱️</span>
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
                             </div>
                             <div class="flex items-center gap-1.5 mb-1">
                                 <span class="text-[10px] font-extrabold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
@@ -409,7 +419,9 @@
                     >
                         <div>
                             <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center mb-4 group-hover:bg-[#0A231E] group-hover:text-[#D4F94E] transition shadow-xs">
-                                <span class="text-xl">📦</span>
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                </svg>
                             </div>
                             <h3 class="font-extrabold text-slate-900 text-base group-hover:text-emerald-800 transition">Manajemen Stok Batch FEFO</h3>
                             <p class="text-xs text-slate-500 mt-1 leading-relaxed">Rotasi nomor batch, pantau tanggal kedaluwarsa (ED), dan karantina obat rusak/expired.</p>
@@ -427,7 +439,9 @@
                     >
                         <div>
                             <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center mb-4 group-hover:bg-[#0A231E] group-hover:text-[#D4F94E] transition shadow-xs">
-                                <span class="text-xl">📥</span>
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                </svg>
                             </div>
                             <h3 class="font-extrabold text-slate-900 text-base group-hover:text-emerald-800 transition">Daftar Antrean Resep Masuk</h3>
                             <p class="text-xs text-slate-500 mt-1 leading-relaxed">Semua berkas foto resep dokter yang diunggah oleh pasien untuk ditelaah apoteker.</p>
@@ -445,7 +459,9 @@
                     >
                         <div>
                             <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center mb-4 group-hover:bg-[#0A231E] group-hover:text-[#D4F94E] transition shadow-xs">
-                                <span class="text-xl">👤</span>
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
                             </div>
                             <h3 class="font-extrabold text-slate-900 text-base group-hover:text-emerald-800 transition">Rekam Data Pasien &amp; Riwayat Obat</h3>
                             <p class="text-xs text-slate-500 mt-1 leading-relaxed">Catatan riwayat alergi obat, riwayat penebusan resep, dan identitas pasien cabang.</p>
@@ -463,7 +479,9 @@
                     >
                         <div>
                             <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center mb-4 group-hover:bg-[#0A231E] group-hover:text-[#D4F94E] transition shadow-xs">
-                                <span class="text-xl">🏪</span>
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                </svg>
                             </div>
                             <h3 class="font-extrabold text-slate-900 text-base group-hover:text-emerald-800 transition">Katalog Publik {{ $userClientName }}</h3>
                             <p class="text-xs text-slate-500 mt-1 leading-relaxed">Pratinjau etalase obat bebas, bebas terbatas, dan harga yang dilihat oleh pelanggan.</p>
@@ -505,7 +523,9 @@
                     >
                         <div>
                             <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center mb-4 group-hover:bg-[#0A231E] group-hover:text-[#D4F94E] transition shadow-xs">
-                                <span class="text-xl">🏬</span>
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                </svg>
                             </div>
                             <h3 class="font-extrabold text-slate-900 text-base group-hover:text-emerald-800 transition">Katalog Cabang Rogojampi</h3>
                             <p class="text-xs text-slate-500 mt-1 leading-relaxed">Cek ketersediaan obat resmi pada Apotek OmniPharma Cabang Rogojampi.</p>
@@ -523,7 +543,9 @@
                     >
                         <div>
                             <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center mb-4 group-hover:bg-[#0A231E] group-hover:text-[#D4F94E] transition shadow-xs">
-                                <span class="text-xl">🛒</span>
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                </svg>
                             </div>
                             <h3 class="font-extrabold text-slate-900 text-base group-hover:text-emerald-800 transition">Keranjang &amp; Slot Pengambilan</h3>
                             <p class="text-xs text-slate-500 mt-1 leading-relaxed">Pilih jam ambil obat di apotek tanpa perlu antre lama di loket.</p>
