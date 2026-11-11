@@ -16,6 +16,19 @@
     @fluxAppearance
 </head>
 <body class="min-h-full bg-[#F8FAFC] text-slate-800 antialiased flex flex-col font-sans overflow-x-hidden">
+    @php
+        $photoUrl = session('firebase_photo') ?? null;
+        $provider = session('firebase_provider', 'password');
+        $user = auth()->user();
+        $userName = $user->name ?? 'Pengguna';
+        $userEmail = $user->email ?? '-';
+        $userRole = $user->role ?? ($user->peran ?? 'pelanggan');
+        $isApoteker = $user && ($user->hasRole('apoteker') || $user->role === 'apoteker');
+        $isSuperAdmin = $user && ($user->hasRole('super_admin') || $user->role === 'super_admin');
+        $userClientSlug = $user && method_exists($user, 'getClientSlug') ? $user->getClientSlug() : 'banyuwangi-kota';
+        $userClientName = $user && method_exists($user, 'getClientName') ? $user->getClientName() : 'Cabang Banyuwangi Kota';
+    @endphp
+
     <!-- Navbar Atas -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
@@ -61,16 +74,6 @@
                 </a>
 
                 <div class="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-full border border-slate-200 bg-slate-50/70 text-xs">
-                    @php
-                        $photoUrl = session('firebase_photo') ?? null;
-                        $provider = session('firebase_provider', 'password');
-                        $user = auth()->user();
-                        $userName = $user->name ?? 'Pengguna';
-                        $userEmail = $user->email ?? '-';
-                        $userRole = $user->role ?? ($user->peran ?? 'pelanggan');
-                        $isApoteker = $user?->hasRole('apoteker') || $user?->role === 'apoteker';
-                        $isSuperAdmin = $user?->hasRole('super_admin') || $user?->role === 'super_admin';
-                    @endphp
                     @if($photoUrl)
                         <img src="{{ $photoUrl }}" alt="Avatar" class="w-6 h-6 rounded-full object-cover shrink-0 border border-emerald-500/40">
                     @else
@@ -575,159 +578,6 @@
                 </div>
                 <span class="text-[11px] font-bold text-emerald-700">Terverifikasi SIA &amp; SIP</span>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- 1. Katalog Pasien Cabang Banyuwangi Kota -->
-                <a
-                    href="{{ route('customer.home', ['client' => 'banyuwangi-kota']) }}"
-                    class="group p-5 rounded-2xl bg-white border border-slate-200 hover:border-emerald-500 hover:shadow-md active:bg-slate-50 transition flex flex-col justify-between min-h-[140px]"
-                >
-                    <div>
-                        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-110 transition">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                            </svg>
-                        </div>
-                        <h3 class="font-bold text-slate-900 text-sm group-hover:text-emerald-700">Katalog Obat Cabang Bwi</h3>
-                        <p class="text-xs text-slate-500 mt-1">Cek obat bebas & keras, unggah foto resep dokter, dan pesan obat.</p>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-emerald-600">
-                        <span>Buka Cabang Kota</span>
-                        <span>&rarr;</span>
-                    </div>
-                </a>
-
-                <!-- 2. Katalog Pasien Cabang Rogojampi -->
-                <a
-                    href="{{ route('customer.home', ['client' => 'rogojampi']) }}"
-                    class="group p-5 rounded-2xl bg-white border border-slate-200 hover:border-emerald-500 hover:shadow-md active:bg-slate-50 transition flex flex-col justify-between min-h-[140px]"
-                >
-                    <div>
-                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3 group-hover:scale-110 transition">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
-                            </svg>
-                        </div>
-                        <h3 class="font-bold text-slate-900 text-sm group-hover:text-blue-700">Katalog Cabang Rogojampi</h3>
-                        <p class="text-xs text-slate-500 mt-1">Isolasi stok multi-tenant cabang 02 dan cek ketersediaan obat.</p>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-blue-600">
-                        <span>Buka Rogojampi</span>
-                        <span>&rarr;</span>
-                    </div>
-                </a>
-
-                <!-- 3. Portal Apoteker & Staf Cabang -->
-                @if($isApoteker)
-                    <a
-                        href="{{ route('tenant.dashboard', ['client' => ($user?->email === 'dewi@omnipharma.test' ? 'rogojampi' : 'banyuwangi-kota')]) }}"
-                        class="group p-5 rounded-2xl bg-white border border-slate-200 hover:border-amber-500 hover:shadow-md active:bg-slate-50 transition flex flex-col justify-between min-h-[140px]"
-                    >
-                        <div>
-                            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-3 group-hover:scale-110 transition">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                            </div>
-                            <h3 class="font-bold text-slate-900 text-sm group-hover:text-amber-700">Antrean Resep &amp; FEFO (APJ)</h3>
-                            <p class="text-xs text-slate-500 mt-1">Verifikasi SIP dokter, rotasi batch terdekat ED, dan telaah farmasi.</p>
-                        </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-amber-600">
-                            <span>Portal Apoteker</span>
-                            <span>&rarr;</span>
-                        </div>
-                    </a>
-                @else
-                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/90 flex flex-col justify-between min-h-[140px]">
-                        <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center text-sm font-bold">
-                                    APJ
-                                </div>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-amber-100 text-amber-800">
-                                    Khusus Apoteker
-                                </span>
-                            </div>
-                            <h3 class="font-bold text-slate-900 text-sm">Antrean Resep &amp; FEFO</h3>
-                            <p class="text-[11px] text-slate-500 mt-1 leading-relaxed">
-                                Butuh hak akses Apoteker untuk validasi resep dokter dan stok FEFO.
-                            </p>
-                        </div>
-                        <div class="mt-4 pt-3 border-t border-slate-200/60">
-                            <form method="POST" action="{{ route('login.store') }}">
-                                @csrf
-                                <input type="hidden" name="email" value="bambang@omnipharma.test">
-                                <input type="hidden" name="password" value="password">
-                                <button
-                                    type="submit"
-                                    class="w-full inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white font-bold text-xs shadow-xs transition cursor-pointer min-h-[44px]"
-                                >
-                                    <span>Beralih ke Apoteker</span>
-                                    <span aria-hidden="true">&rarr;</span>
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                @endif
-
-                <!-- 4. Portal Super Admin Eksekutif -->
-                @if($isSuperAdmin)
-                    <a
-                        href="{{ route('admin.dashboard') }}"
-                        class="group p-5 rounded-2xl bg-white border border-slate-200 hover:border-purple-500 hover:shadow-md active:bg-slate-50 transition flex flex-col justify-between min-h-[140px]"
-                    >
-                        <div>
-                            <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center mb-3 group-hover:scale-110 transition">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                                </svg>
-                            </div>
-                            <h3 class="font-bold text-slate-900 text-sm group-hover:text-purple-700">Super Admin Eksekutif</h3>
-                            <p class="text-xs text-slate-500 mt-1">Omzet agregat lintas cabang, tutup periode akuntansi, dan ekspor CSV.</p>
-                        </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-purple-600">
-                            <span>Portal Admin</span>
-                            <span>&rarr;</span>
-                        </div>
-                    </a>
-                @else
-                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/90 flex flex-col justify-between min-h-[140px]">
-                        <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="w-8 h-8 rounded-lg bg-purple-100 text-purple-800 flex items-center justify-center text-sm font-bold">
-                                    ADM
-                                </div>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-purple-100 text-purple-800">
-                                    Khusus Admin
-                                </span>
-                            </div>
-                            <h3 class="font-bold text-slate-900 text-sm">Super Admin Eksekutif</h3>
-                            <p class="text-[11px] text-slate-500 mt-1 leading-relaxed">
-                                Butuh hak akses Super Admin untuk melihat KPI omzet agregat dan tutup periode.
-                            </p>
-                        </div>
-                        <div class="mt-4 pt-3 border-t border-slate-200/60">
-                            <form method="POST" action="{{ route('login.store') }}">
-                                @csrf
-                                <input type="hidden" name="email" value="daffa@omnipharma.test">
-                                <input type="hidden" name="password" value="password">
-                                <button
-                                    type="submit"
-                                    class="w-full inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white font-bold text-xs shadow-xs transition cursor-pointer min-h-[44px]"
-                                >
-                                    <span>Beralih ke Admin</span>
-                                    <span aria-hidden="true">&rarr;</span>
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                @endif
-            </div>
-        </div>
-
-        <!-- Rincian Informasi Sesi & Kredensial Medis -->
-        <div class="rounded-2xl bg-white border border-slate-200 p-4 sm:p-6">
-            <h3 class="text-sm font-bold uppercase tracking-wider text-slate-700 mb-4">Informasi Sesi Autentikasi Pengguna</h3>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-xs">
                 <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100">
                     <span class="text-slate-400 block mb-1">Status Autentikasi</span>

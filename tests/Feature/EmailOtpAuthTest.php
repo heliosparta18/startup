@@ -89,10 +89,10 @@ class EmailOtpAuthTest extends TestCase
         $response->assertStatus(200);
         $response->assertJson([
             'success' => true,
-            'redirect' => route('dashboard'),
+            'redirect' => route('login'),
         ]);
 
-        $this->assertAuthenticated();
+        $this->assertGuest();
         $this->assertDatabaseHas('users', [
             'name' => 'pasienbaru',
             'email' => $email,

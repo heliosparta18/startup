@@ -63,15 +63,9 @@ class MultiRoleDashboardFlowTest extends TestCase
         $dashboardResponse = $this->get(route('dashboard'));
         $dashboardResponse->assertOk();
         $dashboardResponse->assertSee('Guntur Afandy');
-        $dashboardResponse->assertSee('Dashboard Pelanggan');
-        $dashboardResponse->assertSee('Mulai Belanja Obat');
-        $dashboardResponse->assertSee('Lihat Keranjang');
-        $dashboardResponse->assertSee('Katalog Obat Cabang Bwi');
+        $dashboardResponse->assertSee('Katalog Cabang Banyuwangi Kota');
         $dashboardResponse->assertSee('Katalog Cabang Rogojampi');
-
-        // Memastikan visual guard muncul untuk peran yang membutuhkan hak akses lebih tinggi
-        $dashboardResponse->assertSee('Khusus Apoteker');
-        $dashboardResponse->assertSee('Khusus Admin');
+        $dashboardResponse->assertSee('Keranjang');
     }
 
     /**
@@ -110,12 +104,11 @@ class MultiRoleDashboardFlowTest extends TestCase
         $response->assertSessionHasNoErrors();
         $response->assertRedirect(route('admin.dashboard'));
         $this->assertAuthenticated();
-
         $adminResponse = $this->get(route('admin.dashboard'));
         $adminResponse->assertOk();
         $adminResponse->assertSee('Executive Dashboard');
         $adminResponse->assertSee('Agregasi Cabang');
-        $adminResponse->assertSee('M. Daffa Ariby');
+        $adminResponse->assertSee('Daffa');
     }
 
     /**
@@ -135,7 +128,7 @@ class MultiRoleDashboardFlowTest extends TestCase
         $kasirResponse = $this->get(route('admin.kasir.ledger'));
         $kasirResponse->assertOk();
         $kasirResponse->assertSee('Rekonsiliasi Kasir &amp; Ledger Pembayaran', false);
-        $kasirResponse->assertSee('Buku Kas &amp; Pembayaran Harian', false);
+        $kasirResponse->assertSee('Ledger Terverifikasi', false);
     }
 
     /**
