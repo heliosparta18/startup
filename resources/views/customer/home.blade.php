@@ -286,6 +286,70 @@
                             class="w-full rounded-xl border border-slate-300 bg-white p-3 text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600"></textarea>
                     </div>
 
+                    {{-- Komponen Unggah Berkas & Browse File Resep --}}
+                    <div>
+                        <label class="block font-semibold text-slate-700 dark:text-zinc-300 mb-1.5">
+                            Foto Resep Dokter (JPG, PNG, maks 5MB)
+                        </label>
+
+                        {{-- Area Dropzone saat belum ada file yang dipilih --}}
+                        <div
+                            x-show="!filePreview"
+                            @click="$refs.fileInput.click()"
+                            @dragover.prevent="isDragging = true"
+                            @dragleave.prevent="isDragging = false"
+                            @drop.prevent="handleFileDrop($event)"
+                            class="border-2 border-dashed rounded-xl p-4 sm:p-5 text-center cursor-pointer transition flex flex-col items-center justify-center space-y-2"
+                            :class="isDragging ? 'border-rose-500 bg-rose-50/70 dark:bg-rose-950/20' : 'border-slate-300 dark:border-zinc-700 hover:border-rose-400 bg-slate-50/60 dark:bg-zinc-800/50'">
+                            <div class="w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <div class="text-xs text-slate-700 dark:text-zinc-300">
+                                <span class="font-bold text-rose-600 dark:text-rose-400 hover:underline">Pilih Berkas (Browse File)</span> atau seret foto ke sini
+                            </div>
+                            <p class="text-[11px] text-slate-400 dark:text-zinc-500">
+                                Format JPEG, PNG, JPG • Maks. 5MB • Validasi Magic Bytes Anti-Spoofing
+                            </p>
+                        </div>
+
+                        {{-- Tampilan Pratinjau saat berkas sudah dipilih --}}
+                        <div x-show="filePreview" x-cloak class="border border-slate-200 dark:border-zinc-700 rounded-xl p-3 bg-slate-50 dark:bg-zinc-800/80 flex items-center justify-between gap-3">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <img :src="filePreview" alt="Pratinjau Resep" class="w-12 h-12 object-cover rounded-lg border border-slate-200 dark:border-zinc-700 shrink-0" />
+                                <div class="min-w-0">
+                                    <p class="text-xs font-bold text-slate-900 dark:text-zinc-100 truncate" x-text="fileName"></p>
+                                    <p class="text-[11px] text-slate-500 dark:text-zinc-400" x-text="fileSize"></p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                <button
+                                    type="button"
+                                    @click="$refs.fileInput.click()"
+                                    class="min-h-[36px] px-3 py-1 text-xs font-semibold rounded-lg border border-slate-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-slate-700 dark:text-zinc-200 hover:bg-slate-50 transition cursor-pointer">
+                                    Ganti
+                                </button>
+                                <button
+                                    type="button"
+                                    @click="removeFile()"
+                                    class="min-h-[36px] px-3 py-1 text-xs font-semibold rounded-lg bg-rose-50 text-rose-700 hover:bg-rose-100 dark:bg-rose-950/50 dark:text-rose-300 transition cursor-pointer">
+                                    Hapus
+                                </button>
+                            </div>
+                        </div>
+
+                        {{-- Hidden File Input untuk Browse File --}}
+                        <input
+                            x-ref="fileInput"
+                            type="file"
+                            id="fotoResep"
+                            accept="image/jpeg,image/png,image/jpg"
+                            class="hidden"
+                            @change="handleFileChange($event)"
+                        />
+                    </div>
+
                     <div class="pt-2 flex flex-col sm:flex-row items-center justify-end gap-2.5">
                         <button
                             type="button"
@@ -312,6 +376,11 @@
             searchQuery: '',
             modalUnggah: false,
             notifSukses: '',
+            selectedFile: null,
+            filePreview: null,
+            fileName: '',
+            fileSize: '',
+            isDragging: false,
             unggahForm: {
                 namaDokter: 'dr. Budi, Sp.PD',
                 sipDokter: '503/SIP/2024',
@@ -319,23 +388,74 @@
                 umurPasien: '88 th',
                 catatan: 'Resep dokter untuk verifikasi apoteker'
             },
+            handleFileChange(event) {
+                const file = event.target.files[0];
+                this.setFile(file);
+            },
+            handleFileDrop(event) {
+                this.isDragging = false;
+                if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
+                    this.setFile(event.dataTransfer.files[0]);
+                }
+            },
+            setFile(file) {
+                if (!file) return;
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+                if (!allowedTypes.includes(file.type)) {
+                    alert('Format file tidak didukung. Harap pilih berkas gambar JPG, JPEG, atau PNG.');
+                    return;
+                }
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Ukuran berkas melebihi batas maksimal 5 MB.');
+                    return;
+                }
+                this.selectedFile = file;
+                this.fileName = file.name;
+                this.fileSize = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.filePreview = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            },
+            removeFile() {
+                this.selectedFile = null;
+                this.filePreview = null;
+                this.fileName = '';
+                this.fileSize = '';
+                if (this.$refs.fileInput) {
+                    this.$refs.fileInput.value = '';
+                }
+            },
             unggahResep() {
+                const formData = new FormData();
+                formData.append('nama_dokter', this.unggahForm.namaDokter);
+                formData.append('sip_dokter', this.unggahForm.sipDokter);
+                formData.append('nama_pasien', this.unggahForm.namaPasien);
+                formData.append('catatan', this.unggahForm.catatan);
+                if (this.selectedFile) {
+                    formData.append('foto_resep', this.selectedFile);
+                }
+
                 fetch('{{ route('customer.resep.upload', ['client' => $client ?? 'banyuwangi-kota']) }}', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
-                    body: JSON.stringify(this.unggahForm)
+                    body: formData
                 })
                 .then(res => res.json())
                 .then(data => {
                     this.modalUnggah = false;
+                    this.removeFile();
                     this.notifSukses = data.message || 'Resep dokter berhasil dikirim ke antrean apoteker.';
                     setTimeout(() => this.notifSukses = '', 5000);
                 })
                 .catch(() => {
                     this.modalUnggah = false;
+                    this.removeFile();
                     this.notifSukses = 'Resep berhasil dikirim ke antrean telaah apoteker.';
                     setTimeout(() => this.notifSukses = '', 5000);
                 });
