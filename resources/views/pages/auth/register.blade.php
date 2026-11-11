@@ -22,58 +22,64 @@
     <!-- Container Utama Split Card Register (Sesuai Referensi Visual) -->
     <div class="w-full max-w-5xl bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-slate-200/80 overflow-hidden flex flex-col lg:flex-row min-h-0 lg:min-h-[640px]">
 
-        <!-- KOLOM KIRI: Visual Hero / Ilustrasi & Brand Showcase -->
-        <div class="lg:w-5/12 bg-gradient-to-br from-[#0A231E] via-[#0E352E] to-[#0A231E] p-5 sm:p-8 lg:p-10 flex flex-col justify-between text-white relative overflow-hidden">
-            <!-- Dekorasi Garis & Lingkaran Geometris Halus -->
-            <div class="absolute -top-24 -left-24 w-72 h-72 rounded-full border border-emerald-500/10 pointer-events-none"></div>
-            <div class="absolute -bottom-24 -right-24 w-80 h-80 rounded-full border border-emerald-500/15 pointer-events-none"></div>
-
-            <!-- Header Brand Kolom Kiri (Logo Transparan Berbayang) -->
+        <!-- KOLOM KIRI: Visual Apotek Resmi & Jaminan Pendaftaran Pasien -->
+        <div class="lg:w-5/12 bg-slate-50 border-r border-slate-200/90 p-6 sm:p-8 lg:p-10 flex flex-col justify-between text-slate-800 relative">
             <div class="relative z-10">
-                <div class="flex items-center gap-3.5">
-                    <img src="/logo.png" alt="OmniPharma Logo" class="h-12 w-12 object-contain drop-shadow-[0_4px_10px_rgba(0,0,0,0.45)] hover:scale-105 transition-transform duration-200">
+                <!-- Brand Header -->
+                <div class="flex items-center gap-3">
+                    <img src="/logo.png" alt="OmniPharma Logo" class="h-10 w-10 object-contain drop-shadow-[0_2px_6px_rgba(5,150,105,0.25)]">
                     <div>
-                        <span class="block text-xs font-bold tracking-widest text-[#D4F94E] uppercase">OmniPharma Network</span>
-                        <span class="block text-sm font-semibold text-emerald-100">Portal Pasien & Pelanggan</span>
+                        <span class="block text-base font-extrabold text-slate-900 tracking-tight leading-none">OmniPharma</span>
+                        <span class="block text-xs font-semibold text-emerald-700 mt-0.5">Portal Pasien &amp; Pelanggan</span>
                     </div>
                 </div>
 
-                <div class="mt-6 sm:mt-8">
-                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-emerald-200 border border-emerald-500/30">
-                        <span class="h-1.5 w-1.5 rounded-full bg-[#D4F94E]"></span>
-                        Verifikasi OTP Email Resmi
-                    </span>
-                    <h2 class="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-white mt-3 leading-snug">
-                        Daftar Akun Pasien & Validasi Email Terpercaya
+                <div class="mt-8 space-y-3">
+                    <div class="inline-block text-[11px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200/80">
+                        Registrasi Pasien Baru
+                    </div>
+                    <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 leading-snug">
+                        Daftar Akun &amp; Pelayanan Obat Terpercaya
                     </h2>
-                    <p class="text-xs sm:text-sm text-emerald-200/80 mt-2 leading-relaxed">
-                        Akun pasien terverifikasi 2FA dengan kode OTP email resmi untuk menjamin keamanan resep dokter dan riwayat obat Anda.
+                    <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">
+                        Buat akun pasien untuk memudahkan pembelian obat bebas, unggah foto resep dokter, dan riwayat kesehatan obat Anda.
                     </p>
                 </div>
-            </div>
 
-            <!-- Kartu Info Keunggulan Layanan -->
-            <div class="my-4 sm:my-6 py-2 sm:py-4 flex items-center justify-center relative z-10">
-                <div class="w-full max-w-[280px] rounded-2xl bg-white/5 border border-white/10 p-4 sm:p-5 space-y-2.5 sm:space-y-3 backdrop-blur-xs shadow-inner text-xs">
-                    <div class="flex items-center gap-2.5 text-white">
-                        <div class="w-6 h-6 rounded-md bg-emerald-500/20 text-[#D4F94E] flex items-center justify-center shrink-0 font-bold">✓</div>
-                        <span>Email Terverifikasi Otomatis via OTP</span>
+                <!-- Kartu Keunggulan Layanan Pasien -->
+                <div class="my-6 space-y-3">
+                    <div class="p-3.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-xs text-slate-900">Verifikasi OTP Email Resmi</h4>
+                            <p class="text-[11px] text-slate-500">Validasi identitas keamanan akun Anda</p>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-2.5 text-white">
-                        <div class="w-6 h-6 rounded-md bg-emerald-500/20 text-[#D4F94E] flex items-center justify-center shrink-0 font-bold">✓</div>
-                        <span>Penebusan Resep Dokter Terintegrasi SIP</span>
-                    </div>
-                    <div class="flex items-center gap-2.5 text-white">
-                        <div class="w-6 h-6 rounded-md bg-emerald-500/20 text-[#D4F94E] flex items-center justify-center shrink-0 font-bold">✓</div>
-                        <span>Live Tracking Status Pesanan Real-Time</span>
+
+                    <div class="p-3.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-xs text-slate-900">Tebus Resep Terintegrasi SIPA</h4>
+                            <p class="text-[11px] text-slate-500">Pemeriksaan langsung oleh apoteker resmi</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Footer Kolom Kiri -->
-            <div class="relative z-10 text-[11px] text-emerald-300/70 flex items-center justify-between pt-4 border-t border-white/10">
-                <span>Praktikum PSI Pak Devit</span>
-                <span>v2.4 Production</span>
+            <div class="relative z-10 text-[11px] text-slate-400 flex items-center justify-between pt-4 border-t border-slate-200/80">
+                <span>&copy; 2026 Apotek OmniPharma</span>
+                <a href="{{ route('home') }}" class="font-semibold text-emerald-700 hover:text-emerald-800 hover:underline inline-flex items-center gap-1">
+                    &larr; Beranda
+                </a>
             </div>
         </div>
 

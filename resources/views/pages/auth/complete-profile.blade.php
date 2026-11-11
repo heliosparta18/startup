@@ -22,59 +22,55 @@
     <div class="w-full max-w-5xl bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-slate-200/80 overflow-hidden flex flex-col lg:flex-row min-h-0 lg:min-h-[640px]">
 
         <!-- KOLOM KIRI: Visual Showcase & Informasi Pasien -->
-        <div class="lg:w-5/12 bg-gradient-to-br from-[#0A231E] via-[#0E352E] to-[#0A231E] p-5 sm:p-8 lg:p-10 flex flex-col justify-between text-white relative overflow-hidden">
-            <div class="absolute -top-24 -left-24 w-72 h-72 rounded-full border border-emerald-500/10 pointer-events-none"></div>
-            <div class="absolute -bottom-24 -right-24 w-80 h-80 rounded-full border border-emerald-500/15 pointer-events-none"></div>
-
+        <div class="lg:w-5/12 bg-slate-50 border-r border-slate-200/90 p-6 sm:p-8 lg:p-10 flex flex-col justify-between text-slate-800 relative">
             <div class="relative z-10">
-                <div class="flex items-center gap-3.5">
-                    <img src="/logo.png" alt="OmniPharma Logo" class="h-10 w-10 sm:h-12 sm:w-12 object-contain drop-shadow-[0_4px_10px_rgba(0,0,0,0.45)] hover:scale-105 transition-transform duration-200 shrink-0">
-                    <div class="min-w-0">
-                        <span class="block text-xs font-bold tracking-widest text-[#D4F94E] uppercase truncate">OmniPharma Network</span>
-                        <span class="block text-sm font-semibold text-emerald-100 truncate">Onboarding Pasien Baru</span>
+                <div class="flex items-center gap-3">
+                    <img src="/logo.png" alt="OmniPharma Logo" class="h-10 w-10 object-contain drop-shadow-[0_2px_6px_rgba(5,150,105,0.25)] shrink-0">
+                    <div>
+                        <span class="block text-base font-extrabold text-slate-900 tracking-tight leading-none">OmniPharma</span>
+                        <span class="block text-xs font-semibold text-emerald-700 mt-0.5">Onboarding Pasien Baru</span>
                     </div>
                 </div>
 
-                <div class="mt-6 sm:mt-8">
-                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-emerald-200 border border-emerald-500/30">
-                        <span class="h-1.5 w-1.5 rounded-full bg-[#D4F94E]"></span>
-                        Langkah Terakhir Pendaftaran
-                    </span>
-                    <h2 class="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-white mt-3 leading-snug">
-                        Satu Langkah Lagi Menuju Layanan Farmasi Penuh
+                <div class="mt-8 space-y-3">
+                    <div class="inline-block text-[11px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200/80">
+                        Langkah Terakhir Registrasi
+                    </div>
+                    <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 leading-snug">
+                        Lengkapi Data Profil Pasien Anda
                     </h2>
-                    <p class="text-xs sm:text-sm text-emerald-200/80 mt-2 leading-relaxed">
-                        Akun Google Anda berhasil diverifikasi. Lengkapi data kontak Anda untuk notifikasi status obat dan buat kata sandi agar Anda dapat masuk menggunakan email kapan saja.
+                    <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">
+                        Akun Google Anda berhasil diverifikasi. Lengkapi nomor telepon dan buat kata sandi agar akun Anda dapat digunakan secara fleksibel.
                     </p>
                 </div>
-            </div>
 
-            <!-- Kartu Preview Akun Terhubung -->
-            <div class="my-4 sm:my-6 py-2 sm:py-4 relative z-10">
-                <div class="rounded-2xl bg-white/5 border border-white/10 p-3.5 sm:p-4 space-y-3 backdrop-blur-xs text-xs">
-                    <div class="flex items-center gap-3 min-w-0">
-                        @if($photoUrl)
-                            <img src="{{ $photoUrl }}" alt="Avatar" class="w-10 h-10 rounded-full object-cover border border-emerald-400 shrink-0">
-                        @else
-                            <div class="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
-                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                <!-- Kartu Preview Akun Terhubung -->
+                <div class="my-6">
+                    <div class="rounded-2xl bg-white border border-slate-200/80 p-4 space-y-3 shadow-2xs text-xs">
+                        <div class="flex items-center gap-3 min-w-0">
+                            @if($photoUrl)
+                                <img src="{{ $photoUrl }}" alt="Avatar" class="w-10 h-10 rounded-full object-cover border border-emerald-500/40 shrink-0">
+                            @else
+                                <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-sm shrink-0 border border-emerald-200">
+                                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                                </div>
+                            @endif
+                            <div class="min-w-0 flex-1">
+                                <div class="font-bold text-slate-900 text-sm truncate">{{ $user->name }}</div>
+                                <div class="text-[11px] text-slate-500 truncate">{{ $user->email }}</div>
                             </div>
-                        @endif
-                        <div class="min-w-0 flex-1">
-                            <div class="font-bold text-white text-sm truncate">{{ $user->name }}</div>
-                            <div class="text-[11px] text-emerald-300 truncate">{{ $user->email }}</div>
                         </div>
-                    </div>
-                    <div class="pt-2 border-t border-white/10 flex items-center justify-between text-[11px] text-emerald-200">
-                        <span>Penyedia Identitas:</span>
-                        <span class="font-bold text-[#D4F94E]">Google Account</span>
+                        <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-600">
+                            <span>Penyedia Identitas:</span>
+                            <span class="font-bold text-emerald-700">Google OAuth 2.0</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="relative z-10 text-[11px] text-emerald-300/70 flex items-center justify-between pt-3 sm:pt-4 border-t border-white/10">
+            <div class="relative z-10 text-[11px] text-slate-400 flex items-center justify-between pt-4 border-t border-slate-200/80">
                 <span>Data Medis Terenkripsi</span>
-                <span>Standar SIA & SIP</span>
+                <span class="font-semibold text-emerald-700">Standar SIA &amp; SIP</span>
             </div>
         </div>
 
