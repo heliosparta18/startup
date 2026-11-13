@@ -54,7 +54,8 @@ class CustomerSessionService
 
     public function getNearestBranch(?float $latitude = null, ?float $longitude = null): ?Client
     {
-        // Fallback default: Cabang aktif pertama di database
-        return Client::where('aktif', true)->first();
+        // Fallback default: Cabang utama Banyuwangi Kota atau cabang aktif pertama di database
+        return Client::where('slug', 'banyuwangi-kota')->where('aktif', true)->first()
+            ?? Client::where('aktif', true)->first();
     }
 }
