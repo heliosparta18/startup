@@ -193,7 +193,7 @@
                         </a>
                     @else
                         <a
-                            href="{{ route('customer.home', ['client' => 'banyuwangi-kota']) }}"
+                            href="{{ route('customer.catalog', ['client' => session('active_branch', 'banyuwangi-kota')]) }}"
                             class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs sm:text-sm shadow-md transition min-h-[46px] cursor-pointer"
                         >
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -484,7 +484,7 @@
 
                     <!-- 6. Katalog Obat Cabang Apoteker -->
                     <a
-                        href="{{ route('customer.home', ['client' => $userClientSlug]) }}"
+                        href="{{ route('customer.catalog', ['client' => $userClientSlug]) }}"
                         class="group p-6 rounded-3xl bg-white border border-slate-200/90 hover:border-emerald-500 hover:shadow-lg transition-all duration-200 flex flex-col justify-between min-h-[170px]"
                     >
                         <div>

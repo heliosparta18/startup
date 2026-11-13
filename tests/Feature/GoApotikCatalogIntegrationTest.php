@@ -172,9 +172,10 @@ class GoApotikCatalogIntegrationTest extends TestCase
             ->set('search', 'Obat Eksklusif')
             ->assertSee('Obat Eksklusif Banyuwangi Kota');
 
-        // Cabang Rogojampi tidak melihat produk dengan stok 0
+        // Cabang Rogojampi melihat produk dengan opsi beralih ke cabang yang tersedia (Banyuwangi Kota)
         Livewire::test(PublicCatalog::class, ['client' => $clientRogojampi->slug])
             ->set('search', 'Obat Eksklusif')
-            ->assertDontSee('Obat Eksklusif Banyuwangi Kota');
+            ->assertSee('Obat Eksklusif Banyuwangi Kota')
+            ->assertSee('Beralih ke Banyuwangi Kota');
     }
 }

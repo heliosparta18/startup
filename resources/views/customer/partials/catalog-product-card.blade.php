@@ -56,25 +56,69 @@
         <p class="text-[11px] text-slate-500 font-medium truncate mt-1">
             {{ $obat->satuan_kemasan ?: $obat->jenis_sediaan }}
         </p>
+
+        {{-- Multi-Branch Stock Availability Indicator --}}
+        @php
+            $isAvailableHere = $obat->isAvailableInBranch($client);
+            $altBranch = ! $isAvailableHere ? $obat->getAlternativeAvailableBranch($client) : null;
+        @endphp
+        <div class="mt-2 flex flex-wrap items-center gap-1.5 text-[10px]">
+            @if ($isAvailableHere)
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                    <svg class="w-3 h-3 text-emerald-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>{{ $obat->branch_availability_text }}</span>
+                </span>
+            @elseif ($altBranch)
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-semibold bg-amber-50 text-amber-800 border border-amber-200" title="Kosong di cabang ini">
+                    <svg class="w-3 h-3 text-amber-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <span>{{ $obat->branch_availability_text }}</span>
+                </span>
+            @else
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                    <span>Stok Habis di Semua Cabang</span>
+                </span>
+            @endif
+        </div>
     </div>
 
     {{-- Price and Action Area --}}
-    <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between gap-2">
-        <div>
-            <span class="block text-[10px] text-slate-400 font-medium">Harga Resmi</span>
-            <span class="text-sm sm:text-base font-black text-emerald-800">
-                Rp {{ number_format($obat->harga, 0, ',', '.') }}
-            </span>
+    <div class="mt-3 pt-2.5 border-t border-slate-100 flex flex-col gap-2">
+        <div class="flex items-center justify-between gap-2">
+            <div>
+                <span class="block text-[10px] text-slate-400 font-medium">Harga Resmi</span>
+                <span class="text-sm sm:text-base font-black text-emerald-800">
+                    Rp {{ number_format($obat->harga, 0, ',', '.') }}
+                </span>
+            </div>
+
+            <a
+                href="{{ route('customer.obat.detail', ['client' => $client, 'id' => $obat->id_obat]) }}"
+                class="inline-flex items-center justify-center px-3 py-2 rounded-lg bg-emerald-50 hover:bg-emerald-600 text-emerald-800 hover:text-white font-semibold text-xs transition-colors duration-150 min-h-[44px] min-w-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer"
+                aria-label="Lihat detail {{ $obat->nama_obat }}"
+                title="Lihat Detail Produk"
+            >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                </svg>
+            </a>
         </div>
 
-        <a
-            href="{{ route('customer.obat.detail', ['client' => $client, 'id' => $obat->id_obat]) }}"
-            class="inline-flex items-center justify-center px-3 py-2 rounded-lg bg-emerald-50 hover:bg-emerald-600 text-emerald-800 hover:text-white font-semibold text-xs transition-colors duration-150 min-h-[44px] min-w-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer"
-            aria-label="Lihat detail {{ $obat->nama_obat }}"
-        >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-            </svg>
-        </a>
+        @if (! $isAvailableHere && $altBranch)
+            <button
+                type="button"
+                wire:click="switchBranch('{{ $altBranch->slug }}')"
+                class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs shadow-xs transition-colors duration-150 min-h-[44px] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+            >
+                <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+                <span>Beralih ke {{ preg_replace('/^Cabang\s+/i', '', $altBranch->nama_client) }}</span>
+            </button>
+        @endif
     </div>
 </div>

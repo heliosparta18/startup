@@ -2,7 +2,9 @@
 
 namespace App\Modules\Catalog\Livewire;
 
+use App\Models\Client;
 use App\Modules\Catalog\Services\CatalogService;
+use App\Modules\Catalog\Services\CustomerSessionService;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -89,6 +91,30 @@ class PublicCatalog extends Component
         $this->resetPage();
     }
 
+    /**
+     * Beralih ke cabang apotek lain dan memperbarui sesi serta preferensi pengguna.
+     */
+    public function switchBranch(string $branchSlug, ?CustomerSessionService $sessionService = null): mixed
+    {
+        $sessionService = $sessionService ?: app(CustomerSessionService::class);
+        $client = Client::where('slug', $branchSlug)
+            ->orWhere('id_client', $branchSlug)
+            ->first();
+
+        if ($client) {
+            $sessionService->setActiveBranch($client->id_client);
+            session([
+                'active_branch' => $client->slug,
+                'active_client' => $client->slug,
+            ]);
+            $this->clientId = $client->slug;
+
+            return $this->redirect(route('customer.catalog', ['client' => $client->slug]));
+        }
+
+        return null;
+    }
+
     public function render(CatalogService $catalogService): View
     {
         $obats = $catalogService->getCatalog(
@@ -97,7 +123,8 @@ class PublicCatalog extends Component
             $this->sediaan ?: null,
             $this->kategori ?: null,
             $this->subKategori ?: null,
-            15
+            15,
+            true // Mode katalog terpadu multi-cabang (Unified Catalog)
         );
 
         return view('customer.catalog', [

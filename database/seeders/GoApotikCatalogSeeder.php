@@ -30,9 +30,11 @@ class GoApotikCatalogSeeder extends Seeder
         }
 
         $clients = Client::all();
+        $bwiClient = $clients->firstWhere('slug', 'banyuwangi-kota') ?? $clients->first();
+        $rogoClient = $clients->firstWhere('slug', 'rogojampi') ?? $clients->skip(1)->first();
 
-        DB::transaction(function () use ($items, $clients) {
-            foreach ($items as $data) {
+        DB::transaction(function () use ($items, $clients, $bwiClient, $rogoClient) {
+            foreach ($items as $index => $data) {
                 // 1. Kategori Utama
                 $kategori = KategoriObat::firstOrCreate(
                     ['nama_kategori' => $data['kategori']],
@@ -112,18 +114,64 @@ class GoApotikCatalogSeeder extends Seeder
                     ]);
                 }
 
-                // 4. Multi-client stok untuk cabang aktif
-                foreach ($clients as $client) {
+                // 4. Multi-client stok untuk cabang aktif dengan alokasi variasi deterministik
+                // Group 1 (index 0..13, 14 produk): Tersedia di kedua cabang (BWI > 0, Rogojampi > 0)
+                // Group 2 (index 14..24, 11 produk): Hanya tersedia di Banyuwangi Kota (BWI > 0, Rogojampi = 0)
+                // Group 3 (index 25..35, 11 produk): Hanya tersedia di Rogojampi (BWI = 0, Rogojampi > 0)
+                // Group 4 (index 36..41, 6 produk): Kosong di kedua cabang (BWI = 0, Rogojampi = 0)
+                if ($index <= 13) {
+                    $stokBwi = 35;
+                    $stokRogo = 25;
+                } elseif ($index <= 24) {
+                    $stokBwi = 30;
+                    $stokRogo = 0;
+                } elseif ($index <= 35) {
+                    $stokBwi = 0;
+                    $stokRogo = 30;
+                } else {
+                    $stokBwi = 0;
+                    $stokRogo = 0;
+                }
+
+                if ($bwiClient) {
                     StokClient::updateOrCreate(
                         [
                             'id_obat' => $obat->id_obat,
-                            'id_client' => $client->id_client,
+                            'id_client' => $bwiClient->id_client,
                         ],
                         [
-                            'jumlah_stok' => 50,
+                            'jumlah_stok' => $stokBwi,
                             'diperbarui_pada' => now(),
                         ]
                     );
+                }
+
+                if ($rogoClient) {
+                    StokClient::updateOrCreate(
+                        [
+                            'id_obat' => $obat->id_obat,
+                            'id_client' => $rogoClient->id_client,
+                        ],
+                        [
+                            'jumlah_stok' => $stokRogo,
+                            'diperbarui_pada' => now(),
+                        ]
+                    );
+                }
+
+                foreach ($clients as $client) {
+                    if ($client->id_client !== $bwiClient?->id_client && $client->id_client !== $rogoClient?->id_client) {
+                        StokClient::updateOrCreate(
+                            [
+                                'id_obat' => $obat->id_obat,
+                                'id_client' => $client->id_client,
+                            ],
+                            [
+                                'jumlah_stok' => 0,
+                                'diperbarui_pada' => now(),
+                            ]
+                        );
+                    }
                 }
             }
         });

@@ -52,7 +52,17 @@ Route::get('/', function (string $client) {
 Route::get('/katalog', PublicCatalog::class)->name('catalog');
 
 Route::get('/obat/{id}', function (string $client, string $id) {
-    $obat = Obat::query()->with(['kategori', 'stokClient'])->find($id);
+    $obat = Obat::query()
+        ->with([
+            'kategori',
+            'subkategori',
+            'stokClient' => function ($q) {
+                $q->withoutGlobalScope(\App\Models\Scopes\TenantScope::class)->with('client');
+            },
+        ])
+        ->where('id_obat', $id)
+        ->orWhere('slug', $id)
+        ->first();
 
     return view('customer.obat-detail', [
         'client' => $client,

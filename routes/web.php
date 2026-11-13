@@ -27,8 +27,14 @@ Route::get('/', function (Request $request) {
     return view('welcome');
 })->name('home');
 
-Route::get('/katalog', function () {
-    return redirect()->route('customer.catalog', ['client' => 'banyuwangi-kota']);
+Route::get('/katalog', function (\Illuminate\Http\Request $request, \App\Modules\Catalog\Services\CustomerSessionService $sessionService) {
+    $branch = session('active_branch') ?? session('active_client');
+    if (! $branch) {
+        $client = $sessionService->getActiveBranch($request);
+        $branch = $client?->slug ?? 'banyuwangi-kota';
+    }
+
+    return redirect()->route('customer.catalog', ['client' => $branch]);
 })->name('katalog');
 
 Route::middleware(['auth'])->group(function () {
