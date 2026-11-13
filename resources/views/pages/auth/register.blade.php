@@ -84,195 +84,7 @@
         </div>
 
         <!-- KOLOM KANAN: Formulir Pendaftaran dengan Verifikasi OTP Email -->
-        <div class="lg:w-7/12 p-5 sm:p-8 lg:p-12 flex flex-col justify-between bg-white" x-data="{
-            username: '{{ old('name', '') }}',
-            email: '{{ old('email', '') }}',
-            password: '',
-            passwordConfirmation: '',
-            otp: '',
-            otpStep: false,
-            otpCountdown: 300,
-            timerStr: '05:00',
-            timerInterval: null,
-            demoOtpHint: '',
-            showPassword: false,
-            loadingGoogle: false,
-            loadingSendOtp: false,
-            loadingRegister: false,
-
-            async ensureFirebaseAuth() {
-                if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.loginWithGoogle === 'function') {
-                    return window.OmniFirebaseAuth;
-                }
-                const scriptEl = document.querySelector('script[src*="app-"]');
-                if (scriptEl && scriptEl.src) {
-                    try {
-                        await import(scriptEl.src);
-                    } catch (e) {
-                        console.warn('Dynamic import fallback note:', e);
-                    }
-                }
-                for (let i = 0; i < 25; i++) {
-                    if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.loginWithGoogle === 'function') {
-                        return window.OmniFirebaseAuth;
-                    }
-                    await new Promise(r => setTimeout(r, 100));
-                }
-                throw new Error('Modul autentikasi Firebase belum siap. Silakan refresh halaman.');
-            },
-
-            async handleGoogleRegister() {
-                if (this.loadingGoogle || this.loadingRegister || this.loadingSendOtp) return;
-                this.loadingGoogle = true;
-                try {
-                    const fb = await this.ensureFirebaseAuth();
-                    const result = await fb.loginWithGoogle();
-                    const userName = result.user.displayName || result.user.email;
-                    if (fb.showToast) {
-                        fb.showToast(`Pendaftaran berhasil! Selamat datang, ${userName}!`, 'success');
-                    }
-                    setTimeout(() => {
-                        window.location.href = result.session?.redirect || '{{ route('dashboard') }}';
-                    }, 600);
-                } catch (err) {
-                    console.error('Google Register Error:', err);
-                    const errorMsg = window.OmniFirebaseAuth?.formatFirebaseError
-                        ? window.OmniFirebaseAuth.formatFirebaseError(err)
-                        : (err?.message || 'Gagal mendaftar dengan akun Google.');
-                    if (window.OmniFirebaseAuth?.showToast) {
-                        window.OmniFirebaseAuth.showToast(errorMsg, 'error');
-                    } else {
-                        alert(errorMsg);
-                    }
-                } finally {
-                    this.loadingGoogle = false;
-                }
-            },
-
-            async requestRegisterOtp() {
-                if (!this.username.trim()) {
-                    if (window.OmniFirebaseAuth?.showToast) {
-                        window.OmniFirebaseAuth.showToast('Silakan masukkan username atau nama lengkap Anda.', 'error');
-                    }
-                    return;
-                }
-                if (!this.email.trim() || !this.email.includes('@')) {
-                    if (window.OmniFirebaseAuth?.showToast) {
-                        window.OmniFirebaseAuth.showToast('Silakan masukkan format alamat email yang valid.', 'error');
-                    }
-                    return;
-                }
-                if (!this.password || this.password.length < 6) {
-                    if (window.OmniFirebaseAuth?.showToast) {
-                        window.OmniFirebaseAuth.showToast('Kata sandi minimal harus 6 karakter.', 'error');
-                    }
-                    return;
-                }
-                if (this.password !== this.passwordConfirmation) {
-                    if (window.OmniFirebaseAuth?.showToast) {
-                        window.OmniFirebaseAuth.showToast('Konfirmasi kata sandi tidak cocok.', 'error');
-                    }
-                    return;
-                }
-
-                this.loadingSendOtp = true;
-                try {
-                    const token = document.querySelector('meta[name=\'csrf-token\']')?.content;
-                    const res = await fetch('/auth/send-otp', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': token
-                        },
-                        body: JSON.stringify({ email: this.email })
-                    });
-                    const data = await res.json();
-                    if (!res.ok) throw new Error(data.message || 'Gagal mengirim kode verifikasi OTP.');
-
-                    this.otpStep = true;
-                    this.demoOtpHint = data.demo_otp || '';
-                    if (window.OmniFirebaseAuth?.showToast) {
-                        window.OmniFirebaseAuth.showToast(data.message || 'Kode OTP telah dikirimkan ke email Anda!', 'success');
-                    }
-                    this.startOtpTimer();
-                } catch (err) {
-                    console.error('Send OTP Error:', err);
-                    if (window.OmniFirebaseAuth?.showToast) {
-                        window.OmniFirebaseAuth.showToast(err.message || 'Gagal mengirim kode OTP.', 'error');
-                    }
-                } finally {
-                    this.loadingSendOtp = false;
-                }
-            },
-
-            async completeRegisterWithOtp() {
-                if (!this.otp || this.otp.length !== 6) {
-                    if (window.OmniFirebaseAuth?.showToast) {
-                        window.OmniFirebaseAuth.showToast('Silakan masukkan 6 digit kode OTP verifikasi.', 'error');
-                    }
-                    return;
-                }
-
-                this.loadingRegister = true;
-                try {
-                    const token = document.querySelector('meta[name=\'csrf-token\']')?.content;
-                    const res = await fetch('/auth/register-otp', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': token
-                        },
-                        body: JSON.stringify({
-                            username: this.username,
-                            email: this.email,
-                            password: this.password,
-                            otp: this.otp
-                        })
-                    });
-                    const data = await res.json();
-                    if (!res.ok) throw new Error(data.message || 'Pendaftaran gagal diverifikasi.');
-
-                    // Jika ada Firebase SDK, sinkronkan juga akun ke Firebase Auth di background
-                    if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.registerWithEmail === 'function') {
-                        try {
-                            await window.OmniFirebaseAuth.registerWithEmail(this.username, this.email, this.password);
-                        } catch (fbErr) {
-                            console.warn('Firebase registration sync note:', fbErr);
-                        }
-                    }
-
-                    if (window.OmniFirebaseAuth?.showToast) {
-                        window.OmniFirebaseAuth.showToast('Pendaftaran akun berhasil! Silakan masuk dengan akun baru Anda.', 'success');
-                    }
-                    setTimeout(() => {
-                        window.location.href = data.redirect || '{{ route('login') }}';
-                    }, 800);
-                    console.error('Register OTP Error:', err);
-                    if (window.OmniFirebaseAuth?.showToast) {
-                        window.OmniFirebaseAuth.showToast(err.message || 'Verifikasi OTP gagal.', 'error');
-                    }
-                } finally {
-                    this.loadingRegister = false;
-                }
-            },
-
-            startOtpTimer() {
-                this.otpCountdown = 300;
-                if (this.timerInterval) clearInterval(this.timerInterval);
-                this.timerInterval = setInterval(() => {
-                    this.otpCountdown--;
-                    const m = Math.floor(this.otpCountdown / 60);
-                    const s = this.otpCountdown % 60;
-                    this.timerStr = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-                    if (this.otpCountdown <= 0) {
-                        clearInterval(this.timerInterval);
-                        this.timerStr = '00:00';
-                    }
-                }, 1000);
-            }
-        }">
+        <div class="lg:w-7/12 p-5 sm:p-8 lg:p-12 flex flex-col justify-between bg-white" x-data="registerPageData()">
             <div>
                 <!-- Mobile Brand Header -->
                 <div class="flex items-center gap-2.5 mb-4 lg:hidden">
@@ -516,6 +328,199 @@
         </flux:toast.group>
     @endpersist
 
+    <script>
+        function registerPageData() {
+            return {
+                username: '{{ old('name', '') }}',
+                email: '{{ old('email', '') }}',
+                password: '',
+                passwordConfirmation: '',
+                otp: '',
+                otpStep: false,
+                otpCountdown: 300,
+                timerStr: '05:00',
+                timerInterval: null,
+                demoOtpHint: '',
+                showPassword: false,
+                loadingGoogle: false,
+                loadingSendOtp: false,
+                loadingRegister: false,
+
+                async ensureFirebaseAuth() {
+                    if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.loginWithGoogle === 'function') {
+                        return window.OmniFirebaseAuth;
+                    }
+                    const scriptEl = document.querySelector("script[src*='app-']");
+                    if (scriptEl && scriptEl.src) {
+                        try {
+                            await import(scriptEl.src);
+                        } catch (e) {
+                            console.warn('Dynamic import fallback note:', e);
+                        }
+                    }
+                    for (let i = 0; i < 25; i++) {
+                        if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.loginWithGoogle === 'function') {
+                            return window.OmniFirebaseAuth;
+                        }
+                        await new Promise(r => setTimeout(r, 100));
+                    }
+                    throw new Error('Modul autentikasi Firebase belum siap. Silakan refresh halaman.');
+                },
+
+                async handleGoogleRegister() {
+                    if (this.loadingGoogle || this.loadingRegister || this.loadingSendOtp) return;
+                    this.loadingGoogle = true;
+                    try {
+                        const fb = await this.ensureFirebaseAuth();
+                        const result = await fb.loginWithGoogle();
+                        const userName = result.user.displayName || result.user.email;
+                        if (fb.showToast) {
+                            fb.showToast(`Pendaftaran berhasil! Selamat datang, ${userName}!`, 'success');
+                        }
+                        setTimeout(() => {
+                            window.location.href = result.session?.redirect || '{{ route('dashboard') }}';
+                        }, 600);
+                    } catch (err) {
+                        console.error('Google Register Error:', err);
+                        const errorMsg = window.OmniFirebaseAuth?.formatFirebaseError
+                            ? window.OmniFirebaseAuth.formatFirebaseError(err)
+                            : (err?.message || 'Gagal mendaftar dengan akun Google.');
+                        if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.showToast === 'function') {
+                            window.OmniFirebaseAuth.showToast(errorMsg, 'error');
+                        } else {
+                            alert(errorMsg);
+                        }
+                    } finally {
+                        this.loadingGoogle = false;
+                    }
+                },
+
+                async requestRegisterOtp() {
+                    if (!this.username.trim()) {
+                        if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.showToast === 'function') {
+                            window.OmniFirebaseAuth.showToast('Silakan masukkan username atau nama lengkap Anda.', 'error');
+                        }
+                        return;
+                    }
+                    if (!this.email.trim() || !this.email.includes('@')) {
+                        if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.showToast === 'function') {
+                            window.OmniFirebaseAuth.showToast('Silakan masukkan format alamat email yang valid.', 'error');
+                        }
+                        return;
+                    }
+                    if (!this.password || this.password.length < 6) {
+                        if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.showToast === 'function') {
+                            window.OmniFirebaseAuth.showToast('Kata sandi minimal harus 6 karakter.', 'error');
+                        }
+                        return;
+                    }
+                    if (this.password !== this.passwordConfirmation) {
+                        if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.showToast === 'function') {
+                            window.OmniFirebaseAuth.showToast('Konfirmasi kata sandi tidak cocok.', 'error');
+                        }
+                        return;
+                    }
+
+                    this.loadingSendOtp = true;
+                    try {
+                        const token = document.querySelector('meta[name="csrf-token"]')?.content;
+                        const res = await fetch('/auth/send-otp', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': token
+                            },
+                            body: JSON.stringify({ email: this.email })
+                        });
+                        const data = await res.json();
+                        if (!res.ok) throw new Error(data.message || 'Gagal mengirim kode verifikasi OTP.');
+
+                        this.otpStep = true;
+                        this.demoOtpHint = data.demo_otp || '';
+                        if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.showToast === 'function') {
+                            window.OmniFirebaseAuth.showToast(data.message || 'Kode OTP telah dikirimkan ke email Anda!', 'success');
+                        }
+                        this.startOtpTimer();
+                    } catch (err) {
+                        console.error('Send OTP Error:', err);
+                        if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.showToast === 'function') {
+                            window.OmniFirebaseAuth.showToast(err.message || 'Gagal mengirim kode OTP.', 'error');
+                        }
+                    } finally {
+                        this.loadingSendOtp = false;
+                    }
+                },
+
+                async completeRegisterWithOtp() {
+                    if (!this.otp || this.otp.length !== 6) {
+                        if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.showToast === 'function') {
+                            window.OmniFirebaseAuth.showToast('Silakan masukkan 6 digit kode OTP verifikasi.', 'error');
+                        }
+                        return;
+                    }
+
+                    this.loadingRegister = true;
+                    try {
+                        const token = document.querySelector('meta[name="csrf-token"]')?.content;
+                        const res = await fetch('/auth/register-otp', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': token
+                            },
+                            body: JSON.stringify({
+                                username: this.username,
+                                email: this.email,
+                                password: this.password,
+                                otp: this.otp
+                            })
+                        });
+                        const data = await res.json();
+                        if (!res.ok) throw new Error(data.message || 'Pendaftaran gagal diverifikasi.');
+
+                        if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.registerWithEmail === 'function') {
+                            try {
+                                await window.OmniFirebaseAuth.registerWithEmail(this.username, this.email, this.password);
+                            } catch (fbErr) {
+                                console.warn('Firebase registration sync note:', fbErr);
+                            }
+                        }
+
+                        if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.showToast === 'function') {
+                            window.OmniFirebaseAuth.showToast('Pendaftaran akun berhasil! Silakan masuk dengan akun baru Anda.', 'success');
+                        }
+                        setTimeout(() => {
+                            window.location.href = data.redirect || '{{ route('login') }}';
+                        }, 800);
+                    } catch (err) {
+                        console.error('Register OTP Error:', err);
+                        if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.showToast === 'function') {
+                            window.OmniFirebaseAuth.showToast(err.message || 'Verifikasi OTP gagal.', 'error');
+                        }
+                    } finally {
+                        this.loadingRegister = false;
+                    }
+                },
+
+                startOtpTimer() {
+                    this.otpCountdown = 300;
+                    if (this.timerInterval) clearInterval(this.timerInterval);
+                    this.timerInterval = setInterval(() => {
+                        this.otpCountdown--;
+                        const m = Math.floor(this.otpCountdown / 60);
+                        const s = this.otpCountdown % 60;
+                        this.timerStr = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                        if (this.otpCountdown <= 0) {
+                            clearInterval(this.timerInterval);
+                            this.timerStr = '00:00';
+                        }
+                    }, 1000);
+                }
+            };
+        }
+    </script>
     @fluxScripts
 </body>
 </html>

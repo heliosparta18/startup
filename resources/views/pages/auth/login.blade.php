@@ -84,117 +84,7 @@
         </div>
 
         <!-- KOLOM KANAN: Formulir Masuk Sederhana (Input 1: Email/Username, Input 2: Password) -->
-        <div class="lg:w-7/12 p-5 sm:p-8 lg:p-12 flex flex-col justify-between bg-white" x-data="{
-            identifier: '{{ old('email', '') }}',
-            password: '',
-            showPassword: false,
-            selectedRole: '',
-            loadingSubmit: false,
-            loadingGoogle: false,
-            isRedirecting: false,
-
-            selectDemo(roleKey, userEmail, userPass) {
-                this.selectedRole = roleKey;
-                this.identifier = userEmail;
-                this.password = userPass;
-                this.loadingSubmit = true;
-                this.isRedirecting = true;
-                if (window.OmniFirebaseAuth?.showToast) {
-                    window.OmniFirebaseAuth.showToast('Memproses masuk akun demo...', 'info');
-                }
-                setTimeout(() => {
-                    this.$refs.loginForm.submit();
-                }, 200);
-            },
-
-            async ensureFirebaseAuth() {
-                if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.loginWithGoogle === 'function') {
-                    return window.OmniFirebaseAuth;
-                }
-                const scriptEl = document.querySelector('script[src*="app-"]');
-                if (scriptEl && scriptEl.src) {
-                    try {
-                        await import(scriptEl.src);
-                    } catch (e) {
-                        console.warn('Dynamic import fallback note:', e);
-                    }
-                }
-                for (let i = 0; i < 25; i++) {
-                    if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.loginWithGoogle === 'function') {
-                        return window.OmniFirebaseAuth;
-                    }
-                    await new Promise(r => setTimeout(r, 100));
-                }
-                throw new Error('Modul autentikasi Firebase belum siap. Silakan refresh halaman.');
-            },
-
-            async handleGoogleLogin() {
-                if (this.loadingGoogle || this.loadingSubmit) return;
-                this.loadingGoogle = true;
-                try {
-                    const fb = await this.ensureFirebaseAuth();
-                    const result = await fb.loginWithGoogle();
-                    const userName = result.user.displayName || result.user.email;
-                    if (fb.showToast) {
-                        fb.showToast(`Selamat datang, ${userName}!`, 'success');
-                    }
-                    this.isRedirecting = true;
-                    setTimeout(() => {
-                        window.location.href = result.session?.redirect || '{{ route('dashboard') }}';
-                    }, 600);
-                } catch (err) {
-                    console.error('Google Auth Error:', err);
-                    const errorMsg = window.OmniFirebaseAuth?.formatFirebaseError
-                        ? window.OmniFirebaseAuth.formatFirebaseError(err)
-                        : (err?.message || 'Gagal masuk dengan akun Google.');
-                    if (window.OmniFirebaseAuth?.showToast) {
-                        window.OmniFirebaseAuth.showToast(errorMsg, 'error');
-                    } else {
-                        alert(errorMsg);
-                    }
-                } finally {
-                    this.loadingGoogle = false;
-                }
-            },
-
-            async handleLoginSubmit(e) {
-                // Jika akun demo dipilih, kirim langsung ke endpoint Fortify backend
-                if (this.selectedRole) {
-                    return true;
-                }
-
-                e.preventDefault();
-                if (!this.identifier || !this.password) {
-                    if (window.OmniFirebaseAuth?.showToast) {
-                        window.OmniFirebaseAuth.showToast('Silakan masukkan email atau username beserta kata sandi.', 'error');
-                    }
-                    return;
-                }
-
-                this.loadingSubmit = true;
-                try {
-                    if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.loginWithEmailOrUsername === 'function') {
-                        const result = await window.OmniFirebaseAuth.loginWithEmailOrUsername(this.identifier, this.password);
-                        if (window.OmniFirebaseAuth?.showToast) {
-                            window.OmniFirebaseAuth.showToast('Login berhasil! Mengalihkan ke dashboard...', 'success');
-                        }
-                        this.isRedirecting = true;
-                        setTimeout(() => {
-                            window.location.href = result.session?.redirect || '{{ route('dashboard') }}';
-                        }, 600);
-                    } else {
-                        this.isRedirecting = true;
-                        e.target.submit();
-                    }
-                } catch (err) {
-                    console.warn('Firebase login attempt fallback to Fortify:', err);
-                    // Fallback form submit native jika akun terdaftar di database server lokal
-                    this.isRedirecting = true;
-                    e.target.submit();
-                    this.loadingSubmit = false;
-                }
-            }
-        }">
+        <div class="lg:w-7/12 p-5 sm:p-8 lg:p-12 flex flex-col justify-between bg-white" x-data="loginPageData()">
             <div>
                 <!-- Mobile Brand Header -->
                 <div class="flex items-center gap-2.5 mb-4 lg:hidden">
@@ -447,6 +337,120 @@
         </flux:toast.group>
     @endpersist
 
+    <script>
+        function loginPageData() {
+            return {
+                identifier: '{{ old('email', '') }}',
+                password: '',
+                showPassword: false,
+                selectedRole: '',
+                loadingSubmit: false,
+                loadingGoogle: false,
+                isRedirecting: false,
+
+                selectDemo(roleKey, userEmail, userPass) {
+                    this.selectedRole = roleKey;
+                    this.identifier = userEmail;
+                    this.password = userPass;
+                    this.loadingSubmit = true;
+                    this.isRedirecting = true;
+                    if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.showToast === 'function') {
+                        window.OmniFirebaseAuth.showToast('Memproses masuk akun demo...', 'info');
+                    }
+                    setTimeout(() => {
+                        this.$refs.loginForm.submit();
+                    }, 200);
+                },
+
+                async ensureFirebaseAuth() {
+                    if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.loginWithGoogle === 'function') {
+                        return window.OmniFirebaseAuth;
+                    }
+                    const scriptEl = document.querySelector("script[src*='app-']");
+                    if (scriptEl && scriptEl.src) {
+                        try {
+                            await import(scriptEl.src);
+                        } catch (e) {
+                            console.warn('Dynamic import fallback note:', e);
+                        }
+                    }
+                    for (let i = 0; i < 25; i++) {
+                        if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.loginWithGoogle === 'function') {
+                            return window.OmniFirebaseAuth;
+                        }
+                        await new Promise(r => setTimeout(r, 100));
+                    }
+                    throw new Error('Modul autentikasi Firebase belum siap. Silakan refresh halaman.');
+                },
+
+                async handleGoogleLogin() {
+                    if (this.loadingGoogle || this.loadingSubmit) return;
+                    this.loadingGoogle = true;
+                    try {
+                        const fb = await this.ensureFirebaseAuth();
+                        const result = await fb.loginWithGoogle();
+                        const userName = result.user.displayName || result.user.email;
+                        if (fb.showToast) {
+                            fb.showToast(`Selamat datang, ${userName}!`, 'success');
+                        }
+                        this.isRedirecting = true;
+                        setTimeout(() => {
+                            window.location.href = result.session?.redirect || '{{ route('dashboard') }}';
+                        }, 600);
+                    } catch (err) {
+                        console.error('Google Auth Error:', err);
+                        const errorMsg = window.OmniFirebaseAuth?.formatFirebaseError
+                            ? window.OmniFirebaseAuth.formatFirebaseError(err)
+                            : (err?.message || 'Gagal masuk dengan akun Google.');
+                        if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.showToast === 'function') {
+                            window.OmniFirebaseAuth.showToast(errorMsg, 'error');
+                        } else {
+                            alert(errorMsg);
+                        }
+                    } finally {
+                        this.loadingGoogle = false;
+                    }
+                },
+
+                async handleLoginSubmit(e) {
+                    if (this.selectedRole) {
+                        return true;
+                    }
+
+                    e.preventDefault();
+                    if (!this.identifier || !this.password) {
+                        if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.showToast === 'function') {
+                            window.OmniFirebaseAuth.showToast('Silakan masukkan email atau username beserta kata sandi.', 'error');
+                        }
+                        return;
+                    }
+
+                    this.loadingSubmit = true;
+                    try {
+                        await this.ensureFirebaseAuth();
+                        if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.loginWithEmailOrUsername === 'function') {
+                            const result = await window.OmniFirebaseAuth.loginWithEmailOrUsername(this.identifier, this.password);
+                            if (window.OmniFirebaseAuth?.showToast) {
+                                window.OmniFirebaseAuth.showToast('Login berhasil! Mengalihkan ke dashboard...', 'success');
+                            }
+                            this.isRedirecting = true;
+                            setTimeout(() => {
+                                window.location.href = result.session?.redirect || '{{ route('dashboard') }}';
+                            }, 600);
+                        } else {
+                            this.isRedirecting = true;
+                            e.target.submit();
+                        }
+                    } catch (err) {
+                        console.warn('Firebase login attempt fallback to Fortify:', err);
+                        this.isRedirecting = true;
+                        e.target.submit();
+                        this.loadingSubmit = false;
+                    }
+                }
+            };
+        }
+    </script>
     @fluxScripts
 </body>
 </html>
