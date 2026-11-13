@@ -138,6 +138,7 @@ class PublicCatalog extends Component
         ])->layout('components.layouts.customer', [
             'title' => 'Katalog Obat & Kesehatan - OmniPharma Network',
             'client' => $this->clientId,
+            'fullWidth' => true,
         ]);
     }
 }

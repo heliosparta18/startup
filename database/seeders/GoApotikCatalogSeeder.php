@@ -19,7 +19,11 @@ class GoApotikCatalogSeeder extends Seeder
      */
     public function run(): void
     {
-        $jsonPath = database_path('data/goapotik_catalog_42.json');
+        $filename = config('app.goapotik_catalog_file', 'goapotik_catalog_42.json');
+        $jsonPath = database_path("data/{$filename}");
+        if (! File::exists($jsonPath)) {
+            $jsonPath = database_path('data/goapotik_catalog_42.json');
+        }
         if (! File::exists($jsonPath)) {
             return;
         }
@@ -76,8 +80,8 @@ class GoApotikCatalogSeeder extends Seeder
                         'nama_obat' => $data['nama_produk'],
                         'slug' => $data['slug'],
                         'merek' => $data['manufaktur'] ?? 'Farmasi Indonesia',
-                        'jenis_sediaan' => $data['satuan_kemasan'] ?? 'tablet',
-                        'satuan_kemasan' => $data['satuan_kemasan'],
+                        'jenis_sediaan' => substr($data['jenis_sediaan'] ?? 'Tablet', 0, 50),
+                        'satuan_kemasan' => substr($data['satuan_kemasan'] ?? '1 Pcs', 0, 100),
                         'jumlah_obat' => 100,
                         'id_kategori' => $kategori->id_kategori,
                         'id_subkategori' => $subkategoriId,
@@ -97,8 +101,8 @@ class GoApotikCatalogSeeder extends Seeder
                     $obat->update([
                         'nama_obat' => $data['nama_produk'],
                         'merek' => $data['manufaktur'] ?? 'Farmasi Indonesia',
-                        'jenis_sediaan' => $data['satuan_kemasan'] ?? 'tablet',
-                        'satuan_kemasan' => $data['satuan_kemasan'],
+                        'jenis_sediaan' => substr($data['jenis_sediaan'] ?? 'Tablet', 0, 50),
+                        'satuan_kemasan' => substr($data['satuan_kemasan'] ?? '1 Pcs', 0, 100),
                         'jumlah_obat' => 100,
                         'id_kategori' => $kategori->id_kategori,
                         'id_subkategori' => $subkategoriId,

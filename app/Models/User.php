@@ -120,7 +120,7 @@ class User extends Authenticatable implements PasskeyUser
      */
     public function getClientSlug(): string
     {
-        if ($this->email === 'dewi@omnipharma.test' || str_contains(strtolower($this->name), 'dewi') || str_contains(strtolower($this->name), 'dinda') || str_contains(strtolower($this->name), 'shafira')) {
+        if ($this->email === 'dewi@omnipharma.test' || $this->email === 'apoteker.rogojampi@omnipharma.test' || str_contains($this->name, 'apt. Dinda Ayu Shafira')) {
             return 'rogojampi';
         }
 

@@ -17,7 +17,8 @@
     "cara_pakai": "",
     "deskripsi": "Mengandung paracetamol digunakan untuk meringankan rasa sakit seperti sakit gigi, sakit kepala, dan menurunkan demam.",
     "manufaktur": "BERLICO MULIA FARMA",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Sirup"
   },
   {
     "external_id": 913279,
@@ -37,7 +38,8 @@
     "cara_pakai": "Dapat diminum sebelum atau sesudah makan",
     "deskripsi": "Obat ini digunakan untuk meringankan rasa sakit seperti sakit gigi, sakit kepala, dan menurunkan demam",
     "manufaktur": "SEJAHTERA LESTARI FARMA",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Tablet"
   },
   {
     "external_id": 36384,
@@ -57,7 +59,8 @@
     "cara_pakai": "Dapat diminum sebelum atau sesudah makan",
     "deskripsi": "Sanmol merupakan obat yang digunakan untuk meringankan rasa sakit seperti sakit gigi, sakit kepala, dan menurunkan demam",
     "manufaktur": "Sanbe Farma, PT",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Sirup"
   },
   {
     "external_id": 922007,
@@ -77,7 +80,8 @@
     "cara_pakai": "",
     "deskripsi": "Promag digunakan untuk mengatasi maag dengan gejala nyeri ulu hati, sering bersendawa, dan perut kembung.",
     "manufaktur": "Kalbe Farma",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Suspensi"
   },
   {
     "external_id": 966142,
@@ -97,7 +101,8 @@
     "cara_pakai": "Konsumsi disesuaikan dengan umur. Dewasa: 3 kali sehari @1 takaran Anak-anak: 3 kali sehari @1/2 takaran Dapat pula dikonsumsi bersamaan dengan makanan.",
     "deskripsi": "Bodrex tipe ini merupakan obat batuk dan flu berbentuk sirup. Khususnya berfungsi untuk meringankan flu yang disertai batuk tidak berdahak atau batuk kering.",
     "manufaktur": "TEMPO SCAN PACIFIC - Indonesia",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Sirup"
   },
   {
     "external_id": 35423,
@@ -117,7 +122,8 @@
     "cara_pakai": "1. Cuci tangan terlebih dahulu hingga bersih dengan air dan sabun.\r\n\r\n2. Buka penutup botol, kemudian cek kondisi ujung penetes pada botol dan pastikan tidak rusak.\r\n\r\n3. Condongkan kepala sedikit ke belakang dan tarik kelopak bawah mata dengan jari (telunjuk) yang akan ditetesi obat hingga membentuk kantung.\r\n\r\n4. Dengan satu tangan lainnya, pegang dan arahkan botol sedekat mungkin ke arah kantung kelopak mata bawah tanpa menyentuhnya.\r\n\r\n5. Kemudian, teteskan obat sesuai anjuran/dosis ke dalam kantung kelopak mata bawah tersebut dan jangan berkedip.\r\n\r\n6. Setelah selesai, tutup mata selama 2-3 menit. Bersihkan obat yang berlebih pada wajah.\r\n\r\n7. Tutup kembali botol dan cuci tangan hingga bersih. Perhatian : Jangan menyentuh ujung penetes obat dengan tangan atau benda lain.",
     "deskripsi": "Obat ini digunakan untuk mengurangi mata lelah, mata merah, mata perih dan mata gatal karena iritasi debu, asap, angin, banyak membaca, setelah berenang, menonton televisi dan sebagainya",
     "manufaktur": "PT Pharma Healthcare",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Tetes (Drops)"
   },
   {
     "external_id": 709720,
@@ -137,7 +143,8 @@
     "cara_pakai": "Dapat diberikan sebelum atau sesudah makan, dapat diberikan bersama makanan untuk mengurangi rasa tidak nyaman pada saluran cerna",
     "deskripsi": "PENGGUNAAN OBAT INI HARUS SESUAI PETUNJUK DOKTER. Obat ini digunakan untuk mengobati infeksi saluran kemih, infeksi saluran nafas atas dan bawah, infeksi kulit dan jaringan lunak, mencegah endokarditis dan eradikasi Helicobacter pylori.",
     "manufaktur": "Phapros",
-    "wajib_resep": true
+    "wajib_resep": true,
+    "jenis_sediaan": "Sirup"
   },
   {
     "external_id": 756201,
@@ -157,7 +164,8 @@
     "cara_pakai": "Obat diminum pada saat perut kosong.",
     "deskripsi": "PENGGUNAAN OBAT INI HARUS SESUAI PETUNJUK DOKTER. Digunakan untuk mengobati dan mencegah ulkus lambung dan usus, erosif esofagitis (kerusakan pada kerongkongan akibat asam lambung), dan kondisi lain yang melibatkan asam lambung yang berlebihan.",
     "manufaktur": "Indofarma",
-    "wajib_resep": true
+    "wajib_resep": true,
+    "jenis_sediaan": "Kapsul"
   },
   {
     "external_id": 35088,
@@ -177,7 +185,8 @@
     "cara_pakai": "Diberikan sesuai dengan petunjuk dosis penggunaan, leaflet/brosur, dokter atau apoteker",
     "deskripsi": "Enervon-C merupakan suplemen untuk menjaga daya tahan tubuh",
     "manufaktur": "Darya Varia Laboratories",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Tablet"
   },
   {
     "external_id": 177334,
@@ -197,7 +206,8 @@
     "cara_pakai": "Tablet effevescent dilarutkan terlebih dahul di dalam segelas air, kemudian segera diminum setelah tablet larut",
     "deskripsi": "CDR dapat digunakan Untuk memenuhi kebutuhan kalsium, vitamin C, vitamin D, vitamin B6 untuk menjaga kekuatan tulang dan gigi pada orang dewasa, memenuhi kebutuhan kalsium pada masa kehamilan. Dapat diperlukan pada masa pertumbuhan atau masa penyembuhan",
     "manufaktur": "Bayer Indonesia",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Tablet"
   },
   {
     "external_id": 713766,
@@ -217,7 +227,8 @@
     "cara_pakai": "Dikonsumsi setelah atau sebelum makan",
     "deskripsi": "Suplemen untuk memelihara kesehatan & stamina tubuh",
     "manufaktur": "PTMERCK TBK",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Tablet"
   },
   {
     "external_id": 36371,
@@ -237,7 +248,8 @@
     "cara_pakai": "Diberikan sesuai dengan petunjuk dosis penggunaan, leaflet/brosur, dokter atau apoteker",
     "deskripsi": "Untuk pembentukan sel darah merah pada anemia selama masa haid/menstrasi dan untuk memelihara kesehatan tubuh",
     "manufaktur": "Merck Indonesia",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Kapsul"
   },
   {
     "external_id": 36152,
@@ -257,7 +269,8 @@
     "cara_pakai": "Konsumsilah setiap pagi setelah makan",
     "deskripsi": "Suplemen makanan untuk ibu hamil dan menyusui.",
     "manufaktur": "Guardian Pharmatama",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Kapsul"
   },
   {
     "external_id": 905023,
@@ -267,7 +280,7 @@
     "kategori": "Suplemen",
     "subkategori": "Multivitamin & Mineral",
     "harga": 192291,
-    "satuan_kemasan": "Botol kaca @  30 Tablet",
+    "satuan_kemasan": "Botol kaca @ 30 Tablet",
     "badge_status": "Suplemen",
     "gambar_url": "https://assets.goapotik.com/mediums/blackmores_executive_b_botol_30_tablet_1.jpg",
     "nomor_ijin_edar_bpom": "SI164507121",
@@ -277,7 +290,8 @@
     "cara_pakai": "Diberikan setelah makan",
     "deskripsi": "Membantu memelihara kesehatan orang yang aktif",
     "manufaktur": "LIPA PHARMACEUTICAL LTD",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Tablet"
   },
   {
     "external_id": 935647,
@@ -297,7 +311,8 @@
     "cara_pakai": "",
     "deskripsi": "Merupakan madu anak yang memang sengaja diformulasikan untuk anak. Berkhasiat untuk meningkatkan daya tahan tubuh anak serta membantu mengatasi berbagai penyakit yang kerap mengidap anak-anak.",
     "manufaktur": "PT Madurasa Unggulan Nusantara - Kab. Wonogiri, Jawa Tengah",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Serbuk/Sachet"
   },
   {
     "external_id": 909401,
@@ -317,7 +332,8 @@
     "cara_pakai": "",
     "deskripsi": "Diabetasol Sweetener merupakan pemanis pengganti gula yang tidak memiliki kalori, aman digunakan bagi penderita Diabetes Mellitus.",
     "manufaktur": "PT SANGHIANG PERKASA",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Serbuk/Sachet"
   },
   {
     "external_id": 930843,
@@ -337,7 +353,8 @@
     "cara_pakai": "",
     "deskripsi": "Diabetasol Bar adalah Bar tinggi serat, rendah natrium, rendah indeks glikemik dengan oat asli, dan coklat lengkap. Tinggi serat pangan (Hi â€“ Fiber) yang dapat membantu mengurangi risiko timbulnya penyakit jantung koroner, mengikat kolesterol, dan risiko naiknya gula darah. Bar ini mengandung 11 Vitamin & 5 Mineral yang diperlukan untuk kesehatan tubuh, terdiri dari Vit A, C, D3, E, B1, B2, Niasin, B6, B12, Asam Folat, Asam Pantotenat, Kalsium, Besi, Fosfor, Magnesium Seng, dan Yodium.",
     "manufaktur": "PT MONDE MAHKOTA BISCUIT",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Tablet"
   },
   {
     "external_id": 917083,
@@ -357,7 +374,8 @@
     "cara_pakai": "",
     "deskripsi": "Diabetasol merupakan Nutrisi pengganti makan yang lengkap dan seimbang dengan kandungan Vitadigest dan Indeks Glikemik rendah untuk mengurangi terjadinya lonjakan gula darah tinggi setelah konsumsi makanan dan mengontrol penurunan gula darah yang drastis dalam menstabilkan kadar gula darah pada penderita Diabetes Mellitus (DM).\r\n",
     "manufaktur": "PT SANGHIANG PERKASA",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Tablet"
   },
   {
     "external_id": 37869,
@@ -377,7 +395,8 @@
     "cara_pakai": "Diberikan sesuai dengan petunjuk dosis penggunaan, leaflet/brosur, dokter atau apoteker",
     "deskripsi": "Sustagen junior merupakan Minuman bernutrisi untuk anak usia 1-3 tahun",
     "manufaktur": "Sarihusada",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Tablet"
   },
   {
     "external_id": 920781,
@@ -397,7 +416,8 @@
     "cara_pakai": "Masukkan 4 sendok takar Entrasol Senior ke dalam 200 mL air matang hangat, kemudian aduk hingga larut.",
     "deskripsi": "Entrasol Senior Minyman Serbuk Rasa Vanilla merupakan nutrisi untuk orang lanjut usia.",
     "manufaktur": "PT SANGHIANG PERKASA",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Serbuk/Sachet"
   },
   {
     "external_id": 759023,
@@ -417,7 +437,8 @@
     "cara_pakai": "Diberikan sesudah makan",
     "deskripsi": "Tolak angin permen adalah permen herbal yang terbuat dari bahan alami dan madu untuk menghangatkan badan dan cocok untuk perjalanan jauh",
     "manufaktur": "Industri Jamu dan Farmasi Sido Muncul, PT",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Serbuk/Sachet"
   },
   {
     "external_id": 950925,
@@ -437,7 +458,8 @@
     "cara_pakai": "Gunakan sesuai dengan kebutuhan",
     "deskripsi": "TOLAK ANGIN SIDOMUNCUL PERMEN HERBAL BEBAS GULA merupakan permen herbal yang dapat membantu melegakan tenggorokan dan meredakan mual akibat mabuk perjalanan",
     "manufaktur": "Industri Jamu dan Farmasi Sido Muncul, PT",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Serbuk/Sachet"
   },
   {
     "external_id": 932593,
@@ -447,7 +469,7 @@
     "kategori": "Herbal",
     "subkategori": "Herbal Masuk Angin",
     "harga": 65000,
-    "satuan_kemasan": "Dus @  12 sachet @ 15 ml",
+    "satuan_kemasan": "Dus @ 12 sachet @ 15 ml",
     "badge_status": "Jamu",
     "gambar_url": "https://res.cloudinary.com/dauxzw3ho/image/private/t_goapotik_non_resep_Watermark/low/antangin_habbatussauda_15_ml_box_12_sachet_0001.jpg",
     "nomor_ijin_edar_bpom": "TR202601241",
@@ -457,7 +479,8 @@
     "cara_pakai": "Dapat dikonsumsi sebelum atau sesudah makan",
     "deskripsi": "Merupakan produk yang membantu meningkatkan daya tahan tubuh dan meredakan masuk angin, meriang, mual kembung, pegal-pegal, sakit kepala dan melegakan tenggorokan.",
     "manufaktur": "PT DELTOMED LABORATORIES - Kab. Wonogiri, Jawa Tengah",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Serbuk/Sachet"
   },
   {
     "external_id": 905851,
@@ -477,7 +500,8 @@
     "cara_pakai": "'-",
     "deskripsi": "Curcuma Sanbe mengandung ekstrak temulawak yang berkhasiat untuk membantu menjaga fungsi hati/liver serta meningkatkan nafsu makan",
     "manufaktur": "Sanbe Farma",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Tablet"
   },
   {
     "external_id": 929043,
@@ -497,7 +521,8 @@
     "cara_pakai": "",
     "deskripsi": "Digunakan untuk untuk membantu memperbaiki nafsu makan dan membantu memelihara kesehatan fungsi hati, serta ekstrak piperine untuk membantu meningkatkan bioavailabilitas cucurminoid.",
     "manufaktur": "Soho Industri Pharmasi, PT",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Tablet"
   },
   {
     "external_id": 36474,
@@ -517,7 +542,8 @@
     "cara_pakai": "Diberikan sesudah makan",
     "deskripsi": "Stimuno Sirup adalah penguat imun (imunomodulator) berbahan ekstrak Meniran (Phyllanthus niruri) untuk anak. Di Indonesia, Stimuno merupakan satu-satunya imunomodulator sudah mendapat Sertifikat Fitofarmaka dari BPOM dan Halal. Stimuno telah lulus uji coba klinis dapat meningkatkan fungsi sistem imun dan aman digunakan dalam jangka panjang.",
     "manufaktur": "Beta Pharmacon, PT",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Sirup"
   },
   {
     "external_id": 949591,
@@ -537,7 +563,8 @@
     "cara_pakai": "'-",
     "deskripsi": "Digunakan untuk memberi rasa hangat di badan, melindungi bayi dari gigitan serangga /  nyamuk dan mengatasi Gejala Masuk Angin pada bayi seperti mual dan muntah",
     "manufaktur": "PT DELTA ATSIRI PRIMA聽",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Tablet"
   },
   {
     "external_id": 950275,
@@ -557,7 +584,8 @@
     "cara_pakai": "'-",
     "deskripsi": "Digunakan untuk memberi rasa hangat di badan, melindungi bayi dari gigitan serangga /  nyamuk dan mengatasi Gejala Masuk Angin pada bayi seperti mual dan muntah",
     "manufaktur": "PT DELTA ATSIRI PRIMA聽",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Tablet"
   },
   {
     "external_id": 387077,
@@ -577,7 +605,8 @@
     "cara_pakai": "Usapkan pada rambut secara lembut setelah mandi",
     "deskripsi": "Bayi Anda memerlukan perawatan dan salah satunya untuk pertumbuhan rambut. Zwitsal memberikan perawatan untuk kelembutan rambut dengan baby oil dan kandungan lidah buaya yang membuat rambut tumbuh subur.",
     "manufaktur": "PT Mitrapak Eramandiri, Indonesia",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Tablet"
   },
   {
     "external_id": 777925,
@@ -597,7 +626,8 @@
     "cara_pakai": "Dituang secukupnya ke tangan lalu diusapkan ke badan bayi.",
     "deskripsi": "Zwitsal Classic Powder Fresh Floral merupakan bedak dengan kandungan Canola Oil memberikan nutrisi serta melembutkan kulit bayu. Fresh Caring Systemnya dapat memberikan keharuman yang tahan lama, dan teruji hypo-allergenic, aman untuk digunakan kulit bayi yang sensitif.",
     "manufaktur": "PT. Unilever Indonesia Tbk",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Serbuk/Sachet"
   },
   {
     "external_id": 918001,
@@ -617,7 +647,8 @@
     "cara_pakai": "",
     "deskripsi": "My Baby Kids Shampoo and Conditioner memiliki formula yang lembut untuk membersihkan rambut, tidak iritasi di mata, dan telah teruji klinis tidak menyebabkan iritasi pada kulit bayi dan menjaga kelembaban kulit dan membantu pertumbuhan rambut bayi.",
     "manufaktur": "RUDY SOETADI",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Larutan/Cairan"
   },
   {
     "external_id": 903927,
@@ -637,7 +668,8 @@
     "cara_pakai": "",
     "deskripsi": "Bedak cair untuk bayi yang berfungsi untuk meredakan kemerahan dan gatal-gatal akibat iritasi, kepanasan, ruam popok dan bakteri.",
     "manufaktur": "PT Galenium Pharmasia Laboratories",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Serbuk/Sachet"
   },
   {
     "external_id": 735879,
@@ -657,7 +689,8 @@
     "cara_pakai": "-",
     "deskripsi": "Merupakan alat pengukur suhu tubuh dengan layar LCD untuk menampilkan hasil pengukuran yang menawarkan akurat",
     "manufaktur": "-",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Tablet"
   },
   {
     "external_id": 770603,
@@ -677,7 +710,8 @@
     "cara_pakai": "",
     "deskripsi": "Chicco digital thermometer adalah digital termometer yang dirancang untuk mengukur suhu badan si kecil saat mengalami demam.",
     "manufaktur": "PT. Far Utama Indonesia",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Alat Medis"
   },
   {
     "external_id": 735830,
@@ -697,7 +731,8 @@
     "cara_pakai": "-",
     "deskripsi": "Safety termometer air raksa",
     "manufaktur": "-",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Alat Medis"
   },
   {
     "external_id": 709100,
@@ -717,7 +752,8 @@
     "cara_pakai": "",
     "deskripsi": "Hansaplast plester kompres demam dengan bahan hydrogel memberikan efek dingin alami yang tahan lama guna meredakan gejala demam serta aman untuk kulit yang sensitif",
     "manufaktur": "PT. Beiersdorf Indonesia",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Plester/Strip"
   },
   {
     "external_id": 731956,
@@ -737,7 +773,8 @@
     "cara_pakai": "",
     "deskripsi": "Hansaplast kompres demam kompres untuk meredakan demam anak dan memberikan kesejukan hingga 8 jam",
     "manufaktur": "PT. Beiersdorf Indonesia",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Plester/Strip"
   },
   {
     "external_id": 37632,
@@ -757,7 +794,8 @@
     "cara_pakai": "Diberikan sesuai dengan petunjuk dosis penggunaan, leaflet/brosur, dokter atau apoteker",
     "deskripsi": "Digunakan sebagai pelembab untuk kulit berminyak, sebagai tambahan terhadap pengobatan jerawat.",
     "manufaktur": "Galderma",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Larutan/Cairan"
   },
   {
     "external_id": 37641,
@@ -777,7 +815,8 @@
     "cara_pakai": "Diberikan sesuai dengan petunjuk dosis penggunaan, leaflet/brosur, dokter atau apoteker",
     "deskripsi": "Diformulasikan untuk kulit yang sangat kering dan gatal, untuk membersihkan dan melembabkan. Terbukti secara klinis untuk meredakan rasa gatal dan kulit kering. Dapat digunakan untuk semua umur, termasuk bayi. Tidak mengiritasi, tidak mengeringkan, hipoalergenik, bebas sabun (soap-free) dan bebas parfum, mudah dibilas.",
     "manufaktur": "Galderma",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Larutan/Cairan"
   },
   {
     "external_id": 931021,
@@ -787,7 +826,7 @@
     "kategori": "Perawatan Diri",
     "subkategori": "Tabir Surya (Sunscreen)",
     "harga": 86487,
-    "satuan_kemasan": "Â Tube 35 G",
+    "satuan_kemasan": "Tube 35 G",
     "badge_status": "Perawatan Diri",
     "gambar_url": "https://assets.goapotik.com/mediums/moisten_sunscreen_kids_35_gram_tube_1.jpg",
     "nomor_ijin_edar_bpom": "NA18191705465",
@@ -797,7 +836,8 @@
     "cara_pakai": "",
     "deskripsi": "Merupakan sunscreen ringan yang diformulasikan khusus bagi anak-anak, mengandung Zinc Oxide dan Titanium dioxide untuk melindungi kulit dari paparan sinar matahari.",
     "manufaktur": "PRODERMA SUKSES MANDIRI",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Tablet"
   },
   {
     "external_id": 932296,
@@ -817,7 +857,8 @@
     "cara_pakai": "Ikuti petunjuk penggunaan",
     "deskripsi": "Dettol Handwash Antibakteri digunakan untuk membersihkan tangan dari berbagai macam kuman dan bakteri. Diformulasikan pH-Balanced dengan perlindungan Dettol yang dapat membersihkan dan melindungi dari kuman serta memberikan keharuman kesegaran cemara yang khas.",
     "manufaktur": "Reckitt Benckiser Indonesia, PT - Kab Bogor",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Larutan/Cairan"
   },
   {
     "external_id": 760691,
@@ -837,6 +878,7 @@
     "cara_pakai": "Oleskan pada ketiak setelah mandi atau sebelum beraktivitas",
     "deskripsi": "Sebamed deodorant roll-on active merupakan prodak perawatan pada ketiak yang aman bagi kulit dan tidak menyebabkan ketiak hitam",
     "manufaktur": "PT. Eltean Luhur Kencana",
-    "wajib_resep": false
+    "wajib_resep": false,
+    "jenis_sediaan": "Tablet"
   }
 ]

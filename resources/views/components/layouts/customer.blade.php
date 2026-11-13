@@ -1,4 +1,4 @@
-@props(['title' => 'OmniPharma', 'client' => null])
+@props(['title' => 'OmniPharma', 'client' => null, 'fullWidth' => false])
 @php
     $clientSlug = $client ?? (auth()->check() && method_exists(auth()->user(), 'getClientSlug') ? auth()->user()->getClientSlug() : 'banyuwangi-kota');
     $clientDisplay = ucwords(str_replace('-', ' ', $clientSlug));
@@ -79,10 +79,15 @@
     </header>
 
     <!-- Main Body -->
-    <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        {{ $slot }}
-    </main>
-
+    @if ($fullWidth ?? false)
+        <main class="flex-1 w-full flex flex-col">
+            {{ $slot }}
+        </main>
+    @else
+        <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
+            {{ $slot }}
+        </main>
+    @endif
     <!-- Footer -->
     <footer class="border-t border-slate-200/80 bg-white p-6 text-center text-xs text-slate-500">
         <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">

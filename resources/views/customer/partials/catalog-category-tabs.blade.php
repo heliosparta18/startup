@@ -43,7 +43,7 @@
     <div class="flex items-center gap-2 sm:gap-4 overflow-x-auto no-scrollbar scroll-smooth snap-x py-3 px-1 sm:px-2">
         @foreach ($categories as $cat)
             @php
-                $isActive = (strtolower($kategoriAktif) === strtolower($cat['name']) || (strtolower($kategoriAktif) === 'obat' && strtolower($cat['name']) === 'obat'));
+                $isActive = (strtolower($kategoriAktif ?: 'obat') === strtolower($cat['name']));
             @endphp
             <button
                 type="button"
