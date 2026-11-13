@@ -42,7 +42,7 @@
 
                 <!-- Tombol Akses Cepat Katalog -->
                 <a
-                    href="{{ route('katalog') }}"
+                    href="{{ auth()->check() ? route('katalog') : route('login') }}"
                     class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold shadow-xs transition min-h-[44px]"
                 >
                     <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -143,7 +143,7 @@
                                     </a>
                                 @else
                                     <a
-                                        href="{{ route('katalog') }}"
+                                        href="{{ route('login') }}"
                                         class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition min-h-[48px]"
                                     >
                                         <span>Mulai Belanja</span>
@@ -233,7 +233,7 @@
                                                 <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-slate-200 text-slate-700">07:00 - 22:00</span>
                                             </div>
                                             <p class="text-[11px] text-slate-500 mt-0.5">Jl. Raya Rogojampi No. 12, Rogojampi</p>
-                                            <p class="text-[10px] text-emerald-700 font-medium mt-1">Apoteker: apt. Dewi Sartika, S.Farm</p>
+                                            <p class="text-[10px] text-emerald-700 font-medium mt-1">Apoteker: apt. Dinda Ayu Shafira, S.Farm.</p>
                                         </div>
                                         @auth
                                             <a href="{{ route('customer.home', ['client' => 'rogojampi']) }}" class="shrink-0 text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline min-h-[36px] flex items-center">

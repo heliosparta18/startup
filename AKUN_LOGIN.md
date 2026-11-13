@@ -19,7 +19,7 @@ Dokumen ini berisi daftar kredensial akun untuk pengujian manual sistem informas
 | :--- | :--- | :--- | :---: | :--- | :--- |
 | **👑 Super Admin Eksekutif** | Muhammad Daffa Ariby | `daffa@omnipharma.test` | `password` | Kantor Pusat (Semua Cabang) | `/admin/dashboard` |
 | **🩺 Apoteker Penanggung Jawab (APJ)** | apt. Bambang, S.Farm | `bambang@omnipharma.test` | `password` | Cabang Banyuwangi Kota | `/cabang/banyuwangi-kota/dashboard` |
-| **💊 Apoteker Penanggung Jawab (APJ)** | apt. Dewi Sartika, S.Farm | `dewi@omnipharma.test` | `password` | Cabang Rogojampi | `/cabang/rogojampi/dashboard` |
+| **💊 Apoteker Penanggung Jawab (APJ)** | apt. Dinda Ayu Shafira, S.Farm. | `dewi@omnipharma.test` | `password` | Cabang Rogojampi | `/cabang/rogojampi/dashboard` |
 | **🧾 Kasir / Staf Administrasi** | Kasir Staf Banyuwangi | `kasir.bwi@omnipharma.test` | `password` | Cabang Banyuwangi Kota | `/admin/kasir-ledger` |
 | **🛒 Pasien / Pelanggan Utama** | Guntur Afandy | `gunturafandy5@gmail.com` | `password` | Pelanggan Umum | `/dashboard` |
 | **🛒 Pasien / Pelanggan Alternatif** | Candi Chier | `candi@gmail.com` | `password` | Pelanggan Umum | `/dashboard` |
