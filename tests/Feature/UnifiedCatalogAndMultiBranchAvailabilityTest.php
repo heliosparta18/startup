@@ -47,6 +47,10 @@ class UnifiedCatalogAndMultiBranchAvailabilityTest extends TestCase
 
         $this->assertGreaterThanOrEqual(20, $rogoActiveCount, 'Stok aktif Rogojampi minimal 20 produk.');
         $this->assertLessThanOrEqual(30, $rogoActiveCount, 'Stok aktif Rogojampi maksimal 30 produk.');
+
+        // Verifikasi kuantitatif eksak alokasi produk deterministik
+        $this->assertSame(27, $bwiActiveCount, 'Stok aktif Banyuwangi Kota harus tepat 27 produk.');
+        $this->assertSame(26, $rogoActiveCount, 'Stok aktif Rogojampi harus tepat 26 produk.');
     }
 
     /**
@@ -164,12 +168,18 @@ class UnifiedCatalogAndMultiBranchAvailabilityTest extends TestCase
             ->assertSee('Tersedia di: Rogojampi')
             ->assertSee('Beralih ke Rogojampi');
 
-        // Uji eksekusi aksi switchBranch
+        // Uji eksekusi aksi switchBranch dua arah
         Livewire::test(PublicCatalog::class, ['client' => 'banyuwangi-kota'])
             ->call('switchBranch', 'rogojampi')
             ->assertRedirect(route('customer.catalog', ['client' => 'rogojampi']));
 
         $this->assertSame('rogojampi', session('active_branch'));
+
+        Livewire::test(PublicCatalog::class, ['client' => 'rogojampi'])
+            ->call('switchBranch', 'banyuwangi-kota')
+            ->assertRedirect(route('customer.catalog', ['client' => 'banyuwangi-kota']));
+
+        $this->assertSame('banyuwangi-kota', session('active_branch'));
     }
 
     /**
@@ -210,13 +220,26 @@ class UnifiedCatalogAndMultiBranchAvailabilityTest extends TestCase
     {
         $user = User::factory()->create();
 
+        // 1. Cabang default tanpa session terpasang (fallback ke Banyuwangi Kota)
         $response = $this->actingAs($user)->get(route('dashboard'));
         $response->assertOk();
         $response->assertSee('Mulai Belanja Obat');
         $response->assertSee(route('customer.catalog', ['client' => 'banyuwangi-kota']));
+        $response->assertSee(route('customer.cart', ['client' => 'banyuwangi-kota']));
 
         // Shortcut /katalog me-redirect ke katalog cabang aktif
         $catalogRedirect = $this->get(route('katalog'));
         $catalogRedirect->assertRedirect(route('customer.catalog', ['client' => 'banyuwangi-kota']));
+
+        // 2. Cabang aktif berubah ke Rogojampi via session
+        $responseRogo = $this->actingAs($user)
+            ->withSession(['active_branch' => 'rogojampi'])
+            ->get(route('dashboard'));
+        $responseRogo->assertOk();
+        $responseRogo->assertSee(route('customer.catalog', ['client' => 'rogojampi']));
+        $responseRogo->assertSee(route('customer.cart', ['client' => 'rogojampi']));
+
+        $catalogRogoRedirect = $this->withSession(['active_branch' => 'rogojampi'])->get(route('katalog'));
+        $catalogRogoRedirect->assertRedirect(route('customer.catalog', ['client' => 'rogojampi']));
     }
 }
