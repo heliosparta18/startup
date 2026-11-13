@@ -27,6 +27,9 @@ class KategoriObat extends Model
     protected $fillable = [
         'id_kategori',
         'nama_kategori',
+        'slug',
+        'icon_url',
+        'urutan',
         'wajib_resep',
         'deskripsi',
         'id_client',
@@ -36,9 +39,18 @@ class KategoriObat extends Model
     protected function casts(): array
     {
         return [
+            'urutan' => 'integer',
             'wajib_resep' => 'boolean',
             'dibuat_pada' => 'datetime',
         ];
+    }
+
+    /**
+     * @return HasMany<SubkategoriObat, $this>
+     */
+    public function subkategori(): HasMany
+    {
+        return $this->hasMany(SubkategoriObat::class, 'id_kategori', 'id_kategori')->orderBy('urutan');
     }
 
     /**

@@ -233,3 +233,29 @@ git push -u origin feat/roles-dashboard
 | **Apoteker Rogojampi** | `dewi@omnipharma.test` | Cabang Rogojampi (`rogojampi`) | `password` |
 | **Kasir Banyuwangi** | `kasir.bwi@omnipharma.test` | Cabang Banyuwangi Kota (`banyuwangi-kota`) | `password` |
 | **Pelanggan / Pasien** | `candi@omnipharma.test` | Pelanggan Publik | `password` |
+
+---
+
+## 6. Fitur Katalog Obat & Kesehatan GoApotik (Branch `feat/katalog`)
+
+Integrasi fitur katalog produk kesehatan berbasis dataset terkurasi GoApotik dengan antarmuka bertema hijau-putih yang bersih dan arsitektur non-konflik:
+
+### Rincian Fungsionalitas & Arsitektur
+- **Dataset Terkurasi 42 Produk (`database/data/goapotik_catalog_42.json`):**
+  - Mencakup 7 kategori utama: *Obat*, *Suplemen*, *Nutrisi*, *Herbal*, *Ibu & Anak*, *Alat Kesehatan*, dan *Perawatan Diri*.
+  - Atribut lengkap: nama resmi, NIE BPOM, indikasi klinis, komposisi, dosis, aturan pakai, satuan kemasan, dan tautan gambar packshot.
+- **Migrasi Non-Breaking (`2026_11_13_000001_add_catalog_attributes_to_obat_and_kategori_table.php`):**
+  - Menambahkan kolom nullable pada tabel `obat` dan `kategori_obat`, serta tabel relasi baru `subkategori_obat`.
+- **Seeder Idempoten (`GoApotikCatalogSeeder`):**
+  - Dapat dieksekusi berulang kali tanpa duplikasi data (`updateOrCreate` berbasis slug unik) serta mengalokasikan stok multi-klien untuk cabang aktif.
+- **Service & Komponen Reaktif Livewire (`PublicCatalog` & `CatalogService`):**
+  - Navigasi tab kategori utama horizontal dengan scroll responsif.
+  - Sidebar filter subkategori anatomis/terapeutik dengan penghitung jumlah stok real-time.
+  - Pencarian debounced instan dengan placeholder dinamis sesuai kategori aktif.
+  - Filter cepat jenis sediaan obat (tablet, sirup, kapsul, salep, dll.).
+- **Antarmuka Hijau-Putih Berstandar Medis:**
+  - Palet warna: Deep Forest Spruce (`#0A231E`), Emerald (`#059669` / `#047857`), dan Putih Bersih (`#FFFFFF`).
+  - Badge regulasi BPOM resmi: Lingkaran merah K (Obat Keras / Wajib Resep), lingkaran biru (Bebas Terbatas), dan lingkaran hijau (Obat Bebas).
+  - Ketahanan status (empty state & loading skeleton) serta kepatuhan aksesibilitas WCAG AA (kontras rasio hingga 16.2:1 dan touch target $\ge$ 44px).
+- **Automated Test Suite:**
+  - `tests/Feature/GoApotikCatalogIntegrationTest.php` memverifikasi seeder idempoten, 42 produk, reaktivitas filter Livewire, rendering badge BPOM, dan isolasi stok tenant.

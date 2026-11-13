@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             DemoApotekSeeder::class,
+            GoApotikCatalogSeeder::class,
         ]);
     }
 }

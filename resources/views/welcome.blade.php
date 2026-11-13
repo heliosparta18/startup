@@ -40,6 +40,17 @@
                     </div>
                 </div>
 
+                <!-- Tombol Akses Cepat Katalog -->
+                <a
+                    href="{{ route('katalog') }}"
+                    class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold shadow-xs transition min-h-[44px]"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                    <span>Katalog Obat</span>
+                </a>
+
                 @auth
                     @php
                         $userAuth = auth()->user();
@@ -125,21 +136,27 @@
                                         <span>Buka Dashboard</span>
                                     </a>
                                     <a
-                                        href="{{ route('customer.home', ['client' => 'banyuwangi-kota']) }}"
+                                        href="{{ route('katalog') }}"
                                         class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm shadow-2xs transition min-h-[48px]"
                                     >
                                         <span>Katalog Obat</span>
                                     </a>
                                 @else
                                     <a
-                                        href="{{ route('login') }}"
+                                        href="{{ route('katalog') }}"
                                         class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition min-h-[48px]"
                                     >
                                         <span>Mulai Belanja</span>
                                     </a>
                                     <a
-                                        href="{{ route('register') }}"
+                                        href="{{ route('login') }}"
                                         class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm shadow-2xs transition min-h-[48px]"
+                                    >
+                                        <span>Masuk Portal</span>
+                                    </a>
+                                    <a
+                                        href="{{ route('register') }}"
+                                        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3.5 rounded-xl border border-transparent bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition min-h-[48px]"
                                     >
                                         <span>Daftar Akun</span>
                                     </a>

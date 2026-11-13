@@ -29,10 +29,21 @@ class Obat extends Model
     protected $fillable = [
         'id_obat',
         'nama_obat',
+        'slug',
         'merek',
         'jenis_sediaan',
+        'satuan_kemasan',
+        'badge_status',
+        'gambar_url',
+        'nomor_ijin_edar',
+        'indikasi',
+        'deskripsi',
+        'dosis',
+        'komposisi',
+        'aturan_pakai',
         'jumlah_obat',
         'id_kategori',
+        'id_subkategori',
         'harga',
         'expired',
         'batch_number',
@@ -49,12 +60,25 @@ class Obat extends Model
         ];
     }
 
+    public function getUrlGambarAttribute(): string
+    {
+        return $this->gambar_url ?: asset('images/placeholder-product.svg');
+    }
+
     /**
      * @return BelongsTo<KategoriObat, $this>
      */
     public function kategori(): BelongsTo
     {
         return $this->belongsTo(KategoriObat::class, 'id_kategori', 'id_kategori');
+    }
+
+    /**
+     * @return BelongsTo<SubkategoriObat, $this>
+     */
+    public function subkategori(): BelongsTo
+    {
+        return $this->belongsTo(SubkategoriObat::class, 'id_subkategori', 'id_subkategori');
     }
 
     /**
