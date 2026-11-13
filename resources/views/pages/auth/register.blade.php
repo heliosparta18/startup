@@ -100,17 +100,36 @@
             loadingSendOtp: false,
             loadingRegister: false,
 
+            async ensureFirebaseAuth() {
+                if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.loginWithGoogle === 'function') {
+                    return window.OmniFirebaseAuth;
+                }
+                const scriptEl = document.querySelector('script[src*="app-"]');
+                if (scriptEl && scriptEl.src) {
+                    try {
+                        await import(scriptEl.src);
+                    } catch (e) {
+                        console.warn('Dynamic import fallback note:', e);
+                    }
+                }
+                for (let i = 0; i < 25; i++) {
+                    if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.loginWithGoogle === 'function') {
+                        return window.OmniFirebaseAuth;
+                    }
+                    await new Promise(r => setTimeout(r, 100));
+                }
+                throw new Error('Modul autentikasi Firebase belum siap. Silakan refresh halaman.');
+            },
+
             async handleGoogleRegister() {
                 if (this.loadingGoogle || this.loadingRegister || this.loadingSendOtp) return;
                 this.loadingGoogle = true;
                 try {
-                    if (!window.OmniFirebaseAuth || typeof window.OmniFirebaseAuth.loginWithGoogle !== 'function') {
-                        throw new Error('Modul autentikasi Firebase sedang dimuat. Silakan tunggu 1-2 detik.');
-                    }
-                    const result = await window.OmniFirebaseAuth.loginWithGoogle();
+                    const fb = await this.ensureFirebaseAuth();
+                    const result = await fb.loginWithGoogle();
                     const userName = result.user.displayName || result.user.email;
-                    if (window.OmniFirebaseAuth?.showToast) {
-                        window.OmniFirebaseAuth.showToast(`Pendaftaran berhasil! Selamat datang, ${userName}!`, 'success');
+                    if (fb.showToast) {
+                        fb.showToast(`Pendaftaran berhasil! Selamat datang, ${userName}!`, 'success');
                     }
                     setTimeout(() => {
                         window.location.href = result.session?.redirect || '{{ route('dashboard') }}';
@@ -122,6 +141,8 @@
                         : (err?.message || 'Gagal mendaftar dengan akun Google.');
                     if (window.OmniFirebaseAuth?.showToast) {
                         window.OmniFirebaseAuth.showToast(errorMsg, 'error');
+                    } else {
+                        alert(errorMsg);
                     }
                 } finally {
                     this.loadingGoogle = false;

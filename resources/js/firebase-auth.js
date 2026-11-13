@@ -109,6 +109,12 @@ export function formatFirebaseError(error) {
             return 'Jendela masuk Google ditutup sebelum proses selesai.';
         case 'auth/popup-blocked':
             return 'Pop-up browser diblokir. Izinkan pop-up untuk login Google.';
+        case 'auth/unauthorized-domain':
+            return 'Domain/host ini belum diotorisasi di Firebase Auth. Buka aplikasi via http://localhost:8088 atau daftarkan domain di Firebase Console.';
+        case 'auth/cancelled-popup-request':
+            return 'Proses masuk Google dibatalkan karena ada jendela baru yang dibuka.';
+        case 'auth/internal-error':
+            return 'Terjadi kendala internal koneksi Google. Silakan periksa jaringan dan coba lagi.';
         case 'auth/network-request-failed':
             return 'Gagal terhubung ke server Firebase. Periksa koneksi internet Anda.';
         case 'auth/user-disabled':
@@ -241,3 +247,6 @@ if (typeof window !== 'undefined') {
         onAuthStateChanged: (cb) => onAuthStateChanged(auth, cb)
     };
 }
+    if (typeof document !== 'undefined') {
+        document.dispatchEvent(new CustomEvent('omni:firebase-ready', { detail: window.OmniFirebaseAuth }));
+    }
