@@ -80,19 +80,7 @@
 
         {{ $slot }}
 
-        @if (session('welcome_user'))
-            <div
-                x-data
-                x-init="$el.addEventListener('animationend', () => $el.remove())"
-                class="pointer-events-none fixed inset-0 z-[9999] flex items-center justify-center bg-white"
-                style="animation: welcomeSplash 2.6s cubic-bezier(.4,0,.2,1) forwards;"
-            >
-                <div class="select-none text-center">
-                    <p class="text-sm font-medium uppercase tracking-[0.25em] text-zinc-400">Welcome</p>
-                    <h1 class="mt-2 text-6xl font-bold text-emerald-600 sm:text-7xl">{{ session('welcome_user') }}</h1>
-                </div>
-            </div>
-        @endif
+        <x-welcome-splash />
 
         @persist('toast')
             <flux:toast.group>

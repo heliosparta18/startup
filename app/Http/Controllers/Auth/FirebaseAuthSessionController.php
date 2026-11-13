@@ -79,6 +79,7 @@ class FirebaseAuthSessionController extends Controller
             $request->session()->put('google_first_time', true);
             $redirectUrl = route('auth.complete-profile');
         } else {
+            $request->session()->flash('welcome_user', $user->name);
             $redirectUrl = route('dashboard');
             if ($user->hasRole('super_admin') || $user->role === 'super_admin') {
                 $redirectUrl = route('admin.dashboard');
@@ -170,6 +171,7 @@ class FirebaseAuthSessionController extends Controller
 
         $request->session()->forget('google_first_time');
         $request->session()->put('profile_completed', true);
+        $request->session()->flash('welcome_user', $user->name);
 
         return redirect()->route('dashboard')->with('status', 'Profil pasien berhasil dilengkapi! Selamat datang di OmniPharma Network.');
     }

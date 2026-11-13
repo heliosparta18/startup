@@ -122,6 +122,7 @@ class EmailOtpAuthController extends Controller
         Auth::login($user, true);
         $request->session()->regenerate();
         $request->session()->put('firebase_provider', 'email_otp');
+        $request->session()->flash('welcome_user', $user->name);
 
         $redirectUrl = route('dashboard');
         if ($user->hasRole('super_admin') || $user->role === 'super_admin') {

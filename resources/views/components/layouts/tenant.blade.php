@@ -12,6 +12,7 @@
     @include('partials.head')
 </head>
 <body class="min-h-screen bg-slate-100/90 text-slate-800 font-sans flex flex-col overflow-x-hidden">
+    <x-welcome-splash />
     <div x-data="{ mobileNav: false }" class="flex min-h-screen flex-col">
         <!-- Main Top Bar: Nuansa Hijau Deep Spruce & Putih Bersih Sesuai Login -->
         <header class="sticky top-0 z-30 bg-white border-b border-slate-200/80 shadow-2xs">

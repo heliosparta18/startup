@@ -16,6 +16,7 @@
     @fluxAppearance
 </head>
 <body class="min-h-full bg-[#F8FAFC] text-slate-800 antialiased flex flex-col font-sans overflow-x-hidden">
+    <x-welcome-splash />
     @php
         $photoUrl = session('firebase_photo') ?? null;
         $provider = session('firebase_provider', 'password');

@@ -71,11 +71,47 @@ select:focus[data-flux-control] {
     100% { transform: translateX(-50%); }
 }
 
-@keyframes welcomeSplash {
-    0%   { opacity: 0; }
-    14%  { opacity: 1; }
-    72%  { opacity: 1; }
-    100% { opacity: 0; }
+@keyframes welcomeSplashOverlay {
+    0% {
+        opacity: 1;
+        visibility: visible;
+    }
+    68% {
+        opacity: 1;
+        visibility: visible;
+    }
+    100% {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+    }
+}
+
+@keyframes welcomeSplashText {
+    0% {
+        opacity: 0;
+        transform: scale(0.92) translateY(12px);
+    }
+    16% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+    68% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.04) translateY(-8px);
+    }
+}
+
+.animate-welcome-overlay {
+    animation: welcomeSplashOverlay 2.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-welcome-text {
+    animation: welcomeSplashText 2.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .animate-marquee {

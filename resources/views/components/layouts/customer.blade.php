@@ -9,6 +9,7 @@
     @include('partials.head')
 </head>
 <body class="min-h-screen bg-slate-100/90 text-slate-800 font-sans flex flex-col overflow-x-hidden">
+    <x-welcome-splash />
     <!-- Top Navigation Header: Sesuai Tema Login Hijau Deep Spruce & Putih Bersih -->
     <header class="sticky top-0 z-30 bg-white border-b border-slate-200/80 shadow-2xs">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
