@@ -34,30 +34,26 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
             <!-- Brand -->
             <div class="flex items-center min-w-0">
-                <a href="{{ route('dashboard') }}" class="flex items-center gap-2 sm:gap-2.5 min-h-[44px] py-1">
-                    <img src="/logo.png" alt="OmniPharma Logo" class="h-9 w-9 sm:h-10 sm:w-10 object-contain drop-shadow-[0_2px_6px_rgba(5,150,105,0.35)] shrink-0 hover:scale-105 transition-transform duration-200">
+                <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 sm:gap-3 min-h-[44px] py-1 shrink-0" aria-label="OmniPharma Dashboard">
+                    <img src="/logo.png" alt="OmniPharma Logo" class="h-9 w-9 sm:h-10 sm:w-10 object-contain drop-shadow-[0_2px_6px_rgba(5,150,105,0.25)] shrink-0">
                     <div class="min-w-0">
-                        <span class="block text-[10px] sm:text-xs font-bold tracking-widest text-emerald-700 uppercase">OmniPharma</span>
-                        <span class="block text-xs sm:text-sm font-semibold text-slate-900 leading-tight truncate">Dashboard Pelanggan</span>
-                    </div>
-                </a>
-                <div class="min-w-0">
-                    <div class="flex items-center gap-1.5">
-                        <span class="block text-xs font-black tracking-widest text-emerald-800 uppercase">OmniPharma Network</span>
-                        <span class="text-[10px] font-bold px-1.5 py-0.2 rounded bg-[#0A231E] text-[#D4F94E]">
-                            @if($isSuperAdmin) PUSAT @elseif($isApoteker) APJ @else PORTAL @endif
+                        <div class="flex items-center gap-2">
+                            <span class="block text-sm sm:text-base font-extrabold text-slate-900 tracking-tight leading-none">OmniPharma</span>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 uppercase tracking-wider">
+                                @if($isSuperAdmin) PUSAT @elseif($isApoteker) APJ @else PASIEN @endif
+                            </span>
+                        </div>
+                        <span class="block text-xs font-semibold text-slate-500 leading-tight truncate mt-1">
+                            @if($isSuperAdmin)
+                                Dashboard Pusat (Super Admin)
+                            @elseif($isApoteker)
+                                Portal Apoteker ({{ $userClientName }})
+                            @else
+                                Dashboard Pelanggan • Portal Layanan Farmasi
+                            @endif
                         </span>
                     </div>
-                    <span class="block text-xs sm:text-sm font-extrabold text-slate-900 leading-tight truncate">
-                        @if($isSuperAdmin)
-                            Dashboard Pusat (Super Admin)
-                        @elseif($isApoteker)
-                            Portal Apoteker ({{ $userClientName }})
-                        @else
-                            Portal Layanan Farmasi Pasien
-                        @endif
-                    </span>
-                </div>
+                </a>
             </div>
 
             <!-- User Menu, Kembali ke Sambutan, & Logout -->
@@ -77,7 +73,7 @@
                     @if($photoUrl)
                         <img src="{{ $photoUrl }}" alt="Avatar" class="w-6 h-6 rounded-full object-cover shrink-0 border border-emerald-500/40">
                     @else
-                        <div class="w-6 h-6 rounded-full bg-gradient-to-br from-[#0A231E] to-[#0E352E] text-[#D4F94E] flex items-center justify-center font-bold text-[10px] shrink-0 border border-emerald-500/30">
+                        <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-[10px] shrink-0 border border-emerald-200">
                             {{ strtoupper(substr($userName, 0, 1)) }}
                         </div>
                     @endif
@@ -108,93 +104,56 @@
     <!-- Konten Utama Dashboard -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
 
-        <!-- Hero Banner: Nuansa Deep Spruce Hijau Eksklusif Sesuai Kolom Kiri Menu Login -->
-        <div class="rounded-3xl bg-gradient-to-br from-[#0A231E] via-[#0E352E] to-[#0A231E] text-white p-6 sm:p-8 lg:p-10 shadow-xl border border-emerald-500/20 relative overflow-hidden">
-            <!-- Dekorasi Garis & Lingkaran Geometris Halus Sesuai Login -->
-            <div class="absolute -top-24 -left-24 w-72 h-72 rounded-full border border-emerald-500/10 pointer-events-none"></div>
-            <div class="absolute -bottom-24 -right-24 w-80 h-80 rounded-full border border-emerald-500/15 pointer-events-none"></div>
+        @if(!$isSuperAdmin && !$isApoteker)
+            <!-- Hero Banner Pasien / Pelanggan: Desain Ramah, Bersih, dan Terang Khas Apotek Resmi -->
+            <div class="rounded-3xl bg-white border border-slate-200/90 p-6 sm:p-8 lg:p-9 shadow-xs relative overflow-hidden">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+                    <!-- Info Profil & Identitas Pasien -->
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 min-w-0">
+                        @if($photoUrl)
+                            <img src="{{ $photoUrl }}" alt="Avatar" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-emerald-500 shadow-xs shrink-0">
+                        @else
+                            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-black text-2xl sm:text-3xl shadow-xs shrink-0">
+                                {{ strtoupper(substr($userName, 0, 1)) }}
+                            </div>
+                        @endif
 
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
-                <!-- Info Profil & Identitas -->
-                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 min-w-0">
-                    @if($photoUrl)
-                        <img src="{{ $photoUrl }}" alt="Avatar" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-emerald-400 shadow-md shrink-0">
-                    @else
-                        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/10 text-[#D4F94E] flex items-center justify-center font-black text-2xl sm:text-3xl border border-emerald-400/30 shadow-md shrink-0">
-                            {{ strtoupper(substr($userName, 0, 1)) }}
-                        </div>
-                    @endif
-
-                    <div class="min-w-0 w-full sm:w-auto">
-                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-emerald-200 border border-emerald-500/30">
-                            <span class="h-1.5 w-1.5 rounded-full bg-[#D4F94E]"></span>
-                            Standar Permenkes RI No. 73/2016
-                        </span>
-
-                        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white mt-2 leading-tight">
-                            Halo, {{ $userName }}!
-                        </h1>
-
-                        <p class="text-xs sm:text-sm text-emerald-200/90 mt-1">
-                            @if($isSuperAdmin)
-                                Selamat datang di Executive Control Panel OmniPharma Headquarter (Monitoring Lintas Cabang).
-                            @elseif($isApoteker)
-                                Selamat bertugas di {{ $userClientName }}. Verifikasi resep dokter, kontrol FEFO, dan kelola antrean pasien.
-                            @else
-                                Selamat datang di Portal Farmasi OmniPharma. Akses obat resmi dengan jaminan standar farmasi BPOM.
-                            @endif
-                        </p>
-
-                        <!-- Baris Tag Status -->
-                        <div class="flex flex-wrap items-center gap-2 mt-3 text-xs">
-                            <span class="px-2.5 py-1 rounded-lg bg-white/10 border border-white/15 text-white font-bold uppercase tracking-wider">
-                                Peran: {{ str_replace('_', ' ', $userRole) }}
-                            </span>
-                            @if($isApoteker)
-                                <span class="px-2.5 py-1 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-[#D4F94E] font-bold">
-                                    {{ $userClientName }}
+                        <div class="min-w-0 w-full sm:w-auto space-y-1.5">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                                    Standar Pelayanan Kefarmasian • Permenkes No. 73/2016
                                 </span>
-                            @endif
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/10 border border-white/15 text-emerald-200 font-semibold">
-                                <span class="w-2 h-2 rounded-full bg-[#D4F94E] animate-pulse"></span>
-                                Sesi Terautentikasi ({{ $provider === 'google' ? 'Google Auth' : 'Firebase Password' }})
-                            </span>
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                                    Cabang: {{ $userClientName }}
+                                </span>
+                            </div>
+
+                            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 leading-tight">
+                                Halo, {{ $userName }}!
+                            </h1>
+
+                            <p class="text-xs sm:text-sm text-slate-600 max-w-2xl leading-relaxed">
+                                Selamat datang di Portal Farmasi OmniPharma. Akses obat resmi dengan jaminan standar farmasi BPOM.
+                            </p>
+
+                            <div class="flex flex-wrap items-center gap-2 pt-1 text-xs text-slate-500">
+                                <span class="px-2.5 py-0.5 rounded-md bg-slate-100 border border-slate-200 font-semibold text-slate-700">
+                                    Peran: Pelanggan
+                                </span>
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 font-medium">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                                    Sesi Terautentikasi ({{ $provider === 'google' ? 'Google Auth' : 'Firebase Password' }})
+                                </span>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Tombol Aksi Cepat Sesuai Tombol Hijau Menu Login -->
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto shrink-0">
-                    @if($isSuperAdmin)
-                        <a
-                            href="{{ route('admin.dashboard') }}"
-                            class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs sm:text-sm shadow-md transition min-h-[46px] cursor-pointer"
-                        >
-                            <span>Overview Omzet &amp; KPI</span>
-                        </a>
-                        <a
-                            href="{{ route('admin.progres.index') }}"
-                            class="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-white/20 bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm transition min-h-[46px] cursor-pointer"
-                        >
-                            <span>Live Monitoring Obat</span>
-                        </a>
-                    @elseif($isApoteker)
-                        <a
-                            href="{{ route('tenant.dashboard', ['client' => $userClientSlug]) }}"
-                            class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs sm:text-sm shadow-md transition min-h-[46px] cursor-pointer"
-                        >
-                            <span>Telaah Resep &amp; FEFO</span>
-                        </a>
-                        <a
-                            href="{{ route('tenant.antrean.index', ['client' => $userClientSlug]) }}"
-                            class="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-white/20 bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm transition min-h-[46px] cursor-pointer"
-                        >
-                            <span>Kelola Antrean Cabang</span>
-                        </a>
-                    @else
+                    <!-- Tombol Aksi Cepat Pasien -->
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto shrink-0">
                         <a
                             href="{{ route('customer.home', ['client' => 'banyuwangi-kota']) }}"
-                            class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs sm:text-sm shadow-md transition min-h-[46px] cursor-pointer"
+                            class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs sm:text-sm shadow-xs transition min-h-[46px] cursor-pointer"
                         >
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -203,17 +162,99 @@
                         </a>
                         <a
                             href="{{ route('customer.cart', ['client' => 'banyuwangi-kota']) }}"
-                            class="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-white/20 bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm transition min-h-[46px] cursor-pointer"
+                            class="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 font-bold text-xs sm:text-sm shadow-2xs transition min-h-[46px] cursor-pointer"
                         >
-                            <svg class="w-4 h-4 text-[#D4F94E]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <svg class="w-4 h-4 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
                             <span>Lihat Keranjang</span>
                         </a>
-                    @endif
+                    </div>
                 </div>
             </div>
-        </div>
+        @else
+            <!-- Hero Banner Internal (Super Admin / Apoteker) -->
+            <div class="rounded-3xl bg-gradient-to-br from-[#0A231E] via-[#0E352E] to-[#0A231E] text-white p-6 sm:p-8 lg:p-10 shadow-xl border border-emerald-500/20 relative overflow-hidden">
+                <div class="absolute -top-24 -left-24 w-72 h-72 rounded-full border border-emerald-500/10 pointer-events-none"></div>
+                <div class="absolute -bottom-24 -right-24 w-80 h-80 rounded-full border border-emerald-500/15 pointer-events-none"></div>
+
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 min-w-0">
+                        @if($photoUrl)
+                            <img src="{{ $photoUrl }}" alt="Avatar" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-emerald-400 shadow-md shrink-0">
+                        @else
+                            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/10 text-[#D4F94E] flex items-center justify-center font-black text-2xl sm:text-3xl border border-emerald-400/30 shadow-md shrink-0">
+                                {{ strtoupper(substr($userName, 0, 1)) }}
+                            </div>
+                        @endif
+
+                        <div class="min-w-0 w-full sm:w-auto">
+                            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-emerald-200 border border-emerald-500/30">
+                                <span class="h-1.5 w-1.5 rounded-full bg-[#D4F94E]"></span>
+                                Standar Permenkes RI No. 73/2016
+                            </span>
+
+                            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white mt-2 leading-tight">
+                                Halo, {{ $userName }}!
+                            </h1>
+
+                            <p class="text-xs sm:text-sm text-emerald-200/90 mt-1">
+                                @if($isSuperAdmin)
+                                    Selamat datang di Executive Control Panel OmniPharma Headquarter (Monitoring Lintas Cabang).
+                                @elseif($isApoteker)
+                                    Selamat bertugas di {{ $userClientName }}. Verifikasi resep dokter, kontrol FEFO, dan kelola antrean pasien.
+                                @endif
+                            </p>
+
+                            <div class="flex flex-wrap items-center gap-2 mt-3 text-xs">
+                                <span class="px-2.5 py-1 rounded-lg bg-white/10 border border-white/15 text-white font-bold uppercase tracking-wider">
+                                    Peran: {{ str_replace('_', ' ', $userRole) }}
+                                </span>
+                                @if($isApoteker)
+                                    <span class="px-2.5 py-1 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-[#D4F94E] font-bold">
+                                        {{ $userClientName }}
+                                    </span>
+                                @endif
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/10 border border-white/15 text-emerald-200 font-semibold">
+                                    <span class="w-2 h-2 rounded-full bg-[#D4F94E] animate-pulse"></span>
+                                    Sesi Terautentikasi ({{ $provider === 'google' ? 'Google Auth' : 'Firebase Password' }})
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto shrink-0">
+                        @if($isSuperAdmin)
+                            <a
+                                href="{{ route('admin.dashboard') }}"
+                                class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs sm:text-sm shadow-md transition min-h-[46px] cursor-pointer"
+                            >
+                                <span>Overview Omzet &amp; KPI</span>
+                            </a>
+                            <a
+                                href="{{ route('admin.progres.index') }}"
+                                class="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-white/20 bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm transition min-h-[46px] cursor-pointer"
+                            >
+                                <span>Live Monitoring Obat</span>
+                            </a>
+                        @elseif($isApoteker)
+                            <a
+                                href="{{ route('tenant.dashboard', ['client' => $userClientSlug]) }}"
+                                class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs sm:text-sm shadow-md transition min-h-[46px] cursor-pointer"
+                            >
+                                <span>Telaah Resep &amp; FEFO</span>
+                            </a>
+                            <a
+                                href="{{ route('tenant.antrean.index', ['client' => $userClientSlug]) }}"
+                                class="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-white/20 bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm transition min-h-[46px] cursor-pointer"
+                            >
+                                <span>Kelola Antrean Cabang</span>
+                            </a>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        @endif
 
         <!-- Bagian Portal Akses Terpadu (Sesuai Hak Akses Peran) -->
         <div>
@@ -509,60 +550,75 @@
                     <!-- 1. Katalog Pasien Cabang Banyuwangi Kota -->
                     <a
                         href="{{ route('customer.catalog', ['client' => 'banyuwangi-kota']) }}"
-                        class="group p-6 rounded-3xl bg-white border border-slate-200/90 hover:border-emerald-500 hover:shadow-lg transition-all duration-200 flex flex-col justify-between min-h-[170px]"
+                        class="group p-6 rounded-2xl bg-white border border-slate-200/90 hover:border-emerald-500 hover:shadow-md transition-all duration-200 flex flex-col justify-between min-h-[180px]"
                     >
                         <div>
-                            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0A231E] to-[#0E352E] text-[#D4F94E] flex items-center justify-center mb-4 border border-emerald-500/20 shadow-xs group-hover:scale-105 transition">
-                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                                </svg>
+                            <div class="flex items-center justify-between mb-3.5">
+                                <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition duration-200 shadow-2xs">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                    </svg>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 uppercase tracking-wider">
+                                    Cabang Utama
+                                </span>
                             </div>
-                            <h3 class="font-extrabold text-slate-900 text-base group-hover:text-emerald-800 transition">Katalog Cabang Banyuwangi Kota</h3>
+                            <h3 class="font-bold text-slate-900 text-base group-hover:text-emerald-700 transition">Katalog Cabang Banyuwangi Kota</h3>
                             <p class="text-xs text-slate-500 mt-1 leading-relaxed">Cek stok obat bebas &amp; keras, unggah foto resep dokter, dan pesan obat cepat.</p>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-emerald-700 group-hover:text-emerald-800">
+                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-emerald-700 group-hover:text-emerald-800">
                             <span>Belanja di Banyuwangi Kota</span>
-                            <span class="text-sm">&rarr;</span>
+                            <span class="text-sm transition-transform group-hover:translate-x-1">&rarr;</span>
                         </div>
                     </a>
 
                     <!-- 2. Katalog Pasien Cabang Rogojampi -->
                     <a
                         href="{{ route('customer.catalog', ['client' => 'rogojampi']) }}"
-                        class="group p-6 rounded-3xl bg-white border border-slate-200/90 hover:border-emerald-500 hover:shadow-lg transition-all duration-200 flex flex-col justify-between min-h-[170px]"
+                        class="group p-6 rounded-2xl bg-white border border-slate-200/90 hover:border-emerald-500 hover:shadow-md transition-all duration-200 flex flex-col justify-between min-h-[180px]"
                     >
                         <div>
-                            <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center mb-4 group-hover:bg-[#0A231E] group-hover:text-[#D4F94E] transition shadow-xs">
-                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                </svg>
+                            <div class="flex items-center justify-between mb-3.5">
+                                <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition duration-200 shadow-2xs">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                    </svg>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200 uppercase tracking-wider">
+                                    Cabang 2
+                                </span>
                             </div>
-                            <h3 class="font-extrabold text-slate-900 text-base group-hover:text-emerald-800 transition">Katalog Cabang Rogojampi</h3>
+                            <h3 class="font-bold text-slate-900 text-base group-hover:text-emerald-700 transition">Katalog Cabang Rogojampi</h3>
                             <p class="text-xs text-slate-500 mt-1 leading-relaxed">Cek ketersediaan obat resmi pada Apotek OmniPharma Cabang Rogojampi.</p>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-emerald-700 group-hover:text-emerald-800">
+                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-emerald-700 group-hover:text-emerald-800">
                             <span>Belanja di Rogojampi</span>
-                            <span class="text-sm">&rarr;</span>
+                            <span class="text-sm transition-transform group-hover:translate-x-1">&rarr;</span>
                         </div>
                     </a>
 
                     <!-- 3. Keranjang & Pilihan Slot Ambil (Click & Collect) -->
                     <a
                         href="{{ route('customer.cart', ['client' => 'banyuwangi-kota']) }}"
-                        class="group p-6 rounded-3xl bg-white border border-slate-200/90 hover:border-emerald-500 hover:shadow-lg transition-all duration-200 flex flex-col justify-between min-h-[170px]"
+                        class="group p-6 rounded-2xl bg-white border border-slate-200/90 hover:border-emerald-500 hover:shadow-md transition-all duration-200 flex flex-col justify-between min-h-[180px]"
                     >
                         <div>
-                            <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center mb-4 group-hover:bg-[#0A231E] group-hover:text-[#D4F94E] transition shadow-xs">
-                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                                </svg>
+                            <div class="flex items-center justify-between mb-3.5">
+                                <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition duration-200 shadow-2xs">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                    </svg>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-900 border border-emerald-200 uppercase tracking-wider">
+                                    Loket Cepat
+                                </span>
                             </div>
-                            <h3 class="font-extrabold text-slate-900 text-base group-hover:text-emerald-800 transition">Keranjang &amp; Slot Pengambilan</h3>
+                            <h3 class="font-bold text-slate-900 text-base group-hover:text-emerald-700 transition">Keranjang &amp; Slot Pengambilan</h3>
                             <p class="text-xs text-slate-500 mt-1 leading-relaxed">Pilih jam ambil obat di apotek tanpa perlu antre lama di loket.</p>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-emerald-700 group-hover:text-emerald-800">
+                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-emerald-700 group-hover:text-emerald-800">
                             <span>Buka Keranjang Saya</span>
-                            <span class="text-sm">&rarr;</span>
+                            <span class="text-sm transition-transform group-hover:translate-x-1">&rarr;</span>
                         </div>
                     </a>
                 @endif
@@ -570,13 +626,15 @@
         </div>
 
         <!-- Rincian Informasi Sesi & Kredensial Medis (Nuansa Bersih Sesuai Desain Login) -->
-        <div class="rounded-3xl bg-white border border-slate-200/90 p-5 sm:p-7 shadow-xs">
+        <div class="rounded-2xl bg-white border border-slate-200/90 p-5 sm:p-6 shadow-xs">
             <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
                 <div class="flex items-center gap-2">
                     <span class="h-2 w-2 rounded-full bg-emerald-600"></span>
-                    <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-800">Informasi Sesi Terautentikasi &amp; Kredensial Medis</h3>
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-800">Informasi Sesi Terautentikasi &amp; Kredensial Medis</h3>
                 </div>
-                <span class="text-[11px] font-bold text-emerald-700">Terverifikasi SIA &amp; SIP</span>
+                <span class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                    Terverifikasi SIA &amp; SIP
+                </span>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-xs">
                 <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100">
@@ -588,9 +646,9 @@
                     <span class="text-[10px] text-emerald-700 font-semibold mt-1 block">Standar Permenkes RI No. 73/2016</span>
                 </div>
 
-                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
-                    <span class="text-slate-500 block mb-1 font-semibold">Penyedia Identitas (IdP)</span>
-                    <span class="font-extrabold text-slate-800 text-sm break-words">
+                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100">
+                    <span class="text-slate-400 block mb-1">Penyedia Identitas (IdP)</span>
+                    <span class="font-bold text-slate-800 text-sm break-words">
                         {{ $provider === 'google' ? 'Google OAuth 2.0 (Firebase)' : 'Email & Password (Firebase)' }}
                     </span>
                     <span class="text-[10px] text-slate-500 mt-1 block font-mono">
@@ -598,9 +656,9 @@
                     </span>
                 </div>
 
-                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
-                    <span class="text-slate-500 block mb-1 font-semibold">Hak Akses &amp; Penugasan</span>
-                    <span class="font-extrabold text-slate-800 text-sm uppercase">
+                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100">
+                    <span class="text-slate-400 block mb-1">Hak Akses &amp; Penugasan</span>
+                    <span class="font-bold text-slate-800 text-sm uppercase">
                         {{ str_replace('_', ' ', $userRole) }}
                     </span>
                     <span class="text-[10px] text-emerald-700 font-semibold mt-1 block">
