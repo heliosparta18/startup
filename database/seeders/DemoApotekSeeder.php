@@ -125,15 +125,18 @@ class DemoApotekSeeder extends Seeder
             ['telepon_email' => 'dewi@omnipharma.test'],
             [
                 'id_pengguna' => (string) Str::uuid(),
-                'nama_lengkap' => 'apt. Dewi Sartika, S.Farm',
+                'nama_lengkap' => 'apt. Dinda Ayu Shafira, S.Farm.',
                 'peran' => 'apoteker',
                 'password' => bcrypt('password'),
                 'terdaftar_pada' => '2026-08-12',
                 'aktif' => true,
             ]
         );
+        $apotekerRogo->update([
+            'nama_lengkap' => 'apt. Dinda Ayu Shafira, S.Farm.',
+        ]);
 
-        AdminClient::firstOrCreate(
+        $adminRogo = AdminClient::firstOrCreate(
             ['id_pengguna' => $apotekerRogo->id_pengguna, 'id_client' => $rogojampi->id_client],
             [
                 'id_admin' => (string) Str::uuid(),
@@ -141,6 +144,9 @@ class DemoApotekSeeder extends Seeder
                 'email' => $apotekerRogo->telepon_email,
             ]
         );
+        $adminRogo->update([
+            'nama' => $apotekerRogo->nama_lengkap,
+        ]);
 
         PeranClientPengguna::firstOrCreate(
             ['id_pengguna' => $apotekerRogo->id_pengguna, 'id_client' => $rogojampi->id_client],

@@ -216,7 +216,7 @@
                         <tr class="hover:bg-slate-50 transition">
                             <td class="p-4">
                                 <div class="font-bold text-sm text-slate-900">Cabang Rogojampi</div>
-                                <div class="text-[11px] text-slate-500">ID: CL-RGJ-02 • Penanggung Jawab: apt. Farhan Maula / apt. Dewi</div>
+                                <div class="text-[11px] text-slate-500">ID: CL-RGJ-02 • Penanggung Jawab: apt. Farhan Maula / apt. Dinda Ayu Shafira, S.Farm.</div>
                             </td>
                             <td class="p-4 font-bold text-slate-900">610 order</td>
                             <td class="p-4 font-extrabold text-emerald-800">Rp 45.400.000</td>

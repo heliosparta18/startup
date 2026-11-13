@@ -30,7 +30,14 @@ class MultiRoleDashboardFlowTest extends TestCase
         $response->assertSee('Apotek Terdaftar');
         $response->assertSee('Banyuwangi &amp; Rogojampi', false);
         $response->assertSee('Mulai Belanja');
+        $response->assertSee('Katalog Obat');
         $response->assertSee('Daftar');
+        $response->assertSee('apt. Dinda Ayu Shafira, S.Farm.');
+
+        // Verifikasi tombol Mulai Belanja dan Akses Cepat Katalog mengarah ke rute login bagi pengunjung/tamu
+        $contentHtml = $response->getContent();
+        $this->assertMatchesRegularExpression('/href="[^"]*\/login"[^>]*>[\s\S]*?Mulai Belanja/i', $contentHtml);
+        $this->assertMatchesRegularExpression('/href="[^"]*\/login"[^>]*>[\s\S]*?Katalog Obat/i', $contentHtml);
 
         // Memastikan halaman sambutan bersih dari data login mentah
         $response->assertDontSee('daffa@omnipharma.test');
@@ -42,6 +49,7 @@ class MultiRoleDashboardFlowTest extends TestCase
         $this->assertStringContainsString('daffa@omnipharma.test', $content);
         $this->assertStringContainsString('bambang@omnipharma.test', $content);
         $this->assertStringContainsString('dewi@omnipharma.test', $content);
+        $this->assertStringContainsString('apt. Dinda Ayu Shafira, S.Farm.', $content);
         $this->assertStringContainsString('gunturafandy5@gmail.com', $content);
     }
 
