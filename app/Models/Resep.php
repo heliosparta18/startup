@@ -17,6 +17,7 @@ use Illuminate\Support\Carbon;
  * @property string|null $nama_dokter
  * @property string|null $sip_dokter
  * @property string|null $nama_pasien
+ * @property string|null $catatan
  * @property bool|null $sip_valid
  * @property bool|null $dosis_valid
  * @property string|null $catatan_apoteker
@@ -46,6 +47,7 @@ class Resep extends Model
         'nama_dokter',
         'sip_dokter',
         'nama_pasien',
+        'catatan',
         'sip_valid',
         'dosis_valid',
         'catatan_apoteker',
