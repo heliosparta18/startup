@@ -63,7 +63,10 @@ class CatalogService
                 });
             })
             ->when($bentukSediaan, function (Builder $q, $sediaan) {
-                $q->where('jenis_sediaan', $sediaan);
+                $q->where(function (Builder $sq) use ($sediaan) {
+                    $sq->where('jenis_sediaan', $sediaan)
+                        ->orWhere('jenis_sediaan', 'like', "%{$sediaan}%");
+                });
             })
             ->when($kategori, function (Builder $q, $kat) {
                 if (strtolower($kat) === 'obat') {
@@ -175,10 +178,54 @@ class CatalogService
      */
     public function getDaftarSediaan(): array
     {
-        return Obat::query()
+        $rawList = Obat::query()
             ->distinct()
             ->whereNotNull('jenis_sediaan')
             ->pluck('jenis_sediaan')
             ->toArray();
+
+        $standardMap = [
+            'tablet' => 'Tablet',
+            'kaplet' => 'Kaplet',
+            'kapsul' => 'Kapsul',
+            'sirup' => 'Sirup',
+            'suspensi' => 'Suspensi',
+            'tetes' => 'Tetes (Drops)',
+            'drop' => 'Tetes (Drops)',
+            'salep' => 'Salep/Krim',
+            'krim' => 'Salep/Krim',
+            'serbuk' => 'Serbuk/Sachet',
+            'sachet' => 'Serbuk/Sachet',
+            'larutan' => 'Larutan/Cairan',
+            'cairan' => 'Larutan/Cairan',
+            'alat' => 'Alat Medis',
+            'plester' => 'Plester/Strip',
+        ];
+
+        $cleaned = [];
+        foreach ($rawList as $s) {
+            $matched = false;
+            foreach ($standardMap as $key => $std) {
+                if (str_contains(strtolower($s), $key)) {
+                    $cleaned[$std] = true;
+                    $matched = true;
+                    break;
+                }
+            }
+            if (! $matched && strlen($s) <= 20) {
+                $cleaned[ucwords(strtolower($s))] = true;
+            }
+        }
+
+        $order = ['Tablet', 'Kaplet', 'Kapsul', 'Sirup', 'Suspensi', 'Tetes (Drops)', 'Salep/Krim', 'Serbuk/Sachet', 'Larutan/Cairan', 'Alat Medis', 'Plester/Strip'];
+        $sorted = [];
+        foreach ($order as $item) {
+            if (isset($cleaned[$item])) {
+                $sorted[] = $item;
+                unset($cleaned[$item]);
+            }
+        }
+
+        return array_merge($sorted, array_keys($cleaned));
     }
 }

@@ -1,13 +1,17 @@
-{{-- Product Card (Green-and-White Theme, Antislop R-02, R-03 Compliant) --}}
+{{-- Product Card (GoApotik Authentic Layout, Antislop R-02, R-03 Compliant) --}}
 @php
     $badgeStatus = $obat->badge_status ?? '';
     $isKeras = str_contains(strtolower($badgeStatus), 'keras') || ($obat->kategori->wajib_resep ?? false);
     $isBebasTerbatas = str_contains(strtolower($badgeStatus), 'terbatas') || str_contains(strtolower($obat->kategori->nama_kategori ?? ''), 'terbatas');
     $isBebas = str_contains(strtolower($badgeStatus), 'bebas') && ! $isBebasTerbatas;
+    $urlGambar = $obat->url_gambar ?: asset('images/placeholder-product.svg');
+    $namaObat = $obat->nama_obat;
+    $isAvailableHere = $obat->isAvailableInBranch($client);
+    $altBranch = ! $isAvailableHere ? $obat->getAlternativeAvailableBranch($client) : null;
 @endphp
 
-<div class="bg-white rounded-xl border border-slate-200 p-3 sm:p-3.5 flex flex-col justify-between hover:border-emerald-400 hover:shadow-md transition-all duration-200 relative group">
-    {{-- BPOM Regulatory Badge (Top Right) --}}
+<div class="bg-white rounded-xl border border-slate-200/90 p-2.5 sm:p-3.5 flex flex-col justify-between hover:border-emerald-500 hover:shadow-md transition-all duration-200 relative group">
+    {{-- BPOM Official Regulatory Badge (Top Right) --}}
     <div class="absolute top-2.5 right-2.5 z-10">
         @if ($isKeras)
             <div class="w-5 h-5 rounded-full bg-rose-600 border border-black flex items-center justify-center text-white font-extrabold text-[10px] shadow-2xs" title="Obat Keras (Wajib Resep)">
@@ -29,26 +33,32 @@
     </div>
 
     <div>
-        {{-- Product Packshot Image --}}
-        <a href="{{ route('customer.obat.detail', ['client' => $client, 'id' => $obat->id_obat]) }}" class="block aspect-square w-full rounded-lg bg-slate-50/60 p-2 overflow-hidden mb-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+        {{-- Product Packshot Image Container with Safe Fallback --}}
+        <a href="{{ route('customer.obat.detail', ['client' => $client, 'id' => $obat->id_obat]) }}" class="block aspect-square w-full rounded-lg bg-slate-50/50 p-2 overflow-hidden mb-2 relative group-hover:bg-slate-50 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500">
             <img
-                src="{{ $obat->url_gambar }}"
-                alt="{{ $obat->nama_obat }}"
+                src="{{ $urlGambar }}"
+                alt="{{ $namaObat }}"
                 class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200"
                 loading="lazy"
                 onerror="this.onerror=null;this.src='{{ asset('images/placeholder-product.svg') }}';"
             />
+            {{-- GoApotik Style Micro-Watermark --}}
+            <div class="absolute bottom-1 left-2 right-2 flex items-center justify-center opacity-70 group-hover:opacity-100 transition-opacity">
+                <span class="text-[8px] font-bold px-1.5 py-0.5 rounded bg-white/90 text-slate-500 border border-slate-200/80 shadow-2xs">
+                    OmniPharma
+                </span>
+            </div>
         </a>
 
         {{-- Subcategory & Manufacturer Metadata --}}
-        <div class="text-[10px] font-semibold text-emerald-700 uppercase tracking-wider truncate mb-1">
+        <div class="text-[10px] font-bold text-emerald-700 uppercase tracking-wider truncate mb-1">
             {{ $obat->subkategori->nama_subkategori ?? ($obat->kategori->nama_kategori ?? 'Kesehatan') }}
         </div>
 
-        {{-- Product Title --}}
-        <h4 class="text-xs sm:text-sm font-bold text-slate-900 line-clamp-2 min-h-[2.5rem] group-hover:text-emerald-700 transition-colors uppercase tracking-tight">
+        {{-- Product Title (2 Lines Clamped) --}}
+        <h4 class="text-xs sm:text-sm font-bold text-slate-900 line-clamp-2 min-h-[2.5rem] group-hover:text-emerald-700 transition-colors uppercase tracking-tight leading-snug">
             <a href="{{ route('customer.obat.detail', ['client' => $client, 'id' => $obat->id_obat]) }}" class="hover:underline focus:outline-none focus:text-emerald-700">
-                {{ $obat->nama_obat }}
+                {{ $namaObat }}
             </a>
         </h4>
 
@@ -58,10 +68,6 @@
         </p>
 
         {{-- Multi-Branch Stock Availability Indicator --}}
-        @php
-            $isAvailableHere = $obat->isAvailableInBranch($client);
-            $altBranch = ! $isAvailableHere ? $obat->getAlternativeAvailableBranch($client) : null;
-        @endphp
         <div class="mt-2 flex flex-wrap items-center gap-1.5 text-[10px]">
             @if ($isAvailableHere)
                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
@@ -99,7 +105,7 @@
             <a
                 href="{{ route('customer.obat.detail', ['client' => $client, 'id' => $obat->id_obat]) }}"
                 class="inline-flex items-center justify-center px-3 py-2 rounded-lg bg-emerald-50 hover:bg-emerald-600 text-emerald-800 hover:text-white font-semibold text-xs transition-colors duration-150 min-h-[44px] min-w-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer"
-                aria-label="Lihat detail {{ $obat->nama_obat }}"
+                aria-label="Lihat detail {{ $namaObat }}"
                 title="Lihat Detail Produk"
             >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

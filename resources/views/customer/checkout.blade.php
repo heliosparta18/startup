@@ -77,7 +77,7 @@
                             </label>
                         </div>
 
-                        <!-- Pilihan Slot Jadwal Pengambilan (Click & Collect — FR-PEL-06) -->
+                        <!-- Pilihan Slot Jadwal Pengambilan (Click & Collect - FR-PEL-06) -->
                         <div x-show="metodeLayanan === 'click_collect'" class="mt-5 pt-4 border-t border-slate-100 space-y-3">
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                                 <label class="block text-xs font-bold uppercase tracking-wider text-emerald-800">

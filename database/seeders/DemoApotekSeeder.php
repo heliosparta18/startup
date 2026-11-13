@@ -350,7 +350,8 @@ class DemoApotekSeeder extends Seeder
             [
                 'id_obat' => (string) Str::uuid(),
                 'merek' => 'Amodiaquine',
-                'jenis_sediaan' => 'Dosis terapi infeksi • Strip 10 tablet',
+                'jenis_sediaan' => 'Tablet',
+                'satuan_kemasan' => 'Strip 10 tablet',
                 'jumlah_obat' => 92,
                 'id_kategori' => $katKeras->id_kategori,
                 'harga' => 45000.00,
@@ -364,7 +365,8 @@ class DemoApotekSeeder extends Seeder
             [
                 'id_obat' => (string) Str::uuid(),
                 'merek' => 'Sanmol',
-                'jenis_sediaan' => 'Pereda demam & nyeri • Strip 10 kaplet',
+                'jenis_sediaan' => 'Kaplet',
+                'satuan_kemasan' => 'Strip 10 kaplet',
                 'jumlah_obat' => 75,
                 'id_kategori' => $katBebas->id_kategori,
                 'harga' => 8500.00,
@@ -378,7 +380,8 @@ class DemoApotekSeeder extends Seeder
             [
                 'id_obat' => (string) Str::uuid(),
                 'merek' => 'Amoxan',
-                'jenis_sediaan' => 'Antibiotik • Strip 10 kapsul',
+                'jenis_sediaan' => 'Kapsul',
+                'satuan_kemasan' => 'Strip 10 kapsul',
                 'jumlah_obat' => 35,
                 'id_kategori' => $katKeras->id_kategori,
                 'harga' => 22000.00,
@@ -392,7 +395,8 @@ class DemoApotekSeeder extends Seeder
             [
                 'id_obat' => (string) Str::uuid(),
                 'merek' => 'Promag',
-                'jenis_sediaan' => 'Obat lambung & maag • Blister 12 tablet',
+                'jenis_sediaan' => 'Tablet',
+                'satuan_kemasan' => 'Blister 12 tablet',
                 'jumlah_obat' => 70,
                 'id_kategori' => $katBebas->id_kategori,
                 'harga' => 9000.00,
