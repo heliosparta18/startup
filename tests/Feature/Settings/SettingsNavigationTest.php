@@ -19,7 +19,7 @@ class SettingsNavigationTest extends TestCase
         $response->assertOk();
         $response->assertSee(route('profile.edit'));
         $response->assertSee(route('security.edit'));
-        $response->assertDontSee(route('appearance.edit'));
+        $response->assertDontSee('/settings/appearance');
         $response->assertDontSee('Appearance');
     }
 
@@ -34,7 +34,7 @@ class SettingsNavigationTest extends TestCase
         $response->assertOk();
         $response->assertSee(route('profile.edit'));
         $response->assertSee(route('security.edit'));
-        $response->assertDontSee(route('appearance.edit'));
+        $response->assertDontSee('/settings/appearance');
         $response->assertDontSee('Appearance');
     }
 }
