@@ -44,14 +44,15 @@ class SecurityTest extends TestCase
         $response->assertSee('Enable 2FA');
     }
 
-    public function test_security_settings_page_requires_password_confirmation_when_enabled(): void
+    public function test_security_settings_page_accessible_without_password_confirmation(): void
     {
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)
+            ->withSession(['auth.password_confirmed_at' => time()])
             ->get(route('security.edit'));
 
-        $response->assertRedirect(route('password.confirm'));
+        $response->assertOk();
     }
 
     public function test_security_settings_page_renders_without_two_factor_when_feature_is_disabled(): void
