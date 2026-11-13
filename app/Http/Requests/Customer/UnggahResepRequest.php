@@ -24,8 +24,12 @@ class UnggahResepRequest extends FormRequest
     {
         return [
             'nama_dokter' => ['nullable', 'string', 'max:150'],
+            'namaDokter' => ['nullable', 'string', 'max:150'],
             'sip_dokter' => ['nullable', 'string', 'max:100'],
+            'sipDokter' => ['nullable', 'string', 'max:100'],
             'nama_pasien' => ['nullable', 'string', 'max:150'],
+            'namaPasien' => ['nullable', 'string', 'max:150'],
+            'umurPasien' => ['nullable', 'string', 'max:50'],
             'catatan' => ['nullable', 'string', 'max:500'],
             'foto_resep' => [
                 'nullable',

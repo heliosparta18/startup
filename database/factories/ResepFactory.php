@@ -24,6 +24,7 @@ class ResepFactory extends Factory
             'nama_dokter' => 'dr. '.fake()->name().', Sp.PD',
             'sip_dokter' => fake()->numerify('###/SIP/2024'),
             'nama_pasien' => fake()->name(),
+            'catatan' => null,
             'sip_valid' => false,
             'dosis_valid' => false,
             'catatan_apoteker' => null,

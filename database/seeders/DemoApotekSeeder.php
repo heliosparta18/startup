@@ -298,7 +298,7 @@ class DemoApotekSeeder extends Seeder
                 ['email' => $p->telepon_email],
                 [
                     'name' => $p->nama_lengkap,
-                    'password' => $p->password,
+                    'password' => $p->password ?: bcrypt('password'),
                     'role' => $p->peran,
                     'status' => $p->aktif ? 'active' : 'inactive',
                     'email_verified_at' => now(),
@@ -419,6 +419,7 @@ class DemoApotekSeeder extends Seeder
                 'id_client' => $bwiKota->id_client,
                 'status' => 'menunggu_verifikasi',
                 'metode_layanan' => 'click_collect',
+                'dibuat_pada' => '2026-09-17 08:30:00',
             ]
         );
 
@@ -456,6 +457,7 @@ class DemoApotekSeeder extends Seeder
                 'sip_valid' => true,
                 'dosis_valid' => true,
                 'catatan_apoteker' => 'Resep asli dan masih berlaku.',
+                'dibuat_pada' => '2026-09-17 08:30:00',
             ]
         );
 

@@ -29,9 +29,20 @@ Route::get('/dashboard', function (string $client) {
     $clientId = $clientModel ? $clientModel->id_client : $client;
 
     $resepPending = Resep::query()
+        ->whereHas('pesanan', function ($q) use ($clientId) {
+            $q->withoutGlobalScopes()->where('id_client', $clientId);
+        })
         ->with(['pesanan.pengguna', 'pesanan.itemPesanan.obat'])
         ->where('status_verifikasi', 'menunggu')
+        ->latest('dibuat_pada')
         ->first();
+
+    $resepPendingCount = Resep::query()
+        ->whereHas('pesanan', function ($q) use ($clientId) {
+            $q->withoutGlobalScopes()->where('id_client', $clientId);
+        })
+        ->where('status_verifikasi', 'menunggu')
+        ->count();
 
     $fefoBatches = Obat::query()
         ->with('stokClient')
@@ -43,7 +54,7 @@ Route::get('/dashboard', function (string $client) {
     $pesanansAktif = Pesanan::withoutGlobalScopes()
         ->where('id_client', $clientId)
         ->with(['items', 'pengguna', 'resep'])
-        ->whereIn('status', ['diproses', 'menunggu_pembayaran', 'siap_diambil'])
+        ->whereIn('status', ['diproses', 'menunggu_pembayaran', 'siap_diambil', 'menunggu_verifikasi'])
         ->orderBy('dibuat_pada', 'desc')
         ->take(10)
         ->get();
@@ -52,6 +63,7 @@ Route::get('/dashboard', function (string $client) {
         'client' => $client,
         'clientModel' => $clientModel,
         'resepPending' => $resepPending,
+        'resepPendingCount' => $resepPendingCount,
         'fefoBatches' => $fefoBatches,
         'antreanBerjalan' => $antreanBerjalan,
         'pesanansAktif' => $pesanansAktif,
@@ -152,6 +164,7 @@ Route::post('/antrean/tambah-walkin', function (string $client, Request $request
         'nama_lengkap' => $namaPasien,
         'peran' => 'pelanggan',
         'telepon_email' => 'walkin-'.Str::random(6).'@omnipharma.test',
+        'password' => bcrypt(Str::random(16)),
         'aktif' => true,
     ]);
 
@@ -189,7 +202,13 @@ Route::post('/antrean/tambah-walkin', function (string $client, Request $request
 })->name('antrean.walkin');
 
 Route::get('/resep', function (string $client) {
+    $clientModel = Client::where('id_client', $client)->orWhere('slug', $client)->first();
+    $clientId = $clientModel ? $clientModel->id_client : $client;
+
     $resepPending = Resep::query()
+        ->whereHas('pesanan', function ($q) use ($clientId) {
+            $q->withoutGlobalScopes()->where('id_client', $clientId);
+        })
         ->with(['pesanan.pengguna', 'pesanan.itemPesanan.obat'])
         ->where('status_verifikasi', 'menunggu')
         ->orderBy('dibuat_pada', 'desc')
@@ -197,6 +216,7 @@ Route::get('/resep', function (string $client) {
 
     return view('tenant.verifikasi-resep', [
         'client' => $client,
+        'clientModel' => $clientModel,
         'resepPending' => $resepPending,
     ]);
 })->name('resep.antrean');
@@ -227,24 +247,57 @@ Route::get('/pasien', function (string $client) {
 
 Route::post('/resep/{id}/verifikasi', function (string $client, string $id, VerifikasiResepRequest $request) {
     $action = $request->input('action', 'disetujui');
-    $catatan = $request->input('catatan', 'Resep asli dan masih berlaku.');
+    $catatan = $request->input('catatan') ?? $request->input('alasan') ?? 'Resep asli dan masih berlaku.';
+    $nomorSip = $request->input('nomor_sip') ?? '503/SIP/2024';
 
-    $resep = Resep::query()->find($id);
+    $clientModel = Client::where('id_client', $client)->orWhere('slug', $client)->first();
+    $clientId = $clientModel ? $clientModel->id_client : $client;
+
+    $resep = Resep::query()->find($id)
+        ?? Resep::where('id_pesanan', $id)->first()
+        ?? Resep::whereHas('pesanan', function ($q) use ($id) {
+            $q->withoutGlobalScopes()->where('nomor_pesanan', $id)->orWhere('nomor_pesanan', '#'.$id);
+        })->first();
+
     if ($resep) {
+        $belongsToBranch = Pesanan::withoutGlobalScopes()
+            ->where('id_pesanan', $resep->id_pesanan)
+            ->where('id_client', $clientId)
+            ->exists();
+
+        if (! $belongsToBranch) {
+            abort(404, "Resep {$id} tidak ditemukan pada cabang ini.");
+        }
+
+        $verifikatorId = null;
+        if (auth()->check()) {
+            $user = auth()->user();
+            if (isset($user->id_pengguna) && ! empty($user->id_pengguna)) {
+                $verifikatorId = $user->id_pengguna;
+            } else {
+                $verifikatorId = Pengguna::where('telepon_email', $user->email)->value('id_pengguna');
+            }
+        }
+
         $resep->update([
             'status_verifikasi' => $action,
             'catatan_apoteker' => $catatan,
-            'sip_valid' => true,
-            'dosis_valid' => true,
+            'sip_dokter' => $nomorSip ?: $resep->sip_dokter,
+            'sip_valid' => $action === 'disetujui',
+            'dosis_valid' => $action === 'disetujui',
+            'diverifikasi_oleh' => $verifikatorId,
         ]);
+
         if ($resep->pesanan) {
             $resep->pesanan->update([
                 'status' => $action === 'disetujui' ? 'diproses' : 'dibatalkan',
             ]);
+
+            event(new OrderStatusUpdated($resep->pesanan));
         }
     }
 
-    if ($request->header('Accept') === 'text/html' && $request->has('_token') && $request->header('referer') && ! $request->expectsJson()) {
+    if (str_contains((string) $request->header('Accept'), 'text/html') && $request->has('_token')) {
         return back()->with('success', "Resep {$id} berhasil diverifikasi ({$action}).");
     }
 

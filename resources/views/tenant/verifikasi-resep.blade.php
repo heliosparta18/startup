@@ -112,6 +112,11 @@
                                 <div class="mt-3 text-xs text-slate-600 space-y-1">
                                     <div>Dokter Perujuk: <strong class="text-slate-900">{{ $item->nama_dokter ?? 'dr. Budi, Sp.PD' }}</strong></div>
                                     <div>SIP Tertera: <code class="text-emerald-800 font-bold font-mono">{{ $item->sip_dokter ?? '503/SIP/2024' }}</code></div>
+                                    @if ($item->catatan)
+                                        <div class="mt-2 text-slate-700 bg-slate-100 p-2 rounded-lg border border-slate-200">
+                                            <strong>Catatan Pasien:</strong> {{ $item->catatan }}
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
