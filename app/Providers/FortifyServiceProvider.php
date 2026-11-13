@@ -44,6 +44,10 @@ class FortifyServiceProvider extends ServiceProvider
                         session()->forget('url.intended');
                     }
 
+                    if (! $request->wantsJson()) {
+                        session()->flash('welcome_user', $user->name);
+                    }
+
                     return $request->wantsJson()
                         ? response()->json(['two_factor' => false, 'redirect' => $redirectUrl])
                         : redirect()->intended($redirectUrl);

@@ -71,6 +71,13 @@ select:focus[data-flux-control] {
     100% { transform: translateX(-50%); }
 }
 
+@keyframes welcomeSplash {
+    0%   { opacity: 0; }
+    14%  { opacity: 1; }
+    72%  { opacity: 1; }
+    100% { opacity: 0; }
+}
+
 .animate-marquee {
     display: flex;
     width: max-content;
