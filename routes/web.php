@@ -27,6 +27,10 @@ Route::get('/', function (Request $request) {
     return view('welcome');
 })->name('home');
 
+Route::get('/katalog', function () {
+    return redirect()->route('customer.catalog', ['client' => 'banyuwangi-kota']);
+})->name('katalog');
+
 Route::middleware(['auth'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
 });

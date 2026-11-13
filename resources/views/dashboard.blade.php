@@ -508,7 +508,7 @@
                 @else
                     <!-- 1. Katalog Pasien Cabang Banyuwangi Kota -->
                     <a
-                        href="{{ route('customer.home', ['client' => 'banyuwangi-kota']) }}"
+                        href="{{ route('customer.catalog', ['client' => 'banyuwangi-kota']) }}"
                         class="group p-6 rounded-3xl bg-white border border-slate-200/90 hover:border-emerald-500 hover:shadow-lg transition-all duration-200 flex flex-col justify-between min-h-[170px]"
                     >
                         <div>
@@ -528,7 +528,7 @@
 
                     <!-- 2. Katalog Pasien Cabang Rogojampi -->
                     <a
-                        href="{{ route('customer.home', ['client' => 'rogojampi']) }}"
+                        href="{{ route('customer.catalog', ['client' => 'rogojampi']) }}"
                         class="group p-6 rounded-3xl bg-white border border-slate-200/90 hover:border-emerald-500 hover:shadow-lg transition-all duration-200 flex flex-col justify-between min-h-[170px]"
                     >
                         <div>
