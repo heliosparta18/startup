@@ -31,7 +31,7 @@ class FortifyServiceProvider extends ServiceProvider
                     if ($user?->hasRole('super_admin') || $user?->role === 'super_admin') {
                         $redirectUrl = route('admin.dashboard');
                     } elseif ($user?->hasRole('apoteker') || $user?->role === 'apoteker') {
-                        $clientSlug = ($user->email === 'dewi@omnipharma.test') ? 'rogojampi' : 'banyuwangi-kota';
+                        $clientSlug = ($user->email === 'dewi@omnipharma.test' || $user->email === 'dinda@omnipharma.test') ? 'rogojampi' : 'banyuwangi-kota';
                         $redirectUrl = route('tenant.dashboard', ['client' => $clientSlug]);
                     }
 

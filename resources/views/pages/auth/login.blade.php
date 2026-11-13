@@ -278,7 +278,7 @@
 
                     <button
                         type="button"
-                        @click="selectDemo('apt_rogo', 'dewi@omnipharma.test', 'password')"
+                        @click="selectDemo('apt_rogo', 'dinda@omnipharma.test', 'password')"
                         :disabled="loadingSubmit || loadingGoogle"
                         :class="selectedRole === 'apt_rogo' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
                         class="p-2 sm:p-2.5 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer disabled:opacity-50"
@@ -287,7 +287,7 @@
                             <span class="text-[11px] font-bold truncate">Apoteker RGO</span>
                             <span x-show="selectedRole === 'apt_rogo'" class="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-ping"></span>
                         </div>
-                        <span class="text-[9px] text-slate-500 truncate">dewi@omnipharma.test</span>
+                        <span class="text-[9px] text-slate-500 truncate">dinda@omnipharma.test</span>
                     </button>
 
                     <button

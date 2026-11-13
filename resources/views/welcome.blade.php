@@ -62,7 +62,7 @@
                         };
                         $dashboardTarget = match($userAuth->role ?? '') {
                             'super_admin' => route('admin.dashboard'),
-                            'apoteker' => route('tenant.dashboard', ['client' => ($userAuth->email === 'dewi@omnipharma.test' ? 'rogojampi' : 'banyuwangi-kota')]),
+                            'apoteker' => route('tenant.dashboard', ['client' => (($userAuth->email === 'dewi@omnipharma.test' || $userAuth->email === 'dinda@omnipharma.test') ? 'rogojampi' : 'banyuwangi-kota')]),
                             'admin' => route('admin.kasir.ledger'),
                             default => route('dashboard')
                         };
@@ -124,7 +124,7 @@
                                     @php
                                         $heroDashboardTarget = match(auth()->user()->role ?? '') {
                                             'super_admin' => route('admin.dashboard'),
-                                            'apoteker' => route('tenant.dashboard', ['client' => (auth()->user()->email === 'dewi@omnipharma.test' ? 'rogojampi' : 'banyuwangi-kota')]),
+                                            'apoteker' => route('tenant.dashboard', ['client' => ((auth()->user()->email === 'dewi@omnipharma.test' || auth()->user()->email === 'dinda@omnipharma.test') ? 'rogojampi' : 'banyuwangi-kota')]),
                                             'admin' => route('admin.kasir.ledger'),
                                             default => route('dashboard')
                                         };

@@ -166,6 +166,16 @@ class DemoApotekSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
+        User::updateOrCreate(
+            ['email' => 'dinda@omnipharma.test'],
+            [
+                'name' => $apotekerRogo->nama_lengkap,
+                'password' => bcrypt('password'),
+                'role' => 'apoteker',
+                'status' => 'active',
+                'email_verified_at' => now(),
+            ]
+        );
 
         // 2d. Demo User 4: Kasir BWI (kasir.bwi@omnipharma.test / password)
         $kasirBwi = Pengguna::firstOrCreate(
