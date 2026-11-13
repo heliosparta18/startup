@@ -43,6 +43,7 @@ class SecurityHeadersMiddleware
                "img-src 'self' data: https:; ".
                "connect-src 'self' ws://127.0.0.1:8080 wss://127.0.0.1:8080 ws://localhost:8080 wss://localhost:8080 https://*.googleapis.com https://*.firebaseio.com https://*.google.com https://accounts.google.com{$viteConnect}; ".
                "frame-src 'self' https://*.firebaseapp.com https://accounts.google.com;";
+        $response->headers->set('Content-Security-Policy', $csp);
 
         return $response;
     }
