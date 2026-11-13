@@ -146,7 +146,7 @@
                                         href="{{ route('katalog') }}"
                                         class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition min-h-[48px]"
                                     >
-                                        <span>Lihat Katalog Obat</span>
+                                        <span>Mulai Belanja</span>
                                     </a>
                                     <a
                                         href="{{ route('login') }}"
