@@ -15,7 +15,72 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @fluxAppearance
 </head>
-<body class="min-h-full bg-[#F8FAFC] text-slate-800 antialiased flex flex-col font-sans overflow-x-hidden">
+<body
+    class="min-h-full bg-[#F8FAFC] text-slate-800 antialiased flex flex-col font-sans overflow-x-hidden"
+    x-data="{
+        searchQuery: '',
+        selectedCategory: '',
+        selectedTab: 'diskon',
+        searchResults: [],
+        searchLoading: false,
+        searchDropdownOpen: false,
+        activeBranch: '{{ session('active_branch') ?? 'banyuwangi-kota' }}',
+        branchMenuOpen: false,
+        allProducts: [],
+        init() {
+            fetch('/api/search-obat?q=a&client=' + this.activeBranch)
+                .then(r => r.json())
+                .then(data => { this.allProducts = data; })
+                .catch(() => {});
+        },
+        get filteredProducts() {
+            return this.allProducts.filter(p => {
+                let matchTab = true;
+                if (this.selectedTab === 'tersedia') matchTab = p.tersedia;
+                if (this.selectedTab === 'official') matchTab = ['Kimia Farma', 'Phapros', 'Sanbe', 'Kalbe', 'Dettol', 'Cetaphil', 'Omron'].includes(p.merek);
+
+                let matchCat = true;
+                if (this.selectedCategory) {
+                    let cat = this.selectedCategory.toLowerCase();
+                    matchCat = (p.kategori && p.kategori.toLowerCase().includes(cat)) ||
+                               (p.sediaan && p.sediaan.toLowerCase().includes(cat)) ||
+                               (p.nama && p.nama.toLowerCase().includes(cat));
+                }
+
+                let matchSearch = true;
+                if (this.searchQuery) {
+                    let q = this.searchQuery.toLowerCase();
+                    matchSearch = (p.nama && p.nama.toLowerCase().includes(q)) ||
+                                  (p.merek && p.merek.toLowerCase().includes(q)) ||
+                                  (p.kategori && p.kategori.toLowerCase().includes(q));
+                }
+
+                return matchTab && matchCat && matchSearch;
+            });
+        },
+        liveSearch() {
+            if (this.searchQuery.length < 2) {
+                this.searchResults = [];
+                this.searchDropdownOpen = false;
+                return;
+            }
+            this.searchLoading = true;
+            fetch('/api/search-obat?q=' + encodeURIComponent(this.searchQuery) + '&client=' + this.activeBranch)
+                .then(res => res.json())
+                .then(data => {
+                    this.searchResults = data;
+                    this.searchLoading = false;
+                    this.searchDropdownOpen = true;
+                })
+                .catch(() => { this.searchLoading = false; });
+        },
+        selectCategory(catName) {
+            this.selectedCategory = (this.selectedCategory === catName) ? '' : catName;
+            this.searchDropdownOpen = false;
+            document.getElementById('etalase-produk')?.scrollIntoView({ behavior: 'smooth' });
+        }
+    }"
+>
     <x-welcome-splash />
     @php
         $photoUrl = session('firebase_photo') ?? null;
@@ -30,6 +95,12 @@
         $userClientName = $user && method_exists($user, 'getClientName') ? $user->getClientName() : 'Cabang Banyuwangi Kota';
         $activeBranchSlug = session('active_branch') ?? (session('active_client') ?? $userClientSlug);
         $activeBranchName = $activeBranchSlug === 'rogojampi' ? 'Cabang Rogojampi' : 'Cabang Banyuwangi Kota';
+
+        // Flash sale / showcase products from database
+        $showcaseProducts = \App\Models\Obat::query()
+            ->with(['kategori', 'stokClient' => fn ($q) => $q->withoutGlobalScopes()])
+            ->take(8)
+            ->get();
     @endphp
 
     <!-- Top Header: GoApotik Consumer Portal Navbar -->
@@ -59,22 +130,66 @@
                 </a>
             </div>
 
-            <!-- Central Search Bar (GoApotik Style) -->
-            <form action="{{ route('katalog') }}" method="GET" class="hidden md:flex flex-1 max-w-xl mx-2">
+            <!-- Central Search Bar with Live Dropdown (No Unwanted Redirect) -->
+            <div class="hidden md:flex flex-1 max-w-xl mx-2 relative" @click.outside="searchDropdownOpen = false" @keydown.escape="searchDropdownOpen = false">
                 <div class="relative w-full">
                     <input
                         type="search"
-                        name="search"
+                        x-model="searchQuery"
+                        @input.debounce.250ms="liveSearch()"
+                        @focus="if(searchResults.length > 0) searchDropdownOpen = true"
+                        @keydown.enter.prevent="searchDropdownOpen = false; document.getElementById('etalase-produk')?.scrollIntoView({ behavior: 'smooth' })"
                         placeholder="Cari produk obat, suplemen, atau kebutuhan kesehatan..."
-                        class="w-full h-11 pl-10 pr-4 rounded-xl border border-slate-200 bg-slate-50/70 text-slate-900 placeholder-slate-400 text-xs sm:text-sm focus:bg-white focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all shadow-2xs"
+                        class="w-full h-11 pl-10 pr-10 rounded-xl border border-slate-200 bg-slate-50/70 text-slate-900 placeholder-slate-400 text-xs sm:text-sm focus:bg-white focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all shadow-2xs"
                     />
                     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                         <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                         </svg>
                     </div>
+                    {{-- Clear button --}}
+                    <button
+                        type="button"
+                        x-show="searchQuery"
+                        @click="searchQuery = ''; searchResults = []; searchDropdownOpen = false"
+                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer font-bold text-base"
+                        title="Hapus pencarian"
+                    >
+                        &times;
+                    </button>
                 </div>
-            </form>
+
+                {{-- Live Autocomplete Dropdown (GoApotik style) --}}
+                <div
+                    x-show="searchDropdownOpen"
+                    x-cloak
+                    x-transition
+                    class="absolute top-12 left-0 right-0 bg-white rounded-2xl shadow-2xl border border-slate-200 p-2.5 z-50 max-h-96 overflow-y-auto"
+                >
+                    <div x-show="searchLoading" class="p-4 text-center text-xs text-slate-400">
+                        Mencari produk obat...
+                    </div>
+                    <template x-for="item in searchResults" :key="item.id">
+                        <a
+                            :href="item.url"
+                            class="flex items-center gap-3 p-2 rounded-xl hover:bg-emerald-50/80 transition group border-b border-slate-100 last:border-0"
+                        >
+                            <img :src="item.gambar" class="w-11 h-11 object-contain rounded-lg bg-slate-50 p-1 border border-slate-200/80 shrink-0">
+                            <div class="flex-1 min-w-0">
+                                <h5 class="text-xs font-bold text-slate-900 group-hover:text-emerald-700 truncate" x-text="item.nama"></h5>
+                                <p class="text-[10px] text-slate-500 mt-0.5" x-text="item.kategori + ' • ' + item.sediaan"></p>
+                            </div>
+                            <div class="text-right shrink-0">
+                                <span class="text-xs font-black text-emerald-800" x-text="item.harga_formatted"></span>
+                                <span x-show="item.tersedia" class="block text-[9px] font-bold text-emerald-600">Tersedia</span>
+                            </div>
+                        </a>
+                    </template>
+                    <div x-show="!searchLoading && searchResults.length === 0" class="p-4 text-center text-xs text-slate-500">
+                        Tidak ada produk yang cocok dengan pencarian Anda.
+                    </div>
+                </div>
+            </div>
 
             <!-- Actions: Cart, Alerts & Profile Dropdown -->
             <div class="flex items-center gap-2 sm:gap-3 shrink-0">
@@ -145,7 +260,6 @@
                         aria-orientation="vertical"
                         aria-labelledby="user-menu-button"
                     >
-                        <!-- Header Dropdown Info -->
                         <div class="px-3 py-2.5 bg-slate-50 rounded-xl mb-1.5 border border-slate-100">
                             <p class="font-extrabold text-slate-900 text-sm truncate">{{ $userName }}</p>
                             <p class="text-[11px] text-slate-500 truncate mt-0.5">{{ $userEmail }}</p>
@@ -154,7 +268,6 @@
                             </span>
                         </div>
 
-                        <!-- Menu Navigasi -->
                         <div class="space-y-0.5">
                             <a
                                 href="{{ route('profile.edit') }}"
@@ -184,10 +297,8 @@
                             </a>
                         </div>
 
-                        <!-- Divider -->
                         <div class="my-1.5 border-t border-slate-100"></div>
 
-                        <!-- Tombol Keluar (Logout) -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button
@@ -204,8 +315,8 @@
             </div>
         </div>
 
-        <!-- Sub-bar: Points, Voucher & Location Selector (Matching GoApotik Image #1) -->
-        <div class="bg-slate-50/90 border-t border-slate-100 px-4 sm:px-6 lg:px-8 py-2 text-xs">
+        <!-- Sub-bar: Points, Voucher & Interactive Location Switcher (GoApotik Image #1) -->
+        <div class="bg-slate-50/90 border-t border-slate-100 px-4 sm:px-6 lg:px-8 py-2 text-xs relative">
             <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
                 <div class="flex items-center gap-4 text-slate-600">
                     <span class="inline-flex items-center gap-1.5 font-semibold">
@@ -219,12 +330,52 @@
                     </span>
                 </div>
 
-                {{-- Location / Cabang Selector --}}
-                <div class="flex items-center gap-2">
-                    <span class="text-slate-400 text-[11px]">Tentukan Lokasimu:</span>
-                    <div class="flex items-center gap-1.5 bg-white border border-slate-200 rounded-lg px-2.5 py-1 font-bold text-slate-800 shadow-2xs">
+                {{-- Interactive Location / Branch Selector (Switches Branch In-Place on Dashboard) --}}
+                <div class="relative" @click.outside="branchMenuOpen = false">
+                    <button
+                        type="button"
+                        @click="branchMenuOpen = !branchMenuOpen"
+                        class="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-1 font-bold text-slate-800 shadow-2xs hover:border-emerald-500 transition cursor-pointer min-h-[36px]"
+                    >
                         <svg class="w-3.5 h-3.5 text-rose-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
                         <span class="text-xs">{{ $activeBranchName }}</span>
+                        <svg class="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+
+                    {{-- Branch Dropdown --}}
+                    <div
+                        x-show="branchMenuOpen"
+                        x-cloak
+                        x-transition
+                        class="absolute right-0 mt-1.5 w-64 bg-white rounded-xl shadow-xl border border-slate-200 p-2 z-50 text-xs space-y-1"
+                    >
+                        <p class="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Pilih Cabang Apotek:</p>
+                        <form method="POST" action="{{ route('branch.switch') }}">
+                            @csrf
+                            <input type="hidden" name="branch" value="banyuwangi-kota">
+                            <button
+                                type="submit"
+                                class="w-full flex items-center justify-between p-2 rounded-lg text-left transition {{ $activeBranchSlug === 'banyuwangi-kota' ? 'bg-emerald-50 text-emerald-800 font-bold' : 'hover:bg-slate-50 text-slate-700' }}"
+                            >
+                                <span>Cabang Banyuwangi Kota</span>
+                                @if($activeBranchSlug === 'banyuwangi-kota')
+                                    <span class="text-emerald-600 font-bold">&check;</span>
+                                @endif
+                            </button>
+                        </form>
+                        <form method="POST" action="{{ route('branch.switch') }}">
+                            @csrf
+                            <input type="hidden" name="branch" value="rogojampi">
+                            <button
+                                type="submit"
+                                class="w-full flex items-center justify-between p-2 rounded-lg text-left transition {{ $activeBranchSlug === 'rogojampi' ? 'bg-emerald-50 text-emerald-800 font-bold' : 'hover:bg-slate-50 text-slate-700' }}"
+                            >
+                                <span>Cabang Rogojampi</span>
+                                @if($activeBranchSlug === 'rogojampi')
+                                    <span class="text-emerald-600 font-bold">&check;</span>
+                                @endif
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -260,15 +411,16 @@
                             <span class="px-3 py-1.5 rounded-lg bg-amber-400/90 text-amber-950 font-black text-xs uppercase tracking-wider shadow-2xs">
                                 KODE: GOASIAGA
                             </span>
-                            <a
-                                href="{{ route('customer.catalog', ['client' => $activeBranchSlug]) }}"
+                            <button
+                                type="button"
+                                @click="document.getElementById('etalase-produk')?.scrollIntoView({ behavior: 'smooth' })"
                                 class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs sm:text-sm shadow-xs transition min-h-[44px] cursor-pointer"
                             >
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                                 </svg>
                                 <span>Mulai Belanja Obat</span>
-                            </a>
+                            </button>
                             <a
                                 href="{{ route('customer.cart', ['client' => $activeBranchSlug]) }}"
                                 class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs sm:text-sm shadow-2xs transition min-h-[44px]"
@@ -281,17 +433,14 @@
                     {{-- Hero Illustration Graphics --}}
                     <div class="lg:col-span-5 flex items-center justify-center relative">
                         <div class="relative w-full max-w-sm aspect-4/3 rounded-2xl bg-white/70 p-4 border border-white/80 shadow-md backdrop-blur-xs flex items-center justify-around">
-                            {{-- Omron Monitor Graphic --}}
                             <div class="flex flex-col items-center p-3 rounded-xl bg-sky-50 border border-sky-100 text-sky-800">
                                 <span class="text-2xl">🩺</span>
                                 <span class="text-[10px] font-bold mt-1">Tensimeter</span>
                             </div>
-                            {{-- First Aid Kit --}}
                             <div class="flex flex-col items-center p-4 rounded-xl bg-rose-50 border border-rose-100 text-rose-800 scale-110 shadow-xs">
                                 <span class="text-3xl">🩹</span>
                                 <span class="text-[10px] font-black mt-1 uppercase">P3K Lengkap</span>
                             </div>
-                            {{-- Vitamins Bottle --}}
                             <div class="flex flex-col items-center p-3 rounded-xl bg-amber-50 border border-amber-100 text-amber-800">
                                 <span class="text-2xl">💊</span>
                                 <span class="text-[10px] font-bold mt-1">Suplemen</span>
@@ -301,7 +450,7 @@
                 </div>
             </div>
 
-            {{-- 2. Services Card & Quick Categories Grid (GoApotik Image #1) --}}
+            {{-- 2. Services Card & Quick Categories Grid (Filter Langsung di Dashboard Tanpa Redirect) --}}
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
                 {{-- Left Card: Konsultasi Dokter --}}
                 <div class="lg:col-span-3 rounded-2xl bg-white border border-slate-200 p-5 flex flex-col justify-between shadow-2xs">
@@ -328,145 +477,181 @@
                     </div>
                 </div>
 
-                {{-- Right 2-Row Category Grid (GoApotik Image #1 Exact Icons) --}}
+                {{-- Right 2-Row Category Grid (Interactive In-Place Filtering) --}}
                 <div class="lg:col-span-9 rounded-2xl bg-white border border-slate-200 p-5 shadow-2xs">
                     <div class="grid grid-cols-4 sm:grid-cols-8 gap-3 sm:gap-4 text-center">
                         {{-- Row 1 --}}
-                        <a href="{{ route('customer.catalog', ['client' => $activeBranchSlug, 'kategori' => 'Obat']) }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px]">
-                            <div class="w-12 h-12 rounded-full bg-sky-50 text-sky-600 border border-sky-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs">
+                        <button type="button" @click="selectCategory('Obat')" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px] cursor-pointer">
+                            <div class="w-12 h-12 rounded-full bg-sky-50 text-sky-600 border border-sky-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs" :class="selectedCategory === 'Obat' ? 'ring-2 ring-sky-500 scale-105' : ''">
                                 <span class="text-xl">💊</span>
                             </div>
                             <span class="text-xs font-bold text-slate-800 group-hover:text-emerald-700">Obat</span>
-                        </a>
+                        </button>
 
-                        <a href="{{ route('customer.catalog', ['client' => $activeBranchSlug, 'kategori' => 'Suplemen']) }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px]">
-                            <div class="w-12 h-12 rounded-full bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs">
+                        <button type="button" @click="selectCategory('Suplemen')" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px] cursor-pointer">
+                            <div class="w-12 h-12 rounded-full bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs" :class="selectedCategory === 'Suplemen' ? 'ring-2 ring-amber-500 scale-105' : ''">
                                 <span class="text-xl">🧴</span>
                             </div>
                             <span class="text-xs font-bold text-slate-800 group-hover:text-emerald-700">Suplemen</span>
-                        </a>
+                        </button>
 
-                        <a href="{{ route('customer.catalog', ['client' => $activeBranchSlug, 'kategori' => 'Nutrisi']) }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px]">
-                            <div class="w-12 h-12 rounded-full bg-orange-50 text-orange-600 border border-orange-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs">
+                        <button type="button" @click="selectCategory('Nutrisi')" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px] cursor-pointer">
+                            <div class="w-12 h-12 rounded-full bg-orange-50 text-orange-600 border border-orange-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs" :class="selectedCategory === 'Nutrisi' ? 'ring-2 ring-orange-500 scale-105' : ''">
                                 <span class="text-xl">🧃</span>
                             </div>
                             <span class="text-xs font-bold text-slate-800 group-hover:text-emerald-700">Nutrisi</span>
-                        </a>
+                        </button>
 
-                        <a href="{{ route('customer.catalog', ['client' => $activeBranchSlug, 'kategori' => 'Herbal']) }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px]">
-                            <div class="w-12 h-12 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs">
+                        <button type="button" @click="selectCategory('Herbal')" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px] cursor-pointer">
+                            <div class="w-12 h-12 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs" :class="selectedCategory === 'Herbal' ? 'ring-2 ring-emerald-500 scale-105' : ''">
                                 <span class="text-xl">🌿</span>
                             </div>
                             <span class="text-xs font-bold text-slate-800 group-hover:text-emerald-700">Herbal</span>
-                        </a>
+                        </button>
 
-                        <a href="{{ route('customer.catalog', ['client' => $activeBranchSlug, 'kategori' => 'Ibu & Anak']) }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px]">
-                            <div class="w-12 h-12 rounded-full bg-rose-50 text-rose-500 border border-rose-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs">
+                        <button type="button" @click="selectCategory('Ibu & Anak')" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px] cursor-pointer">
+                            <div class="w-12 h-12 rounded-full bg-rose-50 text-rose-500 border border-rose-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs" :class="selectedCategory === 'Ibu & Anak' ? 'ring-2 ring-rose-500 scale-105' : ''">
                                 <span class="text-xl">🍼</span>
                             </div>
                             <span class="text-xs font-bold text-slate-800 group-hover:text-emerald-700">Produk Bayi</span>
-                        </a>
+                        </button>
 
-                        <a href="{{ route('customer.catalog', ['client' => $activeBranchSlug, 'kategori' => 'Alat Kesehatan']) }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px]">
-                            <div class="w-12 h-12 rounded-full bg-red-50 text-red-600 border border-red-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs">
+                        <button type="button" @click="selectCategory('Alat Kesehatan')" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px] cursor-pointer">
+                            <div class="w-12 h-12 rounded-full bg-red-50 text-red-600 border border-red-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs" :class="selectedCategory === 'Alat Kesehatan' ? 'ring-2 ring-red-500 scale-105' : ''">
                                 <span class="text-xl">🩺</span>
                             </div>
                             <span class="text-xs font-bold text-slate-800 group-hover:text-emerald-700">Alkes</span>
-                        </a>
+                        </button>
 
-                        <a href="{{ route('customer.catalog', ['client' => $activeBranchSlug, 'kategori' => 'Perawatan Diri']) }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px]">
-                            <div class="w-12 h-12 rounded-full bg-purple-50 text-purple-600 border border-purple-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs">
+                        <button type="button" @click="selectCategory('Perawatan Diri')" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px] cursor-pointer">
+                            <div class="w-12 h-12 rounded-full bg-purple-50 text-purple-600 border border-purple-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs" :class="selectedCategory === 'Perawatan Diri' ? 'ring-2 ring-purple-500 scale-105' : ''">
                                 <span class="text-xl">💄</span>
                             </div>
                             <span class="text-xs font-bold text-slate-800 group-hover:text-emerald-700">Kecantikan</span>
-                        </a>
+                        </button>
 
-                        <a href="{{ route('customer.catalog', ['client' => $activeBranchSlug]) }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px]">
-                            <div class="w-12 h-12 rounded-full bg-teal-50 text-teal-600 border border-teal-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs">
+                        <button type="button" @click="selectCategory('Mata')" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px] cursor-pointer">
+                            <div class="w-12 h-12 rounded-full bg-teal-50 text-teal-600 border border-teal-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs" :class="selectedCategory === 'Mata' ? 'ring-2 ring-teal-500 scale-105' : ''">
                                 <span class="text-xl">👁️</span>
                             </div>
                             <span class="text-xs font-bold text-slate-800 group-hover:text-emerald-700">Mata</span>
-                        </a>
+                        </button>
 
-                        {{-- Row 2 (Specific GoApotik categories from Image #1) --}}
-                        <a href="{{ route('customer.catalog', ['client' => $activeBranchSlug, 'search' => 'Dewasa']) }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px]">
-                            <div class="w-12 h-12 rounded-full bg-pink-50 text-pink-600 border border-pink-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs">
+                        {{-- Row 2 --}}
+                        <button type="button" @click="selectCategory('Dewasa')" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px] cursor-pointer">
+                            <div class="w-12 h-12 rounded-full bg-pink-50 text-pink-600 border border-pink-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs" :class="selectedCategory === 'Dewasa' ? 'ring-2 ring-pink-500 scale-105' : ''">
                                 <span class="text-xl">👫</span>
                             </div>
                             <span class="text-[11px] font-semibold text-slate-700 leading-tight">Dewasa 21+</span>
-                        </a>
+                        </button>
 
-                        <a href="{{ route('customer.catalog', ['client' => $activeBranchSlug, 'subKategori' => 'Pereda Demam & Nyeri']) }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px]">
-                            <div class="w-12 h-12 rounded-full bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs">
+                        <button type="button" @click="selectCategory('Nyeri')" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px] cursor-pointer">
+                            <div class="w-12 h-12 rounded-full bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs" :class="selectedCategory === 'Nyeri' ? 'ring-2 ring-amber-500 scale-105' : ''">
                                 <span class="text-xl">🎯</span>
                             </div>
                             <span class="text-[11px] font-semibold text-slate-700 leading-tight">Anti Nyeri</span>
-                        </a>
+                        </button>
 
-                        <a href="{{ route('customer.catalog', ['client' => $activeBranchSlug, 'subKategori' => 'Antibiotik']) }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px]">
-                            <div class="w-12 h-12 rounded-full bg-rose-50 text-rose-700 border border-rose-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs">
+                        <button type="button" @click="selectCategory('Antibiotik')" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px] cursor-pointer">
+                            <div class="w-12 h-12 rounded-full bg-rose-50 text-rose-700 border border-rose-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs" :class="selectedCategory === 'Antibiotik' ? 'ring-2 ring-rose-500 scale-105' : ''">
                                 <span class="text-xl">🛡️</span>
                             </div>
                             <span class="text-[11px] font-semibold text-slate-700 leading-tight">Antibiotik</span>
-                        </a>
+                        </button>
 
-                        <a href="{{ route('customer.catalog', ['client' => $activeBranchSlug, 'search' => 'Antiseptik']) }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px]">
-                            <div class="w-12 h-12 rounded-full bg-cyan-50 text-cyan-700 border border-cyan-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs">
+                        <button type="button" @click="selectCategory('Antiseptik')" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px] cursor-pointer">
+                            <div class="w-12 h-12 rounded-full bg-cyan-50 text-cyan-700 border border-cyan-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs" :class="selectedCategory === 'Antiseptik' ? 'ring-2 ring-cyan-500 scale-105' : ''">
                                 <span class="text-xl">🧴</span>
                             </div>
                             <span class="text-[11px] font-semibold text-slate-700 leading-tight">Antiseptik</span>
-                        </a>
+                        </button>
 
-                        <a href="{{ route('customer.catalog', ['client' => $activeBranchSlug, 'search' => 'Asma']) }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px]">
-                            <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-700 border border-blue-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs">
+                        <button type="button" @click="selectCategory('Asma')" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px] cursor-pointer">
+                            <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-700 border border-blue-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs" :class="selectedCategory === 'Asma' ? 'ring-2 ring-blue-500 scale-105' : ''">
                                 <span class="text-xl">🫁</span>
                             </div>
                             <span class="text-[11px] font-semibold text-slate-700 leading-tight">Asma</span>
-                        </a>
+                        </button>
 
-                        <a href="{{ route('customer.catalog', ['client' => $activeBranchSlug, 'subKategori' => 'Batuk & Flu']) }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px]">
-                            <div class="w-12 h-12 rounded-full bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs">
+                        <button type="button" @click="selectCategory('Batuk')" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px] cursor-pointer">
+                            <div class="w-12 h-12 rounded-full bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs" :class="selectedCategory === 'Batuk' ? 'ring-2 ring-amber-500 scale-105' : ''">
                                 <span class="text-xl">🤧</span>
                             </div>
                             <span class="text-[11px] font-semibold text-slate-700 leading-tight">Batuk &amp; Flu</span>
-                        </a>
+                        </button>
 
-                        <a href="{{ route('customer.catalog', ['client' => $activeBranchSlug, 'subKategori' => 'Kebersihan Tubuh']) }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px]">
-                            <div class="w-12 h-12 rounded-full bg-violet-50 text-violet-700 border border-violet-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs">
+                        <button type="button" @click="selectCategory('Tubuh')" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px] cursor-pointer">
+                            <div class="w-12 h-12 rounded-full bg-violet-50 text-violet-700 border border-violet-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs" :class="selectedCategory === 'Tubuh' ? 'ring-2 ring-violet-500 scale-105' : ''">
                                 <span class="text-xl">🪥</span>
                             </div>
                             <span class="text-[11px] font-semibold text-slate-700 leading-tight">Consumer</span>
-                        </a>
+                        </button>
 
-                        <a href="{{ route('customer.catalog', ['client' => $activeBranchSlug]) }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px]">
-                            <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-700 border border-slate-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs">
+                        <button type="button" @click="selectedCategory = ''; searchQuery = ''" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition group min-h-[44px] cursor-pointer">
+                            <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-700 border border-slate-200 flex items-center justify-center group-hover:scale-105 transition shadow-2xs" :class="selectedCategory === '' ? 'ring-2 ring-slate-500 scale-105' : ''">
                                 <span class="text-xl">📑</span>
                             </div>
                             <span class="text-[11px] font-semibold text-slate-700 leading-tight">Semua</span>
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>
 
-            {{-- 3. Flash Sale & Special Promo Showcase (GoApotik Image #1) --}}
-            <section class="space-y-4" aria-labelledby="harga-spesial-heading">
-                {{-- Tabs Bar --}}
-                <div class="flex items-center gap-2 overflow-x-auto no-scrollbar">
-                    <button type="button" class="px-4 py-2 rounded-xl bg-[#0070CD] text-white font-extrabold text-xs shadow-xs min-h-[40px] cursor-pointer">
-                        Harga Spesial
-                    </button>
-                    <button type="button" class="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold text-xs min-h-[40px] cursor-pointer">
-                        Official Store
-                    </button>
-                    <button type="button" class="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold text-xs min-h-[40px] cursor-pointer">
-                        Rekomendasi
-                    </button>
-                    <button type="button" class="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold text-xs min-h-[40px] cursor-pointer">
-                        Apotek Terdekat
-                    </button>
+            {{-- 3. Flash Sale & Interactive Product Showcase (Tersaring Langsung Tanpa Redirect) --}}
+            <section id="etalase-produk" class="space-y-4 pt-2" aria-labelledby="harga-spesial-heading">
+                {{-- Tabs Bar & Active Filter Status --}}
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
+                    <div class="flex items-center gap-2 overflow-x-auto no-scrollbar">
+                        <button
+                            type="button"
+                            @click="selectedTab = 'diskon'"
+                            class="px-4 py-2 rounded-xl font-bold text-xs shadow-xs min-h-[40px] transition cursor-pointer"
+                            :class="selectedTab === 'diskon' ? 'bg-[#0070CD] text-white' : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'"
+                        >
+                            Harga Spesial
+                        </button>
+                        <button
+                            type="button"
+                            @click="selectedTab = 'official'"
+                            class="px-4 py-2 rounded-xl font-bold text-xs shadow-xs min-h-[40px] transition cursor-pointer"
+                            :class="selectedTab === 'official' ? 'bg-[#0070CD] text-white' : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'"
+                        >
+                            Official Store
+                        </button>
+                        <button
+                            type="button"
+                            @click="selectedTab = 'tersedia'"
+                            class="px-4 py-2 rounded-xl font-bold text-xs shadow-xs min-h-[40px] transition cursor-pointer"
+                            :class="selectedTab === 'tersedia' ? 'bg-[#0070CD] text-white' : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'"
+                        >
+                            Stok Cabang Aktif
+                        </button>
+                        <button
+                            type="button"
+                            @click="selectedTab = 'semua'"
+                            class="px-4 py-2 rounded-xl font-bold text-xs shadow-xs min-h-[40px] transition cursor-pointer"
+                            :class="selectedTab === 'semua' ? 'bg-[#0070CD] text-white' : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'"
+                        >
+                            Semua Produk
+                        </button>
+                    </div>
+
+                    {{-- Active Filter Indicator Chip --}}
+                    <div class="flex items-center gap-2 text-xs">
+                        <span x-show="selectedCategory" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold" x-cloak>
+                            <span>Kategori: </span>
+                            <span x-text="selectedCategory"></span>
+                            <button type="button" @click="selectedCategory = ''" class="hover:text-emerald-950 font-black cursor-pointer">&times;</button>
+                        </span>
+                        <span x-show="searchQuery" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-200 text-slate-800 font-bold" x-cloak>
+                            <span>Cari: </span>
+                            <span x-text="searchQuery"></span>
+                            <button type="button" @click="searchQuery = ''" class="hover:text-black font-black cursor-pointer">&times;</button>
+                        </span>
+                    </div>
                 </div>
 
-                {{-- Product Cards Grid with Left Promo Banner --}}
+                {{-- Product Showcase Grid with Left Poster --}}
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-stretch">
                     {{-- Left Promotional Poster --}}
                     <div class="md:col-span-3 rounded-2xl bg-gradient-to-b from-[#1C4E80] to-[#0A231E] text-white p-5 flex flex-col justify-between shadow-xs overflow-hidden relative">
@@ -480,120 +665,47 @@
                         <div class="my-4 py-2 flex items-center justify-center">
                             <img src="https://res.cloudinary.com/dauxzw3ho/image/private/t_goapotik_non_resep_Watermark/low/sanmol_drops_15_ml_0001.jpg" alt="Promo Medicine" class="h-28 w-28 object-contain rounded-xl bg-white p-2 shadow-md">
                         </div>
-                        <a href="{{ route('customer.catalog', ['client' => $activeBranchSlug]) }}" class="relative z-10 w-full py-2 rounded-xl bg-white/20 hover:bg-white/30 text-white font-bold text-xs text-center transition">
-                            Lihat Semua Promo &rarr;
-                        </a>
+                        <button
+                            type="button"
+                            @click="selectedCategory = ''; searchQuery = ''; selectedTab = 'diskon'"
+                            class="relative z-10 w-full py-2.5 rounded-xl bg-white/20 hover:bg-white/30 text-white font-bold text-xs text-center transition cursor-pointer"
+                        >
+                            Lihat Produk Promo
+                        </button>
                     </div>
 
-                    {{-- Right Product Cards (4 Cards matching GoApotik Image #1) --}}
+                    {{-- Right Product Cards (Rendered Dynamically via Alpine with Zero Page Reload) --}}
                     <div class="md:col-span-9 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                        {{-- Card 1: Citicoline --}}
-                        <div class="bg-white rounded-xl border border-slate-200 p-3 flex flex-col justify-between hover:border-emerald-500 hover:shadow-md transition relative group">
-                            <span class="absolute top-2 left-2 z-10 px-1.5 py-0.5 rounded text-[10px] font-black bg-rose-600 text-white">
-                                -11%
-                            </span>
-                            <div class="aspect-square w-full rounded-lg bg-slate-50/50 p-2 overflow-hidden mb-2 relative">
-                                <img src="https://res.cloudinary.com/dauxzw3ho/image/private/t_goapotik_resep_with_watermark/low/amoxicillin-trihydrate-first_medipharma_500_mg_box_100_kaplet_0001-61-925251-1.jpg" alt="Amoxicillin" class="w-full h-full object-contain group-hover:scale-105 transition">
-                                <span class="absolute bottom-1 left-2 text-[8px] font-bold text-slate-400 bg-white/80 px-1 rounded">OmniPharma</span>
-                            </div>
-                            <div>
-                                <h4 class="text-xs font-bold text-slate-900 line-clamp-2 uppercase min-h-[2rem]">
-                                    AMOXICILLIN TRIHYDRATE 500 MG BOX 100 KAPLET
-                                </h4>
-                                <div class="mt-1">
-                                    <span class="text-xs sm:text-sm font-black text-emerald-800">Rp 14.027</span>
-                                    <span class="text-[10px] text-slate-400 line-through ml-1">Rp 15.800</span>
+                        <template x-for="item in (filteredProducts.length > 0 ? filteredProducts.slice(0, 8) : allProducts.slice(0, 8))" :key="item.id">
+                            <div class="bg-white rounded-xl border border-slate-200 p-3 flex flex-col justify-between hover:border-emerald-500 hover:shadow-md transition relative group">
+                                <span class="absolute top-2 left-2 z-10 px-1.5 py-0.5 rounded text-[10px] font-black bg-rose-600 text-white">
+                                    -10%
+                                </span>
+                                <div class="aspect-square w-full rounded-lg bg-slate-50/50 p-2 overflow-hidden mb-2 relative">
+                                    <img :src="item.gambar" :alt="item.nama" class="w-full h-full object-contain group-hover:scale-105 transition" onerror="this.onerror=null;this.src='/images/placeholder-product.svg';">
+                                    <span class="absolute bottom-1 left-2 text-[8px] font-bold text-slate-400 bg-white/80 px-1 rounded">OmniPharma</span>
                                 </div>
-                                <div class="text-[10px] text-slate-500 mt-1 flex items-center gap-1 truncate">
-                                    <svg class="w-3 h-3 text-slate-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
-                                    <span class="truncate">{{ $activeBranchName }}</span>
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-900 line-clamp-2 uppercase min-h-[2rem]" x-text="item.nama"></h4>
+                                    <div class="mt-1">
+                                        <span class="text-xs sm:text-sm font-black text-emerald-800" x-text="item.harga_formatted"></span>
+                                        <span class="text-[10px] text-slate-400 line-through ml-1" x-text="'Rp ' + Number(item.harga * 1.12).toLocaleString('id-ID')"></span>
+                                    </div>
+                                    <div class="text-[10px] text-slate-500 mt-1 flex items-center gap-1 truncate">
+                                        <svg class="w-3 h-3 text-slate-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+                                        <span class="truncate">{{ $activeBranchName }}</span>
+                                    </div>
+                                    <div class="text-[10px] font-semibold text-amber-600 mt-0.5">
+                                        ★ 5.0 • 42 terjual
+                                    </div>
                                 </div>
-                                <div class="text-[10px] font-semibold text-amber-600 mt-0.5">
-                                    ★ 5.0 • 42 terjual
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- Card 2: Promag Suspensi --}}
-                        <div class="bg-white rounded-xl border border-slate-200 p-3 flex flex-col justify-between hover:border-emerald-500 hover:shadow-md transition relative group">
-                            <span class="absolute top-2 left-2 z-10 px-1.5 py-0.5 rounded text-[10px] font-black bg-rose-600 text-white">
-                                -10%
-                            </span>
-                            <div class="aspect-square w-full rounded-lg bg-slate-50/50 p-2 overflow-hidden mb-2 relative">
-                                <img src="https://res.cloudinary.com/dauxzw3ho/image/private/t_goapotik_non_resep_Watermark/low/promag_suspensi_60_ml_0001.jpg" alt="Promag Suspensi" class="w-full h-full object-contain group-hover:scale-105 transition">
-                                <span class="absolute bottom-1 left-2 text-[8px] font-bold text-slate-400 bg-white/80 px-1 rounded">OmniPharma</span>
-                            </div>
-                            <div>
-                                <h4 class="text-xs font-bold text-slate-900 line-clamp-2 uppercase min-h-[2rem]">
-                                    PROMAG SUSPENSI ISI 60 ML BOTOL
-                                </h4>
-                                <div class="mt-1">
-                                    <span class="text-xs sm:text-sm font-black text-emerald-800">Rp 15.700</span>
-                                    <span class="text-[10px] text-slate-400 line-through ml-1">Rp 17.500</span>
-                                </div>
-                                <div class="text-[10px] text-slate-500 mt-1 flex items-center gap-1 truncate">
-                                    <svg class="w-3 h-3 text-slate-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
-                                    <span class="truncate">{{ $activeBranchName }}</span>
-                                </div>
-                                <div class="text-[10px] font-semibold text-amber-600 mt-0.5">
-                                    ★ 4.9 • 88 terjual
+                                <div class="mt-2.5 pt-2 border-t border-slate-100">
+                                    <a :href="item.url" class="w-full inline-flex items-center justify-center py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-600 text-emerald-800 hover:text-white font-bold text-xs transition">
+                                        Detail Produk
+                                    </a>
                                 </div>
                             </div>
-                        </div>
-
-                        {{-- Card 3: Insto Drops --}}
-                        <div class="bg-white rounded-xl border border-slate-200 p-3 flex flex-col justify-between hover:border-emerald-500 hover:shadow-md transition relative group">
-                            <span class="absolute top-2 left-2 z-10 px-1.5 py-0.5 rounded text-[10px] font-black bg-rose-600 text-white">
-                                -15%
-                            </span>
-                            <div class="aspect-square w-full rounded-lg bg-slate-50/50 p-2 overflow-hidden mb-2 relative">
-                                <img src="https://res.cloudinary.com/dauxzw3ho/image/private/t_goapotik_non_resep_Watermark/low/insto_regular_drops_7_5_ml.jpg" alt="Insto Regular Drops" class="w-full h-full object-contain group-hover:scale-105 transition">
-                                <span class="absolute bottom-1 left-2 text-[8px] font-bold text-slate-400 bg-white/80 px-1 rounded">OmniPharma</span>
-                            </div>
-                            <div>
-                                <h4 class="text-xs font-bold text-slate-900 line-clamp-2 uppercase min-h-[2rem]">
-                                    INSTO REGULAR DROPS 7.5 ML
-                                </h4>
-                                <div class="mt-1">
-                                    <span class="text-xs sm:text-sm font-black text-emerald-800">Rp 14.564</span>
-                                    <span class="text-[10px] text-slate-400 line-through ml-1">Rp 17.200</span>
-                                </div>
-                                <div class="text-[10px] text-slate-500 mt-1 flex items-center gap-1 truncate">
-                                    <svg class="w-3 h-3 text-slate-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
-                                    <span class="truncate">{{ $activeBranchName }}</span>
-                                </div>
-                                <div class="text-[10px] font-semibold text-amber-600 mt-0.5">
-                                    ★ 5.0 • 120 terjual
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- Card 4: Sanmol Drops --}}
-                        <div class="bg-white rounded-xl border border-slate-200 p-3 flex flex-col justify-between hover:border-emerald-500 hover:shadow-md transition relative group">
-                            <span class="absolute top-2 left-2 z-10 px-1.5 py-0.5 rounded text-[10px] font-black bg-rose-600 text-white">
-                                -10%
-                            </span>
-                            <div class="aspect-square w-full rounded-lg bg-slate-50/50 p-2 overflow-hidden mb-2 relative">
-                                <img src="https://res.cloudinary.com/dauxzw3ho/image/private/t_goapotik_non_resep_Watermark/low/sanmol_drops_15_ml_0001.jpg" alt="Sanmol Drops" class="w-full h-full object-contain group-hover:scale-105 transition">
-                                <span class="absolute bottom-1 left-2 text-[8px] font-bold text-slate-400 bg-white/80 px-1 rounded">OmniPharma</span>
-                            </div>
-                            <div>
-                                <h4 class="text-xs font-bold text-slate-900 line-clamp-2 uppercase min-h-[2rem]">
-                                    SANMOL DROPS ISI 15 ML BOTOL
-                                </h4>
-                                <div class="mt-1">
-                                    <span class="text-xs sm:text-sm font-black text-emerald-800">Rp 21.000</span>
-                                    <span class="text-[10px] text-slate-400 line-through ml-1">Rp 23.500</span>
-                                </div>
-                                <div class="text-[10px] text-slate-500 mt-1 flex items-center gap-1 truncate">
-                                    <svg class="w-3 h-3 text-slate-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
-                                    <span class="truncate">{{ $activeBranchName }}</span>
-                                </div>
-                                <div class="text-[10px] font-semibold text-amber-600 mt-0.5">
-                                    ★ 4.9 • 65 terjual
-                                </div>
-                            </div>
-                        </div>
+                        </template>
                     </div>
                 </div>
             </section>
@@ -739,7 +851,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                                 </svg>
                             </div>
-                            <h3 class="font-extrabold text-slate-900 text-base group-hover:text-emerald-800 transition">Manajemen Stok Batch FEFO</h3>
+                            <h3 class="font-extrabold text-slate-900 text-base group-hover:text-emerald-800 transition mt-2">Manajemen Stok Batch FEFO</h3>
                             <p class="text-xs text-slate-500 mt-1 leading-relaxed">Rotasi nomor batch, pantau tanggal kedaluwarsa (ED), dan karantina obat rusak/expired.</p>
                         </div>
                         <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-emerald-700 group-hover:text-emerald-800">
