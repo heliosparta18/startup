@@ -56,47 +56,105 @@
                 </a>
             </div>
 
-            <!-- User Menu, Kembali ke Sambutan, & Logout -->
-            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
-                <a
-                    href="{{ route('home') }}?welcome=1"
-                    class="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 text-xs font-semibold transition min-h-[44px]"
-                    title="Kembali ke Halaman Sambutan"
+            <!-- Profile Dropdown (Clean, Clickable) -->
+            <div class="relative" x-data="{ open: false }" @keydown.escape.stop="open = false" @click.outside="open = false">
+                <button
+                    type="button"
+                    @click="open = !open"
+                    class="flex items-center gap-2.5 p-1 sm:px-2.5 sm:py-1.5 rounded-full border border-slate-200/90 bg-slate-50/80 hover:bg-slate-100/90 text-xs transition cursor-pointer min-h-[44px] focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    id="user-menu-button"
+                    :aria-expanded="open"
+                    aria-haspopup="true"
+                    aria-label="Menu Pengguna"
                 >
-                    <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
-                    <span class="hidden md:inline">Halaman Sambutan</span>
-                </a>
-
-                <div class="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-full border border-slate-200 bg-slate-50/70 text-xs">
                     @if($photoUrl)
-                        <img src="{{ $photoUrl }}" alt="Avatar" class="w-6 h-6 rounded-full object-cover shrink-0 border border-emerald-500/40">
+                        <img src="{{ $photoUrl }}" alt="Avatar" class="w-7 h-7 rounded-full object-cover shrink-0 border border-emerald-500/40">
                     @else
-                        <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-[10px] shrink-0 border border-emerald-200">
+                        <div class="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
                             {{ strtoupper(substr($userName, 0, 1)) }}
                         </div>
                     @endif
-                    <span class="font-bold text-slate-800 hidden md:inline truncate max-w-[130px]">{{ $userName }}</span>
-                    <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-100 text-emerald-900 border border-emerald-200 shrink-0">
-                        {{ str_replace('_', ' ', $userRole) }}
-                    </span>
-                </div>
+                    <div class="hidden sm:flex flex-col text-left leading-none">
+                        <span class="font-bold text-slate-800 text-xs truncate max-w-[130px]">{{ $userName }}</span>
+                        <span class="text-[10px] text-emerald-700 font-semibold mt-0.5 capitalize">{{ str_replace('_', ' ', $userRole) }}</span>
+                    </div>
+                    <svg class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
 
-                <!-- Tombol Logout -->
-                <form method="POST" action="{{ route('logout') }}" class="inline">
-                    @csrf
-                    <button
-                        type="submit"
-                        class="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 active:bg-rose-200 text-rose-700 text-xs font-semibold transition cursor-pointer min-h-[44px] min-w-[44px] shrink-0"
-                        aria-label="Keluar dari akun"
-                    >
-                        <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                        </svg>
-                        <span>Keluar</span>
-                    </button>
-                </form>
+                <!-- Dropdown Menu -->
+                <div
+                    x-show="open"
+                    x-cloak
+                    x-transition:enter="transition ease-out duration-150"
+                    x-transition:enter-start="transform opacity-0 scale-95"
+                    x-transition:enter-end="transform opacity-100 scale-100"
+                    x-transition:leave="transition ease-in duration-100"
+                    x-transition:leave-start="transform opacity-100 scale-100"
+                    x-transition:leave-end="transform opacity-0 scale-95"
+                    class="absolute right-0 mt-2 w-64 rounded-2xl bg-white p-2 shadow-xl border border-slate-200/90 z-50 text-xs"
+                    role="menu"
+                    aria-orientation="vertical"
+                    aria-labelledby="user-menu-button"
+                >
+                    <!-- Header Dropdown Info -->
+                    <div class="px-3 py-2.5 bg-slate-50 rounded-xl mb-1.5 border border-slate-100">
+                        <p class="font-extrabold text-slate-900 text-sm truncate">{{ $userName }}</p>
+                        <p class="text-[11px] text-slate-500 truncate mt-0.5">{{ $userEmail }}</p>
+                        <span class="inline-block mt-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-900 border border-emerald-200">
+                            {{ str_replace('_', ' ', $userRole) }} &bull; {{ $userClientName }}
+                        </span>
+                    </div>
+
+                    <!-- Menu Navigasi -->
+                    <div class="space-y-0.5">
+                        <a
+                            href="{{ route('profile.edit') }}"
+                            class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:text-slate-900 hover:bg-slate-100/80 font-medium transition min-h-[40px]"
+                            role="menuitem"
+                        >
+                            <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                            <span>Pengaturan Akun &amp; Profil</span>
+                        </a>
+
+                        @if(!$isSuperAdmin && !$isApoteker)
+                            <a
+                                href="{{ route('customer.catalog', ['client' => 'banyuwangi-kota']) }}"
+                                class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:text-slate-900 hover:bg-slate-100/80 font-medium transition min-h-[40px]"
+                                role="menuitem"
+                            >
+                                <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                                <span>Katalog Obat Cabang</span>
+                            </a>
+                        @endif
+
+                        <a
+                            href="{{ route('home') }}?welcome=1"
+                            class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:text-slate-900 hover:bg-slate-100/80 font-medium transition min-h-[40px]"
+                            role="menuitem"
+                        >
+                            <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                            <span>Halaman Sambutan Utama</span>
+                        </a>
+                    </div>
+
+                    <!-- Divider -->
+                    <div class="my-1.5 border-t border-slate-100"></div>
+
+                    <!-- Tombol Keluar (Logout) -->
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button
+                            type="submit"
+                            class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-rose-600 hover:text-rose-700 hover:bg-rose-50 font-bold transition min-h-[40px] text-left cursor-pointer"
+                            role="menuitem"
+                        >
+                            <svg class="w-4 h-4 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                            <span>Keluar dari Akun</span>
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </header>
@@ -105,71 +163,47 @@
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
 
         @if(!$isSuperAdmin && !$isApoteker)
-            <!-- Hero Banner Pasien / Pelanggan: Desain Ramah, Bersih, dan Terang Khas Apotek Resmi -->
-            <div class="rounded-3xl bg-white border border-slate-200/90 p-6 sm:p-8 lg:p-9 shadow-xs relative overflow-hidden">
-                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
-                    <!-- Info Profil & Identitas Pasien -->
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 min-w-0">
-                        @if($photoUrl)
-                            <img src="{{ $photoUrl }}" alt="Avatar" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-emerald-500 shadow-xs shrink-0">
-                        @else
-                            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-black text-2xl sm:text-3xl shadow-xs shrink-0">
-                                {{ strtoupper(substr($userName, 0, 1)) }}
-                            </div>
-                        @endif
-
-                        <div class="min-w-0 w-full sm:w-auto space-y-1.5">
-                            <div class="flex flex-wrap items-center gap-2">
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                                    Standar Pelayanan Kefarmasian • Permenkes No. 73/2016
-                                </span>
-                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">
-                                    Cabang: {{ $userClientName }}
-                                </span>
-                            </div>
-
-                            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 leading-tight">
-                                Halo, {{ $userName }}!
-                            </h1>
-
-                            <p class="text-xs sm:text-sm text-slate-600 max-w-2xl leading-relaxed">
-                                Selamat datang di Portal Farmasi OmniPharma. Akses obat resmi dengan jaminan standar farmasi BPOM.
-                            </p>
-
-                            <div class="flex flex-wrap items-center gap-2 pt-1 text-xs text-slate-500">
-                                <span class="px-2.5 py-0.5 rounded-md bg-slate-100 border border-slate-200 font-semibold text-slate-700">
-                                    Peran: Pelanggan
-                                </span>
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 font-medium">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                                    Sesi Terautentikasi ({{ $provider === 'google' ? 'Google Auth' : 'Firebase Password' }})
-                                </span>
-                            </div>
-                        </div>
+            <!-- Sambutan Alami & Humanis untuk Pasien (Tanpa Card AI Template) -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2 text-xs font-semibold text-emerald-800">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                            Apotek Resmi Terverifikasi
+                        </span>
+                        <span class="text-slate-400">&bull;</span>
+                        <span class="text-slate-600">{{ $userClientName }}</span>
                     </div>
 
-                    <!-- Tombol Aksi Cepat Pasien -->
-                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto shrink-0">
-                        <a
-                            href="{{ route('customer.home', ['client' => 'banyuwangi-kota']) }}"
-                            class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs sm:text-sm shadow-xs transition min-h-[46px] cursor-pointer"
-                        >
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                            </svg>
-                            <span>Mulai Belanja Obat</span>
-                        </a>
-                        <a
-                            href="{{ route('customer.cart', ['client' => 'banyuwangi-kota']) }}"
-                            class="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 font-bold text-xs sm:text-sm shadow-2xs transition min-h-[46px] cursor-pointer"
-                        >
-                            <svg class="w-4 h-4 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                            <span>Lihat Keranjang</span>
-                        </a>
-                    </div>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 leading-tight">
+                        Halo, {{ $userName }}!
+                    </h1>
+
+                    <p class="text-xs sm:text-sm text-slate-500 max-w-2xl leading-relaxed">
+                        Selamat datang di Portal Farmasi OmniPharma. Akses obat resmi dengan jaminan standar farmasi BPOM.
+                    </p>
+                </div>
+
+                <!-- Tombol Aksi Cepat Pasien -->
+                <div class="flex items-center gap-3 shrink-0">
+                    <a
+                        href="{{ route('customer.catalog', ['client' => 'banyuwangi-kota']) }}"
+                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs sm:text-sm shadow-xs transition min-h-[44px] cursor-pointer"
+                    >
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                        </svg>
+                        <span>Mulai Belanja Obat</span>
+                    </a>
+                    <a
+                        href="{{ route('customer.cart', ['client' => 'banyuwangi-kota']) }}"
+                        class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 font-semibold text-xs sm:text-sm shadow-2xs transition min-h-[44px] cursor-pointer"
+                    >
+                        <svg class="w-4 h-4 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        <span>Lihat Keranjang</span>
+                    </a>
                 </div>
             </div>
         @else
