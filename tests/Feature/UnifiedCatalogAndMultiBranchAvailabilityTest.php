@@ -7,7 +7,6 @@ use App\Models\Obat;
 use App\Models\StokClient;
 use App\Models\User;
 use App\Modules\Catalog\Livewire\PublicCatalog;
-use App\Modules\Catalog\Services\CustomerSessionService;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;

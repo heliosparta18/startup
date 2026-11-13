@@ -7,6 +7,7 @@ use App\Models\Obat;
 use App\Models\Pengguna;
 use App\Models\Pesanan;
 use App\Models\Resep;
+use App\Models\Scopes\TenantScope;
 use App\Modules\Catalog\Livewire\PublicCatalog;
 use App\Modules\Ordering\Http\Controllers\CartController;
 use App\Modules\Ordering\Http\Controllers\CheckoutController;
@@ -57,7 +58,7 @@ Route::get('/obat/{id}', function (string $client, string $id) {
             'kategori',
             'subkategori',
             'stokClient' => function ($q) {
-                $q->withoutGlobalScope(\App\Models\Scopes\TenantScope::class)->with('client');
+                $q->withoutGlobalScope(TenantScope::class)->with('client');
             },
         ])
         ->where('id_obat', $id)

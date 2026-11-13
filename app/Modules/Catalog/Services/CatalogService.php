@@ -5,6 +5,7 @@ namespace App\Modules\Catalog\Services;
 use App\Models\Client;
 use App\Models\KategoriObat;
 use App\Models\Obat;
+use App\Models\Scopes\TenantScope;
 use App\Models\SubkategoriObat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -36,20 +37,20 @@ class CatalogService
         return Obat::query()
             ->with([
                 'stokClient' => function ($q) {
-                    $q->withoutGlobalScope(\App\Models\Scopes\TenantScope::class)->with('client');
+                    $q->withoutGlobalScope(TenantScope::class)->with('client');
                 },
                 'kategori',
                 'subkategori',
             ])
             ->when(! $unified, function (Builder $q) use ($actualClientId) {
                 $q->whereHas('stokClient', function (Builder $sq) use ($actualClientId) {
-                    $sq->withoutGlobalScope(\App\Models\Scopes\TenantScope::class)
+                    $sq->withoutGlobalScope(TenantScope::class)
                         ->where('id_client', $actualClientId)
                         ->where('jumlah_stok', '>', 0);
                 });
             }, function (Builder $q) {
                 $q->whereHas('stokClient', function (Builder $sq) {
-                    $sq->withoutGlobalScope(\App\Models\Scopes\TenantScope::class)
+                    $sq->withoutGlobalScope(TenantScope::class)
                         ->where('jumlah_stok', '>', 0);
                 });
             })
@@ -148,7 +149,7 @@ class CatalogService
         if ($resolvedClientId) {
             $query->withCount(['obat' => function (Builder $oq) {
                 $oq->whereHas('stokClient', function (Builder $sq) {
-                    $sq->withoutGlobalScope(\App\Models\Scopes\TenantScope::class)->where('jumlah_stok', '>', 0);
+                    $sq->withoutGlobalScope(TenantScope::class)->where('jumlah_stok', '>', 0);
                 });
             }]);
         }

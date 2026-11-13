@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\TenantScope;
 use Database\Factories\ObatFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 class Obat extends Model
 {
@@ -97,15 +99,15 @@ class Obat extends Model
     public function allStokClient(): HasMany
     {
         return $this->hasMany(StokClient::class, 'id_obat', 'id_obat')
-            ->withoutGlobalScope(\App\Models\Scopes\TenantScope::class);
+            ->withoutGlobalScope(TenantScope::class);
     }
 
     /**
      * Mendapatkan daftar cabang yang memiliki stok aktif (>0) untuk obat ini.
      *
-     * @return \Illuminate\Support\Collection<int, Client>
+     * @return Collection<int, Client>
      */
-    public function getAvailableBranches(): \Illuminate\Support\Collection
+    public function getAvailableBranches(): Collection
     {
         $stoks = $this->relationLoaded('allStokClient')
             ? $this->allStokClient
@@ -114,7 +116,7 @@ class Obat extends Model
                 : $this->allStokClient()->with('client')->get());
 
         return $stoks
-            ->filter(fn ($stok) => (int) $stok->jumlah_stok > 0 && ($stok->client?->aktif ?? true))
+            ->filter(fn ($stok) => (int) $stok->jumlah_stok > 0 && ($stok->client->aktif ?? true))
             ->map(fn ($stok) => $stok->client)
             ->filter()
             ->unique('id_client')
@@ -135,7 +137,7 @@ class Obat extends Model
             return preg_replace('/^Cabang\s+/i', '', $client->nama_client);
         })->values();
 
-        return 'Tersedia di: ' . $names->implode(' & ');
+        return 'Tersedia di: '.$names->implode(' & ');
     }
 
     /**
@@ -174,7 +176,7 @@ class Obat extends Model
                 || ($stok->client?->slug === $currentBranchIdentifier)
                 || ($stok->client?->id_client === $currentBranchIdentifier);
 
-            return ! $isCurrent && (int) $stok->jumlah_stok > 0 && ($stok->client?->aktif ?? true);
+            return ! $isCurrent && (int) $stok->jumlah_stok > 0 && ($stok->client->aktif ?? true);
         });
 
         return $altStok?->client;
