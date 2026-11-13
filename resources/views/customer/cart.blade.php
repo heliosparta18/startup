@@ -70,7 +70,7 @@
                     <span>Dashboard Utama</span>
                 </a>
                 <span class="text-slate-400">/</span>
-                <a href="{{ route('customer.home', ['client' => $client]) }}" class="hover:text-emerald-700 transition flex items-center gap-1 min-h-[44px] py-2 truncate max-w-[200px] sm:max-w-none">
+                <a href="{{ route('customer.catalog', ['client' => $client]) }}" class="hover:text-emerald-700 transition flex items-center gap-1 min-h-[44px] py-2 truncate max-w-[200px] sm:max-w-none">
                     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
                     <span>Katalog Cabang {{ ucwords(str_replace('-', ' ', $client)) }}</span>
                 </a>
@@ -96,7 +96,7 @@
             <p class="text-slate-500 max-w-md mx-auto mb-6 text-xs sm:text-sm leading-relaxed">
                 Pilih obat bebas atau sediaan kebutuhan kesehatan dari katalog cabang {{ ucwords(str_replace('-', ' ', $client)) }}.
             </p>
-            <a href="{{ route('customer.home', ['client' => $client]) }}" class="inline-flex items-center justify-center min-h-[44px] px-6 py-3 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold rounded-xl text-xs sm:text-sm transition shadow-xs w-full sm:w-auto cursor-pointer">
+            <a href="{{ route('customer.catalog', ['client' => $client]) }}" class="inline-flex items-center justify-center min-h-[44px] px-6 py-3 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold rounded-xl text-xs sm:text-sm transition shadow-xs w-full sm:w-auto cursor-pointer">
                 Jelajahi Katalog Obat
             </a>
         </div>

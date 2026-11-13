@@ -9,7 +9,7 @@
                     <span>Dashboard Utama</span>
                 </a>
                 <span>/</span>
-                <a href="{{ route('customer.home', ['client' => $client ?? 'banyuwangi-kota']) }}" class="inline-flex min-h-[44px] items-center gap-1 text-slate-600 hover:text-emerald-700 transition">
+                <a href="{{ route('customer.catalog', ['client' => $client ?? 'banyuwangi-kota']) }}" class="inline-flex min-h-[44px] items-center gap-1 text-slate-600 hover:text-emerald-700 transition">
                     <span>Katalog Cabang</span>
                 </a>
                 <span>/</span>
@@ -68,14 +68,57 @@
                         </p>
                     </div>
 
+                    @php
+                        $isAvailableHere = $obat ? $obat->isAvailableInBranch($client ?? 'banyuwangi-kota') : false;
+                        $altBranch = ($obat && ! $isAvailableHere) ? $obat->getAlternativeAvailableBranch($client ?? 'banyuwangi-kota') : null;
+                    @endphp
+
                     <div class="rounded-2xl bg-slate-50 p-4 text-xs border border-slate-200 space-y-2">
                         <div class="font-bold text-slate-800">Ketersediaan Stok Cabang:</div>
-                        <p class="text-emerald-700 font-semibold flex items-center gap-1.5">
-                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span>Tersedia di {{ $client ?? 'Banyuwangi Kota' }} • Batch: {{ $obat->batch_number ?? '#BTC-2024A' }}</span>
-                        </p>
+
+                        @if ($obat)
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-1.5">
+                                    @if ($isAvailableHere)
+                                        <svg class="h-4 w-4 text-emerald-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        <span class="text-emerald-700 font-semibold">{{ $obat->branch_availability_text }}</span>
+                                    @elseif ($altBranch)
+                                        <svg class="h-4 w-4 text-amber-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                        </svg>
+                                        <span class="text-amber-800 font-semibold">Kosong di cabang aktif: {{ $obat->branch_availability_text }}</span>
+                                    @else
+                                        <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+                                        <span class="text-slate-600 font-semibold">Stok Habis di Semua Cabang</span>
+                                    @endif
+                                </div>
+
+                                @if (! $isAvailableHere && $altBranch)
+                                    <div class="pt-1.5">
+                                        <a
+                                            href="{{ route('customer.obat.detail', ['client' => $altBranch->slug, 'id' => $obat->id_obat]) }}"
+                                            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-2xs transition min-h-[44px]"
+                                        >
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                                            </svg>
+                                            <span>Beralih ke {{ preg_replace('/^Cabang\s+/i', '', $altBranch->nama_client) }}</span>
+                                        </a>
+                                    </div>
+                                @endif
+                            </div>
+                        @else
+                            <p class="text-slate-500 font-semibold">Informasi stok belum tersedia.</p>
+                        @endif
+
+                        @if(isset($obat->batch_number))
+                            <p class="text-[11px] text-slate-500">
+                                Nomor Batch: {{ $obat->batch_number }}
+                            </p>
+                        @endif
+
                         @if(isset($obat->expired))
                             <p class="text-[11px] text-slate-500">
                                 Kedaluwarsa: {{ \Carbon\Carbon::parse($obat->expired)->format('d M Y') }}
@@ -116,7 +159,7 @@
                         <a href="{{ route('customer.cart', ['client' => $client ?? 'banyuwangi-kota']) }}" class="underline font-bold text-emerald-700 ml-2">Lihat Keranjang &rarr;</a>
                     </div>
                     <div class="flex flex-col sm:flex-row items-center gap-2.5">
-                        @if(!($obat->kategori->wajib_resep ?? false))
+                        @if(!($obat->kategori->wajib_resep ?? false) && $isAvailableHere)
                             <button
                                 type="button"
                                 @click="tambahKeranjang('{{ $obat->id_obat ?? $id ?? 'sample-id' }}', '{{ $obat->nama_obat ?? 'Amodiaquine 200mg' }}')"
@@ -125,8 +168,14 @@
                                 <span x-show="!loading">Beli Langsung (Tambah ke Keranjang)</span>
                                 <span x-show="loading" x-cloak>Menambahkan...</span>
                             </button>
+                        @elseif(! $isAvailableHere && $altBranch)
+                            <a
+                                href="{{ route('customer.obat.detail', ['client' => $altBranch->slug, 'id' => $obat->id_obat ?? $id]) }}"
+                                class="w-full sm:flex-1 min-h-[44px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 px-4 py-2.5 text-xs font-bold text-white shadow-xs transition">
+                                <span>Beralih ke {{ preg_replace('/^Cabang\s+/i', '', $altBranch->nama_client) }} untuk Membeli</span>
+                            </a>
                         @endif
-                        <a href="{{ route('customer.home', ['client' => $client ?? 'banyuwangi-kota']) }}" class="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white hover:bg-slate-50 px-4 py-2.5 text-xs font-bold text-slate-700 shadow-2xs transition">
+                        <a href="{{ route('customer.catalog', ['client' => $client ?? 'banyuwangi-kota']) }}" class="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white hover:bg-slate-50 px-4 py-2.5 text-xs font-bold text-slate-700 shadow-2xs transition">
                             Katalog Obat
                         </a>
                     </div>

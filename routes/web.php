@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\EmailOtpAuthController;
 use App\Http\Controllers\Auth\FirebaseAuthSessionController;
+use App\Modules\Catalog\Services\CustomerSessionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,8 +28,14 @@ Route::get('/', function (Request $request) {
     return view('welcome');
 })->name('home');
 
-Route::get('/katalog', function () {
-    return redirect()->route('customer.catalog', ['client' => 'banyuwangi-kota']);
+Route::get('/katalog', function (Request $request, CustomerSessionService $sessionService) {
+    $branch = session('active_branch') ?? session('active_client');
+    if (! $branch) {
+        $client = $sessionService->getActiveBranch($request);
+        $branch = $client->slug ?? 'banyuwangi-kota';
+    }
+
+    return redirect()->route('customer.catalog', ['client' => $branch]);
 })->name('katalog');
 
 Route::middleware(['auth'])->group(function () {

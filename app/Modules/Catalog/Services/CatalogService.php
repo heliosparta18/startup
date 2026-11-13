@@ -5,6 +5,7 @@ namespace App\Modules\Catalog\Services;
 use App\Models\Client;
 use App\Models\KategoriObat;
 use App\Models\Obat;
+use App\Models\Scopes\TenantScope;
 use App\Models\SubkategoriObat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -23,7 +24,8 @@ class CatalogService
         ?string $bentukSediaan = null,
         ?string $kategori = null,
         ?string $subKategori = null,
-        int $perPage = 15
+        int $perPage = 15,
+        bool $unified = false
     ): LengthAwarePaginator {
         $resolvedClient = Client::where('id_client', $clientId)
             ->orWhere('slug', $clientId)
@@ -34,14 +36,23 @@ class CatalogService
 
         return Obat::query()
             ->with([
-                'stokClient' => function ($q) use ($actualClientId) {
-                    $q->where('id_client', $actualClientId);
+                'stokClient' => function ($q) {
+                    $q->withoutGlobalScope(TenantScope::class)->with('client');
                 },
                 'kategori',
                 'subkategori',
             ])
-            ->whereHas('stokClient', function (Builder $q) use ($actualClientId) {
-                $q->where('id_client', $actualClientId)->where('jumlah_stok', '>', 0);
+            ->when(! $unified, function (Builder $q) use ($actualClientId) {
+                $q->whereHas('stokClient', function (Builder $sq) use ($actualClientId) {
+                    $sq->withoutGlobalScope(TenantScope::class)
+                        ->where('id_client', $actualClientId)
+                        ->where('jumlah_stok', '>', 0);
+                });
+            }, function (Builder $q) {
+                $q->whereHas('stokClient', function (Builder $sq) {
+                    $sq->withoutGlobalScope(TenantScope::class)
+                        ->where('jumlah_stok', '>', 0);
+                });
             })
             ->when($search, function (Builder $q, $search) {
                 $q->where(function (Builder $sub) use ($search) {
@@ -136,9 +147,9 @@ class CatalogService
         $query = SubkategoriObat::query()->with('kategori');
 
         if ($resolvedClientId) {
-            $query->withCount(['obat' => function (Builder $oq) use ($resolvedClientId) {
-                $oq->whereHas('stokClient', function (Builder $sq) use ($resolvedClientId) {
-                    $sq->where('id_client', $resolvedClientId)->where('jumlah_stok', '>', 0);
+            $query->withCount(['obat' => function (Builder $oq) {
+                $oq->whereHas('stokClient', function (Builder $sq) {
+                    $sq->withoutGlobalScope(TenantScope::class)->where('jumlah_stok', '>', 0);
                 });
             }]);
         }

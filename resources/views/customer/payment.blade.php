@@ -95,7 +95,7 @@
                         <a href="{{ route('dashboard') }}" class="inline-flex items-center justify-center min-h-[44px] w-full sm:flex-1 py-3 px-4 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold rounded-xl text-xs sm:text-sm border border-emerald-200 transition">
                             Dashboard Utama
                         </a>
-                        <a href="{{ route('customer.home', ['client' => $client]) }}" class="inline-flex items-center justify-center min-h-[44px] w-full sm:flex-1 py-3 px-4 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-xs sm:text-sm shadow-2xs transition">
+                        <a href="{{ route('customer.catalog', ['client' => $client]) }}" class="inline-flex items-center justify-center min-h-[44px] w-full sm:flex-1 py-3 px-4 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-xs sm:text-sm shadow-2xs transition">
                             Katalog Cabang
                         </a>
                     </div>
@@ -123,7 +123,7 @@
                     <a href="{{ route('dashboard') }}" class="inline-flex items-center justify-center min-h-[44px] w-full sm:flex-1 py-3 px-4 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold rounded-xl text-xs sm:text-sm border border-emerald-200 transition">
                         Dashboard Utama
                     </a>
-                    <a href="{{ route('customer.home', ['client' => $client]) }}" class="inline-flex items-center justify-center min-h-[44px] w-full sm:flex-1 py-3 px-4 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-xs sm:text-sm shadow-2xs transition">
+                    <a href="{{ route('customer.catalog', ['client' => $client]) }}" class="inline-flex items-center justify-center min-h-[44px] w-full sm:flex-1 py-3 px-4 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-xs sm:text-sm shadow-2xs transition">
                         Katalog Obat
                     </a>
                 </div>
