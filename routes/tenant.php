@@ -250,6 +250,9 @@ Route::post('/resep/{id}/verifikasi', function (string $client, string $id, Veri
     $catatan = $request->input('catatan') ?? $request->input('alasan') ?? 'Resep asli dan masih berlaku.';
     $nomorSip = $request->input('nomor_sip') ?? '503/SIP/2024';
 
+    $clientModel = Client::where('id_client', $client)->orWhere('slug', $client)->first();
+    $clientId = $clientModel ? $clientModel->id_client : $client;
+
     $resep = Resep::query()->find($id)
         ?? Resep::where('id_pesanan', $id)->first()
         ?? Resep::whereHas('pesanan', function ($q) use ($id) {
@@ -257,6 +260,15 @@ Route::post('/resep/{id}/verifikasi', function (string $client, string $id, Veri
         })->first();
 
     if ($resep) {
+        $belongsToBranch = Pesanan::withoutGlobalScopes()
+            ->where('id_pesanan', $resep->id_pesanan)
+            ->where('id_client', $clientId)
+            ->exists();
+
+        if (! $belongsToBranch) {
+            abort(404, "Resep {$id} tidak ditemukan pada cabang ini.");
+        }
+
         $verifikatorId = null;
         if (auth()->check()) {
             $user = auth()->user();
@@ -275,14 +287,17 @@ Route::post('/resep/{id}/verifikasi', function (string $client, string $id, Veri
             'dosis_valid' => $action === 'disetujui',
             'diverifikasi_oleh' => $verifikatorId,
         ]);
+
         if ($resep->pesanan) {
             $resep->pesanan->update([
                 'status' => $action === 'disetujui' ? 'diproses' : 'dibatalkan',
             ]);
+
+            event(new OrderStatusUpdated($resep->pesanan));
         }
     }
 
-    if ($request->header('Accept') === 'text/html' && $request->has('_token') && $request->header('referer') && ! $request->expectsJson()) {
+    if (str_contains((string) $request->header('Accept'), 'text/html') && $request->has('_token')) {
         return back()->with('success', "Resep {$id} berhasil diverifikasi ({$action}).");
     }
 

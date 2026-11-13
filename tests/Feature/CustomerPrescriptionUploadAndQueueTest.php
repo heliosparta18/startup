@@ -3,12 +3,15 @@
 namespace Tests\Feature;
 
 use App\Models\Client;
+use App\Models\Pengguna;
 use App\Models\Pesanan;
 use App\Models\Resep;
 use App\Models\User;
+use App\Modules\Ordering\Events\OrderStatusUpdated;
 use Database\Seeders\DemoApotekSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -280,5 +283,175 @@ class CustomerPrescriptionUploadAndQueueTest extends TestCase
         // Status pesanan berubah menjadi dibatalkan
         $pesanan = Pesanan::withoutTenancy()->find($idPesanan);
         $this->assertSame('dibatalkan', $pesanan->status);
+    }
+
+    /**
+     * Resep yang diunggah oleh pelanggan terautentikasi terhubung ke akun pengguna tersebut.
+     */
+    public function test_customer_prescription_upload_with_authenticated_user_links_user_account(): void
+    {
+        $client = Client::where('slug', 'banyuwangi-kota')->firstOrFail();
+        $customerUser = User::factory()->create([
+            'email' => 'customer.test@example.com',
+            'role' => 'pelanggan',
+        ]);
+
+        $response = $this->actingAs($customerUser)->postJson(route('customer.resep.upload', ['client' => $client->slug]), [
+            'nama_dokter' => 'dr. Sarah Sp.A',
+            'sip_dokter' => '503/SIP/2026',
+            'nama_pasien' => 'Ananda Rizky',
+            'catatan' => 'Resep anak',
+        ]);
+
+        $response->assertOk();
+        $idPesanan = $response->json('id_pesanan');
+        $pesanan = Pesanan::withoutTenancy()->find($idPesanan);
+
+        $pengguna = Pengguna::where('telepon_email', 'customer.test@example.com')->first();
+        $this->assertNotNull($pengguna);
+        $this->assertSame($pengguna->id_pengguna, $pesanan->id_pengguna);
+    }
+
+    /**
+     * Validasi unggah resep menolak berkas berukuran melebihi 5MB.
+     */
+    public function test_customer_prescription_upload_rejects_oversized_file(): void
+    {
+        $client = Client::where('slug', 'banyuwangi-kota')->firstOrFail();
+        $oversizedFile = UploadedFile::fake()->create('huge-resep.jpg', 6000, 'image/jpeg');
+
+        $response = $this->postJson(route('customer.resep.upload', ['client' => $client->slug]), [
+            'foto_resep' => $oversizedFile,
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['foto_resep']);
+    }
+
+    /**
+     * Validasi unggah resep menolak format berkas selain gambar (misal PDF).
+     */
+    public function test_customer_prescription_upload_rejects_invalid_file_type(): void
+    {
+        $client = Client::where('slug', 'banyuwangi-kota')->firstOrFail();
+        $pdfFile = UploadedFile::fake()->create('dokumen.pdf', 500, 'application/pdf');
+
+        $response = $this->postJson(route('customer.resep.upload', ['client' => $client->slug]), [
+            'foto_resep' => $pdfFile,
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['foto_resep']);
+    }
+
+    /**
+     * Upload dengan input string kosong ('') tetap menghasilkan data valid tanpa string hampa.
+     */
+    public function test_customer_prescription_upload_handles_empty_string_inputs_gracefully(): void
+    {
+        $client = Client::where('slug', 'banyuwangi-kota')->firstOrFail();
+
+        $response = $this->postJson(route('customer.resep.upload', ['client' => $client->slug]), [
+            'nama_dokter' => '',
+            'sip_dokter' => '',
+            'nama_pasien' => '',
+            'catatan' => '',
+        ]);
+
+        $response->assertOk();
+        $idResep = $response->json('id_resep');
+        $resep = Resep::find($idResep);
+
+        $this->assertNotEmpty($resep->nama_dokter);
+        $this->assertSame('dr. Budi, Sp.PD', $resep->nama_dokter);
+        $this->assertSame('503/SIP/2024', $resep->sip_dokter);
+        $this->assertSame('Pelanggan Tamu', $resep->nama_pasien);
+    }
+
+    /**
+     * Apoteker tidak dapat memverifikasi resep yang milik cabang lain (IDOR protection).
+     */
+    public function test_pharmacist_cannot_verify_prescription_from_another_branch(): void
+    {
+        $rogojampi = Client::where('slug', 'rogojampi')->firstOrFail();
+
+        $uploadResponse = $this->postJson(route('customer.resep.upload', ['client' => $rogojampi->slug]), [
+            'nama_dokter' => 'dr. Rogojampi',
+            'sip_dokter' => '503/SIP/2024',
+            'nama_pasien' => 'Pasien Rogojampi',
+        ]);
+        $uploadResponse->assertOk();
+        $idResepRogojampi = $uploadResponse->json('id_resep');
+
+        // Apoteker Banyuwangi mencoba memverifikasi resep Rogojampi di endpoint Banyuwangi
+        $apotekerBwi = User::where('email', 'bambang@omnipharma.test')->firstOrFail();
+        $crossVerifyResponse = $this->actingAs($apotekerBwi)->post(route('tenant.resep.verifikasi', [
+            'client' => 'banyuwangi-kota',
+            'id' => $idResepRogojampi,
+        ]), [
+            'action' => 'disetujui',
+        ]);
+
+        $crossVerifyResponse->assertNotFound();
+    }
+
+    /**
+     * Submit form telaah resep via browser dengan Accept text/html menghasilkan redirect back dengan flash.
+     */
+    public function test_pharmacist_verification_via_browser_form_redirects_back(): void
+    {
+        $client = Client::where('slug', 'banyuwangi-kota')->firstOrFail();
+
+        $uploadResponse = $this->postJson(route('customer.resep.upload', ['client' => $client->slug]), [
+            'nama_dokter' => 'dr. Browser Form',
+            'sip_dokter' => '503/SIP/2024',
+            'nama_pasien' => 'Pasien Web Form',
+        ]);
+        $idResep = $uploadResponse->json('id_resep');
+
+        $apoteker = User::where('email', 'bambang@omnipharma.test')->firstOrFail();
+
+        $response = $this->actingAs($apoteker)
+            ->from(route('tenant.resep.antrean', ['client' => 'banyuwangi-kota']))
+            ->post(route('tenant.resep.verifikasi', [
+                'client' => 'banyuwangi-kota',
+                'id' => $idResep,
+            ]), [
+                '_token' => 'dummy-csrf-token',
+                'action' => 'disetujui',
+                'nomor_sip' => '503/SIP/2024',
+                'catatan' => 'Diverifikasi via form browser',
+            ], [
+                'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            ]);
+
+        $response->assertRedirect(route('tenant.resep.antrean', ['client' => 'banyuwangi-kota']));
+        $response->assertSessionHas('success');
+    }
+
+    /**
+     * Verifikasi resep memancarkan event OrderStatusUpdated ke Reverb WebSockets.
+     */
+    public function test_pharmacist_verification_dispatches_order_status_updated_event(): void
+    {
+        Event::fake([OrderStatusUpdated::class]);
+
+        $client = Client::where('slug', 'banyuwangi-kota')->firstOrFail();
+        $uploadResponse = $this->postJson(route('customer.resep.upload', ['client' => $client->slug]), [
+            'nama_dokter' => 'dr. Reverb Event',
+            'sip_dokter' => '503/SIP/2024',
+            'nama_pasien' => 'Pasien Reverb',
+        ]);
+        $idResep = $uploadResponse->json('id_resep');
+
+        $apoteker = User::where('email', 'bambang@omnipharma.test')->firstOrFail();
+        $this->actingAs($apoteker)->post(route('tenant.resep.verifikasi', [
+            'client' => 'banyuwangi-kota',
+            'id' => $idResep,
+        ]), [
+            'action' => 'disetujui',
+        ]);
+
+        Event::assertDispatched(OrderStatusUpdated::class);
     }
 }

@@ -89,20 +89,31 @@ Route::post('/resep/unggah', function (string $client, UnggahResepRequest $reque
     // 3. Resolve customer account / session
     $sessionToken = $resolveCustomerSession($request);
 
+    $namaPasien = trim((string) ($request->input('nama_pasien') ?: $request->input('namaPasien') ?: 'Pelanggan Tamu'));
+    $namaDokter = trim((string) ($request->input('nama_dokter') ?: $request->input('namaDokter') ?: 'dr. Budi, Sp.PD'));
+    $sipDokter = trim((string) ($request->input('sip_dokter') ?: $request->input('sipDokter') ?: '503/SIP/2024'));
+    $catatan = trim((string) ($request->input('catatan') ?: $request->input('catatan_pasien') ?: '')) ?: null;
+
     $resolvedUserId = null;
     $user = $request->user();
     if ($user) {
-        if (isset($user->id_pengguna)) {
+        if (isset($user->id_pengguna) && ! empty($user->id_pengguna)) {
             $resolvedUserId = $user->id_pengguna;
         } else {
-            $resolvedUserId = Pengguna::where('telepon_email', $user->email)->value('id_pengguna');
+            $pengguna = Pengguna::where('telepon_email', $user->email)->first();
+            if (! $pengguna) {
+                $pengguna = Pengguna::create([
+                    'id_pengguna' => (string) Str::uuid(),
+                    'nama_lengkap' => $user->name ?: $namaPasien,
+                    'peran' => 'pelanggan',
+                    'telepon_email' => $user->email,
+                    'password' => $user->password ?: bcrypt(Str::random(16)),
+                    'aktif' => true,
+                ]);
+            }
+            $resolvedUserId = $pengguna->id_pengguna;
         }
     }
-
-    $namaPasien = $request->input('nama_pasien') ?? $request->input('namaPasien') ?? 'Pelanggan Tamu';
-    $namaDokter = $request->input('nama_dokter') ?? $request->input('namaDokter') ?? 'dr. Budi, Sp.PD';
-    $sipDokter = $request->input('sip_dokter') ?? $request->input('sipDokter') ?? '503/SIP/2024';
-    $catatan = $request->input('catatan') ?? $request->input('catatan_pasien');
 
     if (! $resolvedUserId) {
         $guestUser = Pengguna::where('peran', 'pelanggan')->first();
