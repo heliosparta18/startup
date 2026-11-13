@@ -128,4 +128,38 @@ class SecurityTest extends TestCase
 
         $response->assertHasErrors(['current_password']);
     }
+
+    public function test_password_confirmation_mismatch_fails_validation(): void
+    {
+        $user = User::factory()->create([
+            'password' => Hash::make('password'),
+        ]);
+
+        $this->actingAs($user);
+
+        $response = Livewire::test('pages::settings.security')
+            ->set('current_password', 'password')
+            ->set('password', 'new-password')
+            ->set('password_confirmation', 'different-password')
+            ->call('updatePassword');
+
+        $response->assertHasErrors(['password']);
+    }
+
+    public function test_password_update_dispatches_success_toast(): void
+    {
+        $user = User::factory()->create([
+            'password' => Hash::make('password'),
+        ]);
+
+        $this->actingAs($user);
+
+        $response = Livewire::test('pages::settings.security')
+            ->set('current_password', 'password')
+            ->set('password', 'new-password')
+            ->set('password_confirmation', 'new-password')
+            ->call('updatePassword');
+
+        $response->assertDispatched('toast-show');
+    }
 }

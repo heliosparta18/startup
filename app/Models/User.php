@@ -67,6 +67,24 @@ class User extends Authenticatable implements PasskeyUser
     }
 
     /**
+     * Dapatkan label tampilan role pengguna yang ramah pengguna.
+     * Default ke 'Customer' jika belum ditetapkan atau bernilai null.
+     */
+    public function roleLabel(): string
+    {
+        return match (strtolower((string) ($this->role ?? ''))) {
+            'super_admin', 'superadmin' => 'Super Admin',
+            'admin' => 'Administrator',
+            'apoteker' => 'Apoteker',
+            'tenant' => 'Operator Apotek',
+            'staf_klien', 'staff', 'staf' => 'Staf Cabang',
+            'kasir' => 'Kasir',
+            'pelanggan', 'customer' => 'Customer',
+            default => 'Customer',
+        };
+    }
+
+    /**
      * Apakah user memegang role tertentu. Kontrak role interim Modul 2
      * (kolom `role`); diformalkan menjadi relasi pada Modul 4–5.
      */

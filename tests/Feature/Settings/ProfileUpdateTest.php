@@ -54,6 +54,50 @@ class ProfileUpdateTest extends TestCase
         $this->assertNotNull($user->refresh()->email_verified_at);
     }
 
+    public function test_profile_information_is_sanitized_and_trimmed(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user);
+
+        $response = Livewire::test('pages::settings.profile')
+            ->set('name', '   <b>Jane Doe</b>   ')
+            ->set('email', '  jane@example.com  ')
+            ->call('updateProfileInformation');
+
+        $response->assertHasNoErrors();
+
+        $user->refresh();
+
+        $this->assertEquals('Jane Doe', $user->name);
+        $this->assertEquals('jane@example.com', $user->email);
+    }
+
+    public function test_profile_update_dispatches_success_toast(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user);
+
+        $response = Livewire::test('pages::settings.profile')
+            ->set('name', 'Updated Name')
+            ->set('email', 'updated@example.com')
+            ->call('updateProfileInformation');
+
+        $response->assertDispatched('toast-show');
+    }
+
+    public function test_delete_account_section_is_absent_from_profile_page(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get(route('profile.edit'));
+
+        $response->assertOk();
+        $response->assertDontSee('Delete account');
+        $response->assertDontSee('delete-user-form');
+    }
+
     public function test_user_can_delete_their_account(): void
     {
         $user = User::factory()->create();

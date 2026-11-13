@@ -34,4 +34,45 @@ class UserRoleTest extends TestCase
         $this->assertFalse($u->hasRole('admin'));
         $this->assertFalse($u->hasRole('tenant'));
     }
+
+    public function test_role_label_returns_customer_for_null_or_unknown_roles(): void
+    {
+        $u = new User;
+        $this->assertSame('Customer', $u->roleLabel());
+
+        $u->role = null;
+        $this->assertSame('Customer', $u->roleLabel());
+
+        $u->role = '';
+        $this->assertSame('Customer', $u->roleLabel());
+
+        $u->role = 'random_role';
+        $this->assertSame('Customer', $u->roleLabel());
+    }
+
+    public function test_role_label_maps_roles_correctly(): void
+    {
+        $u = new User;
+
+        $u->role = 'super_admin';
+        $this->assertSame('Super Admin', $u->roleLabel());
+
+        $u->role = 'admin';
+        $this->assertSame('Administrator', $u->roleLabel());
+
+        $u->role = 'apoteker';
+        $this->assertSame('Apoteker', $u->roleLabel());
+
+        $u->role = 'tenant';
+        $this->assertSame('Operator Apotek', $u->roleLabel());
+
+        $u->role = 'kasir';
+        $this->assertSame('Kasir', $u->roleLabel());
+
+        $u->role = 'pelanggan';
+        $this->assertSame('Customer', $u->roleLabel());
+
+        $u->role = 'customer';
+        $this->assertSame('Customer', $u->roleLabel());
+    }
 }
