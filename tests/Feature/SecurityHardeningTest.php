@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Storage;
@@ -9,6 +10,7 @@ use Tests\TestCase;
 
 class SecurityHardeningTest extends TestCase
 {
+    use RefreshDatabase;
     public function test_security_headers_are_present_on_http_responses(): void
     {
         $response = $this->get('/up');

@@ -16,7 +16,9 @@ use App\Modules\Ordering\Services\CartService;
 use App\Modules\Payments\Services\QrisEmvcoBuilder;
 use Database\Seeders\DemoApotekSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use RuntimeException;
 use Tests\TestCase;
@@ -423,7 +425,7 @@ class CartCheckoutPaymentTest extends TestCase
             ]);
         $addResponse->assertOk();
 
-        // Verifikasi halaman checkout memiliki prompt GPS, peta interaktif, Maps Share, Ongkir & cover obat
+        // Verifikasi halaman checkout memiliki isian alamat, paste link Google Maps, Ongkir & cover obat tanpa banner GPS popup
         $checkoutPage = $this->actingAs($customer)
             ->withCredentials()
             ->withCookie('omnipharma_customer_session', $sessionId)
@@ -431,12 +433,12 @@ class CartCheckoutPaymentTest extends TestCase
         $checkoutPage->assertOk();
         $checkoutPage->assertDontSee("Izinkan Lokasi, atau geser pin langsung di peta.'; } else");
         $checkoutPage->assertDontSee('parseMapsInput() { const raw =');
-        $checkoutPage->assertSee('Izinkan Akses GPS');
-        $checkoutPage->assertSee('Deteksi Lokasi GPS Saya');
-        $checkoutPage->assertSee('Share Lokasi Pengantaran (Terintegrasi Google Maps)');
-        $checkoutPage->assertSee('Gunakan Lokasi GPS Saya Saat Ini');
-        $checkoutPage->assertSee('checkout-interactive-map');
-        $checkoutPage->assertSee('Cari Jalan / Kelurahan / Lokasi di Peta');
+        $checkoutPage->assertDontSee('Aktifkan Akses GPS Lokasi Anda');
+        $checkoutPage->assertSee('Isi Alamat &amp; Link Lokasi Pengiriman', false);
+        $checkoutPage->assertSee('Isi Alamat Lengkap Pengiriman');
+        $checkoutPage->assertSee('Paste Link Lokasi Google Maps Saat Ini');
+        $checkoutPage->assertSee('Buka Google Maps');
+        $checkoutPage->assertSee('Tempel Link');
         $checkoutPage->assertSee('Lihat Rute Pengiriman di Google Maps');
 
         // Proses checkout metode delivery jarak 4 km => 5000 + ceil(4-2)*2500 = 10000
@@ -475,6 +477,10 @@ class CartCheckoutPaymentTest extends TestCase
         $paymentPage->assertOk();
         $paymentPage->assertSee('window.omniPaymentPageData');
         $paymentPage->assertDontSee('body: `{"order_number":', false);
+        $paymentPage->assertSee('Cek Status');
+        $paymentPage->assertSee('Batalkan Pesanan');
+        $paymentPage->assertDontSee('Simulasi Scan & Bayar Sekarang (Lunas)');
+        $paymentPage->assertDontSee('Pantau Status Pesanan & Antrean');
         $paymentPage->assertSee('Rp 10.000');
         $paymentPage->assertSee('Buka Rute Kurir di Google Maps');
         $paymentPage->assertSee($expectedRouteUrl);
@@ -483,6 +489,13 @@ class CartCheckoutPaymentTest extends TestCase
         $trackPage->assertOk();
         $trackPage->assertSee('Buka Rute Google Maps (Pengirim)');
         $trackPage->assertSee($expectedRouteUrl);
+        $trackPage->assertSee('Invoice Resmi Apotek');
+        $trackPage->assertSee('Cetak Invoice');
+        $trackPage->assertDontSee('##ORD-');
+        $trackPage->assertSee('Riwayat Pesanan');
+        $trackPage->assertSee('Putih');
+        $trackPage->assertSee('Dark');
+        $trackPage->assertDontSee('Halaman Sambutan Utama');
 
         // Panel Antrean Apoteker / Pengirim menampilkan tombol langsung Buka Rute Maps
         $queuePage = $this->actingAs($apoteker)->get(route('tenant.antrean.index', ['client' => $client->slug]));
@@ -490,5 +503,260 @@ class CartCheckoutPaymentTest extends TestCase
         $queuePage->assertSee('Kurir (4 km)');
         $queuePage->assertSee('Buka Rute Maps');
         $queuePage->assertSee($expectedRouteUrl);
+    }
+
+    public function test_customer_checkout_accepts_manual_address_and_pasted_google_maps_shortlink(): void
+    {
+        $client = Client::where('slug', 'banyuwangi-kota')->firstOrFail();
+        $customer = User::where('email', 'gunturafandy5@gmail.com')->firstOrFail();
+        $obat = Obat::firstOrFail();
+        $sessionId = 'shortlink-session-'.Str::random(10);
+
+        StokClient::withoutTenancy()->updateOrCreate(
+            ['id_obat' => $obat->id_obat, 'id_client' => $client->id_client],
+            ['jumlah_stok' => 25]
+        );
+
+        $this->actingAs($customer)
+            ->withCredentials()
+            ->withCookie('omnipharma_customer_session', $sessionId)
+            ->postJson(route('keranjang.add'), [
+                'id_obat' => $obat->id_obat,
+                'jumlah' => 1,
+            ])
+            ->assertOk();
+
+        $shortlink = 'https://maps.app.goo.gl/ContohLokasiRumah99';
+
+        $response = $this->actingAs($customer)
+            ->withCredentials()
+            ->withCookie('omnipharma_customer_session', $sessionId)
+            ->post(route('checkout.store'), [
+                'metode_layanan' => 'delivery',
+                'jarak_km' => 3,
+                'link_maps' => $shortlink,
+                'alamat_pengantaran' => 'Jl. Sudirman No. 45 Banyuwangi',
+                'nama_pemesan' => 'Guntur Afandy',
+                'telepon' => '081234567890',
+            ]);
+
+        $response->assertRedirect();
+        $orderId = basename((string) parse_url((string) $response->headers->get('Location'), PHP_URL_PATH));
+        $pesanan = Pesanan::withoutTenancy()->findOrFail($orderId);
+
+        $this->assertSame('delivery', $pesanan->metode_layanan);
+        $this->assertSame(7500.0, $pesanan->ongkos_kirim);
+        $this->assertSame($shortlink, $pesanan->maps_route_url);
+        $this->assertSame('Jl. Sudirman No. 45 Banyuwangi', $pesanan->alamat_pengantaran);
+        $this->assertNull($pesanan->koordinat_tujuan);
+    }
+
+    public function test_midtrans_sandbox_qris_charge_status_check_and_webhook_settlement(): void
+    {
+        $client = Client::where('slug', 'banyuwangi-kota')->firstOrFail();
+        $obat = Obat::firstOrFail();
+        $pelanggan = Pengguna::where('peran', 'pelanggan')->firstOrFail();
+
+        StokClient::withoutTenancy()->updateOrCreate(
+            ['id_obat' => $obat->id_obat, 'id_client' => $client->id_client],
+            ['jumlah_stok' => 50]
+        );
+
+        $action = app(CreateOrderAction::class);
+        $pesanan = $action->execute($client->id_client, $pelanggan->id_pengguna, [
+            ['id_obat' => $obat->id_obat, 'nama_obat' => $obat->nama_obat, 'harga' => (float) $obat->harga, 'jumlah' => 2],
+        ]);
+
+        config([
+            'services.midtrans.server_key' => 'Mid-server-test-sandbox-key',
+            'services.midtrans.client_key' => 'Mid-client-test-sandbox-key',
+            'services.midtrans.merchant_id' => 'G484050115',
+            'services.midtrans.is_production' => false,
+        ]);
+
+        $midtransOrderId = ltrim((string) $pesanan->nomor_pesanan, '#');
+        Cache::forget("midtrans_qris:{$pesanan->id_pesanan}");
+        Cache::forget("midtrans_order_id:{$pesanan->id_pesanan}");
+
+        Http::fake([
+            'https://api.sandbox.midtrans.com/v2/charge' => Http::response([
+                'status_code' => '201',
+                'transaction_id' => 'tx-midtrans-sandbox-001',
+                'order_id' => $midtransOrderId,
+                'merchant_id' => 'G484050115',
+                'gross_amount' => (string) (int) round((float) $pesanan->total_harga).'.00',
+                'payment_type' => 'qris',
+                'transaction_status' => 'pending',
+                'acquirer' => 'gopay',
+                'qr_string' => '000201010212MOCKMIDTRANSQRSTRING',
+                'actions' => [
+                    [
+                        'name' => 'generate-qr-code',
+                        'method' => 'GET',
+                        'url' => 'https://api.sandbox.midtrans.com/v2/qris/tx-midtrans-sandbox-001/qr-code',
+                    ],
+                ],
+                'expiry_time' => now()->addMinutes(30)->toDateTimeString(),
+            ], 200),
+            "https://api.sandbox.midtrans.com/v2/{$midtransOrderId}/status" => Http::sequence()
+                ->push([
+                    'status_code' => '201',
+                    'order_id' => $midtransOrderId,
+                    'transaction_status' => 'pending',
+                ], 200)
+                ->push([
+                    'status_code' => '200',
+                    'order_id' => $midtransOrderId,
+                    'transaction_status' => 'settlement',
+                    'gross_amount' => (string) (int) round((float) $pesanan->total_harga).'.00',
+                ], 200),
+        ]);
+
+        // 1. Halaman pembayaran memanggil Midtrans /v2/charge & menampilkan badge Midtrans Sandbox
+        $paymentPage = $this->get(route('pembayaran.show', ['id' => $pesanan->id_pesanan]));
+        $paymentPage->assertOk();
+        $paymentPage->assertSee('MIDTRANS SANDBOX');
+        $paymentPage->assertSee('https://api.sandbox.midtrans.com/v2/qris/tx-midtrans-sandbox-001/qr-code');
+
+        // 2. Cek status pertama masih pending
+        $pendingCheck = $this->postJson(route('pesanan.cek-status', ['id' => $pesanan->id_pesanan]));
+        $pendingCheck->assertOk()->assertJson([
+            'paid' => false,
+            'midtrans_status' => 'pending',
+        ]);
+        $this->assertSame('menunggu_pembayaran', $pesanan->fresh()->status);
+
+        // 3. Cek status kedua setelah bayar di Simulator -> settlement -> lunas!
+        Event::fake([OrderStatusUpdated::class]);
+        $settledCheck = $this->postJson(route('pesanan.cek-status', ['id' => $pesanan->id_pesanan]));
+        $settledCheck->assertOk()->assertJson([
+            'paid' => true,
+            'source' => 'midtrans_sandbox',
+            'status' => 'diproses',
+        ]);
+        $this->assertSame('diproses', $pesanan->fresh()->status);
+        Event::assertDispatched(OrderStatusUpdated::class);
+
+        // 4. Uji webhook Midtrans SHA-512 signature pada pesanan baru
+        $pesanan2 = $action->execute($client->id_client, $pelanggan->id_pengguna, [
+            ['id_obat' => $obat->id_obat, 'nama_obat' => $obat->nama_obat, 'harga' => (float) $obat->harga, 'jumlah' => 1],
+        ]);
+        $order2Id = ltrim((string) $pesanan2->nomor_pesanan, '#');
+        $gross2 = (string) (int) round((float) $pesanan2->total_harga).'.00';
+        $sig2 = hash('sha512', $order2Id.'200'.$gross2.'Mid-server-test-sandbox-key');
+
+        $webhookRes = $this->postJson('/api/webhooks/qris', [
+            'order_id' => $order2Id,
+            'status_code' => '200',
+            'gross_amount' => $gross2,
+            'signature_key' => $sig2,
+            'transaction_status' => 'settlement',
+        ]);
+        $webhookRes->assertOk()->assertJson(['success' => true, 'status' => 'diproses']);
+        $this->assertSame('diproses', $pesanan2->fresh()->status);
+    }
+
+    public function test_order_history_page_renders_customer_orders_and_clean_profile_dropdown(): void
+    {
+        $client = Client::where('slug', 'banyuwangi-kota')->firstOrFail();
+        $customer = User::where('email', 'gunturafandy5@gmail.com')->firstOrFail();
+        $obat = Obat::firstOrFail();
+        $sessionId = 'history-session-'.Str::random(10);
+
+        StokClient::withoutTenancy()->updateOrCreate(
+            ['id_obat' => $obat->id_obat, 'id_client' => $client->id_client],
+            ['jumlah_stok' => 25]
+        );
+
+        $this->actingAs($customer)
+            ->withCredentials()
+            ->withCookie('omnipharma_customer_session', $sessionId)
+            ->postJson(route('keranjang.add'), [
+                'id_obat' => $obat->id_obat,
+                'jumlah' => 1,
+            ])
+            ->assertOk();
+
+        $checkoutRes = $this->actingAs($customer)
+            ->withCredentials()
+            ->withCookie('omnipharma_customer_session', $sessionId)
+            ->post(route('checkout.store'), [
+                'metode_layanan' => 'click_collect',
+                'nama_pemesan' => 'Guntur Afandy',
+                'telepon' => '081234567890',
+            ]);
+        $checkoutRes->assertRedirect();
+        $orderId = basename((string) parse_url((string) $checkoutRes->headers->get('Location'), PHP_URL_PATH));
+        $pesanan = Pesanan::withoutTenancy()->findOrFail($orderId);
+
+        $historyRes = $this->actingAs($customer)
+            ->withCookie('omnipharma_customer_session', $sessionId)
+            ->get(route('pesanan.riwayat'));
+        $historyRes->assertOk();
+        $historyRes->assertSee('Riwayat Pesanan');
+        $historyRes->assertSee(ltrim((string) $pesanan->nomor_pesanan, '#'));
+        $historyRes->assertSee('Lihat Invoice');
+        $historyRes->assertSee('Profile');
+        $historyRes->assertSee('Putih');
+        $historyRes->assertSee('Dark');
+        $historyRes->assertDontSee('Halaman Sambutan Utama');
+    }
+
+    public function test_qris_expiry_persists_across_refresh_and_auto_poll_does_not_auto_settle_pending_order(): void
+    {
+        $client = Client::where('slug', 'banyuwangi-kota')->firstOrFail();
+        $obat = Obat::firstOrFail();
+        $pelanggan = Pengguna::where('peran', 'pelanggan')->firstOrFail();
+
+        StokClient::withoutTenancy()->updateOrCreate(
+            ['id_obat' => $obat->id_obat, 'id_client' => $client->id_client],
+            ['jumlah_stok' => 50]
+        );
+
+        $action = app(CreateOrderAction::class);
+        $pesanan = $action->execute($client->id_client, $pelanggan->id_pengguna, [
+            ['id_obat' => $obat->id_obat, 'nama_obat' => $obat->nama_obat, 'harga' => (float) $obat->harga, 'jumlah' => 1],
+        ]);
+
+        // Simulasikan pesanan dibuat 10 menit lalu, lalu halaman pembayaran di-refresh
+        $pesanan->forceFill(['dibuat_pada' => now()->subMinutes(10)])->save();
+        Cache::forget("qris_expiry_ts:{$pesanan->id_pesanan}");
+        Cache::forget("midtrans_qris:{$pesanan->id_pesanan}");
+
+        config(['services.midtrans.server_key' => '']);
+
+        $firstLoad = $this->get(route('pembayaran.show', ['id' => $pesanan->id_pesanan]));
+        $firstLoad->assertOk();
+        $firstHtml = (string) $firstLoad->getContent();
+        $this->assertMatchesRegularExpression('/remainingSeconds(?:\\\\u0022|"):\s*(11[89]\d|1200)/', $firstHtml);
+        $this->assertMatchesRegularExpression('/>\s*(19:[45]\d|20:00)\s*</', $firstHtml);
+        $this->assertDoesNotMatchRegularExpression('/>\s*30:00\s*</', $firstHtml);
+
+        // Refresh ulang tetap mempertahankan sisa waktu ~20 menit, tidak reset ke 30:00
+        $secondLoad = $this->get(route('pembayaran.show', ['id' => $pesanan->id_pesanan]));
+        $secondLoad->assertOk();
+        $this->assertMatchesRegularExpression('/remainingSeconds(?:\\\\u0022|"):\s*(11[89]\d|1200)/', (string) $secondLoad->getContent());
+
+        // Polling otomatis setiap 3 detik (auto_timer=true, timer_expired=false) tidak boleh langsung melunaskan pesanan
+        $autoPollLocal = $this->postJson(route('pesanan.cek-status', ['id' => $pesanan->id_pesanan]), [
+            'auto_timer' => true,
+            'timer_expired' => false,
+        ]);
+        $autoPollLocal->assertOk()->assertJson(['paid' => false]);
+        $this->assertSame('menunggu_pembayaran', $pesanan->fresh()->status);
+
+        // Saat Midtrans Sandbox aktif namun endpoint status sementara gagal/null, jangan auto-lunas
+        config(['services.midtrans.server_key' => 'Mid-server-test-sandbox-key']);
+        Http::fake([
+            'https://api.sandbox.midtrans.com/*' => Http::response(['status_code' => '404'], 404),
+        ]);
+        $midtransNullRes = $this->postJson(route('pesanan.cek-status', ['id' => $pesanan->id_pesanan]), [
+            'auto_timer' => true,
+        ]);
+        $midtransNullRes->assertOk()->assertJson([
+            'paid' => false,
+            'midtrans_status' => 'pending',
+        ]);
+        $this->assertSame('menunggu_pembayaran', $pesanan->fresh()->status);
     }
 }

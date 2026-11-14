@@ -104,17 +104,49 @@ class CheckoutController extends Controller
                 $ongkir = $jarakKm <= 2.0 ? 5000 : (int) (5000 + ceil($jarakKm - 2.0) * 2500);
 
                 $rawKoordinat = trim((string) $request->input('koordinat_tujuan', ''));
+                $linkMaps = trim(str_replace(['[', ']'], '', (string) $request->input('link_maps', '')));
+                $koordinat = null;
+
                 if (preg_match('/^(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)$/', $rawKoordinat, $m)) {
                     $koordinat = round((float) $m[1], 5) . ',' . round((float) $m[2], 5);
-                } else {
-                    $koordinat = round($originLat + 0.008 * $jarakKm, 5) . ',' . round($originLng + 0.005 * $jarakKm, 5);
+                } elseif ($linkMaps !== '') {
+                    foreach ([
+                        '/@(-?\d+\.\d+),(-?\d+\.\d+)/',
+                        '/[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/',
+                        '/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/',
+                        '/(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)/',
+                    ] as $pattern) {
+                        if (preg_match($pattern, $linkMaps, $m)) {
+                            $lat = (float) $m[1];
+                            $lng = (float) $m[2];
+                            if ($lat >= -90 && $lat <= 90 && $lng >= -180 && $lng <= 180) {
+                                $koordinat = round($lat, 5) . ',' . round($lng, 5);
+                                break;
+                            }
+                        }
+                    }
                 }
 
                 $alamat = trim(str_replace(['[', ']'], ['(', ')'], (string) $request->input('alamat_pengantaran', '')));
-                $mapsRouteUrl = "https://www.google.com/maps/dir/?api=1&origin={$originLat},{$originLng}&destination={$koordinat}&travelmode=driving";
+
+                if ($koordinat !== null) {
+                    $mapsRouteUrl = "https://www.google.com/maps/dir/?api=1&origin={$originLat},{$originLng}&destination={$koordinat}&travelmode=driving";
+                } elseif (preg_match('#^https?://#i', $linkMaps)) {
+                    $mapsRouteUrl = $linkMaps;
+                } elseif ($alamat !== '') {
+                    $mapsRouteUrl = "https://www.google.com/maps/dir/?api=1&origin={$originLat},{$originLng}&destination=" . urlencode($alamat) . "&travelmode=driving";
+                } else {
+                    $koordinat = round($originLat + 0.008 * $jarakKm, 5) . ',' . round($originLng + 0.005 * $jarakKm, 5);
+                    $mapsRouteUrl = "https://www.google.com/maps/dir/?api=1&origin={$originLat},{$originLng}&destination={$koordinat}&travelmode=driving";
+                }
+
                 $slotWaktu = "Kurir Apotek ({$jarakKm} km)";
 
-                $prefix = "[ONGKIR:{$ongkir}][JARAK:{$jarakKm}][KOORDINAT:{$koordinat}][MAPS:{$mapsRouteUrl}]";
+                $prefix = "[ONGKIR:{$ongkir}][JARAK:{$jarakKm}]";
+                if ($koordinat !== null) {
+                    $prefix .= "[KOORDINAT:{$koordinat}]";
+                }
+                $prefix .= "[MAPS:{$mapsRouteUrl}]";
                 if ($alamat !== '') {
                     $prefix .= "[ALAMAT:{$alamat}]";
                 }

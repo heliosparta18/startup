@@ -117,10 +117,10 @@
                     </p>
 
                     {{-- Pricing Card --}}
-                    <div class="mt-4 p-3.5 sm:p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200/80 flex flex-wrap items-baseline justify-between gap-2">
+                    <div class="mt-4 p-3.5 sm:p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-wrap items-baseline justify-between gap-2">
                         <div>
-                            <span class="block text-[11px] font-bold text-emerald-700 uppercase tracking-wider">Harga Resmi Apotek</span>
-                            <div class="text-2xl sm:text-3xl font-black text-emerald-900 tracking-tight">
+                            <span class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">Harga Resmi Apotek</span>
+                            <div class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                                 Rp {{ number_format((float) ($obat?->harga ?? 45000), 0, ',', '.') }}
                             </div>
                         </div>
@@ -177,7 +177,7 @@
 
                         @if ($obat?->expired)
                             <div class="pt-1 border-t border-slate-200/60 text-[11px] text-slate-500">
-                                Kedaluwarsa (#FEFO): <strong>{{ \Carbon\Carbon::parse($obat->expired)->format('d M Y') }}</strong>
+                                Exp: <strong class="text-slate-700">{{ \Carbon\Carbon::parse($obat->expired)->format('d M Y') }}</strong>
                             </div>
                         @endif
                     </div>

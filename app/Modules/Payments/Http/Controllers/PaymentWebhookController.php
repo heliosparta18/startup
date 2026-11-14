@@ -7,6 +7,7 @@ use App\Models\Pembayaran;
 use App\Models\Pesanan;
 use App\Modules\Ordering\Events\OrderStatusUpdated;
 use App\Modules\Payments\Contracts\PaymentGatewayInterface;
+use App\Modules\Payments\Services\FakeQrisGateway;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,25 +20,42 @@ class PaymentWebhookController extends Controller
     {
         $signature = (string) $request->header('X-Signature', '');
         $payload = (string) $request->getContent();
+        /** @var array<string, mixed> $data */
+        $data = (array) $request->json()->all();
 
-        if (! $gateway->verifyWebhookSignature($payload, $signature)) {
-            Log::warning('Webhook QRIS ditolak: Signature HMAC tidak cocok.');
+        $isMidtransWebhook = isset($data['signature_key']) && isset($data['order_id']);
+        $isAuthorized = false;
+
+        if ($isMidtransWebhook && $gateway instanceof FakeQrisGateway) {
+            $isAuthorized = $gateway->verifyMidtransSignature($data);
+        } elseif ($signature !== '') {
+            $isAuthorized = $gateway->verifyWebhookSignature($payload, $signature);
+        }
+
+        if (! $isAuthorized) {
+            Log::warning('Webhook QRIS ditolak: Signature HMAC/Midtrans tidak cocok.');
 
             return response()->json(['message' => 'Invalid signature'], 401);
         }
 
-        /** @var array{order_number?: string, status?: string} $data */
-        $data = (array) $request->json()->all();
-        $orderNumber = $data['order_number'] ?? null;
-        $status = $data['status'] ?? null;
+        if ($isMidtransWebhook) {
+            $orderNumber = (string) ($data['order_id'] ?? '');
+            $txStatus = strtolower((string) ($data['transaction_status'] ?? ''));
+            $isPaid = in_array($txStatus, ['settlement', 'capture'], true);
+        } else {
+            $orderNumber = (string) ($data['order_number'] ?? '');
+            $isPaid = ($data['status'] ?? null) === 'PAID';
+        }
 
-        if ($status !== 'PAID' || ! $orderNumber) {
+        if (! $isPaid || $orderNumber === '') {
             return response()->json(['message' => 'Ignored'], 200);
         }
 
-        return DB::transaction(function () use ($orderNumber, $data) {
+        $cleanOrderNumber = ltrim($orderNumber, '#');
+
+        return DB::transaction(function () use ($orderNumber, $cleanOrderNumber, $data) {
             $pesanan = Pesanan::withoutTenancy()
-                ->where('nomor_pesanan', $orderNumber)
+                ->whereIn('nomor_pesanan', [$orderNumber, '#'.$cleanOrderNumber, $cleanOrderNumber])
                 ->lockForUpdate()
                 ->first();
 
@@ -66,12 +84,12 @@ class PaymentWebhookController extends Controller
 
             OrderStatusUpdated::dispatch($pesanan);
 
-            Log::info("Pesanan {$orderNumber} berhasil dilunasi via Webhook QRIS.");
+            Log::info("Pesanan {$pesanan->nomor_pesanan} berhasil dilunasi via Webhook QRIS.");
 
             return response()->json([
                 'success' => true,
                 'message' => 'Settlement processed successfully',
-                'order_number' => $orderNumber,
+                'order_number' => $pesanan->nomor_pesanan,
                 'status' => 'diproses',
             ], 200);
         });

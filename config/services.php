@@ -39,4 +39,16 @@ return [
         'api_key' => env('GOOGLE_MAPS_API_KEY'),
     ],
 
+    'qris' => [
+        'nmid' => env('QRIS_NMID', 'ID1020000012345'),
+        'webhook_secret' => env('QRIS_WEBHOOK_SECRET', 'omnipharma_secret_key'),
+    ],
+
+    'midtrans' => [
+        'merchant_id' => env('MIDTRANS_MERCHANT_ID', 'G484050115'),
+        'client_key' => env('MIDTRANS_CLIENT_KEY'),
+        'server_key' => env('MIDTRANS_SERVER_KEY'),
+        'is_production' => (bool) env('MIDTRANS_IS_PRODUCTION', false),
+    ],
+
 ];

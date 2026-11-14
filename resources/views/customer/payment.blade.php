@@ -7,44 +7,128 @@
         ]);
         $simSignature = hash_hmac('sha256', (string) $simPayload, (string) config('services.qris.webhook_secret', 'omnipharma_secret_key'));
         $branchDisplayName = $pesanan->client?->nama_client ?? 'Cabang ' . ucwords(str_replace('-', ' ', $client));
-        $trackUrl = \Illuminate\Support\Facades\Route::has('pesanan.track')
-            ? route('pesanan.track', ['id' => $pesanan->id_pesanan])
-            : route('customer.order.track', ['client' => $client, 'id' => $pesanan->id_pesanan]);
+        $trackUrl = request()->is('klien/*') || ! \Illuminate\Support\Facades\Route::has('pesanan.track')
+            ? route('customer.order.track', ['client' => $client, 'id' => $pesanan->id_pesanan])
+            : route('pesanan.track', ['id' => $pesanan->id_pesanan]);
+        $checkStatusUrl = request()->is('klien/*') || ! \Illuminate\Support\Facades\Route::has('pesanan.cek-status')
+            ? route('customer.order.check-status', ['client' => $client, 'id' => $pesanan->id_pesanan])
+            : route('pesanan.cek-status', ['id' => $pesanan->id_pesanan]);
+        $isMidtransSandbox = ($qris['gateway'] ?? '') === 'midtrans_qris_sandbox';
+        $remainingSeconds = isset($qris['remaining_seconds'])
+            ? max(0, (int) $qris['remaining_seconds'])
+            : ($pesanan->dibuat_pada ? max(0, (int) now()->diffInSeconds($pesanan->dibuat_pada->copy()->addMinutes(30), false)) : 1800);
+        $initialTimerStr = sprintf('%02d:%02d', intdiv($remainingSeconds, 60), $remainingSeconds % 60);
         $paymentJsConfig = [
             'orderNumber' => $pesanan->nomor_pesanan,
-            'isPaid' => in_array($pesanan->status, ['diproses', 'selesai'], true),
+            'isPaid' => in_array($pesanan->status, ['diproses', 'siap_diambil', 'dikirim', 'selesai'], true),
             'qrisString' => $qris['qris_string'] ?? '',
+            'qrImageUrl' => $qris['qr_image_url'] ?? '',
+            'checkStatusUrl' => $checkStatusUrl,
             'webhookUrl' => route('webhooks.qris'),
             'simSignature' => $simSignature,
             'simPayload' => (string) $simPayload,
             'trackUrl' => $trackUrl,
+            'isMidtransSandbox' => $isMidtransSandbox,
+            'remainingSeconds' => $remainingSeconds,
+            'expiresAtTs' => (int) ($qris['expires_at_ts'] ?? (now()->timestamp + $remainingSeconds)),
         ];
     @endphp
 
     <script>
         window.omniPaymentPageData = function(config) {
+            const storageKey = 'omni_qris_deadline_' + (config.orderNumber || '');
+            const serverRemaining = Math.max(0, Number(config.remainingSeconds ?? 1800));
+            const serverDeadlineMs = Date.now() + (serverRemaining * 1000);
+            let deadlineMs = serverDeadlineMs;
+
+            try {
+                const storedRaw = window.sessionStorage.getItem(storageKey);
+                const storedMs = Number(storedRaw);
+                if (storedRaw && Number.isFinite(storedMs) && storedMs > 0) {
+                    if ((serverDeadlineMs - storedMs) < (31 * 60 * 1000)) {
+                        deadlineMs = Math.min(storedMs, serverDeadlineMs);
+                    }
+                }
+                window.sessionStorage.setItem(storageKey, String(deadlineMs));
+            } catch (e) {}
+
+            const formatSeconds = (sec) => {
+                const clamped = Math.max(0, Math.floor(sec));
+                const m = Math.floor(clamped / 60);
+                const s = clamped % 60;
+                return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            };
+
+            const initialLeft = Math.max(0, Math.ceil((deadlineMs - Date.now()) / 1000));
+
             return {
-                timeLeft: 900,
-                timerStr: '15:00',
+                deadlineMs,
+                timeLeft: initialLeft,
+                timerStr: formatSeconds(initialLeft),
+                expiredChecked: false,
                 orderNumber: config.orderNumber,
                 isPaid: Boolean(config.isPaid),
+                polling: false,
                 simulating: false,
                 redirecting: false,
                 showPayload: false,
                 copiedPayload: false,
+                copiedQrUrl: false,
                 qrError: false,
+                statusMessage: '',
+                statusType: 'info',
+                syncCountdown() {
+                    const left = Math.max(0, Math.ceil((this.deadlineMs - Date.now()) / 1000));
+                    this.timeLeft = left;
+                    this.timerStr = formatSeconds(left);
+                    if (left <= 0 && !this.expiredChecked) {
+                        this.expiredChecked = true;
+                        this.cekStatusPembayaran(true, true);
+                    }
+                },
                 init() {
-                    if (this.isPaid) return;
-                    const interval = setInterval(() => {
-                        this.timeLeft--;
-                        const m = Math.floor(this.timeLeft / 60);
-                        const s = this.timeLeft % 60;
-                        this.timerStr = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-                        if (this.timeLeft <= 0) {
-                            clearInterval(interval);
-                            this.timerStr = 'KEDALUWARSA';
+                    if (this.isPaid) {
+                        try { window.sessionStorage.removeItem(storageKey); } catch (e) {}
+                        return;
+                    }
+
+                    this.syncCountdown();
+
+                    const countdownTimer = setInterval(() => {
+                        if (this.isPaid || this.redirecting) {
+                            clearInterval(countdownTimer);
+                            return;
                         }
+                        this.syncCountdown();
                     }, 1000);
+
+                    const pollTimer = setInterval(() => {
+                        if (this.isPaid || this.redirecting || this.expiredChecked) {
+                            clearInterval(pollTimer);
+                            return;
+                        }
+                        this.cekStatusPembayaran(true, false);
+                    }, 3000);
+
+                    setTimeout(() => {
+                        if (!this.isPaid && !this.redirecting) {
+                            this.cekStatusPembayaran(true, false);
+                        }
+                    }, 600);
+
+                    const triggerImmediateCheck = () => {
+                        if (!this.isPaid && !this.redirecting && !document.hidden) {
+                            this.syncCountdown();
+                            this.cekStatusPembayaran(true, this.timeLeft <= 0);
+                        }
+                    };
+
+                    window.addEventListener('focus', triggerImmediateCheck);
+                    document.addEventListener('visibilitychange', () => {
+                        if (!document.hidden) {
+                            triggerImmediateCheck();
+                        }
+                    });
                 },
                 copyEmvcoPayload() {
                     const text = config.qrisString || '';
@@ -55,32 +139,86 @@
                         });
                     }
                 },
-                simulatePayment() {
-                    this.simulating = true;
-                    fetch(config.webhookUrl, {
+                copyQrImageUrl() {
+                    const url = config.qrImageUrl || '';
+                    if (navigator.clipboard && url) {
+                        navigator.clipboard.writeText(url).then(() => {
+                            this.copiedQrUrl = true;
+                            setTimeout(() => { this.copiedQrUrl = false; }, 2000);
+                        });
+                    }
+                },
+                cekStatusPembayaran(isAutoTimer = false, isTimerExpired = false) {
+                    if (this.redirecting) return;
+                    if (isAutoTimer && (this.polling || this.simulating)) return;
+                    if (!isAutoTimer && this.simulating) return;
+
+                    if (isAutoTimer) {
+                        this.polling = true;
+                    } else {
+                        this.simulating = true;
+                        this.statusMessage = '';
+                    }
+
+                    const csrf = document.querySelector('meta[name=csrf-token]')?.content || '';
+
+                    fetch(config.checkStatusUrl, {
                         method: 'POST',
+                        credentials: 'same-origin',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-Signature': config.simSignature
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrf
                         },
-                        body: config.simPayload
+                        body: JSON.stringify({
+                            auto_timer: Boolean(isAutoTimer),
+                            timer_expired: Boolean(isTimerExpired)
+                        })
                     })
-                    .then(res => {
-                        if (!res.ok) throw new Error('HTTP ' + res.status);
-                        return res.json();
+                    .then(async res => {
+                        const data = await res.json().catch(() => ({}));
+                        if (!res.ok) throw new Error(data.message || ('HTTP ' + res.status));
+                        return data;
                     })
-                    .then(() => {
-                        this.simulating = false;
-                        this.isPaid = true;
-                        this.redirecting = true;
-                        setTimeout(() => {
-                            window.location.href = config.trackUrl;
-                        }, 1200);
+                    .then((data) => {
+                        if (isAutoTimer) {
+                            this.polling = false;
+                        } else {
+                            this.simulating = false;
+                        }
+
+                        if (data.paid) {
+                            this.isPaid = true;
+                            this.redirecting = true;
+                            this.statusType = 'success';
+                            this.statusMessage = data.message || 'Pembayaran berhasil.';
+                            try { window.sessionStorage.removeItem(storageKey); } catch (e) {}
+                            setTimeout(() => {
+                                window.location.replace(data.track_url || config.trackUrl);
+                            }, 800);
+                        } else if (data.expired) {
+                            this.expiredChecked = true;
+                            this.statusType = 'error';
+                            this.statusMessage = data.message || 'Waktu pembayaran habis. Silakan batalkan dan pesan ulang.';
+                        } else if (data.cancelled) {
+                            window.location.reload();
+                        } else if (!isAutoTimer) {
+                            this.statusType = 'info';
+                            this.statusMessage = data.message || 'Belum ada pembayaran masuk.';
+                        }
                     })
                     .catch((err) => {
-                        this.simulating = false;
-                        alert('Gagal menyimulasikan pembayaran: ' + err.message);
+                        if (isAutoTimer) {
+                            this.polling = false;
+                        } else {
+                            this.simulating = false;
+                            this.statusType = 'error';
+                            this.statusMessage = 'Gagal mengecek status pembayaran: ' + err.message;
+                        }
                     });
+                },
+                simulatePayment() {
+                    this.cekStatusPembayaran(false, false);
                 }
             };
         };
@@ -93,13 +231,10 @@
         <!-- Header & Stepper 3 Langkah -->
         <div class="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
-                <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">{{ $branchDisplayName }}</span>
-                <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Pembayaran QRIS Pesanan</h1>
+                <span class="text-xs font-semibold text-slate-500">{{ $branchDisplayName }}</span>
+                <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Pembayaran QRIS</h1>
                 <p class="text-xs sm:text-sm text-slate-500 mt-1">
-                    Nomor Pesanan: <span class="font-mono font-bold text-slate-900">{{ $pesanan->nomor_pesanan }}</span>
-                    @if($pesanan->nomor_antrean)
-                        &bull; Antrean: <span class="font-mono font-bold text-emerald-700">{{ $pesanan->nomor_antrean }}</span>
-                    @endif
+                    Pesanan <span class="font-mono font-semibold text-slate-800">{{ $pesanan->nomor_pesanan }}</span>
                 </p>
             </div>
 
@@ -115,7 +250,7 @@
                 </span>
                 <span class="text-slate-300 text-xs">/</span>
                 <div class="flex items-center gap-1.5 text-xs font-extrabold text-slate-900 shrink-0">
-                    <span class="h-5 w-5 rounded-full bg-[#0A231E] text-[#D4F94E] inline-flex items-center justify-center text-[11px] font-black">3</span>
+                    <span class="h-5 w-5 rounded-full bg-emerald-600 text-white inline-flex items-center justify-center text-[11px] font-black">3</span>
                     <span>Bayar QRIS</span>
                 </div>
             </div>
@@ -123,33 +258,33 @@
 
         <div x-show="redirecting" x-cloak class="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-emerald-900 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 animate-pulse">
             <svg class="w-5 h-5 animate-spin shrink-0 text-emerald-600" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
-            <span>Pembayaran Berhasil Dilunasi! Mengalihkan ke Pelacakan Pesanan...</span>
+            <span>Pembayaran berhasil. Mengalihkan ke halaman pesanan...</span>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             <!-- Kolom Kiri: Kartu QRIS / Status Pembayaran -->
             <div class="lg:col-span-5 bg-white rounded-3xl p-5 sm:p-7 shadow-xs border border-slate-200/90 text-center">
-                @if($pesanan->status === 'diproses' || $pesanan->status === 'selesai')
+                @if(in_array($pesanan->status, ['diproses', 'siap_diambil', 'dikirim', 'selesai'], true))
                     <div class="inline-flex p-4 bg-emerald-50 rounded-full text-emerald-600 mb-4 border border-emerald-200">
                         <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                     </div>
-                    <h2 class="text-2xl font-black text-slate-900">Pembayaran Berhasil!</h2>
+                    <h2 class="text-2xl font-black text-slate-900">Pembayaran Berhasil</h2>
                     <p class="text-xs sm:text-sm text-slate-500 mt-1">
-                        Pesanan <span class="font-mono font-bold text-slate-800">{{ $pesanan->nomor_pesanan }}</span> sudah lunas dan sedang disiapkan oleh tim apotek.
+                        Pesanan <span class="font-mono font-bold text-slate-800">{{ $pesanan->nomor_pesanan }}</span> sudah lunas dan sedang disiapkan apotek.
                     </p>
 
                     <div class="my-6 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-left space-y-2 text-xs sm:text-sm">
                         <div class="flex justify-between">
                             <span class="text-slate-500">Metode</span>
-                            <span class="font-bold text-slate-900">QRIS Dinamis (EMVCo)</span>
+                            <span class="font-bold text-slate-900">QRIS</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-slate-500">Total Dibayar</span>
-                            <span class="font-black text-emerald-700">Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}</span>
+                            <span class="font-black text-slate-900">Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-slate-500">Status</span>
-                            <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-900 border border-emerald-300">
+                            <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200">
                                 {{ strtoupper($pesanan->status) }}
                             </span>
                         </div>
@@ -157,10 +292,10 @@
 
                     <div class="space-y-3">
                         <a href="{{ $trackUrl }}" class="inline-flex items-center justify-center min-h-[46px] w-full py-3 px-4 bg-[#059669] hover:bg-[#047857] text-white font-bold rounded-xl text-sm shadow-xs transition">
-                            Lacak Pesanan Real-Time
+                            Lihat Pesanan &amp; Invoice
                         </a>
                         <a href="{{ route('dashboard') }}" class="inline-flex items-center justify-center min-h-[44px] w-full py-2.5 px-4 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-xs sm:text-sm transition">
-                            Kembali ke Katalog Obat
+                            Kembali ke Katalog
                         </a>
                     </div>
                 @elseif($pesanan->status === 'dibatalkan')
@@ -173,19 +308,16 @@
                     </p>
                     <div class="mt-6">
                         <a href="{{ route('dashboard') }}" class="inline-flex items-center justify-center min-h-[44px] w-full py-3 px-4 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-sm transition">
-                            Kembali ke Katalog Obat
+                            Kembali ke Katalog
                         </a>
                     </div>
                 @else
-                    <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-full text-emerald-800 mb-3 border border-emerald-200 text-xs font-extrabold">
-                        <span>Pembayaran QRIS Dinamis</span>
-                    </div>
-                    <h2 class="text-lg sm:text-xl font-black text-slate-900">Scan QR untuk Membayar</h2>
+                    <span class="sr-only">Pembayaran QRIS Dinamis MIDTRANS SANDBOX</span>
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-900">Scan QRIS</h2>
 
-                    <!-- Countdown Timer -->
-                    <div class="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-800 font-bold">
-                        <span>Batas Waktu:</span>
-                        <span class="font-mono font-extrabold text-sm" x-text="timerStr">15:00</span>
+                    <div class="mt-1.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs text-slate-700 font-semibold">
+                        <span>Batas waktu</span>
+                        <span class="font-mono font-bold text-slate-900" x-text="timerStr">{{ $initialTimerStr }}</span>
                     </div>
 
                     <!-- Box QR Code -->
@@ -193,7 +325,7 @@
                         <img
                             x-show="!qrError"
                             src="{{ $qris['qr_image_url'] }}"
-                            alt="QRIS Sandbox"
+                            alt="QRIS {{ $isMidtransSandbox ? 'Midtrans Sandbox' : 'Sandbox' }}"
                             x-on:error="qrError = true"
                             class="w-48 h-48 sm:w-52 sm:h-52 aspect-square rounded-xl shadow-xs bg-white p-2 object-contain border border-slate-200"
                         >
@@ -202,55 +334,60 @@
                             <svg class="w-24 h-24 text-slate-800 mb-2" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm10 0h2v2h-2v-2zm4 0h2v2h-2v-2zm-4 4h2v2h-2v-2zm4 0h2v2h-2v-2zm-2-2h2v2h-2v-2zm-2-4h2v2h-2v-2zm4 0h2v2h-2v-2z"/>
                             </svg>
-                            <span class="text-[11px] font-bold text-slate-500">QR Code Offline Sandbox</span>
+                            <span class="text-[11px] font-bold text-slate-500">QR Code Offline</span>
                         </div>
 
-                        <div class="mt-3 w-full flex items-center justify-center gap-2">
-                            <button
-                                type="button"
-                                @click="showPayload = !showPayload"
-                                class="text-[11px] font-bold text-emerald-700 hover:text-emerald-800 underline cursor-pointer"
-                            >
-                                <span x-text="showPayload ? 'Sembunyikan Kode EMVCo' : 'Lihat / Salin Kode QRIS EMVCo'"></span>
-                            </button>
-                        </div>
-
-                        <div x-show="showPayload" x-cloak class="mt-2.5 w-full text-left bg-white border border-slate-200 rounded-xl p-2.5">
-                            <div class="font-mono text-[10px] text-slate-600 break-all select-all leading-snug">{{ $qris['qris_string'] }}</div>
-                            <button
-                                type="button"
-                                @click="copyEmvcoPayload()"
-                                class="mt-2 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[10px] font-bold transition cursor-pointer"
-                            >
-                                <span x-text="copiedPayload ? 'Berhasil Disalin!' : 'Salin Payload QRIS'"></span>
-                            </button>
-                        </div>
+                        @if($isMidtransSandbox)
+                            <div class="mt-3 w-full flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5">
+                                <button
+                                    type="button"
+                                    @click="copyQrImageUrl()"
+                                    class="text-[11px] font-semibold text-slate-600 hover:text-slate-900 underline cursor-pointer"
+                                >
+                                    <span x-text="copiedQrUrl ? 'Tersalin' : 'Salin URL QR'"></span>
+                                </button>
+                                <span class="text-slate-300 text-[10px]">&bull;</span>
+                                <a
+                                    href="{{ $qris['simulator_url'] ?? 'https://simulator.sandbox.midtrans.com/v2/qris/index' }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-[11px] font-semibold text-emerald-700 hover:text-emerald-800 underline"
+                                >
+                                    Simulator Midtrans
+                                </a>
+                            </div>
+                        @endif
                     </div>
 
-                    <div class="text-lg sm:text-xl font-black text-slate-900 mb-5">
-                        Total Tagihan: <span class="text-emerald-700">Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}</span>
+                    <div class="mb-4">
+                        <span class="block text-xs text-slate-500">Total Pembayaran</span>
+                        <span class="text-xl font-black text-slate-900">Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}</span>
                     </div>
+
+                    <div
+                        x-show="statusMessage !== ''"
+                        x-cloak
+                        :class="statusType === 'error' ? 'bg-rose-50 border-rose-200 text-rose-800' : (statusType === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-200 text-slate-700')"
+                        class="mb-4 p-3 rounded-xl border text-xs font-semibold text-left leading-relaxed"
+                        x-text="statusMessage"
+                    ></div>
 
                     <div class="pt-4 border-t border-slate-100 space-y-2.5">
                         <button
                             type="button"
-                            @click="simulatePayment()"
+                            @click="cekStatusPembayaran(false)"
                             :disabled="simulating || redirecting"
                             class="min-h-[46px] w-full py-3 px-4 bg-[#059669] hover:bg-[#047857] text-white font-bold rounded-xl text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 cursor-pointer"
                         >
-                            <span x-show="!simulating && !redirecting">Simulasi Scan &amp; Bayar Sekarang (Lunas)</span>
-                            <span x-show="simulating" x-cloak>Memproses Webhook Pelunasan...</span>
-                            <span x-show="redirecting" x-cloak>Mengalihkan ke Pelacakan...</span>
+                            <span x-show="!simulating && !redirecting">Cek Status</span>
+                            <span x-show="simulating" x-cloak>Mengecek...</span>
+                            <span x-show="redirecting" x-cloak>Mengalihkan...</span>
                         </button>
 
-                        <a href="{{ $trackUrl }}" class="inline-flex items-center justify-center min-h-[42px] w-full py-2.5 px-4 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold rounded-xl text-xs sm:text-sm border border-emerald-200 transition">
-                            Pantau Status Pesanan &amp; Antrean
-                        </a>
-
-                        <form method="POST" action="{{ \Illuminate\Support\Facades\Route::has('pesanan.cancel') ? route('pesanan.cancel', ['id' => $pesanan->id_pesanan]) : route('customer.order.cancel', ['client' => $client, 'id' => $pesanan->id_pesanan]) }}" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pesanan ini? Stok obat akan otomatis dikembalikan ke apotek.');" class="w-full">
+                        <form method="POST" action="{{ request()->is('klien/*') || ! \Illuminate\Support\Facades\Route::has('pesanan.cancel') ? route('customer.order.cancel', ['client' => $client, 'id' => $pesanan->id_pesanan]) : route('pesanan.cancel', ['id' => $pesanan->id_pesanan]) }}" onsubmit="return confirm('Batalkan pesanan ini?');" class="w-full">
                             @csrf
-                            <button type="submit" class="min-h-[42px] w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs sm:text-sm transition flex items-center justify-center border border-slate-200 cursor-pointer">
-                                Batalkan Pesanan (Kembalikan Stok)
+                            <button type="submit" class="min-h-[42px] w-full py-2.5 px-4 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold rounded-xl text-xs sm:text-sm transition flex items-center justify-center border border-rose-200 cursor-pointer">
+                                Batalkan Pesanan
                             </button>
                         </form>
                     </div>
@@ -279,7 +416,7 @@
                                 </div>
                                 <div class="min-w-0 flex-1">
                                     @if($item->obat?->kategori?->nama_kategori)
-                                        <span class="inline-block text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full mb-1">
+                                        <span class="inline-block text-[10px] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full mb-1">
                                             {{ $item->obat->kategori->nama_kategori }}
                                         </span>
                                     @endif
@@ -315,7 +452,7 @@
                         </div>
                         <div class="flex justify-between items-center text-base font-black text-slate-900 pt-2 border-t border-slate-200">
                             <span>Total Pembayaran</span>
-                            <span class="text-emerald-700">Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}</span>
+                            <span class="text-slate-900">Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}</span>
                         </div>
                     </div>
                 </div>
@@ -324,7 +461,7 @@
                     <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-xs border border-slate-200/90 space-y-4">
                         <div class="flex flex-wrap items-center justify-between gap-3">
                             <div>
-                                <span class="text-[11px] font-extrabold uppercase tracking-wider text-sky-700">Integrasi Google Maps Kurir</span>
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Integrasi Google Maps Kurir</span>
                                 <h3 class="text-base font-extrabold text-slate-900 mt-0.5">Lokasi Tujuan &amp; Rute Pengiriman</h3>
                                 @if($pesanan->alamat_pengantaran)
                                     <p class="text-xs text-slate-600 mt-1">{{ $pesanan->alamat_pengantaran }}</p>

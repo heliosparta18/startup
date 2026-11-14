@@ -78,42 +78,42 @@ new #[Title('Profile settings')] class extends Component {
     <flux:heading class="sr-only">{{ __('Profile settings') }}</flux:heading>
 
     <x-pages::settings.layout :heading="__('Profile')" :subheading="__('Update your name and email address')">
-        <div class="my-6 rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
-            <div class="flex items-center justify-between pb-6 border-b border-slate-100 dark:border-zinc-800">
+        <div class="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs">
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-slate-100">
                 <div class="space-y-1">
-                    <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+                    <h3 class="text-base sm:text-lg font-extrabold text-slate-900">
                         {{ __('Personal Information') }}
                     </h3>
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400">
+                    <p class="text-xs text-slate-500">
                         {{ __('Manage your display name and registered email address') }}
                     </p>
                 </div>
                 @if (! $this->hasUnverifiedEmail)
-                    <div class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/40">
-                        <span class="size-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400"></span>
+                    <div class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-800 border border-emerald-200">
+                        <span class="size-2 rounded-full bg-emerald-600"></span>
                         {{ __('Verified') }}
                     </div>
                 @endif
             </div>
 
-            <form wire:submit="updateProfileInformation" class="mt-6 space-y-6">
+            <form wire:submit="updateProfileInformation" class="mt-6 space-y-5">
                 <flux:input wire:model="name" :label="__('Name')" type="text" required autofocus autocomplete="name" />
 
                 <div>
                     <flux:input wire:model="email" :label="__('Email')" type="email" required autocomplete="email" />
 
                     @if ($this->hasUnverifiedEmail)
-                        <div class="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-800/50 dark:bg-amber-950/30 dark:text-amber-300">
-                            <flux:text class="text-amber-800 dark:text-amber-300">
+                        <div class="mt-3 rounded-2xl border border-amber-200 bg-amber-50 p-3.5 text-sm text-amber-800">
+                            <flux:text class="text-amber-800">
                                 {{ __('Your email address is unverified.') }}
 
-                                <flux:link class="text-sm font-medium underline cursor-pointer text-amber-900 dark:text-amber-200" wire:click.prevent="resendVerificationNotification">
+                                <flux:link class="text-sm font-bold underline cursor-pointer text-amber-900" wire:click.prevent="resendVerificationNotification">
                                     {{ __('Click here to re-send the verification email.') }}
                                 </flux:link>
                             </flux:text>
 
                             @if (session('status') === 'verification-link-sent')
-                                <flux:text class="mt-2 font-medium !dark:text-emerald-400 !text-emerald-600">
+                                <flux:text class="mt-2 font-semibold !text-emerald-700">
                                     {{ __('A new verification link has been sent to your email address.') }}
                                 </flux:text>
                             @endif
@@ -121,12 +121,10 @@ new #[Title('Profile settings')] class extends Component {
                     @endif
                 </div>
 
-                <div class="flex items-center gap-4 pt-2">
-                    <div class="flex items-center justify-end w-full">
-                        <flux:button variant="primary" type="submit" class="w-full sm:w-auto px-6 font-semibold" data-test="update-profile-button">
-                            {{ __('Save') }}
-                        </flux:button>
-                    </div>
+                <div class="flex items-center justify-end pt-4 border-t border-slate-100">
+                    <flux:button variant="primary" type="submit" class="w-full sm:w-auto px-7 font-bold rounded-xl bg-[#059669] hover:bg-[#047857] text-white" data-test="update-profile-button">
+                        {{ __('Save') }}
+                    </flux:button>
                 </div>
             </form>
         </div>

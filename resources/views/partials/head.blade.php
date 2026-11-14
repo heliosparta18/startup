@@ -14,18 +14,30 @@
 
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 <script>
-    document.documentElement.classList.remove('dark');
-    document.documentElement.classList.add('light');
-    try {
-        localStorage.setItem('flux.appearance', 'light');
-        localStorage.setItem('theme', 'light');
-    } catch (e) {}
-    if (window.MutationObserver) {
-        new MutationObserver(function() {
-            if (document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark');
-                document.documentElement.classList.add('light');
-            }
-        }).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-    }
+    window.omniGetTheme = function() {
+        try {
+            const saved = localStorage.getItem('omni_theme') || localStorage.getItem('theme') || localStorage.getItem('flux.appearance');
+            return saved === 'dark' ? 'dark' : 'light';
+        } catch (e) {
+            return 'light';
+        }
+    };
+    window.omniApplyTheme = function(mode) {
+        const theme = mode === 'dark' ? 'dark' : 'light';
+        document.documentElement.classList.remove('light', 'dark');
+        document.documentElement.classList.add(theme);
+        document.documentElement.style.colorScheme = theme;
+        try {
+            localStorage.setItem('omni_theme', theme);
+            localStorage.setItem('theme', theme);
+            localStorage.setItem('flux.appearance', theme);
+        } catch (e) {}
+        return theme;
+    };
+    window.omniSetTheme = function(mode) {
+        const applied = window.omniApplyTheme(mode);
+        window.dispatchEvent(new CustomEvent('omni-theme-changed', { detail: { theme: applied } }));
+        return applied;
+    };
+    window.omniApplyTheme(window.omniGetTheme());
 </script>

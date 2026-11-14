@@ -203,5 +203,7 @@ Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout
 
 // PERTEMUAN 10 & 12: Dynamic QRIS Sandbox Generator & Reverb Order Tracking
 Route::get('/order/{id}/payment', [OrderTrackingController::class, 'payment'])->name('order.payment');
+Route::post('/order/{id}/check-status', [OrderTrackingController::class, 'checkStatus'])->name('order.check-status');
 Route::post('/order/{id}/cancel', [OrderTrackingController::class, 'cancel'])->name('order.cancel');
 Route::get('/order/{id}/track', [OrderTrackingController::class, 'track'])->name('order.track');
+Route::get('/riwayat-pesanan', [OrderTrackingController::class, 'history'])->name('order.history');

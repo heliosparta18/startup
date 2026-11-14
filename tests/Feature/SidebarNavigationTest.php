@@ -32,7 +32,9 @@ class SidebarNavigationTest extends TestCase
         $response = $this->actingAs($user)->get(route('profile.edit'));
 
         $response->assertOk();
-        $response->assertSee('Customer');
+        $response->assertSee($user->name);
+        $response->assertDontSee('Customer');
+        $response->assertDontSee('PASIEN');
     }
 
     public function test_assigned_user_role_is_displayed_in_profile_widget(): void
@@ -44,7 +46,8 @@ class SidebarNavigationTest extends TestCase
         $response = $this->actingAs($user)->get(route('profile.edit'));
 
         $response->assertOk();
-        $response->assertSee('Super Admin');
+        $response->assertSee($user->name);
+        $response->assertDontSee('PUSAT');
     }
 
     public function test_apoteker_role_is_displayed_in_profile_widget(): void
@@ -56,6 +59,7 @@ class SidebarNavigationTest extends TestCase
         $response = $this->actingAs($user)->get(route('profile.edit'));
 
         $response->assertOk();
-        $response->assertSee('Apoteker');
+        $response->assertSee($user->name);
+        $response->assertDontSee('APJ');
     }
 }

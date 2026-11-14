@@ -16,6 +16,10 @@
     $keranjangUrl = \Illuminate\Support\Facades\Route::has('keranjang')
         ? route('keranjang')
         : route('customer.cart', ['client' => $activeBranchSlug]);
+    $riwayatPesananUrl = \Illuminate\Support\Facades\Route::has('pesanan.riwayat')
+        ? route('pesanan.riwayat')
+        : route('customer.order.history', ['client' => $activeBranchSlug]);
+    $roleLabelText = $loggedUser && method_exists($loggedUser, 'roleLabel') ? $loggedUser->roleLabel() : ucfirst(str_replace('_', ' ', $userRole));
     $resepFormUrl = auth()->check()
         ? (\Illuminate\Support\Facades\Route::has('resep.form') ? route('resep.form') : route('dashboard').'#unggah-resep')
         : route('customer.home', ['client' => $activeBranchSlug]).'#unggah-resep';
@@ -177,17 +181,17 @@
             x-transition:leave="transition ease-in duration-150"
             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
             x-transition:leave-end="opacity-0 translate-y-1 scale-95"
-            class="pointer-events-auto flex items-center gap-3 rounded-2xl bg-[#0A231E] text-white px-4 py-3 shadow-lg border border-emerald-500/40 text-xs"
+            class="pointer-events-auto flex items-center gap-3 rounded-2xl bg-emerald-700 text-white px-4 py-3 shadow-lg border border-emerald-500/40 text-xs"
             role="status"
         >
-            <span class="w-7 h-7 rounded-xl bg-[#D4F94E] text-[#0A231E] flex items-center justify-center shrink-0 font-black">
+            <span class="w-7 h-7 rounded-xl bg-white text-emerald-700 flex items-center justify-center shrink-0 font-black">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
             </span>
             <div class="min-w-0 flex-1">
                 <p class="font-bold text-white leading-snug" x-text="cartToast"></p>
-                <a href="{{ $keranjangUrl }}" class="inline-block mt-1 text-[11px] font-bold text-[#D4F94E] hover:underline">
+                <a href="{{ $keranjangUrl }}" class="inline-block mt-1 text-[11px] font-bold text-emerald-100 hover:underline">
                     Lihat Keranjang &rarr;
                 </a>
             </div>
@@ -208,7 +212,7 @@
             class="pointer-events-auto flex items-center gap-3 rounded-2xl bg-slate-900 text-white px-4 py-3 shadow-lg border border-emerald-400/40 text-xs"
             role="status"
         >
-            <span class="w-7 h-7 rounded-xl bg-emerald-500/20 text-[#D4F94E] border border-emerald-400/30 flex items-center justify-center shrink-0">
+            <span class="w-7 h-7 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 flex items-center justify-center shrink-0">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
@@ -249,18 +253,9 @@
                     <div class="min-w-0">
                         <div class="flex items-center gap-1.5 sm:gap-2 min-w-0">
                             <span class="block text-sm sm:text-lg font-extrabold text-slate-900 tracking-tight leading-none truncate">OmniPharma</span>
-                            <span class="text-[10px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded bg-[#0A231E] text-[#D4F94E] uppercase tracking-wide shrink-0">
-                                @if($isSuperAdmin) PUSAT @elseif($isApoteker) APJ @else PASIEN @endif
-                            </span>
                         </div>
                         <span class="block text-[10px] sm:text-[11px] font-medium text-slate-600 leading-tight truncate mt-0.5 max-w-[140px] sm:max-w-[230px]">
-                            @if($isSuperAdmin)
-                                Dashboard Pusat (Super Admin)
-                            @elseif($isApoteker)
-                                Portal Apoteker ({{ $activeBranchName }})
-                            @else
-                                Portal Farmasi Resmi Terverifikasi
-                            @endif
+                            Portal Farmasi Resmi Terverifikasi
                         </span>
                     </div>
                 </a>
@@ -335,7 +330,7 @@
                         <button
                             type="button"
                             @click="goToCatalogSearch()"
-                            class="inline-flex items-center justify-center px-3 py-2 min-h-[44px] rounded-lg bg-[#0A231E] text-[#D4F94E] text-xs font-bold cursor-pointer hover:bg-[#10332C]"
+                            class="inline-flex items-center justify-center px-3 py-2 min-h-[44px] rounded-lg bg-emerald-600 text-white text-xs font-bold cursor-pointer hover:bg-emerald-700"
                         >
                             Cari di Katalog Utama
                         </button>
@@ -344,7 +339,7 @@
                         <button
                             type="button"
                             @click="goToCatalogSearch()"
-                            class="w-full flex items-center justify-center px-3 py-2 min-h-[44px] rounded-lg bg-[#0A231E] text-[#D4F94E] text-xs font-bold cursor-pointer hover:bg-[#10332C]"
+                            class="w-full flex items-center justify-center px-3 py-2 min-h-[44px] rounded-lg bg-emerald-600 text-white text-xs font-bold cursor-pointer hover:bg-emerald-700"
                         >
                             Tampilkan Semua Hasil di Katalog
                         </button>
@@ -400,13 +395,12 @@
                             @if($photoUrl)
                                 <img src="{{ $photoUrl }}" alt="Foto Profil {{ $userName }}" class="w-7 h-7 rounded-full object-cover shrink-0 border border-slate-300">
                             @else
-                                <div class="w-7 h-7 rounded-full bg-[#0A231E] text-[#D4F94E] flex items-center justify-center font-bold text-xs shrink-0">
+                                <div class="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0">
                                     {{ strtoupper(substr($userName, 0, 2)) }}
                                 </div>
                             @endif
                             <div class="hidden sm:flex flex-col text-left leading-none">
-                                <span class="font-bold text-slate-900 text-xs truncate max-w-[110px]">{{ $userName }}</span>
-                                <span class="text-[11px] text-emerald-800 font-semibold mt-0.5 capitalize">{{ str_replace('_', ' ', $userRole) }}</span>
+                                <span class="font-bold text-slate-900 text-xs truncate max-w-[120px]">{{ $userName }}</span>
                             </div>
                             <svg class="w-4 h-4 text-slate-600 transition-transform duration-150 shrink-0" :class="open ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -423,39 +417,58 @@
                         >
                             <div class="px-3 py-2.5 bg-slate-50 rounded-lg mb-1.5 border border-slate-200">
                                 <p class="font-bold text-slate-900 text-sm truncate">{{ $userName }}</p>
-                                <p class="text-[11px] text-slate-600 truncate mt-0.5">{{ $userEmail }}</p>
-                                <span class="inline-block mt-1.5 px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wide bg-emerald-50 text-emerald-800 border border-emerald-200">
-                                    {{ str_replace('_', ' ', $userRole) }} / {{ $userClientName }}
-                                </span>
+                                <p class="text-[11px] text-slate-500 truncate mt-0.5">{{ $userEmail }}</p>
                             </div>
 
-                            <div class="space-y-0.5">
-                                <a
-                                    href="{{ route('dashboard') }}"
-                                    class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-slate-800 hover:text-slate-900 hover:bg-slate-100 font-semibold transition-colors min-h-[44px]"
-                                    role="menuitem"
-                                >
-                                    <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-                                    <span>Dashboard Utama</span>
-                                </a>
-
+                            <div class="space-y-1">
                                 <a
                                     href="{{ route('profile.edit') }}"
                                     class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-slate-800 hover:text-slate-900 hover:bg-slate-100 font-semibold transition-colors min-h-[44px]"
                                     role="menuitem"
                                 >
-                                    <svg class="w-4 h-4 text-slate-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                                    <span>Pengaturan Profil</span>
+                                    <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                    <span>Profile</span>
                                 </a>
 
                                 <a
-                                    href="{{ route('home') }}?welcome=1"
+                                    href="{{ $riwayatPesananUrl }}"
                                     class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-slate-800 hover:text-slate-900 hover:bg-slate-100 font-semibold transition-colors min-h-[44px]"
                                     role="menuitem"
                                 >
-                                    <svg class="w-4 h-4 text-slate-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
-                                    <span>Halaman Sambutan Utama</span>
+                                    <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                                    <span>Riwayat Pesanan</span>
                                 </a>
+
+                                <div
+                                    class="px-3 py-2 rounded-lg bg-slate-50 border border-slate-200/80"
+                                    x-data="{ themeMode: window.omniGetTheme ? window.omniGetTheme() : 'light' }"
+                                    @omni-theme-changed.window="themeMode = $event.detail.theme"
+                                >
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <span class="text-[11px] font-bold text-slate-700">Tema Tampilan</span>
+                                        <span class="text-[10px] font-extrabold uppercase text-emerald-700" x-text="themeMode === 'dark' ? 'Dark' : 'Putih'"></span>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-1.5">
+                                        <button
+                                            type="button"
+                                            @click="themeMode = window.omniSetTheme('light')"
+                                            :class="themeMode === 'light' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'"
+                                            class="min-h-[34px] px-2.5 py-1.5 rounded-lg border text-[11px] font-bold flex items-center justify-center gap-1.5 transition cursor-pointer"
+                                        >
+                                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                                            <span>Putih</span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            @click="themeMode = window.omniSetTheme('dark')"
+                                            :class="themeMode === 'dark' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'"
+                                            class="min-h-[34px] px-2.5 py-1.5 rounded-lg border text-[11px] font-bold flex items-center justify-center gap-1.5 transition cursor-pointer"
+                                        >
+                                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                                            <span>Dark</span>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="my-1.5 border-t border-slate-200"></div>
@@ -466,6 +479,7 @@
                                     type="submit"
                                     class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-rose-800 hover:bg-rose-50 font-bold transition-colors min-h-[44px] text-left cursor-pointer"
                                     role="menuitem"
+                                    data-test="logout-button"
                                 >
                                     <svg class="w-4 h-4 text-rose-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
                                     <span>Keluar dari Akun</span>
@@ -476,7 +490,7 @@
                 @else
                     <a
                         href="{{ route('login') }}"
-                        class="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl bg-[#0A231E] px-3.5 sm:px-4 py-2 text-xs font-bold text-[#D4F94E] hover:bg-[#10332C] transition shadow-xs shrink-0"
+                        class="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl bg-emerald-600 px-3.5 sm:px-4 py-2 text-xs font-bold text-white hover:bg-emerald-700 transition shadow-xs shrink-0"
                         title="Masuk ke Akun"
                     >
                         <span>Masuk</span>
@@ -545,7 +559,7 @@
                 </template>
                 <div x-show="!searchLoading && !searchError && searchResults.length === 0" class="p-3 text-center space-y-2">
                     <p class="text-xs text-slate-700">Tidak ada hasil cepat untuk kata kunci ini.</p>
-                    <button type="button" @click="goToCatalogSearch()" class="inline-flex items-center justify-center px-3 py-2 min-h-[44px] rounded-lg bg-[#0A231E] text-[#D4F94E] text-xs font-bold cursor-pointer">
+                    <button type="button" @click="goToCatalogSearch()" class="inline-flex items-center justify-center px-3 py-2 min-h-[44px] rounded-lg bg-emerald-600 text-white text-xs font-bold cursor-pointer hover:bg-emerald-700">
                         Cari di Katalog Utama
                     </button>
                 </div>
@@ -596,7 +610,7 @@
                 <form method="POST" action="{{ route('branch.switch') }}">
                     @csrf
                     <input type="hidden" name="branch" value="banyuwangi-kota">
-                    <button type="submit" class="w-full flex items-center justify-between px-3 py-2 min-h-[44px] rounded-xl text-left cursor-pointer {{ $activeBranchSlug === 'banyuwangi-kota' ? 'bg-[#0A231E] text-[#D4F94E] font-bold' : 'text-slate-700 hover:bg-slate-50 font-semibold' }}">
+                    <button type="submit" class="w-full flex items-center justify-between px-3 py-2 min-h-[44px] rounded-xl text-left cursor-pointer {{ $activeBranchSlug === 'banyuwangi-kota' ? 'bg-emerald-600 text-white font-bold' : 'text-slate-700 hover:bg-slate-50 font-semibold' }}">
                         <span>Cabang Banyuwangi Kota</span>
                         @if($activeBranchSlug === 'banyuwangi-kota')
                             <span aria-hidden="true">&#10003;</span>
@@ -606,7 +620,7 @@
                 <form method="POST" action="{{ route('branch.switch') }}">
                     @csrf
                     <input type="hidden" name="branch" value="rogojampi">
-                    <button type="submit" class="w-full flex items-center justify-between px-3 py-2 min-h-[44px] rounded-xl text-left cursor-pointer {{ $activeBranchSlug === 'rogojampi' ? 'bg-[#0A231E] text-[#D4F94E] font-bold' : 'text-slate-700 hover:bg-slate-50 font-semibold' }}">
+                    <button type="submit" class="w-full flex items-center justify-between px-3 py-2 min-h-[44px] rounded-xl text-left cursor-pointer {{ $activeBranchSlug === 'rogojampi' ? 'bg-emerald-600 text-white font-bold' : 'text-slate-700 hover:bg-slate-50 font-semibold' }}">
                         <span>Cabang Rogojampi</span>
                         @if($activeBranchSlug === 'rogojampi')
                             <span aria-hidden="true">&#10003;</span>
@@ -618,11 +632,22 @@
             <div class="pt-2 border-t border-slate-100 space-y-1">
                 @auth
                     <a href="{{ route('profile.edit') }}" class="flex items-center gap-2.5 min-h-[44px] px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-50 font-semibold">
-                        <span>Pengaturan Profil</span>
+                        <span>Profile</span>
                     </a>
-                    <a href="{{ route('home') }}?welcome=1" class="flex items-center gap-2.5 min-h-[44px] px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-50 font-semibold">
-                        <span>Halaman Sambutan Utama</span>
+                    <a href="{{ $riwayatPesananUrl }}" class="flex items-center gap-2.5 min-h-[44px] px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-50 font-semibold">
+                        <span>Riwayat Pesanan</span>
                     </a>
+                    <div
+                        class="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-2"
+                        x-data="{ themeMode: window.omniGetTheme ? window.omniGetTheme() : 'light' }"
+                        @omni-theme-changed.window="themeMode = $event.detail.theme"
+                    >
+                        <span class="text-xs font-bold text-slate-700">Tema</span>
+                        <div class="flex items-center gap-1.5">
+                            <button type="button" @click="themeMode = window.omniSetTheme('light')" :class="themeMode === 'light' ? 'bg-emerald-600 text-white' : 'bg-white text-slate-700 border border-slate-200'" class="px-2.5 py-1 rounded-lg text-[11px] font-bold cursor-pointer">Putih</button>
+                            <button type="button" @click="themeMode = window.omniSetTheme('dark')" :class="themeMode === 'dark' ? 'bg-emerald-600 text-white' : 'bg-white text-slate-700 border border-slate-200'" class="px-2.5 py-1 rounded-lg text-[11px] font-bold cursor-pointer">Dark</button>
+                        </div>
+                    </div>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="w-full flex items-center gap-2.5 min-h-[44px] px-3 py-2 rounded-xl text-rose-700 hover:bg-rose-50 font-bold text-left cursor-pointer">
@@ -630,10 +655,10 @@
                         </button>
                     </form>
                 @else
-                    <a href="{{ route('home') }}" class="flex items-center gap-2.5 min-h-[44px] px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-50 font-semibold">
-                        <span>Halaman Sambutan Utama</span>
+                    <a href="{{ $riwayatPesananUrl }}" class="flex items-center gap-2.5 min-h-[44px] px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-50 font-semibold">
+                        <span>Riwayat Pesanan</span>
                     </a>
-                    <a href="{{ route('login') }}" class="flex items-center justify-center min-h-[44px] px-3 py-2 rounded-xl bg-[#0A231E] text-[#D4F94E] font-bold">
+                    <a href="{{ route('login') }}" class="flex items-center justify-center min-h-[44px] px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold">
                         <span>Masuk ke Akun</span>
                     </a>
                 @endauth
@@ -687,7 +712,7 @@
                             <input type="hidden" name="branch" value="banyuwangi-kota">
                             <button
                                 type="submit"
-                                class="w-full flex items-center justify-between px-3 py-2 min-h-[44px] rounded-lg text-left transition-colors cursor-pointer {{ $activeBranchSlug === 'banyuwangi-kota' ? 'bg-[#0A231E] text-[#D4F94E] font-bold' : 'hover:bg-slate-100 text-slate-800 font-medium' }}"
+                                class="w-full flex items-center justify-between px-3 py-2 min-h-[44px] rounded-lg text-left transition-colors cursor-pointer {{ $activeBranchSlug === 'banyuwangi-kota' ? 'bg-emerald-600 text-white font-bold' : 'hover:bg-slate-100 text-slate-800 font-medium' }}"
                             >
                                 <span>Cabang Banyuwangi Kota</span>
                                 @if($activeBranchSlug === 'banyuwangi-kota')
@@ -700,7 +725,7 @@
                             <input type="hidden" name="branch" value="rogojampi">
                             <button
                                 type="submit"
-                                class="w-full flex items-center justify-between px-3 py-2 min-h-[44px] rounded-lg text-left transition-colors cursor-pointer {{ $activeBranchSlug === 'rogojampi' ? 'bg-[#0A231E] text-[#D4F94E] font-bold' : 'hover:bg-slate-100 text-slate-800 font-medium' }}"
+                                class="w-full flex items-center justify-between px-3 py-2 min-h-[44px] rounded-lg text-left transition-colors cursor-pointer {{ $activeBranchSlug === 'rogojampi' ? 'bg-emerald-600 text-white font-bold' : 'hover:bg-slate-100 text-slate-800 font-medium' }}"
                             >
                                 <span>Cabang Rogojampi</span>
                                 @if($activeBranchSlug === 'rogojampi')
@@ -708,16 +733,6 @@
                                 @endif
                             </button>
                         </form>
-                        <div class="pt-1.5 mt-1 border-t border-slate-100">
-                            <button
-                                type="button"
-                                @click="branchMenuOpen = false; $dispatch('open-gps-modal')"
-                                class="w-full flex items-center gap-2 px-3 py-2 min-h-[40px] rounded-lg text-left bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold transition-colors cursor-pointer"
-                            >
-                                <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                <span>Deteksi Lokasi GPS Saya</span>
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -742,9 +757,6 @@
             <span class="text-[11px] text-slate-500">Standar Permenkes RI No. 73/2016 &bull; SIA &amp; SIP Terverifikasi</span>
         </div>
     </footer>
-
-    <!-- Prompt & Modal Akses GPS + Google Maps -->
-    @include('customer.partials.gps-location-prompt', ['activeBranchSlug' => $activeBranchSlug])
 
     @fluxScripts
 </body>

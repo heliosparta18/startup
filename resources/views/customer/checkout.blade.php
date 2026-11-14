@@ -2,22 +2,6 @@
     $isRogojampi = str_contains(strtolower($client), 'rogojampi');
     $originLat = $isRogojampi ? -8.3069 : -8.2192;
     $originLng = $isRogojampi ? 114.2896 : 114.3691;
-    $defaultDestLat = $isRogojampi ? -8.2950 : -8.2065;
-    $defaultDestLng = $isRogojampi ? 114.2980 : 114.3745;
-
-    $areaPresets = $isRogojampi
-        ? [
-            ['label' => 'Rogojampi Kota (~1.2 km)', 'lat' => -8.3010, 'lng' => 114.2940],
-            ['label' => 'Blimbingsari / Mangir (~4.8 km)', 'lat' => -8.3210, 'lng' => 114.3245],
-            ['label' => 'Gladag / Bubuk (~4.5 km)', 'lat' => -8.3380, 'lng' => 114.2810],
-            ['label' => 'Singojuruh (~7.6 km)', 'lat' => -8.2990, 'lng' => 114.2340],
-        ]
-        : [
-            ['label' => 'Kepatihan / Pusat Kota (~1.3 km)', 'lat' => -8.2115, 'lng' => 114.3740],
-            ['label' => 'Karangente / Sobo (~2.8 km)', 'lat' => -8.2385, 'lng' => 114.3630],
-            ['label' => 'Giri / Kalipuro (~5.3 km)', 'lat' => -8.1815, 'lng' => 114.3755],
-            ['label' => 'Kabat / Pakistaji (~9.0 km)', 'lat' => -8.2730, 'lng' => 114.3315],
-        ];
 
     $branchDisplayName = $clientModel->nama_client ?? 'Cabang ' . ucwords(str_replace('-', ' ', $client));
     $slots = [
@@ -33,16 +17,10 @@
         'branchName' => $branchDisplayName,
         'originLat' => $originLat,
         'originLng' => $originLng,
-        'destLat' => $defaultDestLat,
-        'destLng' => $defaultDestLng,
-        'defaultAreaLabel' => $areaPresets[0]['label'],
     ];
 @endphp
 
 <x-layouts.customer :title="'Checkout Pesanan - OmniPharma'" :fullWidth="true">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-
     <script>
     window.omniCheckoutPageData = function(config) {
         return {
@@ -52,97 +30,15 @@
             branchName: config.branchName,
             originLat: config.originLat,
             originLng: config.originLng,
-            destLat: config.destLat,
-            destLng: config.destLng,
+            destLat: null,
+            destLng: null,
+            hasExtractedCoords: false,
             jarakKm: 2.0,
-            selectedAreaLabel: config.defaultAreaLabel,
             mapsInput: '',
             alamatPengantaran: '',
-            addressSearchQuery: '',
-            addressSearchResults: [],
-            addressSearchLoading: false,
-            gpsLoading: false,
-            gpsStatus: 'idle',
-            gpsLocked: false,
-            gpsAccuracy: null,
-            gpsMessage: '',
-            mapViewMode: 'interactive',
-            tileLayerMode: 'google_street',
-            mapInstance: null,
-            destMarker: null,
-            originMarker: null,
-            routePolyline: null,
-            tileLayers: {},
-            activeTileLayer: null,
+            mapsStatusMessage: '',
+            mapsStatusType: 'info',
             submitting: false,
-            gestureFallbackBound: false,
-            init() {
-                this.syncFromSavedGps();
-
-                window.addEventListener('gps-location-updated', (e) => {
-                    if (e.detail && typeof e.detail.lat === 'number' && typeof e.detail.lng === 'number') {
-                        this.applyCustomerPoint(
-                            e.detail.lat,
-                            e.detail.lng,
-                            e.detail.address ? 'GPS Perangkat Anda (' + e.detail.address.split(',').slice(0, 2).join(',') + ')' : 'Lokasi GPS Anda Saat Ini',
-                            true,
-                            e.detail.accuracy || null
-                        );
-                        if (e.detail.address && !this.alamatPengantaran) {
-                            this.alamatPengantaran = e.detail.address;
-                        }
-                    }
-                });
-
-                this.$watch('metodeLayanan', (val) => {
-                    if (val === 'delivery') {
-                        this.$nextTick(() => {
-                            this.initInteractiveMap();
-                            if (!this.gpsLocked && this.gpsStatus !== 'denied') {
-                                this.gunakanGpsSaatIni(false);
-                            }
-                        });
-                    }
-                });
-
-                if (!this.gpsLocked && this.gpsStatus !== 'denied') {
-                    this.gunakanGpsSaatIni(true);
-                }
-            },
-            bindGestureFallback() {
-                if (this.gestureFallbackBound) return;
-                this.gestureFallbackBound = true;
-                const retryOnce = () => {
-                    window.removeEventListener('pointerdown', retryOnce);
-                    if (!this.gpsLocked && this.gpsStatus !== 'denied') {
-                        this.gunakanGpsSaatIni(true);
-                    }
-                };
-                window.addEventListener('pointerdown', retryOnce, { once: true, passive: true });
-            },
-            syncFromSavedGps() {
-                try {
-                    const cachedRaw = localStorage.getItem('omnipharma_user_gps');
-                    if (cachedRaw) {
-                        const cached = JSON.parse(cachedRaw);
-                        const fresh = cached && cached.ts && (Date.now() - cached.ts < 1000 * 60 * 60 * 12);
-                        if (fresh && typeof cached.lat === 'number' && typeof cached.lng === 'number') {
-                            this.destLat = cached.lat;
-                            this.destLng = cached.lng;
-                            this.gpsAccuracy = cached.accuracy || null;
-                            this.gpsLocked = true;
-                            this.gpsStatus = 'granted';
-                            this.jarakKm = this.hitungJarakHaversine(this.originLat, this.originLng, this.destLat, this.destLng);
-                            this.mapsInput = this.destLat.toFixed(5) + ', ' + this.destLng.toFixed(5);
-                            if (cached.address) {
-                                this.alamatPengantaran = cached.address;
-                            }
-                            this.selectedAreaLabel = 'Lokasi GPS Terdeteksi';
-                            this.gpsMessage = 'Koordinat GPS aktif dari perangkat (' + this.jarakKm + ' km dari gerai).';
-                        }
-                    }
-                } catch (e) {}
-            },
             get ongkir() {
                 if (this.metodeLayanan !== 'delivery') return 0;
                 const d = parseFloat(this.jarakKm) || 2.0;
@@ -152,13 +48,24 @@
                 return this.subtotalObat + this.ongkir;
             },
             get koordinatTujuan() {
+                if (!this.hasExtractedCoords || this.destLat === null || this.destLng === null) {
+                    return '';
+                }
                 return Number(this.destLat).toFixed(5) + ',' + Number(this.destLng).toFixed(5);
             },
             get mapsRouteUrl() {
-                return 'https://www.google.com/maps/dir/?api=1&origin=' + this.originLat + ',' + this.originLng + '&destination=' + this.koordinatTujuan + '&travelmode=driving';
-            },
-            get mapsEmbedUrl() {
-                return 'https://maps.google.com/maps?q=' + this.koordinatTujuan + '&z=15&output=embed';
+                const raw = (this.mapsInput || '').trim();
+                if (this.hasExtractedCoords && this.koordinatTujuan !== '') {
+                    return 'https://www.google.com/maps/dir/?api=1&origin=' + this.originLat + ',' + this.originLng + '&destination=' + this.koordinatTujuan + '&travelmode=driving';
+                }
+                if (/^https?:\/\//i.test(raw)) {
+                    return raw;
+                }
+                const alamat = (this.alamatPengantaran || '').trim();
+                if (alamat !== '') {
+                    return 'https://www.google.com/maps/dir/?api=1&origin=' + this.originLat + ',' + this.originLng + '&destination=' + encodeURIComponent(alamat) + '&travelmode=driving';
+                }
+                return 'https://www.google.com/maps/@' + this.originLat + ',' + this.originLng + ',15z';
             },
             hitungJarakHaversine(lat1, lon1, lat2, lon2) {
                 const R = 6371;
@@ -169,202 +76,36 @@
                 const roadAdjusted = Math.max(0.5, Math.min(25.0, straight * 1.25));
                 return Math.round(roadAdjusted * 10) / 10;
             },
-            initInteractiveMap() {
-                if (typeof L === 'undefined') return;
-                const el = document.getElementById('checkout-interactive-map');
-                if (!el) return;
-
-                if (this.mapInstance) {
-                    setTimeout(() => {
-                        this.mapInstance.invalidateSize();
-                        this.updateMapVisuals(false);
-                    }, 150);
+            async tempelLinkMaps() {
+                if (!navigator.clipboard || typeof navigator.clipboard.readText !== 'function') {
+                    this.mapsStatusType = 'warn';
+                    this.mapsStatusMessage = 'Silakan tempel manual (Ctrl+V atau tekan tahan lalu Tempel) link Google Maps ke kolom di samping.';
                     return;
                 }
-
-                this.mapInstance = L.map(el, { zoomControl: true }).setView([this.destLat, this.destLng], 14);
-
-                this.tileLayers = {
-                    google_street: L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
-                        maxZoom: 20,
-                        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-                        attribution: '&copy; Google Maps'
-                    }),
-                    google_hybrid: L.tileLayer('https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
-                        maxZoom: 20,
-                        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-                        attribution: '&copy; Google Maps Satellite'
-                    }),
-                    osm: L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        maxZoom: 19,
-                        attribution: '&copy; OpenStreetMap'
-                    })
-                };
-
-                this.activeTileLayer = this.tileLayers[this.tileLayerMode] || this.tileLayers.google_street;
-                this.activeTileLayer.addTo(this.mapInstance);
-
-                this.originMarker = L.circleMarker([this.originLat, this.originLng], {
-                    radius: 9,
-                    color: '#0A231E',
-                    weight: 3,
-                    fillColor: '#D4F94E',
-                    fillOpacity: 1
-                }).addTo(this.mapInstance).bindPopup('<b>' + this.branchName + '</b><br>Titik Keberangkatan Kurir');
-
-                this.destMarker = L.marker([this.destLat, this.destLng], {
-                    draggable: true
-                }).addTo(this.mapInstance).bindPopup('<b>Lokasi Tujuan Anda</b><br>Geser pin atau klik peta untuk ubah titik.');
-
-                this.routePolyline = L.polyline(
-                    [[this.originLat, this.originLng], [this.destLat, this.destLng]],
-                    { color: '#059669', weight: 4, dashArray: '8, 6', opacity: 0.9 }
-                ).addTo(this.mapInstance);
-
-                this.destMarker.on('dragend', () => {
-                    const pos = this.destMarker.getLatLng();
-                    this.applyCustomerPoint(pos.lat, pos.lng, 'Pin Peta Digeser', false);
-                    this.reverseGeocode(pos.lat, pos.lng);
-                });
-
-                this.mapInstance.on('click', (e) => {
-                    this.applyCustomerPoint(e.latlng.lat, e.latlng.lng, 'Titik Dipilih di Peta', false);
-                    this.reverseGeocode(e.latlng.lat, e.latlng.lng);
-                });
-
-                setTimeout(() => {
-                    this.mapInstance.invalidateSize();
-                    this.updateMapVisuals(true);
-                }, 200);
-            },
-            switchTileLayer(mode) {
-                this.tileLayerMode = mode;
-                if (!this.mapInstance || !this.tileLayers[mode]) return;
-                if (this.activeTileLayer) {
-                    this.mapInstance.removeLayer(this.activeTileLayer);
+                try {
+                    const text = (await navigator.clipboard.readText()).trim();
+                    if (!text) {
+                        this.mapsStatusType = 'warn';
+                        this.mapsStatusMessage = 'Clipboard kosong. Salin dulu link lokasi Anda dari aplikasi atau web Google Maps.';
+                        return;
+                    }
+                    this.mapsInput = text;
+                    this.parseMapsInput();
+                } catch (e) {
+                    this.mapsStatusType = 'warn';
+                    this.mapsStatusMessage = 'Browser membatasi akses clipboard otomatis. Silakan klik kolom input lalu tempel link (Ctrl+V / Tempel).';
                 }
-                this.activeTileLayer = this.tileLayers[mode];
-                this.activeTileLayer.addTo(this.mapInstance);
-            },
-            updateMapVisuals(fitBounds = true) {
-                if (!this.mapInstance || !this.destMarker || !this.routePolyline) return;
-                this.destMarker.setLatLng([this.destLat, this.destLng]);
-                this.routePolyline.setLatLngs([[this.originLat, this.originLng], [this.destLat, this.destLng]]);
-                if (fitBounds) {
-                    const bounds = L.latLngBounds([[this.originLat, this.originLng], [this.destLat, this.destLng]]);
-                    this.mapInstance.fitBounds(bounds, { padding: [36, 36], maxZoom: 15 });
-                } else {
-                    this.mapInstance.panTo([this.destLat, this.destLng]);
-                }
-            },
-            applyCustomerPoint(lat, lng, label, isFromGps = false, accuracy = null) {
-                this.destLat = Number(lat);
-                this.destLng = Number(lng);
-                this.jarakKm = this.hitungJarakHaversine(this.originLat, this.originLng, this.destLat, this.destLng);
-                this.selectedAreaLabel = label || 'Titik Lokasi Pilihan';
-                this.mapsInput = this.destLat.toFixed(5) + ', ' + this.destLng.toFixed(5);
-                if (isFromGps) {
-                    this.gpsLocked = true;
-                    this.gpsStatus = 'granted';
-                    if (accuracy) this.gpsAccuracy = Math.round(Number(accuracy));
-                }
-                this.gpsMessage = this.selectedAreaLabel + ' (' + this.jarakKm + ' km dari ' + this.branchName + ').';
-                this.updateMapVisuals(true);
-            },
-            reverseGeocode(lat, lng) {
-                fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=' + lat + '&lon=' + lng + '&accept-language=id')
-                    .then(res => res.ok ? res.json() : null)
-                    .then(geo => {
-                        if (geo && geo.display_name) {
-                            this.alamatPengantaran = geo.display_name;
-                        }
-                    })
-                    .catch(() => {});
-            },
-            cariAlamatDiPeta() {
-                const q = (this.addressSearchQuery || '').trim();
-                if (q.length < 3) {
-                    this.addressSearchResults = [];
-                    return;
-                }
-                this.addressSearchLoading = true;
-                fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&countrycodes=id&limit=5&accept-language=id&q=' + encodeURIComponent(q))
-                    .then(res => res.ok ? res.json() : [])
-                    .then(data => {
-                        this.addressSearchLoading = false;
-                        this.addressSearchResults = Array.isArray(data) ? data : [];
-                    })
-                    .catch(() => {
-                        this.addressSearchLoading = false;
-                        this.addressSearchResults = [];
-                    });
-            },
-            pilihHasilPencarianPeta(place) {
-                const lat = parseFloat(place.lat);
-                const lng = parseFloat(place.lon);
-                if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
-                    this.alamatPengantaran = place.display_name || '';
-                    this.addressSearchQuery = (place.display_name || '').split(',').slice(0, 2).join(',');
-                    this.addressSearchResults = [];
-                    this.applyCustomerPoint(lat, lng, 'Hasil Pencarian Peta', false);
-                }
-            },
-            pilihAreaPreset(label, lat, lng) {
-                this.applyCustomerPoint(lat, lng, label, false);
-                if (!this.alamatPengantaran || this.alamatPengantaran.startsWith('Area ')) {
-                    this.alamatPengantaran = 'Area ' + label;
-                }
-            },
-            gunakanGpsSaatIni(isAutoPrompt = false) {
-                if (!navigator.geolocation) {
-                    this.gpsStatus = 'unsupported';
-                    this.gpsMessage = 'Browser Anda tidak mendukung deteksi GPS otomatis. Silakan klik peta atau tempel link Google Maps.';
-                    return;
-                }
-                this.gpsLoading = true;
-                this.gpsMessage = 'Meminta izin browser untuk menyalakan akses GPS Anda...';
-                navigator.geolocation.getCurrentPosition(
-                    (pos) => {
-                        this.gpsLoading = false;
-                        const lat = pos.coords.latitude;
-                        const lng = pos.coords.longitude;
-                        const acc = pos.coords.accuracy;
-                        this.applyCustomerPoint(lat, lng, 'Lokasi GPS Anda Sekarang', true, acc);
-                        this.reverseGeocode(lat, lng);
-
-                        const payload = {
-                            lat,
-                            lng,
-                            accuracy: Math.round(acc),
-                            address: this.alamatPengantaran,
-                            ts: Date.now()
-                        };
-                        try {
-                            localStorage.setItem('omnipharma_user_gps', JSON.stringify(payload));
-                        } catch (e) {}
-                        window.dispatchEvent(new CustomEvent('gps-location-updated', { detail: payload }));
-                    },
-                    (err) => {
-                        this.gpsLoading = false;
-                        if (err && err.code === 1) {
-                            this.gpsStatus = 'denied';
-                            this.gpsMessage = isAutoPrompt
-                                ? 'Browser menunda atau menolak akses GPS. Klik tombol Nyalakan & Gunakan GPS Saya atau buka izin Lokasi di ikon gembok address bar.'
-                                : 'Izin GPS ditolak browser. Buka ikon gembok di address bar lalu ubah Lokasi ke Izinkan, atau geser pin langsung di peta.';
-                        } else {
-                            this.gpsStatus = 'unavailable';
-                            this.gpsMessage = 'Sinyal GPS belum terdeteksi. Pastikan Location perangkat nyala, atau klik langsung titik rumah di peta.';
-                            if (isAutoPrompt) {
-                                this.bindGestureFallback();
-                            }
-                        }
-                    },
-                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
-                );
             },
             parseMapsInput() {
                 const raw = (this.mapsInput || '').trim();
-                if (!raw) return;
+                if (!raw) {
+                    this.hasExtractedCoords = false;
+                    this.destLat = null;
+                    this.destLng = null;
+                    this.mapsStatusMessage = '';
+                    return;
+                }
+
                 const patterns = [
                     /@(-?\d+\.\d+),(-?\d+\.\d+)/,
                     /[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/,
@@ -377,12 +118,28 @@
                         const lat = parseFloat(m[1]);
                         const lng = parseFloat(m[2]);
                         if (lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
-                            this.applyCustomerPoint(lat, lng, 'Pin Link / Koordinat Google Maps', false);
+                            this.destLat = lat;
+                            this.destLng = lng;
+                            this.hasExtractedCoords = true;
+                            this.jarakKm = this.hitungJarakHaversine(this.originLat, this.originLng, lat, lng);
+                            this.mapsStatusType = 'success';
+                            this.mapsStatusMessage = 'Koordinat lokasi terbaca dari link Maps! Estimasi jarak terhitung otomatis: ' + this.jarakKm + ' km dari ' + this.branchName + '.';
                             return;
                         }
                     }
                 }
-                this.gpsMessage = 'Format link belum berisi koordinat lintang/bujur. Contoh: -8.2115, 114.3740 atau URL Google Maps dengan @lat,lng.';
+
+                this.hasExtractedCoords = false;
+                this.destLat = null;
+                this.destLng = null;
+
+                if (/^https?:\/\/(maps\.app\.goo\.gl|goo\.gl|maps\.google\.com|www\.google\.com\/maps)/i.test(raw) || /^https?:\/\//i.test(raw)) {
+                    this.mapsStatusType = 'info';
+                    this.mapsStatusMessage = 'Link Google Maps berhasil ditempel dan akan langsung dikirim ke kurir. Sesuaikan perkiraan jarak (km) di bawah ini jika perlu.';
+                } else {
+                    this.mapsStatusType = 'warn';
+                    this.mapsStatusMessage = 'Tempel link lengkap Google Maps (contoh: https://maps.app.goo.gl/... atau https://www.google.com/maps/@-8.2115,114.3740,17z).';
+                }
             },
             formatRp(val) {
                 return 'Rp ' + new Intl.NumberFormat('id-ID').format(Math.round(val));
@@ -422,7 +179,7 @@
         <div class="mb-6 sm:mb-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
                 <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Konfirmasi Pesanan &amp; Pengiriman</h1>
-                <p class="text-xs sm:text-sm text-slate-500 mt-1">Pilih ambil di apotek atau pengantaran kurir dengan akses GPS &amp; peta interaktif Google Maps.</p>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">Pilih ambil di apotek atau pengantaran kurir dengan mengisi alamat dan menempel link lokasi Google Maps Anda.</p>
             </div>
 
             <div class="flex items-center gap-2 sm:gap-3 bg-white border border-slate-200 rounded-2xl px-3.5 py-2.5 shadow-2xs overflow-x-auto">
@@ -432,7 +189,7 @@
                 </a>
                 <span class="text-slate-300 text-xs">/</span>
                 <div class="flex items-center gap-1.5 text-xs font-extrabold text-slate-900 shrink-0">
-                    <span class="h-5 w-5 rounded-full bg-[#0A231E] text-[#D4F94E] inline-flex items-center justify-center text-[11px] font-black">2</span>
+                    <span class="h-5 w-5 rounded-full bg-emerald-600 text-white inline-flex items-center justify-center text-[11px] font-black">2</span>
                     <span>Checkout</span>
                 </div>
                 <span class="text-slate-300 text-xs">/</span>
@@ -475,7 +232,7 @@
                         </div>
                     </div>
 
-                    <!-- Metode Layanan & Integrasi GPS + Google Maps / Ongkir -->
+                    <!-- Metode Layanan & Isian Alamat + Paste Link Google Maps -->
                     <div class="bg-white rounded-3xl p-4 sm:p-6 border border-slate-200/90 shadow-xs">
                         <h3 class="text-base font-extrabold text-slate-900 mb-3">
                             Pilih Metode Penerimaan Obat
@@ -507,7 +264,7 @@
                                     </div>
                                     <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-sky-100 text-sky-800" x-text="metodeLayanan === 'delivery' ? formatRp(ongkir) : 'Mulai Rp 5 rb'">Mulai Rp 5 rb</span>
                                 </div>
-                                <span class="text-xs text-slate-500 mt-2 leading-relaxed">Nyalakan GPS atau geser pin di peta. Ongkir otomatis per km &amp; kurir mendapat rute Google Maps.</span>
+                                <span class="text-xs text-slate-500 mt-2 leading-relaxed">Isi alamat lengkap dan paste link Google Maps lokasi Anda agar kurir langsung mengantar ke titik tujuan.</span>
                             </label>
                         </div>
 
@@ -532,152 +289,117 @@
                             </div>
                         </div>
 
-                        <!-- Opsi Delivery: Akses GPS + Peta Interaktif Leaflet/Google Maps + Hitung Ongkir -->
-                        <div x-show="metodeLayanan === 'delivery'" x-cloak class="mt-5 pt-5 border-t border-slate-100 space-y-5">
+                        <!-- Opsi Delivery: Form Isian Alamat Lengkap + Paste Link Google Maps Saat Ini -->
+                        <div x-show="metodeLayanan === 'delivery'" x-cloak class="mt-5 pt-5 border-t border-slate-100 space-y-4">
                             <div class="rounded-2xl bg-gradient-to-br from-emerald-50 via-white to-sky-50 border border-emerald-200 p-4 space-y-4">
                                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                                     <div>
                                         <span class="inline-flex items-center gap-1.5 text-xs font-black text-emerald-900">
                                             <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                                            <span>Share Lokasi Pengantaran (Terintegrasi Google Maps)</span>
+                                            <span>Isi Alamat &amp; Link Lokasi Pengiriman</span>
                                         </span>
-                                        <p class="text-[11px] text-slate-600 mt-0.5">Website meminta akses GPS browser atau Anda dapat menggeser pin langsung pada peta Google Maps di bawah.</p>
+                                        <p class="text-[11px] text-slate-600 mt-0.5">Tulis alamat lengkap Anda lalu paste link share lokasi dari Google Maps saat ini.</p>
                                     </div>
                                     <span class="px-2.5 py-1 rounded-full bg-white border border-emerald-200 text-[11px] font-extrabold text-emerald-800 shrink-0">
                                         Tarif: &le;2 km Rp 5.000, lalu +Rp 2.500/km
                                     </span>
                                 </div>
 
-                                <!-- Kartu Permintaan Akses GPS Perangkat -->
-                                <div class="p-3.5 rounded-2xl bg-white border border-emerald-200 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                    <div class="flex items-start gap-2.5">
-                                        <span
-                                            class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-                                            :class="gpsLocked ? 'bg-emerald-100 text-emerald-700' : (gpsStatus === 'denied' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-800')"
-                                        >
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                        </span>
-                                        <div class="text-xs">
-                                            <div class="font-extrabold text-slate-900">
-                                                <span x-show="gpsLocked">GPS Aktif &amp; Titik Lokasi Terkunci <span x-show="gpsAccuracy" class="text-emerald-700" x-text="'(&plusmn;' + gpsAccuracy + ' m)'"></span></span>
-                                                <span x-show="!gpsLocked && gpsStatus === 'denied'" class="text-rose-700">Izin GPS Diblokir Browser</span>
-                                                <span x-show="!gpsLocked && gpsStatus !== 'denied'">Aktifkan Akses GPS Perangkat Anda</span>
-                                            </div>
-                                            <p class="text-[11px] text-slate-600 mt-0.5">
-                                                Izinkan browser membaca posisi GPS agar pin peta, alamat jalan, dan ongkir terisi otomatis.
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <button
-                                        type="button"
-                                        @click="gunakanGpsSaatIni(false)"
-                                        :disabled="gpsLoading"
-                                        class="inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-[#0A231E] hover:bg-[#133830] text-[#D4F94E] text-xs font-bold transition shadow-xs cursor-pointer disabled:opacity-60 shrink-0"
-                                    >
-                                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                                        <span x-text="gpsLoading ? 'Mendeteksi GPS...' : 'Gunakan Lokasi GPS Saya Saat Ini'"></span>
-                                    </button>
+                                <!-- 1. Isian Alamat Lengkap -->
+                                <div>
+                                    <label for="alamat_pengantaran" class="block text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-1.5">
+                                        Isi Alamat Lengkap Pengiriman <span class="text-rose-600">*</span>
+                                    </label>
+                                    <textarea
+                                        id="alamat_pengantaran"
+                                        name="alamat_pengantaran"
+                                        x-model="alamatPengantaran"
+                                        :required="metodeLayanan === 'delivery'"
+                                        rows="3"
+                                        placeholder="Contoh: Jl. Ahmad Yani No. 12, RT 02 RW 04, Kel. Tukangkayu, Kec. Banyuwangi (pagar hijau sebelah minimarket)"
+                                        class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 focus:outline-none"
+                                    ></textarea>
                                 </div>
 
-                                <!-- Pencarian Alamat / Jalan Langsung di Peta -->
-                                <div class="relative">
-                                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-                                        Cari Jalan / Kelurahan / Lokasi di Peta
-                                    </label>
-                                    <div class="flex gap-2">
+                                <!-- 2. Paste Link Lokasi Google Maps Saat Ini -->
+                                <div>
+                                    <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                                        <label for="link_maps" class="block text-xs font-extrabold uppercase tracking-wider text-slate-700">
+                                            Paste Link Lokasi Google Maps Saat Ini <span class="text-rose-600">*</span>
+                                        </label>
+                                        <a
+                                            href="https://www.google.com/maps"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-emerald-300 text-emerald-800 hover:bg-emerald-50 text-[11px] font-bold transition shadow-2xs"
+                                        >
+                                            <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                                            <span>Buka Google Maps</span>
+                                        </a>
+                                    </div>
+
+                                    <div class="flex flex-col sm:flex-row gap-2">
                                         <input
+                                            id="link_maps"
                                             type="text"
-                                            x-model="addressSearchQuery"
-                                            @keydown.enter.prevent="cariAlamatDiPeta()"
-                                            placeholder="Ketik nama jalan, perumahan, atau desa (misal: Jl. Ahmad Yani Banyuwangi)"
-                                            class="flex-1 min-h-[42px] px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-xs text-slate-900 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 focus:outline-none"
+                                            name="link_maps"
+                                            x-model="mapsInput"
+                                            @input="parseMapsInput()"
+                                            :required="metodeLayanan === 'delivery'"
+                                            placeholder="Tempel link Google Maps Anda, misal: https://maps.app.goo.gl/... atau https://www.google.com/maps/@-8.2115,114.3740,17z"
+                                            class="flex-1 min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 focus:outline-none"
                                         >
                                         <button
                                             type="button"
-                                            @click="cariAlamatDiPeta()"
-                                            :disabled="addressSearchLoading"
-                                            class="px-4 py-2 rounded-xl bg-[#059669] hover:bg-[#047857] text-white text-xs font-bold transition cursor-pointer shrink-0 disabled:opacity-60"
+                                            @click="tempelLinkMaps()"
+                                            class="min-h-[44px] px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold transition cursor-pointer shrink-0 inline-flex items-center justify-center gap-1.5"
                                         >
-                                            <span x-text="addressSearchLoading ? 'Mencari...' : 'Cari di Peta'"></span>
+                                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                                            <span>Tempel Link</span>
                                         </button>
                                     </div>
-                                    <div x-show="addressSearchResults.length > 0" x-cloak class="mt-1.5 bg-white border border-slate-200 rounded-xl shadow-md divide-y divide-slate-100 max-h-44 overflow-y-auto z-20 relative">
-                                        <template x-for="(place, idx) in addressSearchResults" :key="idx">
-                                            <button
-                                                type="button"
-                                                @click="pilihHasilPencarianPeta(place)"
-                                                class="w-full text-left px-3 py-2.5 text-xs hover:bg-emerald-50 transition cursor-pointer"
-                                            >
-                                                <div class="font-bold text-slate-900 line-clamp-2" x-text="place.display_name"></div>
-                                            </button>
-                                        </template>
-                                    </div>
+
+                                    <p class="mt-1.5 text-[11px] text-slate-500 leading-relaxed">
+                                        Cara mudah: buka <strong>Google Maps</strong> &rarr; ketuk titik lokasi Anda sekarang &rarr; pilih <strong>Bagikan / Share</strong> &rarr; <strong>Salin Link</strong> &rarr; tempel di kotak atas.
+                                    </p>
+
+                                    <div
+                                        x-show="mapsStatusMessage"
+                                        x-cloak
+                                        class="mt-2 p-2.5 rounded-xl border text-[11px] font-semibold leading-relaxed"
+                                        :class="mapsStatusType === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : (mapsStatusType === 'warn' ? 'bg-amber-50 border-amber-200 text-amber-900' : 'bg-sky-50 border-sky-200 text-sky-900')"
+                                        x-text="mapsStatusMessage"
+                                    ></div>
                                 </div>
 
-                                <!-- Pilihan Cepat Area Google Maps -->
-                                <div>
-                                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-2">
-                                        Atau Pilih Titik Area Tujuan Cepat:
-                                    </label>
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                        @foreach($areaPresets as $preset)
-                                            <button
-                                                type="button"
-                                                @click="pilihAreaPreset(@js($preset['label']), {{ $preset['lat'] }}, {{ $preset['lng'] }})"
-                                                class="text-left px-3 py-2 rounded-xl border text-xs font-semibold transition cursor-pointer flex items-center justify-between gap-2"
-                                                :class="selectedAreaLabel === @js($preset['label']) ? 'border-emerald-600 bg-emerald-100/70 text-emerald-950 font-bold' : 'border-slate-200 bg-white hover:border-emerald-400 text-slate-700'"
-                                            >
-                                                <span class="truncate">{{ $preset['label'] }}</span>
-                                                <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
-                                            </button>
-                                        @endforeach
-                                    </div>
-                                </div>
-
-                                <!-- Input Tempel Link Share Lokasi / Koordinat Google Maps -->
-                                <div>
-                                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-                                        Tempel Link Share Lokasi / Koordinat Google Maps (Opsional)
-                                    </label>
-                                    <input
-                                        type="text"
-                                        x-model="mapsInput"
-                                        @input="parseMapsInput()"
-                                        placeholder="Contoh: https://www.google.com/maps/@-8.2115,114.3740,17z atau -8.2115, 114.3740"
-                                        class="w-full min-h-[42px] px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-xs text-slate-900 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 focus:outline-none"
-                                    >
-                                    <p x-show="gpsMessage" x-text="gpsMessage" class="mt-1.5 text-[11px] font-semibold text-emerald-800"></p>
-                                </div>
-
-                                <!-- Peta Interaktif Pin + Garis Rute & Mode Switcher Google Maps -->
-                                <div class="rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-2xs">
-                                    <div class="px-3.5 py-2.5 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
-                                        <div class="flex flex-wrap items-center gap-1.5 text-xs">
-                                            <button
-                                                type="button"
-                                                @click="mapViewMode = 'interactive'; $nextTick(() => initInteractiveMap())"
-                                                class="px-2.5 py-1 rounded-lg font-bold transition cursor-pointer"
-                                                :class="mapViewMode === 'interactive' ? 'bg-[#0A231E] text-[#D4F94E]' : 'bg-white border border-slate-200 text-slate-700'"
-                                            >
-                                                Peta Pin Interaktif
-                                            </button>
-                                            <button
-                                                type="button"
-                                                @click="mapViewMode = 'embed'"
-                                                class="px-2.5 py-1 rounded-lg font-bold transition cursor-pointer"
-                                                :class="mapViewMode === 'embed' ? 'bg-[#0A231E] text-[#D4F94E]' : 'bg-white border border-slate-200 text-slate-700'"
-                                            >
-                                                Google Maps Embed
-                                            </button>
-                                            <template x-if="mapViewMode === 'interactive'">
-                                                <div class="flex items-center gap-1 ml-1">
-                                                    <button type="button" @click="switchTileLayer('google_street')" class="px-2 py-1 rounded text-[10px] font-bold cursor-pointer" :class="tileLayerMode === 'google_street' ? 'bg-emerald-100 text-emerald-900' : 'text-slate-500 hover:bg-slate-100'">Peta Jalan</button>
-                                                    <button type="button" @click="switchTileLayer('google_hybrid')" class="px-2 py-1 rounded text-[10px] font-bold cursor-pointer" :class="tileLayerMode === 'google_hybrid' ? 'bg-emerald-100 text-emerald-900' : 'text-slate-500 hover:bg-slate-100'">Satelit</button>
-                                                    <button type="button" @click="switchTileLayer('osm')" class="px-2 py-1 rounded text-[10px] font-bold cursor-pointer" :class="tileLayerMode === 'osm' ? 'bg-emerald-100 text-emerald-900' : 'text-slate-500 hover:bg-slate-100'">OSM</button>
-                                                </div>
-                                            </template>
+                                <!-- 3. Estimasi Jarak & Ongkos Kirim + Tautan Rute Kurir -->
+                                <div class="bg-white rounded-2xl border border-slate-200 p-3.5 space-y-3">
+                                    <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+                                        <span class="font-bold text-slate-700">Perkiraan Jarak (Apotek &rarr; Lokasi Anda):</span>
+                                        <div class="flex items-center gap-2">
+                                            <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-900 font-black" x-text="jarakKm + ' km'"></span>
+                                            <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 font-black" x-text="'Ongkir: ' + formatRp(ongkir)"></span>
                                         </div>
+                                    </div>
+
+                                    <input
+                                        type="range"
+                                        min="0.5"
+                                        max="15"
+                                        step="0.5"
+                                        x-model.number="jarakKm"
+                                        class="w-full accent-emerald-600 cursor-pointer"
+                                    >
+
+                                    <div class="flex flex-wrap items-center justify-between gap-2 text-[10px] text-slate-500 font-semibold">
+                                        <span>0.5 - 2 km (Rp 5.000)</span>
+                                        <span>5 km (Rp 12.500)</span>
+                                        <span>10 km (Rp 25.000)</span>
+                                        <span>15 km (Rp 37.500)</span>
+                                    </div>
+
+                                    <div class="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
+                                        <span class="text-[11px] text-slate-600">Kurir &amp; apoteker otomatis menerima alamat dan link Maps Anda.</span>
                                         <a
                                             :href="mapsRouteUrl"
                                             target="_blank"
@@ -688,64 +410,7 @@
                                             <span>Lihat Rute Pengiriman di Google Maps</span>
                                         </a>
                                     </div>
-
-                                    <div x-show="mapViewMode === 'interactive'">
-                                        <div id="checkout-interactive-map" class="w-full h-64 z-0 bg-slate-100"></div>
-                                    </div>
-                                    <div x-show="mapViewMode === 'embed'" x-cloak>
-                                        <iframe
-                                            :src="mapsEmbedUrl"
-                                            class="w-full h-64 border-0"
-                                            loading="lazy"
-                                            referrerpolicy="no-referrer-when-downgrade"
-                                            title="Preview Peta Lokasi Tujuan Pengiriman"
-                                        ></iframe>
-                                    </div>
-
-                                    <div class="px-3.5 py-2 bg-emerald-50/60 flex flex-wrap items-center justify-between gap-2 text-[11px] text-emerald-900 font-medium">
-                                        <span>Klik peta atau geser pin biru untuk menentukan titik pengantaran tepat di rumah Anda.</span>
-                                        <span class="font-mono font-bold text-emerald-800" x-text="koordinatTujuan"></span>
-                                    </div>
                                 </div>
-
-                                <!-- Slider Penyesuaian Jarak & Kalkulasi Ongkir Real-Time -->
-                                <div class="bg-white rounded-2xl border border-slate-200 p-3.5 space-y-2.5">
-                                    <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
-                                        <span class="font-bold text-slate-700">Jarak Terukur (Apotek &rarr; Tujuan):</span>
-                                        <div class="flex items-center gap-2">
-                                            <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-900 font-black" x-text="jarakKm + ' km'"></span>
-                                            <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 font-black" x-text="'Ongkir: ' + formatRp(ongkir)"></span>
-                                        </div>
-                                    </div>
-                                    <input
-                                        type="range"
-                                        min="0.5"
-                                        max="15"
-                                        step="0.5"
-                                        x-model.number="jarakKm"
-                                        class="w-full accent-emerald-600 cursor-pointer"
-                                    >
-                                    <div class="flex justify-between text-[10px] text-slate-400 font-semibold">
-                                        <span>0.5 km (Rp 5.000)</span>
-                                        <span>5 km (Rp 12.500)</span>
-                                        <span>10 km (Rp 25.000)</span>
-                                        <span>15 km (Rp 37.500)</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Detail Alamat & Patokan -->
-                            <div>
-                                <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-1.5">
-                                    Detail Alamat &amp; Patokan Rumah (Terisi Otomatis dari GPS / Peta atau Edit Manual)
-                                </label>
-                                <textarea
-                                    name="alamat_pengantaran"
-                                    x-model="alamatPengantaran"
-                                    rows="2"
-                                    placeholder="Contoh: Jl. Ahmad Yani No. 12, pagar hijau sebelah minimarket"
-                                    class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 focus:outline-none"
-                                ></textarea>
                             </div>
                         </div>
                     </div>

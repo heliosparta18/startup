@@ -45,11 +45,11 @@
 
                     {{-- Category Title --}}
                     <div class="flex items-center gap-1">
-                        <span class="text-xs whitespace-nowrap tracking-tight transition-colors {{ $isActive ? 'font-extrabold text-[#0A231E]' : 'font-semibold text-slate-700 group-hover:text-emerald-800' }}">
+                        <span class="text-xs whitespace-nowrap tracking-tight transition-colors {{ $isActive ? 'font-extrabold text-emerald-700' : 'font-semibold text-slate-700 group-hover:text-emerald-800' }}">
                             {{ $cat['name'] }}
                         </span>
                         @if ($catCount > 0)
-                            <span class="text-[10px] font-bold px-1.5 py-0.2 rounded-full {{ $isActive ? 'bg-[#0A231E] text-[#D4F94E]' : 'bg-slate-100 text-slate-600' }}">
+                            <span class="text-[10px] font-bold px-1.5 py-0.2 rounded-full {{ $isActive ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-600' }}">
                                 {{ $catCount }}
                             </span>
                         @endif

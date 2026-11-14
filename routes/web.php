@@ -154,9 +154,11 @@ Route::middleware(['tenant'])->group(function () {
 
     Route::get('/pembayaran/{id}', [OrderTrackingController::class, 'payment'])->name('pembayaran.show');
     Route::get('/pesanan/{id}/pembayaran', [OrderTrackingController::class, 'payment'])->name('pesanan.pembayaran');
+    Route::post('/pesanan/{id}/cek-status', [OrderTrackingController::class, 'checkStatus'])->name('pesanan.cek-status');
     Route::post('/pesanan/{id}/batal', [OrderTrackingController::class, 'cancel'])->name('pesanan.cancel');
     Route::get('/lacak-pesanan/{id}', [OrderTrackingController::class, 'track'])->name('pesanan.track');
     Route::get('/pesanan/{id}/lacak', [OrderTrackingController::class, 'track'])->name('pesanan.lacak');
+    Route::get('/riwayat-pesanan', [OrderTrackingController::class, 'history'])->name('pesanan.riwayat');
 
     Route::get('/unggah-resep', fn () => redirect()->to(route('dashboard').'#unggah-resep'))
         ->name('resep.form');

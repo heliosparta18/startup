@@ -82,12 +82,12 @@
                                 :aria-expanded="sediaanOpen.toString()"
                                 aria-haspopup="listbox"
                                 aria-label="Filter bentuk sediaan"
-                                class="w-full sm:w-auto min-w-[190px] inline-flex items-center justify-between gap-2.5 px-3.5 py-2 rounded-xl border text-xs font-semibold transition-colors cursor-pointer min-h-[44px] shadow-2xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 {{ $sediaan ? 'border-emerald-700 bg-[#0A231E] text-[#D4F94E]' : 'border-slate-300 bg-white text-slate-800 hover:border-emerald-600' }}"
+                                class="w-full sm:w-auto min-w-[190px] inline-flex items-center justify-between gap-2.5 px-3.5 py-2 rounded-xl border text-xs font-semibold transition-colors cursor-pointer min-h-[44px] shadow-2xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 {{ $sediaan ? 'border-emerald-600 bg-emerald-600 text-white' : 'border-slate-300 bg-white text-slate-800 hover:border-emerald-600' }}"
                             >
                                 <span class="flex items-center gap-2 min-w-0 truncate">
-                                    {!! \App\Modules\Catalog\Support\GoApotikCatalogAssets::uiSvg('filter', 'w-3.5 h-3.5 shrink-0 ' . ($sediaan ? 'text-[#D4F94E]' : 'text-emerald-700')) !!}
+                                    {!! \App\Modules\Catalog\Support\GoApotikCatalogAssets::uiSvg('filter', 'w-3.5 h-3.5 shrink-0 ' . ($sediaan ? 'text-white' : 'text-emerald-700')) !!}
                                     <span class="truncate">
-                                        <span class="{{ $sediaan ? 'text-emerald-200 font-medium' : 'text-slate-500 font-medium' }}">Sediaan:</span>
+                                        <span class="{{ $sediaan ? 'text-emerald-100 font-medium' : 'text-slate-500 font-medium' }}">Sediaan:</span>
                                         <span class="capitalize font-bold">{{ $sediaan ?: 'Semua Sediaan' }}</span>
                                     </span>
                                 </span>
@@ -117,7 +117,7 @@
                                     aria-selected="{{ empty($sediaan) ? 'true' : 'false' }}"
                                     wire:click="filterSediaan('')"
                                     @click="sediaanOpen = false"
-                                    class="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs text-left transition-colors cursor-pointer min-h-[40px] {{ empty($sediaan) ? 'bg-[#0A231E] text-[#D4F94E] font-bold' : 'text-slate-700 hover:bg-slate-50 font-medium' }}"
+                                    class="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs text-left transition-colors cursor-pointer min-h-[40px] {{ empty($sediaan) ? 'bg-emerald-600 text-white font-bold' : 'text-slate-700 hover:bg-slate-50 font-medium' }}"
                                 >
                                     <span>Semua Sediaan</span>
                                     @if (empty($sediaan))
@@ -132,7 +132,7 @@
                                         aria-selected="{{ $sediaan === $jenis ? 'true' : 'false' }}"
                                         wire:click='filterSediaan(@json($jenis))'
                                         @click="sediaanOpen = false"
-                                        class="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs text-left capitalize transition-colors cursor-pointer min-h-[40px] {{ $sediaan === $jenis ? 'bg-[#0A231E] text-[#D4F94E] font-bold' : 'text-slate-700 hover:bg-slate-50 font-medium' }}"
+                                        class="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs text-left capitalize transition-colors cursor-pointer min-h-[40px] {{ $sediaan === $jenis ? 'bg-emerald-600 text-white font-bold' : 'text-slate-700 hover:bg-slate-50 font-medium' }}"
                                     >
                                         <span class="truncate">{{ $jenis }}</span>
                                         @if ($sediaan === $jenis)

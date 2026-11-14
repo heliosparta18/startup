@@ -172,17 +172,18 @@ new #[Title('Security settings')] class extends Component {
     <flux:heading class="sr-only">{{ __('Security settings') }}</flux:heading>
 
     <x-pages::settings.layout :heading="__('Update password')" :subheading="__('Ensure your account is using a long, random password to stay secure')">
-        <div class="my-6 rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
-            <div class="pb-6 border-b border-slate-100 dark:border-zinc-800 space-y-1">
-                <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+        <div class="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs">
+            <div class="pb-5 border-b border-slate-100 space-y-1">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-700">Keamanan Kata Sandi</span>
+                <h3 class="text-base sm:text-lg font-extrabold text-slate-900">
                     {{ __('Account Password') }}
                 </h3>
-                <p class="text-xs text-zinc-500 dark:text-zinc-400">
+                <p class="text-xs text-slate-500">
                     {{ __('Update the password associated with your OmniPharma account') }}
                 </p>
             </div>
 
-            <form method="POST" wire:submit="updatePassword" class="mt-6 space-y-6">
+            <form method="POST" wire:submit="updatePassword" class="mt-6 space-y-5">
                 <flux:input
                     wire:model="current_password"
                     :label="__('Current password')"
@@ -210,18 +211,16 @@ new #[Title('Security settings')] class extends Component {
                     viewable
                 />
 
-                <div class="flex items-center gap-4 pt-2">
-                    <div class="flex items-center justify-end w-full">
-                        <flux:button variant="primary" type="submit" class="w-full sm:w-auto px-6 font-semibold" data-test="update-password-button">
-                            {{ __('Save') }}
-                        </flux:button>
-                    </div>
+                <div class="flex items-center justify-end pt-4 border-t border-slate-100">
+                    <flux:button variant="primary" type="submit" class="w-full sm:w-auto px-7 font-bold rounded-xl bg-[#059669] hover:bg-[#047857] text-white" data-test="update-password-button">
+                        {{ __('Save') }}
+                    </flux:button>
                 </div>
             </form>
         </div>
 
         @if ($canManageTwoFactor)
-            <section class="mt-8 rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
+            <section class="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs">
                 <div class="pb-6 border-b border-slate-100 dark:border-zinc-800 space-y-1">
                     <flux:heading>{{ __('Two-factor authentication') }}</flux:heading>
                     <flux:subheading>{{ __('Manage your two-factor authentication settings') }}</flux:subheading>
@@ -268,7 +267,7 @@ new #[Title('Security settings')] class extends Component {
         @endif
 
         @if ($canManagePasskeys)
-            <section class="mt-8 rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
+            <section class="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs">
                 <div class="pb-6 border-b border-slate-100 dark:border-zinc-800 space-y-1">
                     <flux:heading>{{ __('Passkeys') }}</flux:heading>
                     <flux:subheading>{{ __('Manage your passkeys for passwordless sign-in') }}</flux:subheading>
