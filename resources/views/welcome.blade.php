@@ -272,8 +272,7 @@
                                         <p class="text-[11px] text-slate-500">Jaringan Apotek Berlisensi Resmi</p>
                                     </div>
                                 </div>
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/80">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/80">
                                     2 Cabang Aktif
                                 </span>
                             </div>
@@ -357,34 +356,13 @@
                         <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/90 px-2.5 py-1 rounded-md shrink-0">
                             Lisensi &amp; Regulasi:
                         </span>
-                        <span class="inline-flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            Kemenkes RI
-                        </span>
-                        <span class="inline-flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            BPOM
-                        </span>
-                        <span class="inline-flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            Ikatan Apoteker Indonesia (IAI)
-                        </span>
-                        <span class="inline-flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            Standar CDOB
-                        </span>
-                        <span class="inline-flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            Dinkes Banyuwangi
-                        </span>
-                        <span class="inline-flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            QRIS Bank Indonesia
-                        </span>
-                        <span class="inline-flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            Mitra PBF Resmi
-                        </span>
+                        <span>Kemenkes RI</span>
+                        <span>BPOM</span>
+                        <span>Ikatan Apoteker Indonesia (IAI)</span>
+                        <span>Standar CDOB</span>
+                        <span>Dinkes Banyuwangi</span>
+                        <span>QRIS Bank Indonesia</span>
+                        <span>Mitra PBF Resmi</span>
                     </div>
                 </div>
             </div>

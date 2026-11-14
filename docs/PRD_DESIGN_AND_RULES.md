@@ -19,6 +19,7 @@ Dokumen ini menjadi acuan mutlak dalam perancangan antarmuka OmniPharma Network.
 3. **Dilarang Menggunakan Karakter Em Dash:** Seluruh teks antarmuka dan dokumentasi tidak menggunakan karakter em dash. Gunakan tanda koma, titik dua, atau kurung sebagai pemisah klausa.
 4. **Dilarang Memadati Ruang (Anti-Claustrophobia):** Setiap kontainer wajib memiliki margin dan padding yang lega (minimum padding 24px hingga 32px pada desktop, 16px pada mobile).
 5. **Dilarang Elemen Interaktif Palsu (Dead Controls):** Setiap tombol, dropdown, tautan navigasi, dan input wajib memiliki aksi nyata, tujuan rute, atau modal terhubung.
+6. **Dilarang Menggunakan Titik Hijau Dekoratif (No AI Status Dots):** Hindari titik-titik kecil hijau/neon bulat (`rounded-full`) maupun animasi berkedip/ping (`animate-pulse` / `animate-ping`) pada badge, status, heading, kartu, tombol role, atau pill cabang yang bersifat dekoratif ala antarmuka AI generik. Pengecualian hanya berlaku untuk ikon klasifikasi resmi golongan obat BPOM/Permenkes RI (lingkaran hijau Obat Bebas, biru Obat Bebas Terbatas, dan merah huruf K Obat Keras).
 
 ### 1.2 Palet Warna Medis Terkurasi (Curated Clinical Palette)
 Palet dibatasi secara ketat pada 2 warna netral struktural dan 1 warna aksen medis utama:

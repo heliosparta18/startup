@@ -48,7 +48,6 @@
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
                 <div>
                     <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-emerald-200 border border-emerald-500/30">
-                        <span class="h-1.5 w-1.5 rounded-full bg-[#D4F94E]"></span>
                         Standar Permenkes RI No. 73/2016 • Operasional Apotek
                     </span>
 
@@ -324,12 +323,10 @@
                                 <td class="p-3">
                                     @if($curStatus === 'menunggu_verifikasi')
                                         <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-900 border border-amber-200">
-                                            <span class="h-1.5 w-1.5 rounded-full bg-amber-600 animate-pulse"></span>
                                             Menunggu Telaah
                                         </span>
                                     @elseif($curStatus === 'diproses')
                                         <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                                            <span class="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
                                             Diproses Apotek
                                         </span>
                                     @elseif($curStatus === 'siap_diambil')

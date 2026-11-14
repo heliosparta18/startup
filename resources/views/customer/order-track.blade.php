@@ -60,9 +60,9 @@
         class="max-w-5xl mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-8"
         x-data="window.omniOrderTrackerData(@js($trackerConfig))"
     >
-        <!-- Header & Stepper 4 Langkah (Seragam dengan Checkout & Pembayaran) -->
+        <!-- Header & Stepper 3 Langkah -->
         <div class="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 print:hidden">
-            <div>
+            <div class="min-w-0">
                 <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-1">
                     <a href="{{ route('dashboard') }}" class="hover:text-emerald-700 transition">Katalog Apotek</a>
                     <span>/</span>
@@ -78,21 +78,21 @@
                 </p>
             </div>
 
-            <div class="flex items-center gap-2 sm:gap-3 bg-white border border-slate-200 rounded-2xl px-3.5 py-2.5 shadow-2xs overflow-x-auto">
-                <span class="flex items-center gap-1.5 text-xs font-bold text-emerald-700 shrink-0">
-                    <span class="h-5 w-5 rounded-full bg-emerald-100 text-emerald-800 inline-flex items-center justify-center text-[11px] font-black">✓</span>
+            <div class="inline-flex flex-wrap sm:flex-nowrap items-center gap-x-2.5 gap-y-1.5 sm:gap-3 bg-white border border-slate-200 rounded-2xl px-3.5 py-2.5 shadow-2xs shrink-0 self-start lg:self-auto">
+                <span class="flex items-center gap-1.5 text-xs font-bold text-emerald-700 shrink-0 whitespace-nowrap">
+                    <span class="h-5 w-5 rounded-full bg-emerald-100 text-emerald-800 inline-flex items-center justify-center text-[11px] font-black shrink-0">✓</span>
                     <span>Checkout</span>
                 </span>
-                <span class="text-slate-300 text-xs">/</span>
-                <span class="flex items-center gap-1.5 text-xs font-bold {{ $isPaid ? 'text-emerald-700' : 'text-amber-700' }} shrink-0">
-                    <span class="h-5 w-5 rounded-full {{ $isPaid ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800' }} inline-flex items-center justify-center text-[11px] font-black">
+                <span class="text-slate-300 text-xs shrink-0">/</span>
+                <span class="flex items-center gap-1.5 text-xs font-bold {{ $isPaid ? 'text-emerald-700' : 'text-amber-700' }} shrink-0 whitespace-nowrap">
+                    <span class="h-5 w-5 rounded-full {{ $isPaid ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800' }} inline-flex items-center justify-center text-[11px] font-black shrink-0">
                         {{ $isPaid ? '✓' : '2' }}
                     </span>
                     <span>Bayar QRIS</span>
                 </span>
-                <span class="text-slate-300 text-xs">/</span>
-                <div class="flex items-center gap-1.5 text-xs font-extrabold text-slate-900 shrink-0">
-                    <span class="h-5 w-5 rounded-full bg-emerald-600 text-white inline-flex items-center justify-center text-[11px] font-black">3</span>
+                <span class="text-slate-300 text-xs shrink-0">/</span>
+                <div class="flex items-center gap-1.5 text-xs font-extrabold text-slate-900 shrink-0 whitespace-nowrap">
+                    <span class="h-5 w-5 rounded-full bg-emerald-600 text-white inline-flex items-center justify-center text-[11px] font-black shrink-0">3</span>
                     <span>Invoice &amp; Lacak</span>
                 </div>
             </div>
@@ -196,11 +196,8 @@
                         </template>
                     </div>
 
-                    <div class="mt-5 bg-emerald-50 border border-emerald-200 rounded-2xl p-3.5 flex items-start sm:items-center gap-3 text-xs text-emerald-900">
-                        <span class="relative flex h-2.5 w-2.5 shrink-0 mt-1 sm:mt-0">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-600"></span>
-                        </span>
+                    <div class="mt-5 bg-emerald-50 border border-emerald-200 rounded-2xl p-3.5 flex items-start sm:items-center gap-2.5 text-xs text-emerald-900">
+                        <svg class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5 sm:mt-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         <span class="leading-relaxed font-medium">Pembaruan status real-time aktif. Halaman ini otomatis terupdate saat apoteker memproses atau mengirim pesanan Anda.</span>
                     </div>
                 </div>
@@ -356,7 +353,7 @@
 
                     <div class="grid grid-cols-2 gap-2">
                         <a href="{{ route('dashboard') }}" class="inline-flex items-center justify-center min-h-[42px] py-2.5 px-3 bg-[#059669] hover:bg-[#047857] text-white font-bold rounded-xl text-xs transition text-center">
-                            Kembali ke Katalog Obat
+                            Kembali
                         </a>
                         <a href="{{ $cartUrl }}" class="inline-flex items-center justify-center min-h-[42px] py-2.5 px-3 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-xs transition text-center">
                             Lihat Keranjang

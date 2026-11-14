@@ -22,7 +22,6 @@
                 <div>
                     <div class="flex flex-wrap items-center gap-2">
                         <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-emerald-200 border border-emerald-500/30">
-                            <span class="h-1.5 w-1.5 rounded-full bg-[#D4F94E]"></span>
                             Standar Permenkes RI No. 73/2016
                         </span>
                         <span class="px-2.5 py-1 rounded-full text-[11px] font-mono font-bold bg-white/10 text-[#D4F94E] border border-white/15">
@@ -45,7 +44,6 @@
                             Kode Cabang: {{ $clientModel->slug ?? $clientModel->id_client }}
                         </span>
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-[#D4F94E] font-bold">
-                            <span class="w-2 h-2 rounded-full bg-[#D4F94E] animate-pulse"></span>
                             Operasional Aktif
                         </span>
                     </div>
@@ -193,7 +191,6 @@
                     <p class="text-xs text-slate-500 mt-0.5">Seluruh tenaga kefarmasian yang memiliki penugasan legal pada cabang ini</p>
                 </div>
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
                     Total: {{ count($staff) }} Staf
                 </span>
             </div>
@@ -221,7 +218,6 @@
                                 <td class="py-3.5 px-4 text-slate-500 whitespace-nowrap">{{ $item->ditugaskan_dari ? \Carbon\Carbon::parse($item->ditugaskan_dari)->format('d M Y') : '-' }}</td>
                                 <td class="py-3.5 px-4 whitespace-nowrap text-right">
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">
-                                        <span class="h-1.5 w-1.5 rounded-full bg-emerald-600"></span>
                                         Aktif Terdaftar
                                     </span>
                                 </td>

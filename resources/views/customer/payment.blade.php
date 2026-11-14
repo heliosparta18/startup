@@ -230,7 +230,7 @@
     >
         <!-- Header & Stepper 3 Langkah -->
         <div class="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div>
+            <div class="min-w-0">
                 <span class="text-xs font-semibold text-slate-500">{{ $branchDisplayName }}</span>
                 <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Pembayaran QRIS</h1>
                 <p class="text-xs sm:text-sm text-slate-500 mt-1">
@@ -238,19 +238,19 @@
                 </p>
             </div>
 
-            <div class="flex items-center gap-2 sm:gap-3 bg-white border border-slate-200 rounded-2xl px-3.5 py-2.5 shadow-2xs overflow-x-auto">
-                <span class="flex items-center gap-1.5 text-xs font-bold text-emerald-700 shrink-0">
-                    <span class="h-5 w-5 rounded-full bg-emerald-100 text-emerald-800 inline-flex items-center justify-center text-[11px] font-black">✓</span>
+            <div class="inline-flex flex-wrap sm:flex-nowrap items-center gap-x-2.5 gap-y-1.5 sm:gap-3 bg-white border border-slate-200 rounded-2xl px-3.5 py-2.5 shadow-2xs shrink-0 self-start lg:self-auto">
+                <span class="flex items-center gap-1.5 text-xs font-bold text-emerald-700 shrink-0 whitespace-nowrap">
+                    <span class="h-5 w-5 rounded-full bg-emerald-100 text-emerald-800 inline-flex items-center justify-center text-[11px] font-black shrink-0">✓</span>
                     <span>Keranjang</span>
                 </span>
-                <span class="text-slate-300 text-xs">/</span>
-                <span class="flex items-center gap-1.5 text-xs font-bold text-emerald-700 shrink-0">
-                    <span class="h-5 w-5 rounded-full bg-emerald-100 text-emerald-800 inline-flex items-center justify-center text-[11px] font-black">✓</span>
+                <span class="text-slate-300 text-xs shrink-0">/</span>
+                <span class="flex items-center gap-1.5 text-xs font-bold text-emerald-700 shrink-0 whitespace-nowrap">
+                    <span class="h-5 w-5 rounded-full bg-emerald-100 text-emerald-800 inline-flex items-center justify-center text-[11px] font-black shrink-0">✓</span>
                     <span>Checkout</span>
                 </span>
-                <span class="text-slate-300 text-xs">/</span>
-                <div class="flex items-center gap-1.5 text-xs font-extrabold text-slate-900 shrink-0">
-                    <span class="h-5 w-5 rounded-full bg-emerald-600 text-white inline-flex items-center justify-center text-[11px] font-black">3</span>
+                <span class="text-slate-300 text-xs shrink-0">/</span>
+                <div class="flex items-center gap-1.5 text-xs font-extrabold text-slate-900 shrink-0 whitespace-nowrap">
+                    <span class="h-5 w-5 rounded-full bg-emerald-600 text-white inline-flex items-center justify-center text-[11px] font-black shrink-0">3</span>
                     <span>Bayar QRIS</span>
                 </div>
             </div>

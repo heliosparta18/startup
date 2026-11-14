@@ -25,7 +25,6 @@
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
                 <div>
                     <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-emerald-200 border border-emerald-500/30">
-                        <span class="h-1.5 w-1.5 rounded-full bg-[#D4F94E]"></span>
                         Standar Permenkes RI No. 73/2016 • Skrining Resep Dokter
                     </span>
 
@@ -39,7 +38,6 @@
 
                 <div class="shrink-0">
                     <span class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-[#D4F94E] font-bold text-xs backdrop-blur-xs">
-                        <span class="w-2 h-2 rounded-full bg-[#D4F94E] animate-pulse"></span>
                         {{ count($resepPending) }} Resep Menunggu
                     </span>
                 </div>
@@ -79,7 +77,6 @@
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
                         <div>
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-900 border border-amber-200">
-                                <span class="h-1.5 w-1.5 rounded-full bg-amber-600 animate-pulse"></span>
                                 Menunggu Telaah Apoteker
                             </span>
                             <h2 class="text-lg sm:text-xl font-extrabold text-slate-900 mt-2">

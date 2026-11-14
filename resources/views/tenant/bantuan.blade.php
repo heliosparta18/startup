@@ -20,7 +20,6 @@
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
                 <div>
                     <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-emerald-200 border border-emerald-500/30">
-                        <span class="h-1.5 w-1.5 rounded-full bg-[#D4F94E]"></span>
                         Standar Pelayanan Kefarmasian Resmi
                     </span>
 
@@ -34,7 +33,6 @@
 
                 <div class="shrink-0">
                     <span class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-[#D4F94E] font-bold text-xs backdrop-blur-xs">
-                        <span class="w-2 h-2 rounded-full bg-[#D4F94E] animate-pulse"></span>
                         SOP-FARMASI-v2.4
                     </span>
                 </div>

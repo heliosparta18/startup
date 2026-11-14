@@ -1033,7 +1033,7 @@
                                 <button
                                     type="button"
                                     @click="activeSlide = {{ $idx }}"
-                                    :class="activeSlide === {{ $idx }} ? 'w-5 bg-emerald-400' : 'w-2 bg-white/75 hover:bg-white'"
+                                    :class="activeSlide === {{ $idx }} ? 'w-5 bg-white' : 'w-2 bg-white/60 hover:bg-white'"
                                     class="h-2 rounded-full transition-all duration-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-white"
                                     aria-label="Tampilkan banner {{ $idx + 1 }}"
                                 ></button>

@@ -257,7 +257,6 @@
                     >
                         <div class="flex items-center justify-between gap-1">
                             <span class="text-[11px] font-bold truncate">Pasien Demo</span>
-                            <span x-show="selectedRole === 'pelanggan'" class="h-1.5 w-1.5 rounded-full bg-emerald-600 shrink-0"></span>
                         </div>
                         <span class="text-[9px] text-slate-500 truncate">gunturafandy5@gmail.com</span>
                     </button>
@@ -271,7 +270,6 @@
                     >
                         <div class="flex items-center justify-between gap-1">
                             <span class="text-[11px] font-bold truncate">Super Admin</span>
-                            <span x-show="selectedRole === 'super_admin'" class="h-1.5 w-1.5 rounded-full bg-emerald-600 shrink-0"></span>
                         </div>
                         <span class="text-[9px] text-slate-500 truncate">daffa@omnipharma.test</span>
                     </button>
@@ -285,7 +283,6 @@
                     >
                         <div class="flex items-center justify-between gap-1">
                             <span class="text-[11px] font-bold truncate">Apoteker BWI</span>
-                            <span x-show="selectedRole === 'apt_bwi'" class="h-1.5 w-1.5 rounded-full bg-emerald-600 shrink-0"></span>
                         </div>
                         <span class="text-[9px] text-slate-500 truncate">bambang@omnipharma.test</span>
                     </button>
@@ -299,7 +296,6 @@
                     >
                         <div class="flex items-center justify-between gap-1">
                             <span class="text-[11px] font-bold truncate">Apoteker RGO</span>
-                            <span x-show="selectedRole === 'apt_rogo'" class="h-1.5 w-1.5 rounded-full bg-emerald-600 shrink-0"></span>
                         </div>
                         <span class="text-[9px] text-slate-500 truncate">dinda@omnipharma.test</span>
                     </button>
@@ -313,7 +309,6 @@
                     >
                         <div class="flex items-center justify-between gap-1">
                             <span class="text-[11px] font-bold truncate">Kasir BWI</span>
-                            <span x-show="selectedRole === 'kasir_bwi'" class="h-1.5 w-1.5 rounded-full bg-emerald-600 shrink-0"></span>
                         </div>
                         <span class="text-[9px] text-slate-500 truncate">kasir.bwi@omnipharma.test</span>
                     </button>

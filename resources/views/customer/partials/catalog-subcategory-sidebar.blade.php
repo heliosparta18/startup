@@ -61,7 +61,9 @@
             >
                 <span class="flex items-center gap-2.5 min-w-0">
                     <span class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 {{ empty($subKategoriAktif) ? 'bg-white text-emerald-700' : 'bg-[#F0F7FF] text-emerald-800' }}" aria-hidden="true">
-                        <span class="w-2.5 h-2.5 rounded-full {{ empty($subKategoriAktif) ? 'bg-emerald-700' : 'bg-emerald-700/60' }}"></span>
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                        </svg>
                     </span>
                     <span class="truncate">Semua {{ $kategoriAktif ?: 'Produk' }}</span>
                 </span>

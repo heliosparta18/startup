@@ -104,7 +104,6 @@
             </nav>
 
             <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-900 border border-emerald-200 shrink-0">
-                <span class="w-2 h-2 rounded-full bg-emerald-500" aria-hidden="true"></span>
                 <span>Gerai Aktif: {{ $branchTitle }}</span>
             </span>
         </div>

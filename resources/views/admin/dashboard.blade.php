@@ -63,7 +63,6 @@
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
                 <div>
                     <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-emerald-200 border border-emerald-500/30">
-                        <span class="h-1.5 w-1.5 rounded-full bg-[#D4F94E]"></span>
                         Standar Permenkes RI No. 73/2016 • Konsolidasi Multi-Cabang
                     </span>
 
@@ -151,7 +150,6 @@
                 <div>
                     <div class="flex items-center gap-2">
                         <span class="text-[10px] font-bold uppercase tracking-wider text-[#D4F94E]">Live Feed Antrean &amp; Peracikan Farmasi</span>
-                        <span class="h-1.5 w-1.5 rounded-full bg-[#D4F94E] animate-ping"></span>
                     </div>
                     <h2 class="text-base font-bold text-white mt-0.5">Pantau Obat yang Sedang Diproses &amp; Antrean Berjalan</h2>
                     <p class="text-xs text-zinc-300">Lihat status penyiapan obat dan antrean aktif pasien di seluruh cabang apotek secara transparan.</p>

@@ -46,8 +46,7 @@
         <div class="rounded-3xl bg-white text-slate-900 p-6 sm:p-8 lg:p-10 shadow-xs border border-slate-200 relative overflow-hidden">
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
                 <div>
-                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        <span class="h-1.5 w-1.5 rounded-full bg-emerald-600"></span>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                         Standar Permenkes RI No. 73/2016 • SIA &amp; SIP Terverifikasi
                     </span>
 
@@ -60,8 +59,7 @@
                 </div>
 
                 <div class="shrink-0 flex items-center gap-2">
-                    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold text-xs">
-                        <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+                    <span class="inline-flex items-center px-4 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold text-xs">
                         Loket Cabang Buka
                     </span>
                 </div>
@@ -160,13 +158,11 @@
                         <!-- Header Card: Badge Resep & Stok -->
                         <div class="flex items-center justify-between gap-2">
                             @if($isResep)
-                                <span class="inline-flex items-center gap-1.5 rounded-full bg-rose-50 px-2.5 py-1 text-[11px] font-bold text-rose-700 border border-rose-200">
-                                    <span class="h-1.5 w-1.5 rounded-full bg-rose-600"></span>
+                                <span class="inline-flex items-center rounded-full bg-rose-50 px-2.5 py-1 text-[11px] font-bold text-rose-700 border border-rose-200">
                                     Wajib Resep Dokter
                                 </span>
                             @else
-                                <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-800 border border-emerald-200">
-                                    <span class="h-1.5 w-1.5 rounded-full bg-emerald-600"></span>
+                                <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-800 border border-emerald-200">
                                     Obat Bebas
                                 </span>
                             @endif

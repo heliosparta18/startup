@@ -20,7 +20,6 @@
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
                 <div>
                     <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-emerald-200 border border-emerald-500/30">
-                        <span class="h-1.5 w-1.5 rounded-full bg-[#D4F94E]"></span>
                         Standar Permenkes RI No. 73/2016 • Pengawasan Eksekutif
                     </span>
 
@@ -34,7 +33,6 @@
 
                 <div class="shrink-0 flex items-center gap-2">
                     <span class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-[#D4F94E] font-bold text-xs backdrop-blur-xs">
-                        <span class="w-2 h-2 rounded-full bg-[#D4F94E] animate-ping"></span>
                         Monitoring Aktif Live
                     </span>
                 </div>
@@ -173,7 +171,6 @@
                                 <td class="p-3.5">
                                     @if($status === 'diproses')
                                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                                            <span class="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
                                             Diproses Apotek
                                         </span>
                                     @elseif($status === 'siap_diambil')
@@ -196,7 +193,6 @@
                                 </td>
                                 <td class="p-3.5">
                                     <div class="flex items-center gap-1.5">
-                                        <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
                                         <span class="font-bold text-slate-800">Loket: {{ $branchQueue }}</span>
                                     </div>
                                     <div class="text-[10px] text-slate-400">Sedang melayani di cabang</div>

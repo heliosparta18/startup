@@ -20,7 +20,6 @@
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
                 <div>
                     <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-emerald-200 border border-emerald-500/30">
-                        <span class="h-1.5 w-1.5 rounded-full bg-[#D4F94E]"></span>
                         Standar Permenkes RI No. 73/2016 • Finansial Kasir
                     </span>
 
@@ -34,7 +33,6 @@
 
                 <div class="shrink-0">
                     <span class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-[#D4F94E] font-bold text-xs backdrop-blur-xs">
-                        <span class="w-2 h-2 rounded-full bg-[#D4F94E] animate-pulse"></span>
                         Ledger Terverifikasi Real-Time
                     </span>
                 </div>
@@ -68,7 +66,6 @@
                     <p class="text-xs text-slate-500 mt-0.5">Sinkronisasi real-time via webhook settlement perbankan &amp; kasir offline</p>
                 </div>
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
                     {{ $pembayarans->count() }} Data Pembayaran
                 </span>
             </div>
@@ -98,7 +95,7 @@
                                 <td class="p-3.5 font-black text-slate-900">Rp {{ number_format((float) ($bayar->jumlah ?? 0), 0, ',', '.') }}</td>
                                 <td class="p-3.5">
                                     <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full">
-                                        <span class="h-1.5 w-1.5 rounded-full bg-emerald-600"></span> Lunas
+                                        Lunas
                                     </span>
                                 </td>
                                 <td class="p-3.5 text-slate-500 font-mono text-right">{{ $bayar->dibuat_pada ? \Carbon\Carbon::parse($bayar->dibuat_pada)->format('d M Y, H:i') : '-' }} WIB</td>

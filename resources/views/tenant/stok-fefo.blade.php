@@ -25,7 +25,6 @@
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
                 <div>
                     <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-emerald-200 border border-emerald-500/30">
-                        <span class="h-1.5 w-1.5 rounded-full bg-[#D4F94E]"></span>
                         Standar Permenkes RI No. 73/2016 • Rotasi Mutu FEFO
                     </span>
 
@@ -39,7 +38,6 @@
 
                 <div class="shrink-0 flex items-center gap-2">
                     <span class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-[#D4F94E] font-bold text-xs backdrop-blur-xs">
-                        <span class="w-2 h-2 rounded-full bg-[#D4F94E] animate-pulse"></span>
                         Rotasi Otomatis Aktif
                     </span>
                 </div>
@@ -97,7 +95,6 @@
                     <p class="text-xs text-slate-500 mt-0.5">Disortir berdasarkan <code class="font-mono text-emerald-800 font-bold">tanggal_kadaluarsa ASC</code> sesuai regulasi kefarmasian</p>
                 </div>
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
                     Total {{ $fefoBatches->count() }} Batch Terdata
                 </span>
             </div>

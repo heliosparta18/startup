@@ -20,7 +20,6 @@
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
                 <div>
                     <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-emerald-200 border border-emerald-500/30">
-                        <span class="h-1.5 w-1.5 rounded-full bg-[#D4F94E]"></span>
                         Konfigurasi Multi-Tenant Cabang
                     </span>
 
@@ -34,7 +33,6 @@
 
                 <div class="shrink-0">
                     <span class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-[#D4F94E] font-bold text-xs backdrop-blur-xs">
-                        <span class="w-2 h-2 rounded-full bg-[#D4F94E] animate-pulse"></span>
                         {{ count($clients) }} Cabang Terhubung
                     </span>
                 </div>
@@ -59,7 +57,6 @@
                                 <h3 class="text-lg font-extrabold text-slate-900">{{ $c->nama_client }}</h3>
                             </div>
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold {{ $c->aktif ? 'bg-emerald-50 text-emerald-900 border border-emerald-200' : 'bg-slate-100 text-slate-600' }}">
-                                <span class="w-1.5 h-1.5 rounded-full {{ $c->aktif ? 'bg-emerald-600' : 'bg-slate-400' }}"></span>
                                 {{ $c->aktif ? 'Beroperasi' : 'Tutup Sementara' }}
                             </span>
                         </div>

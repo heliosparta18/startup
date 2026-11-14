@@ -20,7 +20,6 @@
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
                 <div>
                     <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-emerald-200 border border-emerald-500/30">
-                        <span class="h-1.5 w-1.5 rounded-full bg-[#D4F94E]"></span>
                         Rekam Medis Farmasi Digital
                     </span>
 
@@ -34,7 +33,6 @@
 
                 <div class="shrink-0">
                     <span class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-[#D4F94E] font-bold text-xs backdrop-blur-xs">
-                        <span class="w-2 h-2 rounded-full bg-[#D4F94E] animate-pulse"></span>
                         {{ count($pasiens ?? []) }} Pasien Terdaftar
                     </span>
                 </div>
@@ -49,7 +47,6 @@
                     <p class="text-xs text-slate-500 mt-0.5">Kerahasiaan data pasien terlindungi standar etika kefarmasian</p>
                 </div>
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
                     Total: {{ count($pasiens ?? []) }} Data
                 </span>
             </div>
@@ -85,7 +82,7 @@
                                 </td>
                                 <td class="p-3.5 text-right">
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">
-                                        <span class="h-1.5 w-1.5 rounded-full bg-emerald-600"></span> Aktif
+                                        Aktif
                                     </span>
                                 </td>
                             </tr>

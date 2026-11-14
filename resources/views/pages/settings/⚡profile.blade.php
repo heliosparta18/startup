@@ -89,8 +89,7 @@ new #[Title('Profile settings')] class extends Component {
                     </p>
                 </div>
                 @if (! $this->hasUnverifiedEmail)
-                    <div class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-800 border border-emerald-200">
-                        <span class="size-2 rounded-full bg-emerald-600"></span>
+                    <div class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-800 border border-emerald-200">
                         {{ __('Verified') }}
                     </div>
                 @endif

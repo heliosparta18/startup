@@ -170,31 +170,30 @@
             </nav>
 
             <span class="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold px-3 py-1.5 bg-emerald-50 text-emerald-900 rounded-full border border-emerald-200 shrink-0">
-                <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
                 <span>{{ $branchDisplayName }}</span>
             </span>
         </div>
 
         <!-- Header & Stepper 3 Langkah -->
         <div class="mb-6 sm:mb-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div>
+            <div class="min-w-0">
                 <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Konfirmasi Pesanan &amp; Pengiriman</h1>
                 <p class="text-xs sm:text-sm text-slate-500 mt-1">Pilih ambil di apotek atau pengantaran kurir dengan mengisi alamat dan menempel link lokasi Google Maps Anda.</p>
             </div>
 
-            <div class="flex items-center gap-2 sm:gap-3 bg-white border border-slate-200 rounded-2xl px-3.5 py-2.5 shadow-2xs overflow-x-auto">
-                <a href="{{ \Illuminate\Support\Facades\Route::has('keranjang') ? route('keranjang') : route('customer.cart', ['client' => $client]) }}" class="flex items-center gap-1.5 text-xs font-bold text-emerald-700 shrink-0 hover:underline">
-                    <span class="h-5 w-5 rounded-full bg-emerald-100 text-emerald-800 inline-flex items-center justify-center text-[11px] font-black">&#10003;</span>
+            <div class="inline-flex flex-wrap sm:flex-nowrap items-center gap-x-2.5 gap-y-1.5 sm:gap-3 bg-white border border-slate-200 rounded-2xl px-3.5 py-2.5 shadow-2xs shrink-0 self-start lg:self-auto">
+                <a href="{{ \Illuminate\Support\Facades\Route::has('keranjang') ? route('keranjang') : route('customer.cart', ['client' => $client]) }}" class="flex items-center gap-1.5 text-xs font-bold text-emerald-700 shrink-0 whitespace-nowrap hover:underline">
+                    <span class="h-5 w-5 rounded-full bg-emerald-100 text-emerald-800 inline-flex items-center justify-center text-[11px] font-black shrink-0">&#10003;</span>
                     <span>Keranjang</span>
                 </a>
-                <span class="text-slate-300 text-xs">/</span>
-                <div class="flex items-center gap-1.5 text-xs font-extrabold text-slate-900 shrink-0">
-                    <span class="h-5 w-5 rounded-full bg-emerald-600 text-white inline-flex items-center justify-center text-[11px] font-black">2</span>
+                <span class="text-slate-300 text-xs shrink-0">/</span>
+                <div class="flex items-center gap-1.5 text-xs font-extrabold text-slate-900 shrink-0 whitespace-nowrap">
+                    <span class="h-5 w-5 rounded-full bg-emerald-600 text-white inline-flex items-center justify-center text-[11px] font-black shrink-0">2</span>
                     <span>Checkout</span>
                 </div>
-                <span class="text-slate-300 text-xs">/</span>
-                <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-400 shrink-0">
-                    <span class="h-5 w-5 rounded-full bg-slate-100 text-slate-500 inline-flex items-center justify-center text-[11px] font-bold">3</span>
+                <span class="text-slate-300 text-xs shrink-0">/</span>
+                <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-400 shrink-0 whitespace-nowrap">
+                    <span class="h-5 w-5 rounded-full bg-slate-100 text-slate-500 inline-flex items-center justify-center text-[11px] font-bold shrink-0">3</span>
                     <span>Bayar QRIS</span>
                 </div>
             </div>
