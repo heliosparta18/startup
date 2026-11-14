@@ -8,6 +8,7 @@ use App\Modules\Ordering\Actions\CancelOrderAction;
 use App\Modules\Payments\Contracts\PaymentGatewayInterface;
 use App\Support\Tenant\TenantContext;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
@@ -18,7 +19,7 @@ class OrderTrackingController extends Controller
      */
     public function payment(string $client, string $id, PaymentGatewayInterface $gateway, TenantContext $tenantContext): View
     {
-        $pesanan = Pesanan::withoutTenancy()->with(['items', 'pembayaran'])->find($id);
+        $pesanan = Pesanan::withoutTenancy()->with(['items.obat.kategori', 'pembayaran', 'client'])->find($id);
 
         if (! $pesanan || $pesanan->id_client !== $tenantContext->id()) {
             abort(404, 'Pesanan tidak ditemukan pada cabang apotek ini.');
@@ -36,7 +37,7 @@ class OrderTrackingController extends Controller
     /**
      * Batalkan pesanan yang belum lunas dan kembalikan stok fisik ke cabang.
      */
-    public function cancel(string $client, string $id, CancelOrderAction $cancelOrderAction, TenantContext $tenantContext): RedirectResponse
+    public function cancel(string $client, string $id, Request $request, CancelOrderAction $cancelOrderAction, TenantContext $tenantContext): RedirectResponse
     {
         $pesanan = Pesanan::withoutTenancy()->with('items')->find($id);
 
@@ -46,8 +47,11 @@ class OrderTrackingController extends Controller
 
         $cancelOrderAction->execute($pesanan, 'Dibatalkan oleh pelanggan');
 
-        return redirect()->route('customer.order.payment', ['client' => $client, 'id' => $pesanan->id_pesanan])
-            ->with('status', 'Pesanan berhasil dibatalkan dan stok telah dikembalikan ke cabang.');
+        $redirect = $request->is('klien/*')
+            ? redirect()->route('customer.order.payment', ['client' => $client, 'id' => $pesanan->id_pesanan])
+            : redirect()->route('pembayaran.show', ['id' => $pesanan->id_pesanan]);
+
+        return $redirect->with('status', 'Pesanan berhasil dibatalkan dan stok telah dikembalikan ke cabang.');
     }
 
     /**
@@ -55,7 +59,7 @@ class OrderTrackingController extends Controller
      */
     public function track(string $client, string $id, TenantContext $tenantContext): View
     {
-        $pesanan = Pesanan::withoutTenancy()->with(['items', 'pembayaran'])->find($id);
+        $pesanan = Pesanan::withoutTenancy()->with(['items.obat.kategori', 'pembayaran', 'client'])->find($id);
 
         if (! $pesanan || $pesanan->id_client !== $tenantContext->id()) {
             abort(404, 'Pesanan tidak ditemukan pada cabang apotek ini.');

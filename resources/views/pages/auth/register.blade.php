@@ -482,7 +482,7 @@
 
                         if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.registerWithEmail === 'function') {
                             try {
-                                await window.OmniFirebaseAuth.registerWithEmail(this.username, this.email, this.password);
+                                await window.OmniFirebaseAuth.registerWithEmail(this.username, this.email, this.password, { syncSession: false });
                             } catch (fbErr) {
                                 console.warn('Firebase registration sync note:', fbErr);
                             }

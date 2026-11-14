@@ -193,13 +193,17 @@ export async function loginWithGoogle() {
 }
 
 // Handler: Registrasi Akun Baru dengan Firebase
-export async function registerWithEmail(name, email, password) {
+export async function registerWithEmail(name, email, password, options = {}) {
     const userCredential = await createUserWithEmailAndPassword(auth, email.trim(), password);
     const user = userCredential.user;
 
     // Perbarui display name di Firebase
     if (name) {
         await updateProfile(user, { displayName: name });
+    }
+
+    if (options && options.syncSession === false) {
+        return { user, session: null };
     }
 
     // Sinkronkan akun baru ke backend

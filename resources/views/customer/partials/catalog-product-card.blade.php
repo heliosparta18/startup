@@ -1,126 +1,120 @@
-{{-- Product Card (GoApotik Authentic Layout, Antislop R-02, R-03 Compliant) --}}
+{{-- Product Card (GoApotik Regulatory SVG Badges, Prescription CTA & Clean White Surface) --}}
 @php
     $badgeStatus = $obat->badge_status ?? '';
     $isKeras = str_contains(strtolower($badgeStatus), 'keras') || ($obat->kategori->wajib_resep ?? false);
-    $isBebasTerbatas = str_contains(strtolower($badgeStatus), 'terbatas') || str_contains(strtolower($obat->kategori->nama_kategori ?? ''), 'terbatas');
-    $isBebas = str_contains(strtolower($badgeStatus), 'bebas') && ! $isBebasTerbatas;
+    $drugBadge = \App\Modules\Catalog\Support\GoApotikCatalogAssets::drugClassBadge(
+        $badgeStatus,
+        (bool) ($obat->kategori->wajib_resep ?? false),
+        $obat->kategori->nama_kategori ?? null
+    );
     $urlGambar = $obat->url_gambar ?: asset('images/placeholder-product.svg');
     $namaObat = $obat->nama_obat;
     $isAvailableHere = $obat->isAvailableInBranch($client);
     $altBranch = ! $isAvailableHere ? $obat->getAlternativeAvailableBranch($client) : null;
 @endphp
 
-<div class="bg-white rounded-xl border border-slate-200/90 p-2.5 sm:p-3.5 flex flex-col justify-between hover:border-emerald-500 hover:shadow-md transition-all duration-200 relative group">
-    {{-- BPOM Official Regulatory Badge (Top Right) --}}
-    <div class="absolute top-2.5 right-2.5 z-10">
-        @if ($isKeras)
-            <div class="w-5 h-5 rounded-full bg-rose-600 border border-black flex items-center justify-center text-white font-extrabold text-[10px] shadow-2xs" title="Obat Keras (Wajib Resep)">
-                K
-            </div>
-        @elseif ($isBebasTerbatas)
-            <div class="w-5 h-5 rounded-full bg-sky-600 border border-black flex items-center justify-center text-white font-bold text-[9px] shadow-2xs" title="Obat Bebas Terbatas">
-                <span class="w-2.5 h-2.5 rounded-full bg-sky-500 border border-white"></span>
-            </div>
-        @elseif ($isBebas)
-            <div class="w-5 h-5 rounded-full bg-emerald-600 border border-black flex items-center justify-center text-white font-bold text-[9px] shadow-2xs" title="Obat Bebas">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 border border-white"></span>
-            </div>
-        @elseif ($badgeStatus)
-            <span class="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                {{ $badgeStatus }}
-            </span>
-        @endif
+<div class="bg-white rounded-2xl border border-slate-200/90 p-2.5 sm:p-3.5 flex flex-col justify-between hover:border-emerald-700/60 hover:shadow-sm transition-all relative min-w-0">
+    {{-- Official GoApotik Drug Class SVG Badge (Top Right) --}}
+    <div class="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 z-10" title="{{ $drugBadge['title'] }}">
+        <img
+            src="{{ $drugBadge['svg_url'] }}"
+            alt="{{ $drugBadge['title'] }}"
+            title="{{ $drugBadge['title'] }}"
+            class="w-6 h-6 rounded-full object-contain shadow-2xs bg-white"
+            loading="lazy"
+            onerror="this.style.display='none';this.nextElementSibling.classList.remove('hidden');"
+        />
+        <span class="hidden w-6 h-6 rounded-full {{ $isKeras ? 'bg-rose-700 text-white' : 'bg-emerald-700 text-white' }} border border-slate-900 flex items-center justify-center font-extrabold text-[11px]" title="{{ $drugBadge['title'] }}">
+            {{ $drugBadge['label'] }}
+        </span>
     </div>
 
     <div>
-        {{-- Product Packshot Image Container with Safe Fallback --}}
-        <a href="{{ route('customer.obat.detail', ['client' => $client, 'id' => $obat->id_obat]) }}" class="block aspect-square w-full rounded-lg bg-slate-50/50 p-2 overflow-hidden mb-2 relative group-hover:bg-slate-50 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500">
+        {{-- Product Packshot Image Container --}}
+        <a
+            href="{{ \Illuminate\Support\Facades\Route::has('obat.show') ? route('obat.show', ['id' => $obat->slug ?: $obat->id_obat]) : route('customer.obat.detail', ['client' => $client, 'id' => $obat->id_obat]) }}"
+            class="block aspect-square w-full rounded-xl bg-slate-50/80 border border-slate-100 p-2.5 overflow-hidden mb-2.5 relative focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+        >
             <img
                 src="{{ $urlGambar }}"
                 alt="{{ $namaObat }}"
-                class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200"
+                class="w-full h-full object-contain transition-transform duration-200 hover:scale-105"
                 loading="lazy"
                 onerror="this.onerror=null;this.src='{{ asset('images/placeholder-product.svg') }}';"
             />
-            {{-- GoApotik Style Micro-Watermark --}}
-            <div class="absolute bottom-1 left-2 right-2 flex items-center justify-center opacity-70 group-hover:opacity-100 transition-opacity">
-                <span class="text-[8px] font-bold px-1.5 py-0.5 rounded bg-white/90 text-slate-500 border border-slate-200/80 shadow-2xs">
-                    OmniPharma
-                </span>
-            </div>
         </a>
 
-        {{-- Subcategory & Manufacturer Metadata --}}
-        <div class="text-[10px] font-bold text-emerald-700 uppercase tracking-wider truncate mb-1">
+        {{-- Category / Subcategory Metadata --}}
+        <div class="text-[11px] font-bold text-emerald-800 truncate mb-1">
             {{ $obat->subkategori->nama_subkategori ?? ($obat->kategori->nama_kategori ?? 'Kesehatan') }}
         </div>
 
-        {{-- Product Title (2 Lines Clamped) --}}
-        <h4 class="text-xs sm:text-sm font-bold text-slate-900 line-clamp-2 min-h-[2.5rem] group-hover:text-emerald-700 transition-colors uppercase tracking-tight leading-snug">
-            <a href="{{ route('customer.obat.detail', ['client' => $client, 'id' => $obat->id_obat]) }}" class="hover:underline focus:outline-none focus:text-emerald-700">
+        {{-- Product Title --}}
+        <h4 class="text-xs sm:text-sm font-bold text-slate-900 line-clamp-2 min-h-[2.5rem] leading-snug">
+            <a
+                href="{{ \Illuminate\Support\Facades\Route::has('obat.show') ? route('obat.show', ['id' => $obat->slug ?: $obat->id_obat]) : route('customer.obat.detail', ['client' => $client, 'id' => $obat->id_obat]) }}"
+                class="hover:text-emerald-800 hover:underline focus-visible:outline-2 focus-visible:outline-emerald-700 rounded"
+            >
                 {{ $namaObat }}
             </a>
         </h4>
 
         {{-- Packaging / Sediaan Unit --}}
-        <p class="text-[11px] text-slate-500 font-medium truncate mt-1">
+        <p class="text-[11px] text-slate-600 font-medium truncate mt-1">
             {{ $obat->satuan_kemasan ?: $obat->jenis_sediaan }}
         </p>
 
-        {{-- Multi-Branch Stock Availability Indicator --}}
-        <div class="mt-2 flex flex-wrap items-center gap-1.5 text-[10px]">
-            @if ($isAvailableHere)
-                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                    <svg class="w-3 h-3 text-emerald-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span>{{ $obat->branch_availability_text }}</span>
+        @if (! $isAvailableHere && ! $altBranch)
+            <div class="mt-2 flex flex-wrap items-center gap-1.5 text-[11px]">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-slate-500" aria-hidden="true"></span>
+                    <span>Stok Habis</span>
                 </span>
-            @elseif ($altBranch)
-                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-semibold bg-amber-50 text-amber-800 border border-amber-200" title="Kosong di cabang ini">
-                    <svg class="w-3 h-3 text-amber-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
-                    <span>{{ $obat->branch_availability_text }}</span>
-                </span>
-            @else
-                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-semibold bg-slate-100 text-slate-600 border border-slate-200">
-                    <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-                    <span>Stok Habis di Semua Cabang</span>
-                </span>
-            @endif
-        </div>
+            </div>
+        @endif
     </div>
 
     {{-- Price and Action Area --}}
-    <div class="mt-3 pt-2.5 border-t border-slate-100 flex flex-col gap-2">
-        <div class="flex items-center justify-between gap-2">
-            <div>
-                <span class="block text-[10px] text-slate-400 font-medium">Harga Resmi</span>
-                <span class="text-sm sm:text-base font-black text-emerald-800">
-                    Rp {{ number_format($obat->harga, 0, ',', '.') }}
-                </span>
-            </div>
+    <div class="mt-2.5 sm:mt-3 pt-2.5 border-t border-slate-100 flex flex-col gap-1.5 sm:gap-2">
+        <div>
+            <span class="block text-[11px] text-slate-500 font-medium leading-tight whitespace-nowrap">Harga Resmi</span>
+            <p class="text-sm sm:text-base font-extrabold text-slate-900 whitespace-nowrap tracking-tight mt-0.5">
+                Rp {{ number_format($obat->harga, 0, ',', '.') }}
+            </p>
+        </div>
 
+        <div class="flex items-center gap-1.5 sm:gap-2">
             <a
-                href="{{ route('customer.obat.detail', ['client' => $client, 'id' => $obat->id_obat]) }}"
-                class="inline-flex items-center justify-center px-3 py-2 rounded-lg bg-emerald-50 hover:bg-emerald-600 text-emerald-800 hover:text-white font-semibold text-xs transition-colors duration-150 min-h-[44px] min-w-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer"
+                href="{{ \Illuminate\Support\Facades\Route::has('obat.show') ? route('obat.show', ['id' => $obat->slug ?: $obat->id_obat]) : route('customer.obat.detail', ['client' => $client, 'id' => $obat->id_obat]) }}"
+                class="flex-1 inline-flex items-center justify-center px-3 py-2 min-h-[40px] sm:min-h-[44px] rounded-xl bg-emerald-50 hover:bg-emerald-700 text-emerald-800 hover:text-white border border-emerald-200 font-bold text-xs transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 cursor-pointer"
                 aria-label="Lihat detail {{ $namaObat }}"
-                title="Lihat Detail Produk"
             >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-                </svg>
+                Detail
             </a>
+
+            @if ($isAvailableHere)
+                <button
+                    type="button"
+                    @click.prevent="$dispatch('add-to-cart', { id: @js($obat->id_obat), nama: @js($namaObat), client: @js($client), qty: 1 })"
+                    class="inline-flex items-center justify-center gap-1 px-3 py-2 min-h-[40px] sm:min-h-[44px] min-w-[44px] rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs shadow-2xs transition-colors cursor-pointer shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                    title="Masukkan {{ $namaObat }} ke Keranjang"
+                    aria-label="Masukkan {{ $namaObat }} ke Keranjang"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span class="font-extrabold">+</span>
+                </button>
+            @endif
         </div>
 
         @if (! $isAvailableHere && $altBranch)
             <button
                 type="button"
                 wire:click="switchBranch('{{ $altBranch->slug }}')"
-                class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs shadow-xs transition-colors duration-150 min-h-[44px] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                class="w-full inline-flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-[11px] sm:text-xs leading-tight text-center transition-colors min-h-[44px] cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
             >
-                <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                 </svg>
                 <span>Beralih ke {{ preg_replace('/^Cabang\s+/i', '', $altBranch->nama_client) }}</span>

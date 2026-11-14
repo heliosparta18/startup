@@ -8,6 +8,7 @@ use App\Support\Tenant\TenantContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\View\View;
 
 class CartController extends Controller
@@ -45,10 +46,15 @@ class CartController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Obat berhasil ditambahkan ke keranjang.',
+                'cart_count' => $cartService->getCount($sessionId, $clientId),
             ]);
         }
 
-        return redirect()->route('customer.cart', ['client' => $client]);
+        if ($request->is('klien/*')) {
+            return redirect()->route('customer.cart', ['client' => $client]);
+        }
+
+        return redirect()->route('keranjang');
     }
 
     /**
@@ -63,7 +69,10 @@ class CartController extends Controller
 
         $cartService->updateItem($sessionId, $clientId, $obatId, $qty);
 
-        return response()->json(['success' => true]);
+        return response()->json([
+            'success' => true,
+            'cart_count' => $cartService->getCount($sessionId, $clientId),
+        ]);
     }
 
     /**
@@ -77,7 +86,10 @@ class CartController extends Controller
 
         $cartService->removeItem($sessionId, $clientId, $obatId);
 
-        return response()->json(['success' => true]);
+        return response()->json([
+            'success' => true,
+            'cart_count' => $cartService->getCount($sessionId, $clientId),
+        ]);
     }
 
     /**
@@ -87,11 +99,18 @@ class CartController extends Controller
     {
         $cookie = $request->cookie('omnipharma_customer_session') ?? $request->cookie('omni_session');
         if (is_string($cookie) && $cookie !== '') {
+            if (! $request->hasCookie('omnipharma_customer_session')) {
+                Cookie::queue('omnipharma_customer_session', $cookie, 60 * 24 * 30);
+            }
+
             return $cookie;
         }
 
         $sessionId = $request->session()->getId();
+        $token = $sessionId !== '' ? $sessionId : 'guest-'.md5((string) $request->ip());
 
-        return $sessionId !== '' ? $sessionId : 'guest-'.md5((string) $request->ip());
+        Cookie::queue('omnipharma_customer_session', $token, 60 * 24 * 30);
+
+        return $token;
     }
 }

@@ -124,9 +124,67 @@ class Pesanan extends Model
         return $this->hasMany(PermintaanRetur::class, 'id_pesanan', 'id_pesanan');
     }
 
-    public function getTotalHargaAttribute(): float
+    public function getSubtotalObatAttribute(): float
     {
         return (float) $this->items->sum('subtotal');
+    }
+
+    public function getOngkosKirimAttribute(): float
+    {
+        if (preg_match('/\[ONGKIR:(\d+)\]/', (string) $this->catatan_pesanan, $matches)) {
+            return (float) $matches[1];
+        }
+
+        return 0.0;
+    }
+
+    public function getTotalHargaAttribute(): float
+    {
+        return $this->subtotal_obat + $this->ongkos_kirim;
+    }
+
+    public function getJarakKmAttribute(): ?float
+    {
+        if (preg_match('/\[JARAK:([\d.]+)\]/', (string) $this->catatan_pesanan, $matches)) {
+            return (float) $matches[1];
+        }
+
+        return null;
+    }
+
+    public function getKoordinatTujuanAttribute(): ?string
+    {
+        if (preg_match('/\[KOORDINAT:([^\]]+)\]/', (string) $this->catatan_pesanan, $matches)) {
+            return trim($matches[1]);
+        }
+
+        return null;
+    }
+
+    public function getMapsRouteUrlAttribute(): ?string
+    {
+        if (preg_match('/\[MAPS:([^\]]+)\]/', (string) $this->catatan_pesanan, $matches)) {
+            return trim($matches[1]);
+        }
+
+        return null;
+    }
+
+    public function getAlamatPengantaranAttribute(): ?string
+    {
+        if (preg_match('/\[ALAMAT:([^\]]+)\]/', (string) $this->catatan_pesanan, $matches)) {
+            return trim($matches[1]);
+        }
+
+        return null;
+    }
+
+    public function getCatatanBersihAttribute(): ?string
+    {
+        $clean = preg_replace('/^(?:\[(?:ONGKIR|JARAK|KOORDINAT|MAPS|ALAMAT):[^\]]*\]\s*)+/', '', (string) $this->catatan_pesanan);
+        $clean = trim((string) $clean);
+
+        return $clean !== '' ? $clean : null;
     }
 
     public function isLunas(): bool

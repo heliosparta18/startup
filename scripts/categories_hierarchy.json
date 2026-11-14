@@ -1,0 +1,420 @@
+{
+  "obat": {
+    "id": 839,
+    "name": "Obat",
+    "subcategories": [
+      {
+        "id": 1808,
+        "name": "Darah",
+        "seo_title": "darah"
+      },
+      {
+        "id": 1533,
+        "name": "Hormon",
+        "seo_title": "obat-hormon"
+      },
+      {
+        "id": 1610,
+        "name": "Kepala",
+        "seo_title": "obat-kepala"
+      },
+      {
+        "id": 1583,
+        "name": "Kulit",
+        "seo_title": "jual-obat-untuk-kulit"
+      },
+      {
+        "id": 1823,
+        "name": "Liver/Hati, Pankreas & Empedu",
+        "seo_title": "obat-liver-atau-hati-pankreas-dan-empedu"
+      },
+      {
+        "id": 1843,
+        "name": "Otot, Sendi & Tulang",
+        "seo_title": "obat-otot-sendi-dan-tulang"
+      },
+      {
+        "id": 1956,
+        "name": "Rambut",
+        "seo_title": "obat-rambut"
+      },
+      {
+        "id": 1578,
+        "name": "Rongga Mulut & Gigi",
+        "seo_title": "obat-rongga-mulut-dan-gigi"
+      },
+      {
+        "id": 1826,
+        "name": "Obat Saluran Pencernaan",
+        "seo_title": "obat-gangguan-saluran-pencernaan"
+      },
+      {
+        "id": 1569,
+        "name": "Saluran Kemih, Ginjal & Prostat",
+        "seo_title": "obat-saluran-kemih-ginjal-dan-prostat"
+      },
+      {
+        "id": 1840,
+        "name": "Telinga, Hidung & Tenggorokan",
+        "seo_title": "obat-telinga-hidung-dan-tenggorokan"
+      },
+      {
+        "id": 1842,
+        "name": "Tubuh",
+        "seo_title": "obat-tubuh"
+      },
+      {
+        "id": 1844,
+        "name": "Obat Lainnya",
+        "seo_title": "obat-lain-lain"
+      }
+    ]
+  },
+  "suplemen": {
+    "id": 840,
+    "name": "Suplemen",
+    "subcategories": [
+      {
+        "id": 1883,
+        "name": "Kesehatan Darah",
+        "seo_title": "suplemen-dan-vitamin-darah"
+      },
+      {
+        "id": 1888,
+        "name": "Kesehatan Kulit",
+        "seo_title": "suplemen-dan-vitamin-kulit"
+      },
+      {
+        "id": 1895,
+        "name": "Otak",
+        "seo_title": "suplemen-dan-vitamin-otak"
+      },
+      {
+        "id": 1900,
+        "name": "Kesehatan Tubuh",
+        "seo_title": "suplemen-dan-vitamin-tubuh"
+      },
+      {
+        "id": 1902,
+        "name": "Saluran Pencernaan",
+        "seo_title": "suplemen-dan-vitamin-saluran-pencernaan"
+      },
+      {
+        "id": 1903,
+        "name": "Saraf",
+        "seo_title": "suplemen-dan-vitamin-saraf"
+      },
+      {
+        "id": 1911,
+        "name": "Hati / Liver",
+        "seo_title": "suplemen-dan-vitamin-hati-atau-liver"
+      },
+      {
+        "id": 1912,
+        "name": "Ginjal",
+        "seo_title": "suplemen-dan-vitamin-ginjal"
+      },
+      {
+        "id": 1913,
+        "name": "Kehamilan & Menyusui / ASI",
+        "seo_title": "suplemen-dan-vitamin-kehamilan-dan-menyusui-asi"
+      },
+      {
+        "id": 1914,
+        "name": "Kesehatan Rambut",
+        "seo_title": "suplemen-dan-vitamin-rambut"
+      },
+      {
+        "id": 1916,
+        "name": "Prostat",
+        "seo_title": "suplemen-dan-vitamin-prostat"
+      },
+      {
+        "id": 1915,
+        "name": "Menstruasi",
+        "seo_title": "suplemen-dan-vitamin-menstruasi"
+      },
+      {
+        "id": 1931,
+        "name": "Tulang",
+        "seo_title": "suplemen-dan-vitamin-tulang"
+      },
+      {
+        "id": 1960,
+        "name": "Sendi",
+        "seo_title": "suplemen-dan-vitamin-sendi"
+      }
+    ]
+  },
+  "nutrisi": {
+    "id": 841,
+    "name": "Nutrisi",
+    "subcategories": [
+      {
+        "id": 2038,
+        "name": "Makanan & Pengganti Makanan",
+        "seo_title": "makanan-pengganti-makanan"
+      },
+      {
+        "id": 1906,
+        "name": "Minuman",
+        "seo_title": "nutrisi-minuman"
+      },
+      {
+        "id": 1639,
+        "name": "Madu",
+        "seo_title": "nutrisi-madu"
+      },
+      {
+        "id": 1637,
+        "name": "Makanan Pendamping ASI",
+        "seo_title": "nutrisi-makanan-pendamping-asi"
+      },
+      {
+        "id": 1640,
+        "name": "Penambah Berat Badan",
+        "seo_title": "nutrisi-penambah-berat-badan"
+      },
+      {
+        "id": 1638,
+        "name": "Sports Nutrition & Fitness",
+        "seo_title": "nutrisi-sports-nutrition-dan-fitness"
+      },
+      {
+        "id": 1636,
+        "name": "Susu Bayi",
+        "seo_title": "nutrisi-susu-bayi"
+      },
+      {
+        "id": 1635,
+        "name": "Susu Masa Hamil & Menyusui",
+        "seo_title": "nutrisi-susu-masa-hamil-dan-menyusui"
+      },
+      {
+        "id": 1643,
+        "name": "Susu Untuk Anak & Remaja",
+        "seo_title": "nutrisi-susu-untuk-anak-dan-remaja"
+      },
+      {
+        "id": 1642,
+        "name": "Susu Untuk Dewasa & Lanjut Usia",
+        "seo_title": "nutrisi-susu-untuk-dewasa-dan-lanjut-usia"
+      },
+      {
+        "id": 1961,
+        "name": "Gula",
+        "seo_title": "nutrisi-gula"
+      }
+    ]
+  },
+  "herbal": {
+    "id": 842,
+    "name": "Herbal",
+    "subcategories": [
+      {
+        "id": 1523,
+        "name": "Herbal",
+        "seo_title": "herbal-dan-tradisional-obat-herbal"
+      },
+      {
+        "id": 1524,
+        "name": "Tradisional",
+        "seo_title": "herbal-dan-tradisional-obat-tradisional"
+      },
+      {
+        "id": 1806,
+        "name": "Tradisional Cina",
+        "seo_title": "herbal-dan-tradisional-obat-tradisional-cina"
+      }
+    ]
+  },
+  "produk-bayi": {
+    "id": 844,
+    "name": "Produk Bayi",
+    "subcategories": [
+      {
+        "id": 1667,
+        "name": "Keperluan Mandi Bayi",
+        "seo_title": "produk-bayi-dan-anak-keperluan-mandi"
+      },
+      {
+        "id": 1668,
+        "name": "Perlengkapan Makan & Minum",
+        "seo_title": "produk-bayi-dan-anak-perlengkapan-makan-dan-minum"
+      },
+      {
+        "id": 1669,
+        "name": "Popok",
+        "seo_title": "produk-bayi-popok"
+      },
+      {
+        "id": 2240,
+        "name": "Pompa ASI",
+        "seo_title": "pompa-asi"
+      },
+      {
+        "id": 2251,
+        "name": "Perawatan Tubuh Bayi",
+        "seo_title": "produk-bayi-dan-anak-perawatan-tubuh"
+      },
+      {
+        "id": 2259,
+        "name": "Mainan",
+        "seo_title": "produk-bayi-dan-anak-mainan"
+      },
+      {
+        "id": 2260,
+        "name": "Pembersih Perlengkapan Bayi",
+        "seo_title": "produk-bayi-dan-anak-pembersih-perlengkapan-bayi"
+      }
+    ]
+  },
+  "alat-kesehatan": {
+    "id": 845,
+    "name": "Alat Kesehatan",
+    "subcategories": [
+      {
+        "id": 1649,
+        "name": "Alat Bantu Jalan & Kursi Roda",
+        "seo_title": "alat-kesehatan-alat-bantu-jalan-dan-kursi-roda"
+      },
+      {
+        "id": 1648,
+        "name": "Alat Tes Gula Darah, Asam Urat & Kolesterol",
+        "seo_title": "alat-kesehatan-tes-gula-darah-asam-urat-dan-kolesterol"
+      },
+      {
+        "id": 1886,
+        "name": "Barang Disposable / Sekali Pakai",
+        "seo_title": "alat-kesehatan-barang-disposable-atau-sekali-pakai"
+      },
+      {
+        "id": 1887,
+        "name": "Body Support",
+        "seo_title": "alat-kesehatan-body-support"
+      },
+      {
+        "id": 2286,
+        "name": "Optik",
+        "seo_title": "optik"
+      },
+      {
+        "id": 1889,
+        "name": "Tensimeter",
+        "seo_title": "alat-kesehatan-tensimeter"
+      },
+      {
+        "id": 1891,
+        "name": "Termometer",
+        "seo_title": "alat-kesehatan-termometer"
+      },
+      {
+        "id": 1892,
+        "name": "Alkes Lainnya",
+        "seo_title": "alat-kesehatan-lain-lain"
+      },
+      {
+        "id": 2058,
+        "name": "Nebulizer",
+        "seo_title": "alat-kesehatan-nebulizer"
+      },
+      {
+        "id": 2061,
+        "name": "Alat Bantu Dengar",
+        "seo_title": "alat-kesehatan-alat-bantu-dengar"
+      },
+      {
+        "id": 2062,
+        "name": "Timbangan",
+        "seo_title": "alat-kesehatan-timbangan"
+      },
+      {
+        "id": 1837,
+        "name": "Kontrasepsi",
+        "seo_title": "personal-care-dan-beauty-kontrasepsi"
+      },
+      {
+        "id": 2238,
+        "name": "Stetoskop",
+        "seo_title": "stetoskop"
+      }
+    ]
+  },
+  "kecantikan": {
+    "id": 1753,
+    "name": "Kecantikan",
+    "subcategories": [
+      {
+        "id": 1754,
+        "name": "Kebersihan Diri",
+        "seo_title": "personal-care-dan-beauty-kebersihan-diri"
+      },
+      {
+        "id": 1845,
+        "name": "Kosmetik",
+        "seo_title": "personal-care-dan-beauty-kosmetik"
+      },
+      {
+        "id": 1850,
+        "name": "Perawatan Gigi & Mulut",
+        "seo_title": "personal-care-dan-beauty-perawatan-gigi-dan-mulut"
+      },
+      {
+        "id": 1854,
+        "name": "Perawatan Kulit (Skincare)",
+        "seo_title": "personal-care-dan-beauty-perawatan-kulit-skincare-perawatan-kulit"
+      },
+      {
+        "id": 1856,
+        "name": "Perawatan Rambut",
+        "seo_title": "personal-care-dan-beauty-perawatan-rambut"
+      }
+    ]
+  },
+  "eyes": {
+    "id": 1592,
+    "name": "Mata",
+    "subcategories": [
+      {
+        "id": 1593,
+        "name": "Miotik, Midriatik & Glaukoma",
+        "seo_title": "obat-mata-obat-miotik-midriatik-dan-glaukoma"
+      },
+      {
+        "id": 1890,
+        "name": "Suplemen & Vitamin Mata",
+        "seo_title": "suplemen-dan-vitamin-mata"
+      },
+      {
+        "id": 1595,
+        "name": "Infeksi Mata",
+        "seo_title": "obat-mata-infeksi-mata"
+      },
+      {
+        "id": 1596,
+        "name": "Mata Kering & Iritasi Ringan",
+        "seo_title": "obat-mata-mata-kering-dan-iritasi-ringan"
+      },
+      {
+        "id": 1597,
+        "name": "Katarak",
+        "seo_title": "obat-mata-katarak"
+      },
+      {
+        "id": 1974,
+        "name": "Saraf Mata",
+        "seo_title": "saraf-mata"
+      },
+      {
+        "id": 2278,
+        "name": "Bengkak & Alergi",
+        "seo_title": "bengkak-alergi"
+      }
+    ]
+  },
+  "voucher-layanan-kesehatan": {
+    "id": 2523,
+    "name": "Voucher Layanan Kesehatan",
+    "subcategories": []
+  }
+}

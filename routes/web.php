@@ -3,7 +3,11 @@
 use App\Http\Controllers\Auth\EmailOtpAuthController;
 use App\Http\Controllers\Auth\FirebaseAuthSessionController;
 use App\Models\Obat;
+use App\Models\Scopes\TenantScope;
 use App\Modules\Catalog\Services\CustomerSessionService;
+use App\Modules\Ordering\Http\Controllers\CartController;
+use App\Modules\Ordering\Http\Controllers\CheckoutController;
+use App\Modules\Ordering\Http\Controllers\OrderTrackingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,6 +34,10 @@ Route::get('/', function (Request $request) {
 })->name('home');
 
 Route::get('/katalog', function (Request $request, CustomerSessionService $sessionService) {
+    if (auth()->check()) {
+        return redirect()->route('dashboard', $request->query());
+    }
+
     $branch = session('active_branch') ?? session('active_client');
     if (! $branch) {
         $client = $sessionService->getActiveBranch($request);
@@ -41,6 +49,28 @@ Route::get('/katalog', function (Request $request, CustomerSessionService $sessi
 
 Route::middleware(['auth'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
+
+    $resolveBranchSlug = static function (Request $request): string {
+        $user = $request->user();
+
+        return $user && method_exists($user, 'getClientSlug')
+            ? ($user->getClientSlug() ?: 'banyuwangi-kota')
+            : 'banyuwangi-kota';
+    };
+
+    Route::get('/apoteker', fn (Request $request) => redirect()->route('tenant.dashboard', [
+        'client' => $resolveBranchSlug($request),
+    ]));
+    Route::get('/antrean', fn (Request $request) => redirect()->route('tenant.antrean.index', [
+        'client' => $resolveBranchSlug($request),
+    ]));
+    Route::get('/verifikasi-resep', fn (Request $request) => redirect()->route('tenant.resep.antrean', [
+        'client' => $resolveBranchSlug($request),
+    ]));
+    Route::get('/stok-fefo', fn (Request $request) => redirect()->route('tenant.stok.fefo', [
+        'client' => $resolveBranchSlug($request),
+    ]));
+    Route::get('/admin', fn () => redirect()->route('admin.dashboard'));
 });
 Route::post('/cabang/switch', function (Request $request) {
     $branch = $request->input('branch', 'banyuwangi-kota');
@@ -82,12 +112,55 @@ Route::get('/api/search-obat', function (Request $request) {
                 'gambar' => $obat->url_gambar,
                 'badge' => $obat->badge_status,
                 'tersedia' => $obat->isAvailableInBranch($clientSlug),
-                'url' => route('customer.obat.detail', ['client' => $clientSlug, 'id' => $obat->id_obat]),
+                'url' => route('obat.show', ['id' => $obat->slug ?: $obat->id_obat]),
             ];
         });
 
     return response()->json($obats);
 })->name('api.search.obat');
+
+Route::middleware(['tenant'])->group(function () {
+    Route::get('/obat/{id}', function (string $client, string $id) {
+        $obat = Obat::query()
+            ->with([
+                'kategori',
+                'subkategori',
+                'stokClient' => function ($q) {
+                    $q->withoutGlobalScope(TenantScope::class)->with('client');
+                },
+            ])
+            ->where('id_obat', $id)
+            ->orWhere('slug', $id)
+            ->first();
+
+        return view('customer.obat-detail', [
+            'client' => $client,
+            'obat' => $obat,
+            'id' => $id,
+        ]);
+    })->name('obat.show');
+
+    Route::get('/produk/{id}', fn (string $client, string $id) => redirect()->route('obat.show', ['id' => $id]))
+        ->name('produk.show');
+
+    Route::get('/keranjang', [CartController::class, 'index'])->name('keranjang');
+    Route::get('/cart', fn () => redirect()->route('keranjang'))->name('cart.short');
+    Route::post('/keranjang/tambah', [CartController::class, 'add'])->name('keranjang.add');
+    Route::post('/keranjang/ubah', [CartController::class, 'update'])->name('keranjang.update');
+    Route::post('/keranjang/hapus', [CartController::class, 'remove'])->name('keranjang.remove');
+
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.store');
+
+    Route::get('/pembayaran/{id}', [OrderTrackingController::class, 'payment'])->name('pembayaran.show');
+    Route::get('/pesanan/{id}/pembayaran', [OrderTrackingController::class, 'payment'])->name('pesanan.pembayaran');
+    Route::post('/pesanan/{id}/batal', [OrderTrackingController::class, 'cancel'])->name('pesanan.cancel');
+    Route::get('/lacak-pesanan/{id}', [OrderTrackingController::class, 'track'])->name('pesanan.track');
+    Route::get('/pesanan/{id}/lacak', [OrderTrackingController::class, 'track'])->name('pesanan.lacak');
+
+    Route::get('/unggah-resep', fn () => redirect()->to(route('dashboard').'#unggah-resep'))
+        ->name('resep.form');
+});
 
 Route::middleware(['throttle:5,1'])->group(function () {
     Route::post('/auth/send-otp', [EmailOtpAuthController::class, 'sendOtp'])->name('auth.otp.send');

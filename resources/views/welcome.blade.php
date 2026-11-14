@@ -19,15 +19,16 @@
 <body class="min-h-full bg-[#F8FAFC] text-slate-800 flex flex-col font-sans selection:bg-emerald-500 selection:text-white overflow-x-hidden">
 
     <!-- Header & Navigasi Utama -->
-    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 transition-all">
+    <header x-data="{ mobileNav: false }" class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 transition-all">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[4rem] sm:min-h-[4.5rem] py-2 sm:py-0 flex items-center justify-between gap-2 sm:gap-4">
             <!-- Brand Logo -->
-            <a href="{{ route('home') }}" class="flex items-center gap-2.5 sm:gap-3 group focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded-xl p-1 min-h-[44px] shrink-0" aria-label="OmniPharma Beranda">
+            <a href="{{ route('home') }}" class="flex items-center gap-2 sm:gap-3 group focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded-xl p-1 min-h-[44px] shrink-0" aria-label="OmniPharma Beranda">
                 <img src="/logo.png" alt="OmniPharma Logo" class="h-9 w-9 sm:h-11 sm:w-11 object-contain drop-shadow-[0_2px_6px_rgba(5,150,105,0.3)] group-hover:scale-105 transition-transform duration-200">
                 <span class="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">OmniPharma</span>
             </a>
+
             <!-- Navigasi Pintar Cabang & Kredensial -->
-            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+            <div class="flex items-center gap-2 sm:gap-2.5 shrink-0">
                 <div class="hidden lg:flex items-center gap-2.5 text-xs text-slate-700 bg-white border border-slate-200/90 px-3.5 py-1.5 rounded-xl shadow-2xs">
                     <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-emerald-50 text-emerald-700 shrink-0">
                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -40,16 +41,29 @@
                     </div>
                 </div>
 
-                <!-- Tombol Akses Cepat Katalog -->
-                <a
-                    href="{{ auth()->check() ? route('katalog') : route('login') }}"
-                    class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold shadow-xs transition min-h-[44px]"
-                >
-                    <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                    </svg>
-                    <span>Katalog Obat</span>
-                </a>
+                @guest
+                    <a
+                        href="{{ route('login') }}"
+                        class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold shadow-xs transition min-h-[44px]"
+                    >
+                        <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                        </svg>
+                        <span>Katalog Obat</span>
+                    </a>
+                    <a
+                        href="{{ route('login') }}"
+                        class="inline-flex items-center justify-center px-3.5 py-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold transition min-h-[44px]"
+                    >
+                        Masuk
+                    </a>
+                    <a
+                        href="{{ route('register') }}"
+                        class="hidden md:inline-flex items-center justify-center px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold transition min-h-[44px]"
+                    >
+                        Daftar
+                    </a>
+                @endguest
 
                 @auth
                     @php
@@ -67,18 +81,28 @@
                             default => route('dashboard')
                         };
                     @endphp
-                    <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs text-slate-700">
-                        <span class="font-bold">{{ $userAuth->name ?? 'Pengguna' }}</span>
+                    <a
+                        href="{{ route('katalog') }}"
+                        class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs sm:text-sm font-bold transition min-h-[44px]"
+                    >
+                        <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                        </svg>
+                        <span>Katalog Obat</span>
+                    </a>
+                    <div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs text-slate-700">
+                        <span class="font-bold max-w-[140px] truncate">{{ $userAuth->name ?? 'Pengguna' }}</span>
                         <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 uppercase">{{ $userRoleLabel }}</span>
                     </div>
                     <a
                         href="{{ $dashboardTarget }}"
-                        class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold shadow-xs transition min-h-[44px]"
+                        class="inline-flex items-center justify-center gap-1.5 px-3 sm:px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold shadow-xs transition min-h-[44px]"
                     >
                         <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-                        <span>Masuk Dashboard</span>
+                        <span class="hidden sm:inline">Masuk Dashboard</span>
+                        <span class="sm:hidden">Dashboard</span>
                     </a>
-                    <form method="POST" action="{{ route('logout') }}" class="inline">
+                    <form method="POST" action="{{ route('logout') }}" class="hidden md:inline">
                         @csrf
                         <button
                             type="submit"
@@ -89,7 +113,64 @@
                         </button>
                     </form>
                 @endauth
+
+                <!-- Tombol Hamburger Mobile -->
+                <button
+                    type="button"
+                    @click="mobileNav = !mobileNav"
+                    class="md:hidden inline-flex items-center justify-center w-11 h-11 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition cursor-pointer"
+                    :aria-expanded="mobileNav.toString()"
+                    aria-label="Buka menu navigasi"
+                >
+                    <svg x-show="!mobileNav" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                    <svg x-show="mobileNav" x-cloak class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
+        </div>
+
+        <!-- Panel Navigasi Mobile -->
+        <div x-show="mobileNav" x-cloak @click.outside="mobileNav = false" class="md:hidden border-t border-slate-200 bg-white px-4 py-4 space-y-3 shadow-lg">
+            <div class="flex items-center justify-between text-xs bg-emerald-50/70 border border-emerald-200/70 rounded-xl px-3.5 py-2.5 text-emerald-900">
+                <span class="font-bold">Apotek Terdaftar</span>
+                <span class="font-semibold">Banyuwangi &amp; Rogojampi</span>
+            </div>
+
+            @auth
+                <div class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                    <div class="min-w-0">
+                        <p class="text-xs font-bold text-slate-900 truncate">{{ $userAuth->name ?? 'Pengguna' }}</p>
+                        <p class="text-[11px] text-slate-500 truncate">{{ $userAuth->email ?? '' }}</p>
+                    </div>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 uppercase shrink-0">{{ $userRoleLabel }}</span>
+                </div>
+                <div class="grid grid-cols-1 gap-2">
+                    <a href="{{ $dashboardTarget }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-bold min-h-[44px]">
+                        Masuk Dashboard
+                    </a>
+                    <a href="{{ route('katalog') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 text-sm font-semibold min-h-[44px]">
+                        Katalog Obat Resmi
+                    </a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-xl border border-rose-200 bg-rose-50 text-rose-700 text-sm font-semibold min-h-[44px] cursor-pointer">
+                            Keluar Akun
+                        </button>
+                    </form>
+                </div>
+            @else
+                <div class="grid grid-cols-1 gap-2">
+                    <a href="{{ route('login') }}" class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-bold min-h-[44px]">
+                        Masuk Portal &amp; Katalog
+                    </a>
+                    <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-800 text-sm font-bold min-h-[44px]">
+                        Daftar Akun Pasien
+                    </a>
+                </div>
+            @endauth
         </div>
     </header>
 
@@ -98,9 +179,6 @@
 
         <!-- HERO SECTION: Sambutan Hangat & Ajakan Bertindak -->
         <section class="relative overflow-hidden pt-8 pb-12 sm:pt-12 sm:pb-16 lg:pt-20 lg:pb-24 border-b border-slate-200/80 bg-gradient-to-b from-white via-slate-50/50 to-[#F8FAFC]">
-            <!-- Aksen Garis Geometris Halus (Non-Slop) -->
-            <div class="absolute -top-40 right-0 w-96 h-96 rounded-full bg-emerald-50/60 blur-3xl pointer-events-none"></div>
-
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
 
@@ -196,116 +274,65 @@
                                 </div>
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/80">
                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                                    6 Cabang Aktif
+                                    2 Cabang Aktif
                                 </span>
                             </div>
 
-
                             <!-- Daftar Cabang Resmi -->
-                            <div class="space-y-2">
+                            <div class="space-y-2.5">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Lokasi Pelayanan Obat:</span>
+                                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Lokasi Pelayanan Obat Resmi:</span>
                                 </div>
 
-                                <div class="space-y-2 pr-1.5 focus:outline-none" style="max-height: 168px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #94a3b8 #f1f5f9;">
+                                <div class="space-y-2.5">
                                     <!-- Cabang 1: Banyuwangi Kota -->
-                                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-emerald-300 transition flex items-start justify-between gap-3">
+                                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 hover:border-emerald-300 transition flex items-center justify-between gap-3">
                                         <div class="min-w-0">
-                                            <div class="flex items-center gap-1.5">
+                                            <div class="flex flex-wrap items-center gap-1.5">
                                                 <h4 class="font-bold text-xs text-slate-900">Cabang Banyuwangi Kota</h4>
-                                                <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800">24 Jam</span>
+                                                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">24 Jam</span>
                                             </div>
-                                            <p class="text-[11px] text-slate-500 mt-0.5">Jl. Ahmad Yani No. 45, Banyuwangi</p>
+                                            <p class="text-[11px] text-slate-600 mt-0.5">Jl. Ahmad Yani No. 45, Banyuwangi</p>
                                             <p class="text-[10px] text-emerald-700 font-medium mt-1">Apoteker: apt. Bambang, S.Farm</p>
                                         </div>
                                         @auth
-                                            <a href="{{ route('customer.home', ['client' => 'banyuwangi-kota']) }}" class="shrink-0 text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline min-h-[36px] flex items-center">
-                                                Buka &rarr;
+                                            <form method="POST" action="{{ route('branch.switch') }}" class="shrink-0">
+                                                @csrf
+                                                <input type="hidden" name="branch" value="banyuwangi-kota">
+                                                <input type="hidden" name="redirect_to" value="{{ route('dashboard') }}">
+                                                <button type="submit" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-bold text-emerald-700 bg-white border border-emerald-200 hover:bg-emerald-50 min-h-[36px] transition cursor-pointer">
+                                                    Buka &rarr;
+                                                </button>
+                                            </form>
+                                        @else
+                                            <a href="{{ route('login') }}" class="shrink-0 inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-bold text-emerald-700 bg-white border border-emerald-200 hover:bg-emerald-50 min-h-[36px] transition">
+                                                Masuk &rarr;
                                             </a>
                                         @endauth
                                     </div>
 
                                     <!-- Cabang 2: Rogojampi -->
-                                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-emerald-300 transition flex items-start justify-between gap-3">
+                                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 hover:border-emerald-300 transition flex items-center justify-between gap-3">
                                         <div class="min-w-0">
-                                            <div class="flex items-center gap-1.5">
+                                            <div class="flex flex-wrap items-center gap-1.5">
                                                 <h4 class="font-bold text-xs text-slate-900">Cabang Rogojampi</h4>
-                                                <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-slate-200 text-slate-700">07:00 - 22:00</span>
+                                                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-200 text-slate-700">07:00 - 22:00</span>
                                             </div>
-                                            <p class="text-[11px] text-slate-500 mt-0.5">Jl. Raya Rogojampi No. 12, Rogojampi</p>
+                                            <p class="text-[11px] text-slate-600 mt-0.5">Jl. Raya Rogojampi No. 12, Rogojampi</p>
                                             <p class="text-[10px] text-emerald-700 font-medium mt-1">Apoteker: apt. Dinda Ayu Shafira, S.Farm.</p>
                                         </div>
                                         @auth
-                                            <a href="{{ route('customer.home', ['client' => 'rogojampi']) }}" class="shrink-0 text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline min-h-[36px] flex items-center">
-                                                Buka &rarr;
-                                            </a>
-                                        @endauth
-                                    </div>
-
-                                    <!-- Cabang 3: Genteng -->
-                                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-emerald-300 transition flex items-start justify-between gap-3">
-                                        <div class="min-w-0">
-                                            <div class="flex items-center gap-1.5">
-                                                <h4 class="font-bold text-xs text-slate-900">Cabang Genteng</h4>
-                                                <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-blue-50 text-blue-700 border border-blue-200/60">07:30 - 22:00</span>
-                                            </div>
-                                            <p class="text-[11px] text-slate-500 mt-0.5">Jl. Gajah Mada No. 88, Genteng</p>
-                                            <p class="text-[10px] text-emerald-700 font-medium mt-1">Apoteker: apt. Arya Dwi Mahendra, S.Farm</p>
-                                        </div>
-                                        @auth
-                                            <a href="{{ route('customer.home', ['client' => 'genteng']) }}" class="shrink-0 text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline min-h-[36px] flex items-center">
-                                                Buka &rarr;
-                                            </a>
-                                        @endauth
-                                    </div>
-
-                                    <!-- Cabang 4: Muncar -->
-                                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-emerald-300 transition flex items-start justify-between gap-3">
-                                        <div class="min-w-0">
-                                            <div class="flex items-center gap-1.5">
-                                                <h4 class="font-bold text-xs text-slate-900">Cabang Muncar</h4>
-                                                <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-slate-200 text-slate-700">08:00 - 21:00</span>
-                                            </div>
-                                            <p class="text-[11px] text-slate-500 mt-0.5">Jl. Raya Muncar No. 24, Muncar</p>
-                                            <p class="text-[10px] text-emerald-700 font-medium mt-1">Apoteker: apt. Siti Rahma, S.Farm</p>
-                                        </div>
-                                        @auth
-                                            <a href="{{ route('customer.home', ['client' => 'muncar']) }}" class="shrink-0 text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline min-h-[36px] flex items-center">
-                                                Buka &rarr;
-                                            </a>
-                                        @endauth
-                                    </div>
-
-                                    <!-- Cabang 5: Giri & Kalipuro -->
-                                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-emerald-300 transition flex items-start justify-between gap-3">
-                                        <div class="min-w-0">
-                                            <div class="flex items-center gap-1.5">
-                                                <h4 class="font-bold text-xs text-slate-900">Cabang Giri &amp; Kalipuro</h4>
-                                                <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-slate-200 text-slate-700">07:00 - 21:00</span>
-                                            </div>
-                                            <p class="text-[11px] text-slate-500 mt-0.5">Jl. Raden Wijaya No. 18, Giri</p>
-                                            <p class="text-[10px] text-emerald-700 font-medium mt-1">Apoteker: apt. Farhan Ramadhan, S.Farm</p>
-                                        </div>
-                                        @auth
-                                            <a href="{{ route('customer.home', ['client' => 'giri']) }}" class="shrink-0 text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline min-h-[36px] flex items-center">
-                                                Buka &rarr;
-                                            </a>
-                                        @endauth
-                                    </div>
-
-                                    <!-- Cabang 6: Cluring -->
-                                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-emerald-300 transition flex items-start justify-between gap-3">
-                                        <div class="min-w-0">
-                                            <div class="flex items-center gap-1.5">
-                                                <h4 class="font-bold text-xs text-slate-900">Cabang Cluring</h4>
-                                                <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-slate-200 text-slate-700">08:00 - 21:00</span>
-                                            </div>
-                                            <p class="text-[11px] text-slate-500 mt-0.5">Jl. Raya Benculuk No. 5, Cluring</p>
-                                            <p class="text-[10px] text-emerald-700 font-medium mt-1">Apoteker: apt. Nurul Hidayah, S.Farm</p>
-                                        </div>
-                                        @auth
-                                            <a href="{{ route('customer.home', ['client' => 'cluring']) }}" class="shrink-0 text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline min-h-[36px] flex items-center">
-                                                Buka &rarr;
+                                            <form method="POST" action="{{ route('branch.switch') }}" class="shrink-0">
+                                                @csrf
+                                                <input type="hidden" name="branch" value="rogojampi">
+                                                <input type="hidden" name="redirect_to" value="{{ route('dashboard') }}">
+                                                <button type="submit" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-bold text-emerald-700 bg-white border border-emerald-200 hover:bg-emerald-50 min-h-[36px] transition cursor-pointer">
+                                                    Buka &rarr;
+                                                </button>
+                                            </form>
+                                        @else
+                                            <a href="{{ route('login') }}" class="shrink-0 inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-bold text-emerald-700 bg-white border border-emerald-200 hover:bg-emerald-50 min-h-[36px] transition">
+                                                Masuk &rarr;
                                             </a>
                                         @endauth
                                     </div>
@@ -323,73 +350,41 @@
                         </div>
                     </div>
                 </div>
-                <!-- Teks Berjalan Dukungan Resmi Pemerintah & Regulasi (Full Width) -->
-                <div class="mt-8 sm:mt-10 pt-4 border-t border-slate-200/60 overflow-hidden relative rounded-2xl bg-white/70 border border-slate-200/70 p-3 shadow-2xs">
-                    <div class="flex items-center gap-3">
+
+                <!-- Dukungan Resmi Pemerintah & Regulasi (Statis & Responsif) -->
+                <div class="mt-8 sm:mt-10 rounded-2xl bg-white/80 border border-slate-200/80 p-3.5 sm:p-4 shadow-2xs">
+                    <div class="flex flex-wrap items-center justify-center sm:justify-start gap-x-6 gap-y-2.5 text-xs font-medium text-slate-600">
                         <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/90 px-2.5 py-1 rounded-md shrink-0">
                             Lisensi &amp; Regulasi:
                         </span>
-                        <div class="overflow-hidden relative w-full select-none" style="mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);">
-                            <div class="animate-marquee flex items-center gap-8 whitespace-nowrap text-xs font-medium text-slate-600">
-                                <span class="inline-flex items-center gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                    Kementerian Kesehatan RI (Kemenkes)
-                                </span>
-                                <span class="inline-flex items-center gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                    Badan Pengawas Obat &amp; Makanan (BPOM)
-                                </span>
-                                <span class="inline-flex items-center gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                    Ikatan Apoteker Indonesia (IAI)
-                                </span>
-                                <span class="inline-flex items-center gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                    Standar Cara Distribusi Obat yang Baik (CDOB)
-                                </span>
-                                <span class="inline-flex items-center gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                    Dinas Kesehatan Kabupaten Banyuwangi
-                                </span>
-                                <span class="inline-flex items-center gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                    Standar Pembayaran QRIS (Bank Indonesia)
-                                </span>
-                                <span class="inline-flex items-center gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                    Pedagang Besar Farmasi (PBF) Resmi Terdaftar
-                                </span>
-                                <!-- Duplicate for infinite marquee loop -->
-                                <span class="inline-flex items-center gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                    Kementerian Kesehatan RI (Kemenkes)
-                                </span>
-                                <span class="inline-flex items-center gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                    Badan Pengawas Obat &amp; Makanan (BPOM)
-                                </span>
-                                <span class="inline-flex items-center gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                    Ikatan Apoteker Indonesia (IAI)
-                                </span>
-                                <span class="inline-flex items-center gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                    Standar Cara Distribusi Obat yang Baik (CDOB)
-                                </span>
-                                <span class="inline-flex items-center gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                    Dinas Kesehatan Kabupaten Banyuwangi
-                                </span>
-                                <span class="inline-flex items-center gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                    Standar Pembayaran QRIS (Bank Indonesia)
-                                </span>
-                                <span class="inline-flex items-center gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                    Pedagang Besar Farmasi (PBF) Terdaftar
-                                </span>
-                            </div>
-                        </div>
+                        <span class="inline-flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            Kemenkes RI
+                        </span>
+                        <span class="inline-flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            BPOM
+                        </span>
+                        <span class="inline-flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            Ikatan Apoteker Indonesia (IAI)
+                        </span>
+                        <span class="inline-flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            Standar CDOB
+                        </span>
+                        <span class="inline-flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            Dinkes Banyuwangi
+                        </span>
+                        <span class="inline-flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            QRIS Bank Indonesia
+                        </span>
+                        <span class="inline-flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            Mitra PBF Resmi
+                        </span>
                     </div>
                 </div>
             </div>

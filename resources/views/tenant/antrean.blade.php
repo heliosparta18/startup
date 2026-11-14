@@ -200,9 +200,36 @@
                                     <div class="text-[11px] text-slate-400">{{ $order->pengguna->telepon_email ?? '-' }}</div>
                                 </td>
                                 <td class="p-3.5">
-                                    <span class="inline-flex items-center gap-1 font-semibold text-slate-700">
-                                        <span>{{ $order->slot_waktu ?? '15 Menit Lagi' }}</span>
-                                    </span>
+                                    @if ($order->metode_layanan === 'delivery')
+                                        <div class="flex flex-col items-start gap-1">
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-sky-50 text-sky-700 border border-sky-200">
+                                                Kurir ({{ $order->jarak_km ?? 2 }} km)
+                                            </span>
+                                            @if ($order->alamat_pengantaran)
+                                                <span class="text-[11px] text-slate-600 max-w-[200px] truncate" title="{{ $order->alamat_pengantaran }}">
+                                                    {{ $order->alamat_pengantaran }}
+                                                </span>
+                                            @endif
+                                            @if ($order->maps_route_url)
+                                                <a
+                                                    href="{{ $order->maps_route_url }}"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#059669] hover:bg-[#047857] text-white text-[11px] font-bold transition shadow-xs"
+                                                >
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                    </svg>
+                                                    <span>Buka Rute Maps</span>
+                                                </a>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <span class="inline-flex items-center gap-1 font-semibold text-slate-700">
+                                            <span>{{ $order->slot_waktu ?? '15 Menit Lagi' }}</span>
+                                        </span>
+                                    @endif
                                 </td>
                                 <td class="p-3.5 max-w-[240px]">
                                     <div class="space-y-1">

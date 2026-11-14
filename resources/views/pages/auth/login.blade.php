@@ -247,7 +247,21 @@
                     <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Pilih Akun Demo Praktikum:</span>
                     <span class="text-[10px] text-slate-400">Klik untuk isi otomatis</span>
                 </div>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <button
+                        type="button"
+                        @click="selectDemo('pelanggan', 'gunturafandy5@gmail.com', 'password')"
+                        :disabled="loadingSubmit || loadingGoogle"
+                        :class="selectedRole === 'pelanggan' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
+                        class="p-2 sm:p-2.5 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer disabled:opacity-50"
+                    >
+                        <div class="flex items-center justify-between gap-1">
+                            <span class="text-[11px] font-bold truncate">Pasien Demo</span>
+                            <span x-show="selectedRole === 'pelanggan'" class="h-1.5 w-1.5 rounded-full bg-emerald-600 shrink-0"></span>
+                        </div>
+                        <span class="text-[9px] text-slate-500 truncate">gunturafandy5@gmail.com</span>
+                    </button>
+
                     <button
                         type="button"
                         @click="selectDemo('super_admin', 'daffa@omnipharma.test', 'password')"
@@ -255,9 +269,9 @@
                         :class="selectedRole === 'super_admin' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
                         class="p-2 sm:p-2.5 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer disabled:opacity-50"
                     >
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between gap-1">
                             <span class="text-[11px] font-bold truncate">Super Admin</span>
-                            <span x-show="selectedRole === 'super_admin'" class="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-ping"></span>
+                            <span x-show="selectedRole === 'super_admin'" class="h-1.5 w-1.5 rounded-full bg-emerald-600 shrink-0"></span>
                         </div>
                         <span class="text-[9px] text-slate-500 truncate">daffa@omnipharma.test</span>
                     </button>
@@ -269,9 +283,9 @@
                         :class="selectedRole === 'apt_bwi' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
                         class="p-2 sm:p-2.5 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer disabled:opacity-50"
                     >
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between gap-1">
                             <span class="text-[11px] font-bold truncate">Apoteker BWI</span>
-                            <span x-show="selectedRole === 'apt_bwi'" class="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-ping"></span>
+                            <span x-show="selectedRole === 'apt_bwi'" class="h-1.5 w-1.5 rounded-full bg-emerald-600 shrink-0"></span>
                         </div>
                         <span class="text-[9px] text-slate-500 truncate">bambang@omnipharma.test</span>
                     </button>
@@ -283,9 +297,9 @@
                         :class="selectedRole === 'apt_rogo' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
                         class="p-2 sm:p-2.5 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer disabled:opacity-50"
                     >
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between gap-1">
                             <span class="text-[11px] font-bold truncate">Apoteker RGO</span>
-                            <span x-show="selectedRole === 'apt_rogo'" class="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-ping"></span>
+                            <span x-show="selectedRole === 'apt_rogo'" class="h-1.5 w-1.5 rounded-full bg-emerald-600 shrink-0"></span>
                         </div>
                         <span class="text-[9px] text-slate-500 truncate">dinda@omnipharma.test</span>
                     </button>
@@ -297,9 +311,9 @@
                         :class="selectedRole === 'kasir_bwi' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
                         class="p-2 sm:p-2.5 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer disabled:opacity-50"
                     >
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between gap-1">
                             <span class="text-[11px] font-bold truncate">Kasir BWI</span>
-                            <span x-show="selectedRole === 'kasir_bwi'" class="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-ping"></span>
+                            <span x-show="selectedRole === 'kasir_bwi'" class="h-1.5 w-1.5 rounded-full bg-emerald-600 shrink-0"></span>
                         </div>
                         <span class="text-[9px] text-slate-500 truncate">kasir.bwi@omnipharma.test</span>
                     </button>
@@ -439,13 +453,12 @@
                             }, 600);
                         } else {
                             this.isRedirecting = true;
-                            e.target.submit();
+                            this.$refs.loginForm.submit();
                         }
                     } catch (err) {
                         console.warn('Firebase login attempt fallback to Fortify:', err);
                         this.isRedirecting = true;
-                        e.target.submit();
-                        this.loadingSubmit = false;
+                        this.$refs.loginForm.submit();
                     }
                 }
             };

@@ -108,6 +108,7 @@ class CatalogService
     public function getDaftarKategori(): Collection
     {
         return KategoriObat::query()
+            ->withCount('obat')
             ->whereIn('nama_kategori', [
                 'Obat',
                 'Suplemen',
@@ -116,6 +117,7 @@ class CatalogService
                 'Ibu & Anak',
                 'Alat Kesehatan',
                 'Perawatan Diri',
+                'Mata',
             ])
             ->orWhereNotNull('slug')
             ->orderByRaw("CASE 
@@ -126,7 +128,8 @@ class CatalogService
                 WHEN nama_kategori = 'Ibu & Anak' THEN 5 
                 WHEN nama_kategori = 'Alat Kesehatan' THEN 6 
                 WHEN nama_kategori = 'Perawatan Diri' THEN 7 
-                ELSE 8 END")
+                WHEN nama_kategori = 'Mata' THEN 8 
+                ELSE 9 END")
             ->orderBy('nama_kategori')
             ->get();
     }
@@ -170,7 +173,30 @@ class CatalogService
             });
         }
 
-        return $query->orderBy('urutan')->orderBy('nama_subkategori')->get();
+        $subkategoris = $query->orderBy('urutan')->orderBy('nama_subkategori')->get();
+
+        $canonicalOrder = [
+            'Darah' => 1,
+            'Hormon' => 2,
+            'Hormon & Kontrasepsi' => 3,
+            'Kepala' => 4,
+            'Kulit' => 5,
+            'Liver/Hati, Pankreas & Empedu' => 6,
+            'Otot, Sendi & Tulang' => 7,
+            'Rambut' => 8,
+            'Rongga Mulut & Gigi' => 9,
+            'Obat Saluran Pencernaan' => 10,
+            'Saluran Kemih, Ginjal & Prostat' => 11,
+            'Telinga, Hidung & Tenggorokan' => 12,
+            'Tubuh' => 13,
+            'Obat Lainnya' => 14,
+        ];
+
+        return $subkategoris->sortBy(function (SubkategoriObat $sub) use ($canonicalOrder): array {
+            $prio = $canonicalOrder[$sub->nama_subkategori] ?? 100;
+
+            return [$prio, (int) ($sub->urutan ?? 0), strtolower($sub->nama_subkategori)];
+        })->values();
     }
 
     /**

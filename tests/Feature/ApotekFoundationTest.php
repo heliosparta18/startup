@@ -58,8 +58,8 @@ class ApotekFoundationTest extends TestCase
         $response->assertSee('OmniPharma');
         $response->assertSee('Amodiaquine 200mg');
         $response->assertSee('Paracetamol 500mg');
-        $response->assertSee('+ Unggah Resep');
-        $response->assertSee('+ Beli Langsung');
+        $response->assertSee('Unggah Resep');
+        $response->assertSee('Masukkan Keranjang');
 
         $detailResponse = $this->get(route('customer.obat.detail', ['client' => 'banyuwangi-kota', 'id' => 'sample-id']));
         $detailResponse->assertOk();

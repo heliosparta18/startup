@@ -23,6 +23,8 @@ class PublicCatalog extends Component
 
     public string $subKategori = '';
 
+    public bool $inDashboard = false;
+
     /**
      * @var array<string, array<string, string>>
      */
@@ -33,9 +35,36 @@ class PublicCatalog extends Component
         'subKategori' => ['except' => ''],
     ];
 
-    public function mount(string $client = ''): void
+    public function mount(string $client = '', bool $inDashboard = false): void
     {
+        if (! $inDashboard && auth()->check() && request()->routeIs('customer.catalog')) {
+            if ($client !== '') {
+                session([
+                    'active_branch' => $client,
+                    'active_client' => $client,
+                ]);
+            }
+
+            $this->redirectRoute('dashboard', request()->query(), navigate: false);
+
+            return;
+        }
+
         $this->clientId = $client;
+        $this->inDashboard = $inDashboard;
+    }
+
+    #[\Livewire\Attributes\On('dashboard-search')]
+    public function updateSearchFromDashboard(string $search = ''): void
+    {
+        $this->search = $search;
+        $this->resetPage();
+    }
+
+    #[\Livewire\Attributes\On('dashboard-category')]
+    public function updateCategoryFromDashboard(string $kategori = 'Obat'): void
+    {
+        $this->selectCategory($kategori);
     }
 
     public function updatingSearch(): void
@@ -109,7 +138,7 @@ class PublicCatalog extends Component
             ]);
             $this->clientId = $client->slug;
 
-            return $this->redirect(route('customer.catalog', ['client' => $client->slug]));
+            return $this->redirect($this->inDashboard ? route('dashboard') : route('customer.catalog', ['client' => $client->slug]));
         }
 
         return null;
@@ -117,17 +146,19 @@ class PublicCatalog extends Component
 
     public function render(CatalogService $catalogService): View
     {
+        $isGlobalSearch = trim($this->search) !== '' && $this->subKategori === '';
+
         $obats = $catalogService->getCatalog(
             $this->clientId,
             $this->search ?: null,
             $this->sediaan ?: null,
-            $this->kategori ?: null,
+            $isGlobalSearch ? null : ($this->kategori ?: null),
             $this->subKategori ?: null,
             15,
             true // Mode katalog terpadu multi-cabang (Unified Catalog)
         );
 
-        return view('customer.catalog', [
+        $view = view('customer.catalog', [
             'obats' => $obats,
             'kategoriList' => $catalogService->getDaftarKategori(),
             'subkategoriList' => $catalogService->getDaftarSubkategori($this->kategori, $this->clientId),
@@ -135,7 +166,14 @@ class PublicCatalog extends Component
             'client' => $this->clientId,
             'kategoriAktif' => $this->kategori,
             'subKategoriAktif' => $this->subKategori,
-        ])->layout('components.layouts.customer', [
+            'inDashboard' => $this->inDashboard,
+        ]);
+
+        if ($this->inDashboard) {
+            return $view;
+        }
+
+        return $view->layout('components.layouts.customer', [
             'title' => 'Katalog Obat & Kesehatan - OmniPharma Network',
             'client' => $this->clientId,
             'fullWidth' => true,

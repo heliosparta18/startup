@@ -58,7 +58,7 @@ class CartService
         }
 
         $obatIds = array_keys($rawItems);
-        $obats = Obat::whereIn('id_obat', $obatIds)->get()->keyBy('id_obat');
+        $obats = Obat::with('kategori')->whereIn('id_obat', $obatIds)->get()->keyBy('id_obat');
         $stoks = StokClient::withoutTenancy()
             ->where('id_client', $clientId)
             ->whereIn('id_obat', $obatIds)
@@ -84,6 +84,11 @@ class CartService
                 'subtotal' => $harga * $qtyInt,
                 'stok_tersedia' => $stokTersedia,
                 'sedia' => $stokTersedia >= $qtyInt,
+                'url_gambar' => (string) ($obat->url_gambar ?: asset('images/placeholder-product.svg')),
+                'slug' => (string) ($obat->slug ?: $obat->id_obat),
+                'kategori' => (string) ($obat->kategori->nama_kategori ?? 'Obat & Kesehatan'),
+                'satuan' => (string) ($obat->satuan_kemasan ?: ($obat->jenis_sediaan ?: 'Unit')),
+                'badge_status' => (string) ($obat->badge_status ?? ''),
             ];
         }
 
@@ -100,5 +105,29 @@ class CartService
     public function clear(string $sessionId, string $clientId): void
     {
         Redis::del($this->getCartKey($sessionId, $clientId));
+    }
+
+    public function getCount(string $sessionId, string $clientId): int
+    {
+        try {
+            $key = $this->getCartKey($sessionId, $clientId);
+            /** @var array<string, int|string> $rawItems */
+            $rawItems = Redis::hgetall($key);
+            if (empty($rawItems)) {
+                return 0;
+            }
+
+            $count = 0;
+            foreach ($rawItems as $qty) {
+                $qtyInt = (int) $qty;
+                if ($qtyInt > 0) {
+                    $count += $qtyInt;
+                }
+            }
+
+            return $count;
+        } catch (\Throwable $e) {
+            return 0;
+        }
     }
 }

@@ -212,4 +212,65 @@ class MultiRoleDashboardFlowTest extends TestCase
         // Verifikasi bahwa pengguna tidak terlempar ke tempat beli resep
         $this->assertNotEquals($customerStoreUrl, $response->headers->get('Location'));
     }
+
+    /**
+     * 10. Verifikasi hasil audit alur Sambutan -> Login (Email/Username) -> Register/Profil -> Dashboard:
+     *     - Login bisa menggunakan username maupun handle pendek (@omnipharma.test)
+     *     - Halaman sambutan hanya menampilkan 2 cabang aktif resmi tanpa tautan 404 /klien/genteng
+     *     - Halaman complete-profile merender Google Fonts tanpa directive @fonts mentah
+     *     - Dashboard admin menampilkan kartu Rekonsiliasi Kasir & Ledger Pembayaran
+     */
+    public function test_user_can_login_with_username_and_welcome_branches_switch_cleanly(): void
+    {
+        // A. Login menggunakan username lengkap ('Guntur Afandy')
+        $resUsername = $this->post(route('login.store'), [
+            'email' => 'Guntur Afandy',
+            'password' => 'password',
+        ]);
+        $resUsername->assertSessionHasNoErrors();
+        $resUsername->assertRedirect(route('dashboard'));
+        $this->assertAuthenticated();
+        $this->post(route('logout'));
+
+        // B. Login menggunakan handle pendek ('daffa') -> daffa@omnipharma.test
+        $resHandle = $this->post(route('login.store'), [
+            'email' => 'daffa',
+            'password' => 'password',
+        ]);
+        $resHandle->assertSessionHasNoErrors();
+        $resHandle->assertRedirect(route('admin.dashboard'));
+        $this->assertAuthenticated();
+
+        // Admin dashboard view di /dashboard memuat kartu Rekonsiliasi Kasir
+        $adminDash = $this->get(route('dashboard'));
+        $adminDash->assertOk();
+        $adminDash->assertSee('Rekonsiliasi Kasir &amp; Ledger Pembayaran', false);
+        $adminDash->assertSee(route('admin.kasir.ledger'));
+        $this->post(route('logout'));
+
+        // C. Halaman sambutan tamu hanya menampilkan 2 cabang resmi & bebas cabang fiktif
+        $welcomeGuest = $this->get(route('home'));
+        $welcomeGuest->assertOk();
+        $welcomeGuest->assertSee('2 Cabang Aktif');
+        $welcomeGuest->assertSee('Cabang Banyuwangi Kota');
+        $welcomeGuest->assertSee('Cabang Rogojampi');
+        $welcomeGuest->assertDontSee('6 Cabang Aktif');
+        $welcomeGuest->assertDontSee('/klien/genteng');
+        $welcomeGuest->assertDontSee('/klien/muncar');
+        $welcomeGuest->assertDontSee('/klien/giri');
+        $welcomeGuest->assertDontSee('/klien/cluring');
+
+        // D. Halaman sambutan terautentikasi (?welcome=1) memakai branch.switch menuju /dashboard
+        $pelanggan = User::where('email', 'gunturafandy5@gmail.com')->firstOrFail();
+        $welcomeAuth = $this->actingAs($pelanggan)->get(route('home', ['welcome' => 1]));
+        $welcomeAuth->assertOk();
+        $welcomeAuth->assertSee(route('branch.switch'));
+        $welcomeAuth->assertDontSee('/klien/banyuwangi-kota');
+
+        // E. Halaman complete-profile bebas dari teks @fonts mentah
+        $completeProfile = $this->actingAs($pelanggan)->get(route('auth.complete-profile'));
+        $completeProfile->assertOk();
+        $completeProfile->assertDontSee('@fonts');
+        $completeProfile->assertSee('fonts.googleapis.com');
+    }
 }

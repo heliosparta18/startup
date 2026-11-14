@@ -146,11 +146,17 @@
         <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             @forelse($listObat as $item)
                 @php
-                    $isResep = $item->kategori->wajib_resep ?? false;
+                    $isResep = ($item->kategori->wajib_resep ?? false) || str_contains(strtolower($item->badge_status ?? ''), 'keras');
+                    $katSlug = \Illuminate\Support\Str::slug($item->kategori->nama_kategori ?? '');
                     $stokTotal = $item->stokClient->sum('jumlah_stok') ?: ($item->jumlah_obat ?? 10);
+                    $namaLowerJs = \Illuminate\Support\Js::from(strtolower($item->nama_obat));
+                    $merekLowerJs = \Illuminate\Support\Js::from(strtolower($item->merek ?? ''));
+                    $namaJs = \Illuminate\Support\Js::from($item->nama_obat);
+                    $resepNoteJs = \Illuminate\Support\Js::from('Resep untuk '.$item->nama_obat);
+                    $idJs = \Illuminate\Support\Js::from($item->id_obat);
                 @endphp
                 <article
-                    x-show="(kategoriAktif === 'semua' || (kategoriAktif === 'keras' && {{ $isResep ? 'true' : 'false' }}) || (kategoriAktif === 'bebas' && {{ !$isResep ? 'true' : 'false' }})) && ('{{ strtolower($item->nama_obat) }}'.includes(searchQuery.toLowerCase()) || '{{ strtolower($item->merek ?? '') }}'.includes(searchQuery.toLowerCase()))"
+                    x-show="(kategoriAktif === 'semua' || kategoriAktif === '{{ $katSlug }}' || (kategoriAktif === 'keras' && {{ $isResep ? 'true' : 'false' }}) || (kategoriAktif === 'bebas' && {{ !$isResep ? 'true' : 'false' }})) && ({{ $namaLowerJs }}.includes(searchQuery.toLowerCase()) || {{ $merekLowerJs }}.includes(searchQuery.toLowerCase()))"
                     class="flex flex-col justify-between rounded-3xl border border-slate-200/90 bg-white p-5 sm:p-6 shadow-xs hover:border-emerald-500/40 hover:shadow-md transition">
                     
                     <div class="space-y-3">
@@ -191,23 +197,17 @@
                         </div>
                     </div>
 
-                    <!-- Action Button: Professional, Clean, Emerald Green Sesuai Login -->
+                    <!-- Action Button: Beli Langsung dengan Ikon Keranjang (Semua Golongan Obat) -->
                     <div class="mt-4 pt-3 border-t border-slate-100">
-                        @if($isResep)
-                            <button
-                                type="button"
-                                @click="modalUnggah = true; unggahForm.catatan = 'Resep untuk {{ $item->nama_obat }}'"
-                                class="w-full min-h-[44px] inline-flex items-center justify-center rounded-xl bg-rose-600 hover:bg-rose-700 active:bg-rose-800 px-4 py-2.5 text-xs font-bold text-white shadow-xs transition cursor-pointer">
-                                <span>+ Unggah Resep</span>
-                            </button>
-                        @else
-                            <button
-                                type="button"
-                                @click="beliLangsung('{{ $item->id_obat }}', '{{ $item->nama_obat }}')"
-                                class="w-full min-h-[44px] inline-flex items-center justify-center rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 px-4 py-2.5 text-xs font-bold text-white shadow-xs transition cursor-pointer">
-                                <span>+ Beli Langsung</span>
-                            </button>
-                        @endif
+                        <button
+                            type="button"
+                            @click="beliLangsung({{ $idJs }}, {{ $namaJs }})"
+                            class="w-full min-h-[44px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 px-4 py-2.5 text-xs font-bold text-white shadow-xs transition cursor-pointer">
+                            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                            <span>Masukkan Keranjang</span>
+                        </button>
                     </div>
                 </article>
             @empty
@@ -472,10 +472,12 @@
                 })
                 .then(res => res.json())
                 .then(data => {
+                    window.dispatchEvent(new CustomEvent('cart-updated', { detail: { count: data?.cart_count, added: 1, nama: namaObat } }));
                     this.notifSukses = data.message || (namaObat + ' berhasil ditambahkan ke keranjang.');
                     setTimeout(() => this.notifSukses = '', 5000);
                 })
                 .catch(() => {
+                    window.dispatchEvent(new CustomEvent('cart-updated', { detail: { added: 1, nama: namaObat } }));
                     this.notifSukses = namaObat + ' berhasil ditambahkan ke keranjang belanja.';
                     setTimeout(() => this.notifSukses = '', 5000);
                 });

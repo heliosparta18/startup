@@ -8,6 +8,7 @@ use App\Models\Pembayaran;
 use App\Models\Pengguna;
 use App\Models\Pesanan;
 use App\Models\StokClient;
+use App\Models\User;
 use App\Modules\Ordering\Actions\CancelOrderAction;
 use App\Modules\Ordering\Actions\CreateOrderAction;
 use App\Modules\Ordering\Events\OrderStatusUpdated;
@@ -378,5 +379,116 @@ class CartCheckoutPaymentTest extends TestCase
         // Buka lewat URL Cabang A (Banyuwangi Kota) -> Harus 404 (IDOR dicegah)
         $response = $this->get('/klien/'.$clientA->slug.'/order/'.$pesananB->id_pesanan.'/payment');
         $response->assertStatus(404);
+    }
+
+    public function test_cart_items_include_product_cover_and_metadata(): void
+    {
+        $clientA = Client::where('slug', 'banyuwangi-kota')->firstOrFail();
+        $obat = Obat::firstOrFail();
+
+        $cartService = app(CartService::class);
+        $sessionId = 'cover-session-'.Str::random(8);
+        $cartService->addItem($sessionId, $clientA->id_client, $obat->id_obat, 2);
+
+        $items = $cartService->getItems($sessionId, $clientA->id_client);
+
+        $this->assertCount(1, $items);
+        $this->assertNotEmpty($items[0]['url_gambar']);
+        $this->assertSame($obat->url_gambar, $items[0]['url_gambar']);
+        $this->assertSame($obat->slug ?: $obat->id_obat, $items[0]['slug']);
+        $this->assertArrayHasKey('kategori', $items[0]);
+        $this->assertArrayHasKey('satuan', $items[0]);
+    }
+
+    public function test_delivery_checkout_calculates_distance_based_ongkir_and_renders_google_maps_routes(): void
+    {
+        $client = Client::where('slug', 'banyuwangi-kota')->firstOrFail();
+        $customer = User::where('email', 'gunturafandy5@gmail.com')->firstOrFail();
+        $apoteker = User::where('email', 'bambang@omnipharma.test')->firstOrFail();
+        $obat = Obat::firstOrFail();
+        $sessionId = 'delivery-session-'.Str::random(10);
+
+        StokClient::withoutTenancy()->updateOrCreate(
+            ['id_obat' => $obat->id_obat, 'id_client' => $client->id_client],
+            ['jumlah_stok' => 30]
+        );
+
+        // Tambah item ke keranjang sebagai pelanggan dengan cookie sesi terenkripsi konsisten
+        $addResponse = $this->actingAs($customer)
+            ->withCredentials()
+            ->withCookie('omnipharma_customer_session', $sessionId)
+            ->postJson(route('keranjang.add'), [
+                'id_obat' => $obat->id_obat,
+                'jumlah' => 2,
+            ]);
+        $addResponse->assertOk();
+
+        // Verifikasi halaman checkout memiliki prompt GPS, peta interaktif, Maps Share, Ongkir & cover obat
+        $checkoutPage = $this->actingAs($customer)
+            ->withCredentials()
+            ->withCookie('omnipharma_customer_session', $sessionId)
+            ->get(route('checkout.index'));
+        $checkoutPage->assertOk();
+        $checkoutPage->assertDontSee("Izinkan Lokasi, atau geser pin langsung di peta.'; } else");
+        $checkoutPage->assertDontSee('parseMapsInput() { const raw =');
+        $checkoutPage->assertSee('Izinkan Akses GPS');
+        $checkoutPage->assertSee('Deteksi Lokasi GPS Saya');
+        $checkoutPage->assertSee('Share Lokasi Pengantaran (Terintegrasi Google Maps)');
+        $checkoutPage->assertSee('Gunakan Lokasi GPS Saya Saat Ini');
+        $checkoutPage->assertSee('checkout-interactive-map');
+        $checkoutPage->assertSee('Cari Jalan / Kelurahan / Lokasi di Peta');
+        $checkoutPage->assertSee('Lihat Rute Pengiriman di Google Maps');
+
+        // Proses checkout metode delivery jarak 4 km => 5000 + ceil(4-2)*2500 = 10000
+        $processResponse = $this->actingAs($customer)
+            ->withCredentials()
+            ->withCookie('omnipharma_customer_session', $sessionId)
+            ->post(route('checkout.store'), [
+                'metode_layanan' => 'delivery',
+                'jarak_km' => 4,
+                'koordinat_tujuan' => '-8.2050,114.3750',
+                'alamat_pengantaran' => 'Jl. Ahmad Yani No. 10',
+                'nama_pemesan' => 'Guntur Afandy',
+                'telepon' => '081234567890',
+                'catatan' => 'Tolong hubungi saat tiba',
+            ]);
+        $processResponse->assertRedirect();
+        $redirectPath = (string) parse_url((string) $processResponse->headers->get('Location'), PHP_URL_PATH);
+        $this->assertStringContainsString('/pembayaran/', $redirectPath, 'Checkout redirect target: '.$redirectPath);
+        $orderId = basename($redirectPath);
+
+        $pesanan = Pesanan::withoutTenancy()->findOrFail($orderId);
+        $expectedSubtotal = (float) $obat->harga * 2;
+        $expectedRouteUrl = 'https://www.google.com/maps/dir/?api=1&origin=-8.2192,114.3691&destination=-8.205,114.375&travelmode=driving';
+
+        $this->assertSame('delivery', $pesanan->metode_layanan);
+        $this->assertSame(10000.0, $pesanan->ongkos_kirim);
+        $this->assertSame(4.0, $pesanan->jarak_km);
+        $this->assertSame('-8.205,114.375', $pesanan->koordinat_tujuan);
+        $this->assertSame('Jl. Ahmad Yani No. 10', $pesanan->alamat_pengantaran);
+        $this->assertSame('Tolong hubungi saat tiba', $pesanan->catatan_bersih);
+        $this->assertSame($expectedRouteUrl, $pesanan->maps_route_url);
+        $this->assertEquals($expectedSubtotal + 10000.0, $pesanan->total_harga);
+
+        // Pembayaran & Lacak Pesanan menampilkan rincian ongkir + rute Google Maps kurir tanpa kebocoran atribut HTML
+        $paymentPage = $this->actingAs($customer)->get(route('pembayaran.show', ['id' => $pesanan->id_pesanan]));
+        $paymentPage->assertOk();
+        $paymentPage->assertSee('window.omniPaymentPageData');
+        $paymentPage->assertDontSee('body: `{"order_number":', false);
+        $paymentPage->assertSee('Rp 10.000');
+        $paymentPage->assertSee('Buka Rute Kurir di Google Maps');
+        $paymentPage->assertSee($expectedRouteUrl);
+
+        $trackPage = $this->actingAs($customer)->get(route('pesanan.track', ['id' => $pesanan->id_pesanan]));
+        $trackPage->assertOk();
+        $trackPage->assertSee('Buka Rute Google Maps (Pengirim)');
+        $trackPage->assertSee($expectedRouteUrl);
+
+        // Panel Antrean Apoteker / Pengirim menampilkan tombol langsung Buka Rute Maps
+        $queuePage = $this->actingAs($apoteker)->get(route('tenant.antrean.index', ['client' => $client->slug]));
+        $queuePage->assertOk();
+        $queuePage->assertSee('Kurir (4 km)');
+        $queuePage->assertSee('Buka Rute Maps');
+        $queuePage->assertSee($expectedRouteUrl);
     }
 }

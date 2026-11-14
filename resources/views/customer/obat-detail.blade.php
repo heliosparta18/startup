@@ -10,13 +10,13 @@
                     <span>Dashboard Utama</span>
                 </a>
                 <span>/</span>
-                <a href="{{ route('customer.catalog', ['client' => $client ?? 'banyuwangi-kota']) }}" class="inline-flex min-h-[44px] items-center gap-1 text-slate-600 hover:text-emerald-700 transition">
+                <a href="{{ route('dashboard') }}" class="inline-flex min-h-[44px] items-center gap-1 text-slate-600 hover:text-emerald-700 transition">
                     <span>Katalog</span>
                 </a>
                 <span>/</span>
                 <span class="font-bold text-emerald-800 truncate max-w-[200px] sm:max-w-md">{{ $obat->nama_obat ?? 'Detail Obat' }}</span>
             </div>
-            <a href="{{ route('customer.cart', ['client' => $client ?? 'banyuwangi-kota']) }}" class="inline-flex items-center gap-1.5 font-bold text-emerald-700 hover:text-emerald-800 min-h-[44px] px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition">
+            <a href="{{ \Illuminate\Support\Facades\Route::has('keranjang') ? route('keranjang') : route('customer.cart', ['client' => $client ?? 'banyuwangi-kota']) }}" class="inline-flex items-center gap-1.5 font-bold text-emerald-700 hover:text-emerald-800 min-h-[44px] px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition shrink-0">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
@@ -36,7 +36,7 @@
         @endphp
 
         {{-- Main Product Card --}}
-        <article class="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 rounded-3xl border border-slate-200 bg-white p-5 sm:p-8 shadow-xs">
+        <article class="grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-8 rounded-3xl border border-slate-200 bg-white p-4 sm:p-8 shadow-xs">
             {{-- Left Column: Packshot Image & Quick Badges --}}
             <div class="md:col-span-5 flex flex-col space-y-4">
                 <div class="relative flex aspect-square w-full items-center justify-center rounded-2xl bg-white p-4 sm:p-6 border border-slate-200/80 overflow-hidden shadow-2xs group">
@@ -117,7 +117,7 @@
                     </p>
 
                     {{-- Pricing Card --}}
-                    <div class="mt-4 p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200/80 flex items-baseline justify-between">
+                    <div class="mt-4 p-3.5 sm:p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200/80 flex flex-wrap items-baseline justify-between gap-2">
                         <div>
                             <span class="block text-[11px] font-bold text-emerald-700 uppercase tracking-wider">Harga Resmi Apotek</span>
                             <div class="text-2xl sm:text-3xl font-black text-emerald-900 tracking-tight">
@@ -128,8 +128,8 @@
                     </div>
 
                     {{-- Stock & Multi-Branch Availability --}}
-                    <div class="mt-4 rounded-2xl bg-slate-50 p-4 border border-slate-200 space-y-2.5 text-xs">
-                        <div class="font-bold text-slate-800 flex items-center justify-between">
+                    <div class="mt-4 rounded-2xl bg-slate-50 p-3.5 sm:p-4 border border-slate-200 space-y-2.5 text-xs">
+                        <div class="font-bold text-slate-800 flex flex-wrap items-center justify-between gap-2">
                             <span>Ketersediaan Stok Cabang:</span>
                             @if ($obat?->batch_number)
                                 <span class="font-mono text-[10px] text-slate-500 font-normal">Batch: {{ $obat->batch_number }}</span>
@@ -163,10 +163,10 @@
                             @if (! $isAvailableHere && $altBranch)
                                 <div class="pt-1">
                                     <a
-                                        href="{{ route('customer.obat.detail', ['client' => $altBranch->slug, 'id' => $obat->id_obat]) }}"
-                                        class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition min-h-[44px]"
+                                        href="{{ \Illuminate\Support\Facades\Route::has('obat.show') ? route('obat.show', ['id' => ($obat->slug ?: $obat->id_obat), 'client' => $altBranch->slug]) : route('customer.obat.detail', ['client' => $altBranch->slug, 'id' => $obat->id_obat]) }}"
+                                        class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition min-h-[44px] text-center"
                                     >
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                                         </svg>
                                         <span>Beralih ke {{ preg_replace('/^Cabang\s+/i', '', $altBranch->nama_client) }}</span>
@@ -190,62 +190,48 @@
                     loading: false,
                     tambahKeranjang(idObat, namaObat) {
                         this.loading = true;
-                        fetch('{{ route('customer.cart.add', ['client' => $client ?? 'banyuwangi-kota']) }}', {
+                        fetch('{{ \Illuminate\Support\Facades\Route::has('keranjang.add') ? route('keranjang.add') : route('customer.cart.add', ['client' => $client ?? 'banyuwangi-kota']) }}', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
                                 'Accept': 'application/json',
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
                             },
-                            body: JSON.stringify({ id_obat: idObat, jumlah: this.qty })
+                            body: JSON.stringify({
+                                id_obat: idObat,
+                                jumlah: this.qty,
+                                client: '{{ $client ?? 'banyuwangi-kota' }}'
+                            })
                         })
                         .then(res => res.json())
-                        .then(() => {
+                        .then(data => {
                             this.loading = false;
+                            window.dispatchEvent(new CustomEvent('cart-updated', { detail: { count: data?.cart_count, added: this.qty, nama: namaObat } }));
                             this.notif = 'Berhasil ditambahkan ke keranjang (' + this.qty + ' item)!';
                             setTimeout(() => this.notif = '', 4000);
                         })
                         .catch(() => {
                             this.loading = false;
+                            window.dispatchEvent(new CustomEvent('cart-updated', { detail: { added: this.qty, nama: namaObat } }));
                             this.notif = 'Obat ditambahkan ke keranjang.';
                             setTimeout(() => this.notif = '', 4000);
                         });
                     }
                 }">
                     {{-- Alert Notification --}}
-                    <div x-show="notif" x-cloak class="p-3 rounded-xl bg-emerald-50 text-emerald-900 text-xs font-bold flex items-center justify-between border border-emerald-200">
+                    <div x-show="notif" x-cloak class="p-3 rounded-xl bg-emerald-50 text-emerald-900 text-xs font-bold flex flex-wrap items-center justify-between gap-2 border border-emerald-200">
                         <span x-text="notif"></span>
-                        <a href="{{ route('customer.cart', ['client' => $client ?? 'banyuwangi-kota']) }}" class="underline font-bold text-emerald-700 ml-2">Lihat Keranjang &rarr;</a>
+                        <a href="{{ \Illuminate\Support\Facades\Route::has('keranjang') ? route('keranjang') : route('customer.cart', ['client' => $client ?? 'banyuwangi-kota']) }}" class="underline font-bold text-emerald-700 shrink-0">Lihat Keranjang &rarr;</a>
                     </div>
 
-                    {{-- Prescription Notice or Cart Buttons --}}
-                    @if ($isKeras)
-                        <div class="rounded-2xl border border-rose-200 bg-rose-50/70 p-4 text-xs space-y-2.5">
-                            <div class="flex items-center gap-2 text-rose-900 font-bold">
-                                <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                                </svg>
-                                <span>Obat Keras (Wajib Resep Dokter)</span>
-                            </div>
-                            <p class="text-rose-700 leading-relaxed">
-                                Sesuai regulasi Permenkes RI No. 73/2016, obat golongan keras ini hanya dapat diserahkan setelah diverifikasi oleh Apoteker Penanggung Jawab (APJ) dengan resep dokter sah.
-                            </p>
-                            <div class="pt-1">
-                                <a href="{{ route('customer.home', ['client' => $client ?? 'banyuwangi-kota']) }}#unggah-resep" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-xs transition min-h-[44px]">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
-                                    </svg>
-                                    <span>Unggah Foto Resep Dokter di Cabang Ini</span>
-                                </a>
-                            </div>
-                        </div>
-                    @elseif ($isAvailableHere)
+                    {{-- Direct Purchase Controls for Available Medicines (Including Logo K) --}}
+                    @if ($isAvailableHere)
                         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                             {{-- Quantity Selector --}}
                             <div class="flex items-center justify-between sm:justify-start rounded-xl border border-slate-200 bg-white p-1">
-                                <button type="button" @click="if (qty > 1) qty--" class="w-10 h-10 rounded-lg flex items-center justify-center text-slate-600 hover:bg-slate-100 font-bold min-h-[40px] min-w-[40px] cursor-pointer" aria-label="Kurangi jumlah">&minus;</button>
+                                <button type="button" @click="if (qty > 1) qty--" class="w-10 h-10 rounded-lg flex items-center justify-center text-slate-600 hover:bg-slate-100 font-bold min-h-[44px] min-w-[44px] cursor-pointer" aria-label="Kurangi jumlah">&minus;</button>
                                 <span x-text="qty" class="w-12 text-center font-bold text-sm text-slate-900"></span>
-                                <button type="button" @click="qty++" class="w-10 h-10 rounded-lg flex items-center justify-center text-slate-600 hover:bg-slate-100 font-bold min-h-[40px] min-w-[40px] cursor-pointer" aria-label="Tambah jumlah">&plus;</button>
+                                <button type="button" @click="qty++" class="w-10 h-10 rounded-lg flex items-center justify-center text-slate-600 hover:bg-slate-100 font-bold min-h-[44px] min-w-[44px] cursor-pointer" aria-label="Tambah jumlah">&plus;</button>
                             </div>
 
                             {{-- Add to Cart Button --}}
@@ -256,7 +242,7 @@
                                 class="flex-1 min-h-[44px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 px-5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-xs transition cursor-pointer disabled:opacity-50"
                             >
                                 <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
                                 </svg>
                                 <span x-show="!loading">Tambah ke Keranjang</span>
                                 <span x-show="loading" x-cloak>Menambahkan...</span>
@@ -264,8 +250,8 @@
                         </div>
                     @elseif (! $isAvailableHere && $altBranch)
                         <a
-                            href="{{ route('customer.obat.detail', ['client' => $altBranch->slug, 'id' => $obat?->id_obat ?? $id]) }}"
-                            class="w-full min-h-[44px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 px-5 py-3 text-xs sm:text-sm font-bold text-white shadow-xs transition"
+                            href="{{ \Illuminate\Support\Facades\Route::has('obat.show') ? route('obat.show', ['id' => ($obat?->slug ?: ($obat?->id_obat ?? $id)), 'client' => $altBranch->slug]) : route('customer.obat.detail', ['client' => $altBranch->slug, 'id' => $obat?->id_obat ?? $id]) }}"
+                            class="w-full min-h-[44px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 px-5 py-3 text-xs sm:text-sm font-bold text-white shadow-xs transition text-center"
                         >
                             <span>Beralih ke {{ preg_replace('/^Cabang\s+/i', '', $altBranch->nama_client) }} untuk Membeli</span>
                         </a>
@@ -273,7 +259,7 @@
 
                     {{-- Back Link --}}
                     <div>
-                        <a href="{{ route('customer.catalog', ['client' => $client ?? 'banyuwangi-kota']) }}" class="inline-flex min-h-[44px] items-center gap-2 text-xs font-semibold text-slate-600 hover:text-emerald-700 transition">
+                        <a href="{{ route('dashboard') }}" class="inline-flex min-h-[44px] items-center gap-2 text-xs font-semibold text-slate-600 hover:text-emerald-700 transition">
                             &larr; Kembali ke Katalog Obat
                         </a>
                     </div>
@@ -282,7 +268,7 @@
         </article>
 
         {{-- Clinical Information Cards (GoApotik Comprehensive Data) --}}
-        <section class="rounded-3xl border border-slate-200 bg-white p-5 sm:p-8 shadow-xs space-y-6" aria-labelledby="informasi-klinis-heading">
+        <section class="rounded-3xl border border-slate-200 bg-white p-4 sm:p-8 shadow-xs space-y-5 sm:space-y-6" aria-labelledby="informasi-klinis-heading">
             <h2 id="informasi-klinis-heading" class="text-base sm:text-lg font-black text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
                 <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -290,44 +276,44 @@
                 <span>Informasi Klinis &amp; Farmakologi Produk</span>
             </h2>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 text-xs">
                 {{-- Indikasi --}}
-                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5">
-                    <h3 class="font-bold text-slate-900 uppercase tracking-wider text-[11px] text-emerald-800">Indikasi Klinis</h3>
-                    <p class="text-slate-700 leading-relaxed">
+                <div class="p-3.5 sm:p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5 min-w-0">
+                    <h3 class="font-bold uppercase tracking-wider text-[11px] text-emerald-800">Indikasi Klinis</h3>
+                    <p class="text-slate-700 leading-relaxed break-words">
                         {{ $obat?->indikasi ?: 'Membantu memelihara kesehatan tubuh dan meredakan gejala sesuai dengan indikasi farmasi resmi.' }}
                     </p>
                 </div>
 
                 {{-- Komposisi --}}
-                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5">
-                    <h3 class="font-bold text-slate-900 uppercase tracking-wider text-[11px] text-emerald-800">Komposisi Zat Aktif</h3>
-                    <p class="text-slate-700 leading-relaxed font-mono text-[11px]">
+                <div class="p-3.5 sm:p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5 min-w-0">
+                    <h3 class="font-bold uppercase tracking-wider text-[11px] text-emerald-800">Komposisi Zat Aktif</h3>
+                    <p class="text-slate-700 leading-relaxed font-mono text-[11px] break-words">
                         {{ $obat?->komposisi ?: 'Informasi komposisi zat aktif tercantum lengkap pada kemasan resmi.' }}
                     </p>
                 </div>
 
                 {{-- Dosis --}}
-                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5">
-                    <h3 class="font-bold text-slate-900 uppercase tracking-wider text-[11px] text-emerald-800">Dosis Penggunaan</h3>
-                    <p class="text-slate-700 leading-relaxed">
+                <div class="p-3.5 sm:p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5 min-w-0">
+                    <h3 class="font-bold uppercase tracking-wider text-[11px] text-emerald-800">Dosis Penggunaan</h3>
+                    <p class="text-slate-700 leading-relaxed break-words">
                         {{ $obat?->dosis ?: 'Gunakan sesuai anjuran dokter atau petunjuk resmi pada kemasan obat.' }}
                     </p>
                 </div>
 
                 {{-- Aturan Pakai --}}
-                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5">
-                    <h3 class="font-bold text-slate-900 uppercase tracking-wider text-[11px] text-emerald-800">Aturan &amp; Cara Pakai</h3>
-                    <p class="text-slate-700 leading-relaxed">
+                <div class="p-3.5 sm:p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5 min-w-0">
+                    <h3 class="font-bold uppercase tracking-wider text-[11px] text-emerald-800">Aturan &amp; Cara Pakai</h3>
+                    <p class="text-slate-700 leading-relaxed break-words">
                         {{ $obat?->aturan_pakai ?: 'Dapat dikonsumsi setelah makan atau sesuai petunjuk profesional kefarmasian.' }}
                     </p>
                 </div>
 
                 {{-- Deskripsi Ringkas --}}
                 @if ($obat?->deskripsi)
-                    <div class="col-span-1 md:col-span-2 p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5">
-                        <h3 class="font-bold text-slate-900 uppercase tracking-wider text-[11px] text-emerald-800">Deskripsi Produk</h3>
-                        <p class="text-slate-700 leading-relaxed">
+                    <div class="col-span-1 md:col-span-2 p-3.5 sm:p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5 min-w-0">
+                        <h3 class="font-bold uppercase tracking-wider text-[11px] text-emerald-800">Deskripsi Produk</h3>
+                        <p class="text-slate-700 leading-relaxed break-words">
                             {{ $obat->deskripsi }}
                         </p>
                     </div>

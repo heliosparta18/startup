@@ -4,8 +4,10 @@ namespace App\Providers;
 
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
+use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -86,6 +88,32 @@ class FortifyServiceProvider extends ServiceProvider
     {
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::createUsersUsing(CreateNewUser::class);
+
+        Fortify::authenticateUsing(function (Request $request) {
+            $identifier = trim((string) $request->input('email', ''));
+            $password = (string) $request->input('password', '');
+
+            if ($identifier === '' || $password === '') {
+                return null;
+            }
+
+            $normalized = strtolower($identifier);
+            $user = User::whereRaw('LOWER(email) = ?', [$normalized])->first();
+
+            if (! $user && ! str_contains($normalized, '@')) {
+                $user = User::whereRaw('LOWER(email) = ?', [$normalized.'@omnipharma.test'])->first();
+            }
+
+            if (! $user) {
+                $user = User::whereRaw('LOWER(name) = ?', [$normalized])->first();
+            }
+
+            if ($user && $user->isActive() && Hash::check($password, $user->password)) {
+                return $user;
+            }
+
+            return null;
+        });
     }
 
     /**
