@@ -80,13 +80,7 @@ class FirebaseAuthSessionController extends Controller
             $redirectUrl = route('auth.complete-profile');
         } else {
             $request->session()->flash('welcome_user', $user->name);
-            $redirectUrl = route('dashboard');
-            if ($user->hasRole('super_admin') || $user->role === 'super_admin') {
-                $redirectUrl = route('admin.dashboard');
-            } elseif ($user->hasRole('apoteker') || $user->role === 'apoteker') {
-                $branchSlug = $user->getClientSlug();
-                $redirectUrl = route('tenant.dashboard', ['client' => $branchSlug]);
-            }
+            $redirectUrl = $user->homeRoute();
         }
 
         return response()->json([

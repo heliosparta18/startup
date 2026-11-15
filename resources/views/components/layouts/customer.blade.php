@@ -6,6 +6,7 @@
     $userRole = $loggedUser->role ?? ($loggedUser->peran ?? 'pelanggan');
     $isApoteker = $loggedUser && ($loggedUser->hasRole('apoteker') || $loggedUser->role === 'apoteker');
     $isSuperAdmin = $loggedUser && ($loggedUser->hasRole('super_admin') || $loggedUser->role === 'super_admin');
+    $isKasir = $loggedUser && $loggedUser->hasRole('kasir');
     $routeClient = request()->route('client');
     $userClientSlug = $loggedUser && method_exists($loggedUser, 'getClientSlug') ? $loggedUser->getClientSlug() : 'banyuwangi-kota';
     $userClientName = $loggedUser && method_exists($loggedUser, 'getClientName') ? $loggedUser->getClientName() : 'Cabang Banyuwangi Kota';
@@ -433,6 +434,17 @@
                                     <span>Profile</span>
                                 </a>
 
+                                @if($isSuperAdmin || $isApoteker || $isKasir)
+                                    <a
+                                        href="{{ $loggedUser->homeRoute() }}"
+                                        class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-emerald-800 bg-emerald-50/70 hover:bg-emerald-100 font-bold transition-colors min-h-[44px]"
+                                        role="menuitem"
+                                    >
+                                        <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+                                        <span>{{ $isSuperAdmin ? 'Executive Dashboard' : ($isKasir ? 'Kasir & POS Loket' : 'Dashboard Cabang') }}</span>
+                                    </a>
+                                @endif
+
                                 <a
                                     href="{{ $riwayatPesananUrl }}"
                                     class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-slate-800 hover:text-slate-900 hover:bg-slate-100 font-semibold transition-colors min-h-[44px]"
@@ -637,6 +649,11 @@
                     <a href="{{ route('profile.edit') }}" class="flex items-center gap-2.5 min-h-[44px] px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-50 font-semibold">
                         <span>Profile</span>
                     </a>
+                    @if($isSuperAdmin || $isApoteker || $isKasir)
+                        <a href="{{ $loggedUser->homeRoute() }}" class="flex items-center gap-2.5 min-h-[44px] px-3 py-2 rounded-xl text-emerald-800 bg-emerald-50 hover:bg-emerald-100 font-bold">
+                            <span>{{ $isSuperAdmin ? 'Executive Dashboard' : ($isKasir ? 'Kasir & POS Loket' : 'Dashboard Cabang') }}</span>
+                        </a>
+                    @endif
                     <a href="{{ $riwayatPesananUrl }}" class="flex items-center gap-2.5 min-h-[44px] px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-50 font-semibold">
                         <span>Riwayat Pesanan</span>
                     </a>

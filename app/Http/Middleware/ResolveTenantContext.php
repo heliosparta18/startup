@@ -25,7 +25,7 @@ class ResolveTenantContext
         $tenantIdentifier = (string) $request->route('client');
 
         if ($tenantIdentifier === '') {
-            $tenantIdentifier = (string) ($request->input('client') ?: session('active_branch') ?: session('active_client') ?: ($request->user() && method_exists($request->user(), 'getClientSlug') ? $request->user()->getClientSlug() : 'banyuwangi-kota'));
+            $tenantIdentifier = (string) ($request->input('client') ?: session('active_branch') ?: session('active_client') ?: ($request->user()?->getClientSlug() ?: 'banyuwangi-kota'));
 
             if ($tenantIdentifier === '') {
                 return $next($request);

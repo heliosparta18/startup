@@ -21,14 +21,14 @@ class GoApotikFullCatalogSeeder extends Seeder
     {
         $jsonPath = database_path('data/scraped_goapotik_lengkap.json');
         if (! File::exists($jsonPath)) {
-            $this->command?->error("File data tidak ditemukan di: {$jsonPath}");
+            optional($this->command)->error("File data tidak ditemukan di: {$jsonPath}");
 
             return;
         }
 
         $items = json_decode(File::get($jsonPath), true);
         if (! is_array($items)) {
-            $this->command?->error('Gagal membaca JSON katalog.');
+            optional($this->command)->error('Gagal membaca JSON katalog.');
 
             return;
         }
@@ -42,7 +42,7 @@ class GoApotikFullCatalogSeeder extends Seeder
         $bwiClient = $clients->firstWhere('slug', 'banyuwangi-kota') ?? $clients->first();
         $rogoClient = $clients->firstWhere('slug', 'rogojampi') ?? $clients->skip(1)->first();
 
-        $this->command?->info('Memulai seeding '.count($items).' produk GoApotik lengkap...');
+        optional($this->command)->info('Memulai seeding '.count($items).' produk GoApotik lengkap...');
 
         $kategoriCache = KategoriObat::all()->keyBy('nama_kategori');
         $subkategoriBySlug = SubkategoriObat::all()->keyBy('slug');
@@ -154,6 +154,6 @@ class GoApotikFullCatalogSeeder extends Seeder
             }
         });
 
-        $this->command?->info('Berhasil mengimpor '.count($items).' produk ke database!');
+        optional($this->command)->info('Berhasil mengimpor '.count($items).' produk ke database!');
     }
 }

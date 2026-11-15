@@ -1,95 +1,149 @@
-<x-layouts.admin :title="'Pengaturan Cabang - OmniPharma'">
-    <div class="space-y-6 sm:space-y-8">
-        <!-- Breadcrumb & Navigasi -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div class="flex items-center gap-2 text-xs text-slate-500">
-                <a href="{{ route('admin.dashboard') }}" class="hover:text-emerald-800 font-medium transition">Dashboard Pusat</a>
-                <span>/</span>
-                <span class="text-slate-900 font-bold">Pengaturan Cabang Apotek</span>
+<x-layouts.admin title="Pengaturan Operasional Multi-Cabang - OmniPharma">
+    <div x-data="{ showAddBranch: false }" class="space-y-6 sm:space-y-8">
+        <!-- Header -->
+        <div class="rounded-3xl bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold">
+                    <span>Manajemen Cabang Apotek | {{ count($clients) }} Cabang Terhubung</span>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-3">
+                    Pengaturan Operasional &amp; Lokasi Cabang
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl">
+                    Tambahkan cabang baru, ubah alamat gerai, atur jam operasional, radius pengiriman, serta aktifkan atau nonaktifkan operasional apotek.
+                </p>
             </div>
-            <a href="{{ route('admin.dashboard') }}" class="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-2xs transition">
-                &larr; Kembali ke Dashboard
-            </a>
-        </div>
-
-        <!-- Hero Banner: Nuansa Deep Spruce Hijau Sesuai Menu Login -->
-        <div class="rounded-3xl bg-gradient-to-br from-[#0A231E] via-[#0E352E] to-[#0A231E] text-white p-6 sm:p-8 lg:p-10 shadow-xl border border-emerald-500/20 relative overflow-hidden">
-            <div class="absolute -top-24 -left-24 w-72 h-72 rounded-full border border-emerald-500/10 pointer-events-none"></div>
-            <div class="absolute -bottom-24 -right-24 w-80 h-80 rounded-full border border-emerald-500/15 pointer-events-none"></div>
-
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
-                <div>
-                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-emerald-200 border border-emerald-500/30">
-                        Konfigurasi Multi-Tenant Cabang
-                    </span>
-
-                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white mt-3 leading-tight">
-                        Pengaturan &amp; Operasional Cabang
-                    </h1>
-                    <p class="text-xs sm:text-sm text-emerald-200/90 mt-1 max-w-2xl leading-relaxed">
-                        Pengaturan parameter cabang apotek, radius layanan pengiriman kurir, dan jadwal jam operasional harian seluruh gerai.
-                    </p>
-                </div>
-
-                <div class="shrink-0">
-                    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-[#D4F94E] font-bold text-xs backdrop-blur-xs">
-                        {{ count($clients) }} Cabang Terhubung
-                    </span>
-                </div>
+            <div class="shrink-0 flex flex-wrap items-center gap-2.5">
+                <button type="button" @click="showAddBranch = !showAddBranch" class="inline-flex min-h-[44px] items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition cursor-pointer">
+                    <span x-text="showAddBranch ? 'Tutup Form Tambah' : '+ Tambah Cabang Baru'"></span>
+                </button>
+                <a href="{{ route('admin.dashboard') }}" class="inline-flex min-h-[44px] items-center justify-center px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition">
+                    &larr; Kembali ke Dashboard
+                </a>
             </div>
         </div>
 
-        @if(session('success'))
-            <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-300 text-xs font-bold text-emerald-900 flex items-center gap-2.5 shadow-xs">
-                <svg class="h-5 w-5 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+        @if (session('success'))
+            <div class="rounded-2xl border border-emerald-300 bg-emerald-50 p-4 text-xs font-bold text-emerald-900 shadow-xs flex items-center gap-2.5">
+                <svg class="h-5 w-5 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
                 <span>{{ session('success') }}</span>
             </div>
         @endif
 
-        <!-- Grid 2 Cabang: Banyuwangi Kota & Rogojampi -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-            @foreach($clients as $c)
-                <div class="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs space-y-5 flex flex-col justify-between">
+        @if (session('error') || $errors->any())
+            <div class="rounded-2xl border border-rose-300 bg-rose-50 p-4 text-xs font-bold text-rose-900 space-y-1">
+                @if (session('error'))<p>{{ session('error') }}</p>@endif
+                @foreach ($errors->all() as $err)<p>{{ $err }}</p>@endforeach
+            </div>
+        @endif
+
+        <!-- Form Tambah Cabang Baru -->
+        <div x-show="showAddBranch" x-cloak class="rounded-3xl border border-emerald-200 bg-white p-6 sm:p-8 shadow-xs space-y-4">
+            <div class="border-b border-slate-100 pb-3">
+                <h2 class="text-base font-extrabold text-slate-900">Buka Cabang Apotek Baru</h2>
+                <p class="text-xs text-slate-500 mt-0.5">Cabang baru langsung tersedia di portal admin, tenant apoteker, dan pemilihan cabang pelanggan.</p>
+            </div>
+            <form method="POST" action="{{ route('admin.cabang.store') }}" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                @csrf
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Nama Cabang *</label>
+                    <input type="text" name="nama_client" required placeholder="Cabang Genteng" class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3.5 text-slate-900 focus:border-emerald-600 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Slug URL Cabang (Opsional)</label>
+                    <input type="text" name="slug" placeholder="genteng" class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3.5 font-mono text-slate-900 focus:border-emerald-600 focus:outline-none">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block font-bold text-slate-700 mb-1">Alamat Lengkap *</label>
+                    <textarea name="alamat" rows="2" required placeholder="Jl. Gajah Mada No. 12, Genteng, Banyuwangi" class="w-full rounded-xl border border-slate-300 p-3 text-slate-900 focus:border-emerald-600 focus:outline-none"></textarea>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Radius Layanan (KM)</label>
+                    <input type="number" name="radius_km" min="1" max="50" value="5" class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3.5 text-slate-900">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Jam Operasional</label>
+                    <input type="text" name="jam_buka" value="07:00 - 22:00 WIB" class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3.5 text-slate-900">
+                </div>
+                <div class="md:col-span-2 flex items-center justify-end gap-3 pt-2">
+                    <button type="button" @click="showAddBranch = false" class="min-h-[44px] px-4 rounded-xl border border-slate-300 text-slate-700 font-bold cursor-pointer">Batal</button>
+                    <button type="submit" class="min-h-[44px] px-6 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-xs cursor-pointer">Simpan Cabang Baru</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Daftar Kartu Konfigurasi Cabang -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            @foreach ($clients as $c)
+                @php $branchSlug = $c->slug ?? $c->id_client; @endphp
+                <div class="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs flex flex-col justify-between space-y-5">
                     <div>
-                        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                        <div class="flex items-start justify-between gap-3 border-b border-slate-100 pb-4">
                             <div>
-                                <span class="text-xs font-bold uppercase tracking-wider text-emerald-800">Gerai Resmi Apotek</span>
-                                <h3 class="text-lg font-extrabold text-slate-900">{{ $c->nama_client }}</h3>
+                                <span class="text-[11px] font-mono text-slate-500">Kode: {{ $branchSlug }}</span>
+                                <h3 class="text-lg font-extrabold text-slate-900 mt-0.5">{{ $c->nama_client }}</h3>
                             </div>
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold {{ $c->aktif ? 'bg-emerald-50 text-emerald-900 border border-emerald-200' : 'bg-slate-100 text-slate-600' }}">
-                                {{ $c->aktif ? 'Beroperasi' : 'Tutup Sementara' }}
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold shrink-0 {{ $c->aktif ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-slate-100 text-slate-600 border border-slate-200' }}">
+                                {{ $c->aktif ? 'Beroperasi Aktif' : 'Tutup Sementara' }}
                             </span>
                         </div>
 
-                        <form method="POST" action="{{ route('admin.cabang.pengaturan.save', ['client' => $c->slug ?? $c->id_client]) }}" class="mt-5 space-y-4 text-xs">
+                        <form method="POST" action="{{ route('admin.cabang.pengaturan.save', ['client' => $branchSlug]) }}" class="mt-5 space-y-4 text-xs">
                             @csrf
                             <div>
-                                <label class="block font-bold text-slate-700 mb-1.5">Nama Resmi Cabang</label>
-                                <input type="text" name="nama_client" value="{{ $c->nama_client }}" required class="w-full min-h-[46px] rounded-xl border border-slate-300 bg-white px-3.5 text-xs sm:text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-600 transition">
+                                <label class="block font-bold text-slate-700 mb-1">Nama Cabang Resmi *</label>
+                                <input type="text" name="nama_client" value="{{ $c->nama_client }}" required class="w-full min-h-[44px] rounded-xl border border-slate-300 bg-white px-3.5 text-slate-900 focus:border-emerald-600 focus:outline-none">
                             </div>
 
                             <div>
-                                <label class="block font-bold text-slate-700 mb-1.5">Alamat Fisik Cabang (SIPA Terdaftar)</label>
-                                <textarea name="alamat" rows="2" required class="w-full rounded-xl border border-slate-300 bg-white p-3 text-xs sm:text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-600 transition">{{ $c->alamat }}</textarea>
+                                <label class="block font-bold text-slate-700 mb-1">Alamat Lengkap Gerai *</label>
+                                <textarea name="alamat" rows="2" required class="w-full rounded-xl border border-slate-300 bg-white p-3 text-slate-900 focus:border-emerald-600 focus:outline-none">{{ $c->alamat }}</textarea>
                             </div>
 
-                            <div class="grid grid-cols-2 gap-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                 <div>
-                                    <label class="block font-bold text-slate-700 mb-1.5">Radius Pengiriman (km)</label>
-                                    <input type="number" name="radius_km" value="5" min="1" max="25" class="w-full min-h-[46px] rounded-xl border border-slate-300 bg-white px-3 text-xs sm:text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-600 transition">
+                                    <label class="block font-bold text-slate-700 mb-1">Radius (KM)</label>
+                                    <input type="number" name="radius_km" min="1" max="50" value="{{ $c->radius_km ?? 5 }}" class="w-full min-h-[44px] rounded-xl border border-slate-300 bg-white px-3 text-slate-900">
                                 </div>
                                 <div>
-                                    <label class="block font-bold text-slate-700 mb-1.5">Jam Operasional Layanan</label>
-                                    <input type="text" name="jam_buka" value="07:00 - 22:00 WIB" class="w-full min-h-[46px] rounded-xl border border-slate-300 bg-white px-3 text-xs sm:text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-600 transition">
+                                    <label class="block font-bold text-slate-700 mb-1">Jam Operasional</label>
+                                    <input type="text" name="jam_buka" value="{{ $c->jam_buka ?? '07:00 - 22:00 WIB' }}" class="w-full min-h-[44px] rounded-xl border border-slate-300 bg-white px-3 text-slate-900">
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-1">Status Gerai</label>
+                                    <select name="aktif" class="w-full min-h-[44px] rounded-xl border border-slate-300 bg-white px-3 text-slate-900">
+                                        <option value="1" @selected((bool) $c->aktif)>Beroperasi</option>
+                                        <option value="0" @selected(! (bool) $c->aktif)>Nonaktif</option>
+                                    </select>
                                 </div>
                             </div>
 
-                            <div class="pt-2">
-                                <button type="submit" class="w-full min-h-[46px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs shadow-xs transition cursor-pointer">
-                                    <span>Simpan Perubahan Cabang</span>
-                                    <span class="text-sm">&rarr;</span>
+                            <div class="pt-2 flex flex-wrap items-center justify-between gap-2">
+                                <div class="flex items-center gap-2">
+                                    <a href="{{ route('admin.cabang.staf', ['client' => $branchSlug]) }}" class="min-h-[40px] inline-flex items-center px-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold text-[11px] transition">
+                                        Kelola Staf
+                                    </a>
+                                    <a href="{{ route('tenant.laporan.index', ['client' => $branchSlug]) }}" class="min-h-[40px] inline-flex items-center px-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold text-[11px] transition">
+                                        Laporan Penjualan
+                                    </a>
+                                </div>
+                                <button type="submit" class="min-h-[44px] inline-flex items-center justify-center rounded-xl bg-emerald-600 hover:bg-emerald-700 px-5 text-xs font-bold text-white shadow-xs transition cursor-pointer">
+                                    Simpan Konfigurasi
                                 </button>
                             </div>
+                        </form>
+                    </div>
+
+                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+                        <span>Terakhir diperbarui: {{ $c->updated_at ? $c->updated_at->format('d M Y H:i') : '-' }}</span>
+                        <form method="POST" action="{{ route('admin.cabang.destroy', ['client' => $branchSlug]) }}" onsubmit="return confirm('Hapus cabang {{ addslashes($c->nama_client) }}? Cabang dengan riwayat transaksi akan tetap dilindungi.')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="font-bold text-rose-700 hover:text-rose-900 underline cursor-pointer">
+                                Hapus Cabang
+                            </button>
                         </form>
                     </div>
                 </div>

@@ -64,4 +64,18 @@ class StaffManagementService
             ->where('id_client', $idClient)
             ->get();
     }
+
+    public function hapusPeranCabang(string $idClient, string $id): bool
+    {
+        return PeranClientPengguna::where('id_client', $idClient)
+            ->where('id', $id)
+            ->delete() > 0;
+    }
+
+    public function hapusPengawas(string $idClient, string $id): bool
+    {
+        return PetaPengawasStaf::where('id_client', $idClient)
+            ->where('id', $id)
+            ->delete() > 0;
+    }
 }

@@ -54,33 +54,27 @@
             </div>
         </div>
 
-        <!-- Hero Banner: Nuansa Hijau Deep Spruce Sesuai Menu Login -->
-        <div class="rounded-3xl bg-gradient-to-br from-[#0A231E] via-[#0E352E] to-[#0A231E] text-white p-6 sm:p-8 lg:p-10 shadow-xl border border-emerald-500/20 relative overflow-hidden">
-            <div class="absolute -top-24 -left-24 w-72 h-72 rounded-full border border-emerald-500/10 pointer-events-none"></div>
-            <div class="absolute -bottom-24 -right-24 w-80 h-80 rounded-full border border-emerald-500/15 pointer-events-none"></div>
+        <!-- Clean Light Header Banner -->
+        <div class="rounded-3xl bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                    Standar Permenkes RI No. 73/2016 | Antrean &amp; Progresi Layanan
+                </span>
+                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-3 leading-tight">
+                    Antrean Virtual &amp; Tombol Progresi Status
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl leading-relaxed">
+                    Kelola antrean berjalan, slot jam pengambilan pasien (<em>Click &amp; Collect</em>), dan perbarui siklus penyiapan obat ke pelanggan secara real-time.
+                </p>
+            </div>
 
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
-                <div>
-                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-emerald-200 border border-emerald-500/30">
-                        Standar Permenkes RI No. 73/2016 • Antrean &amp; Progresi Layanan
-                    </span>
-
-                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white mt-3 leading-tight">
-                        Antrean Virtual &amp; Tombol Progresi Status
-                    </h1>
-                    <p class="text-xs sm:text-sm text-emerald-200/90 mt-1 max-w-2xl leading-relaxed">
-                        Kelola antrean berjalan, slot jam pengambilan pasien (<em>Click &amp; Collect</em>), dan perbarui siklus penyiapan obat ke pelanggan secara real-time.
-                    </p>
-                </div>
-
-                <div class="shrink-0 flex items-center gap-3">
-                    <button
-                        type="button"
-                        @click="modalManualAntrean = true"
-                        class="inline-flex min-h-[44px] items-center gap-2 px-4 py-2.5 rounded-xl bg-[#D4F94E] hover:bg-[#c2e83b] text-[#0A231E] font-black text-xs shadow-xs transition cursor-pointer">
-                        <span>Antrean Aktif: <strong class="text-sm" x-text="nomorManual"></strong></span>
-                    </button>
-                </div>
+            <div class="shrink-0 flex items-center gap-3">
+                <button
+                    type="button"
+                    @click="modalManualAntrean = true"
+                    class="inline-flex min-h-[44px] items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition cursor-pointer">
+                    <span>Antrean Aktif: <strong class="text-sm" x-text="nomorManual"></strong></span>
+                </button>
             </div>
         </div>
 
@@ -105,8 +99,8 @@
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 <!-- Left: Info Antrean Berjalan Saat Ini -->
                 <div class="flex items-center gap-4 sm:gap-6">
-                    <div class="h-20 w-20 sm:h-24 sm:w-24 rounded-3xl bg-gradient-to-br from-[#0A231E] to-[#0E352E] text-[#D4F94E] flex flex-col items-center justify-center border-2 border-emerald-500/30 shadow-md shrink-0">
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-300">Sedang Dipanggil</span>
+                    <div class="h-20 w-20 sm:h-24 sm:w-24 rounded-3xl bg-emerald-600 text-white flex flex-col items-center justify-center border border-emerald-700 shadow-xs shrink-0">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-100">Sedang Dipanggil</span>
                         <span class="text-2xl sm:text-3xl font-black tracking-tight">{{ $antreanBerjalan }}</span>
                     </div>
                     <div>
@@ -183,7 +177,7 @@
                             <tr class="hover:bg-slate-50/80 transition">
                                 <td class="p-3.5">
                                     <div class="flex items-center gap-2">
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-xl font-black text-xs {{ $order->nomor_antrean === $antreanBerjalan ? 'bg-[#0A231E] text-[#D4F94E]' : 'bg-slate-100 text-slate-800' }}">
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-xl font-black text-xs {{ $order->nomor_antrean === $antreanBerjalan ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-800' }}">
                                             {{ $order->nomor_antrean ?? 'A-'.substr($order->nomor_pesanan, -3) }}
                                         </span>
                                         <div>
@@ -252,7 +246,7 @@
                                             Siap Diambil
                                         </span>
                                     @elseif($status === 'selesai')
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-[#0A231E] text-[#D4F94E] border border-emerald-500/20">
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-600 text-white">
                                             Selesai
                                         </span>
                                     @elseif($status === 'menunggu_pembayaran')
@@ -288,7 +282,7 @@
                                                 type="button"
                                                 @click="updateStatus('{{ $order->id_pesanan }}', 'selesai')"
                                                 :disabled="loadingId === '{{ $order->id_pesanan }}'"
-                                                class="min-h-[44px] px-4 py-2 rounded-xl bg-[#0A231E] hover:bg-[#0E352E] text-[#D4F94E] font-bold text-xs border border-emerald-500/30 shadow-xs transition cursor-pointer disabled:opacity-50">
+                                                class="min-h-[44px] px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition cursor-pointer disabled:opacity-50">
                                                 Selesaikan Penyerahan
                                             </button>
                                         @elseif($status === 'selesai')

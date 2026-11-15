@@ -187,6 +187,19 @@ class Pesanan extends Model
         return $clean !== '' ? $clean : null;
     }
 
+    public function getNamaPembeliAttribute(): string
+    {
+        $catatan = (string) ($this->catatan_bersih ?? $this->catatan_pesanan ?? '');
+        if (preg_match('/Walk-in Kasir:\s*(.+)$/i', $catatan, $matches)) {
+            $walkinName = trim($matches[1]);
+            if ($walkinName !== '') {
+                return $walkinName;
+            }
+        }
+
+        return $this->pengguna->nama_lengkap ?? 'Pelanggan';
+    }
+
     public function isLunas(): bool
     {
         return $this->pembayaran()->where('status', 'lunas')->exists()

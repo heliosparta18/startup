@@ -12,30 +12,23 @@
             </a>
         </div>
 
-        <!-- Hero Banner: Nuansa Deep Spruce Hijau Sesuai Menu Login -->
-        <div class="rounded-3xl bg-gradient-to-br from-[#0A231E] via-[#0E352E] to-[#0A231E] text-white p-6 sm:p-8 lg:p-10 shadow-xl border border-emerald-500/20 relative overflow-hidden">
-            <div class="absolute -top-24 -left-24 w-72 h-72 rounded-full border border-emerald-500/10 pointer-events-none"></div>
-            <div class="absolute -bottom-24 -right-24 w-80 h-80 rounded-full border border-emerald-500/15 pointer-events-none"></div>
-
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
-                <div>
-                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-emerald-200 border border-emerald-500/30">
-                        Standar Pelayanan Kefarmasian Resmi
-                    </span>
-
-                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white mt-3 leading-tight">
-                        Panduan SOP &amp; Kepatuhan Regulasi Farmasi
-                    </h1>
-                    <p class="text-xs sm:text-sm text-emerald-200/90 mt-1 max-w-2xl leading-relaxed">
-                        Acuan kepatuhan operasional Apoteker Penanggung Jawab (APJ) dan tenaga teknis kefarmasian berdasarkan Peraturan Menteri Kesehatan RI No. 73 Tahun 2016.
-                    </p>
-                </div>
-
-                <div class="shrink-0">
-                    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-[#D4F94E] font-bold text-xs backdrop-blur-xs">
-                        SOP-FARMASI-v2.4
-                    </span>
-                </div>
+        <!-- Clean Light Header Banner -->
+        <div class="rounded-3xl bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                    Standar Pelayanan Kefarmasian Resmi
+                </span>
+                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-3 leading-tight">
+                    Panduan SOP &amp; Kepatuhan Regulasi Farmasi
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl leading-relaxed">
+                    Acuan kepatuhan operasional Apoteker Penanggung Jawab (APJ) dan tenaga teknis kefarmasian berdasarkan Peraturan Menteri Kesehatan RI No. 73 Tahun 2016.
+                </p>
+            </div>
+            <div class="shrink-0">
+                <span class="inline-flex items-center px-4 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold text-xs">
+                    SOP-FARMASI-v2.4
+                </span>
             </div>
         </div>
 
@@ -46,7 +39,7 @@
             <div class="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs space-y-4 flex flex-col justify-between">
                 <div>
                     <div class="flex items-center gap-3.5 border-b border-slate-100 pb-4">
-                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0A231E] to-[#0E352E] text-[#D4F94E] font-black text-base flex items-center justify-center border border-emerald-500/20 shadow-xs shrink-0">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 font-black text-base flex items-center justify-center border border-emerald-200 shadow-xs shrink-0">
                             01
                         </div>
                         <div>
@@ -66,7 +59,7 @@
             <div class="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs space-y-4 flex flex-col justify-between">
                 <div>
                     <div class="flex items-center gap-3.5 border-b border-slate-100 pb-4">
-                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0A231E] to-[#0E352E] text-[#D4F94E] font-black text-base flex items-center justify-center border border-emerald-500/20 shadow-xs shrink-0">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 font-black text-base flex items-center justify-center border border-emerald-200 shadow-xs shrink-0">
                             02
                         </div>
                         <div>
@@ -86,7 +79,7 @@
             <div class="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs space-y-4 flex flex-col justify-between">
                 <div>
                     <div class="flex items-center gap-3.5 border-b border-slate-100 pb-4">
-                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0A231E] to-[#0E352E] text-[#D4F94E] font-black text-base flex items-center justify-center border border-emerald-500/20 shadow-xs shrink-0">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 font-black text-base flex items-center justify-center border border-emerald-200 shadow-xs shrink-0">
                             03
                         </div>
                         <div>
@@ -105,7 +98,7 @@
             <div class="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs space-y-4 flex flex-col justify-between">
                 <div>
                     <div class="flex items-center gap-3.5 border-b border-slate-100 pb-4">
-                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0A231E] to-[#0E352E] text-[#D4F94E] font-black text-base flex items-center justify-center border border-emerald-500/20 shadow-xs shrink-0">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 font-black text-base flex items-center justify-center border border-emerald-200 shadow-xs shrink-0">
                             04
                         </div>
                         <div>

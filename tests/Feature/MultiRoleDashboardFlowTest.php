@@ -120,7 +120,8 @@ class MultiRoleDashboardFlowTest extends TestCase
     }
 
     /**
-     * 5. Kasir / Staf Administrasi dapat login dan mengakses buku kasir & rekonsiliasi pembayaran.
+     * 5. Kasir / Staf Administrasi dialihkan ke portal kasir khusus, dapat mengakses POS & ledger kasir,
+     * dan ditolak (403) bila mencoba membuka portal Super Admin.
      */
     public function test_kasir_can_login_and_access_kasir_ledger(): void
     {
@@ -130,13 +131,19 @@ class MultiRoleDashboardFlowTest extends TestCase
         ]);
 
         $response->assertSessionHasNoErrors();
-        $response->assertRedirect(route('admin.dashboard'));
+        $response->assertRedirect(route('kasir.dashboard'));
         $this->assertAuthenticated();
 
-        $kasirResponse = $this->get(route('admin.kasir.ledger'));
+        $posResponse = $this->get(route('kasir.dashboard'));
+        $posResponse->assertOk();
+        $posResponse->assertSee('Kasir &amp; Point of Sale Cabang', false);
+
+        $kasirResponse = $this->get(route('kasir.ledger'));
         $kasirResponse->assertOk();
         $kasirResponse->assertSee('Rekonsiliasi Kasir &amp; Ledger Pembayaran', false);
         $kasirResponse->assertSee('Ledger Terverifikasi', false);
+
+        $this->get(route('admin.dashboard'))->assertForbidden();
     }
 
     /**

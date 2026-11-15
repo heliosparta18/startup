@@ -75,4 +75,31 @@ class UserRoleTest extends TestCase
         $u->role = 'customer';
         $this->assertSame('Customer', $u->roleLabel());
     }
+
+    public function test_kasir_and_admin_are_isolated_from_super_admin(): void
+    {
+        $kasir = new User(['name' => 'Kasir', 'email' => 'k@test.com']);
+        $kasir->role = 'kasir';
+        $kasir->status = 'active';
+
+        $admin = new User(['name' => 'Admin Cabang', 'email' => 'a@test.com']);
+        $admin->role = 'admin';
+        $admin->status = 'active';
+
+        $superAdmin = new User(['name' => 'Super Admin', 'email' => 'sa@test.com']);
+        $superAdmin->role = 'super_admin';
+        $superAdmin->status = 'active';
+
+        $this->assertTrue($kasir->hasRole('kasir'));
+        $this->assertTrue($kasir->hasRole('admin'));
+        $this->assertFalse($kasir->hasRole('super_admin'));
+
+        $this->assertTrue($admin->hasRole('kasir'));
+        $this->assertTrue($admin->hasRole('admin'));
+        $this->assertFalse($admin->hasRole('super_admin'));
+
+        $this->assertTrue($superAdmin->hasRole('super_admin'));
+        $this->assertTrue($superAdmin->hasRole('admin'));
+        $this->assertFalse($superAdmin->hasRole('kasir'));
+    }
 }

@@ -6,6 +6,7 @@ use App\Models\Client;
 use App\Modules\Catalog\Services\CatalogService;
 use App\Modules\Catalog\Services\CustomerSessionService;
 use Illuminate\Contracts\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -54,14 +55,14 @@ class PublicCatalog extends Component
         $this->inDashboard = $inDashboard;
     }
 
-    #[\Livewire\Attributes\On('dashboard-search')]
+    #[On('dashboard-search')]
     public function updateSearchFromDashboard(string $search = ''): void
     {
         $this->search = $search;
         $this->resetPage();
     }
 
-    #[\Livewire\Attributes\On('dashboard-category')]
+    #[On('dashboard-category')]
     public function updateCategoryFromDashboard(string $kategori = 'Obat'): void
     {
         $this->selectCategory($kategori);

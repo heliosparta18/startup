@@ -108,7 +108,7 @@ class CheckoutController extends Controller
                 $koordinat = null;
 
                 if (preg_match('/^(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)$/', $rawKoordinat, $m)) {
-                    $koordinat = round((float) $m[1], 5) . ',' . round((float) $m[2], 5);
+                    $koordinat = round((float) $m[1], 5).','.round((float) $m[2], 5);
                 } elseif ($linkMaps !== '') {
                     foreach ([
                         '/@(-?\d+\.\d+),(-?\d+\.\d+)/',
@@ -120,7 +120,7 @@ class CheckoutController extends Controller
                             $lat = (float) $m[1];
                             $lng = (float) $m[2];
                             if ($lat >= -90 && $lat <= 90 && $lng >= -180 && $lng <= 180) {
-                                $koordinat = round($lat, 5) . ',' . round($lng, 5);
+                                $koordinat = round($lat, 5).','.round($lng, 5);
                                 break;
                             }
                         }
@@ -134,9 +134,9 @@ class CheckoutController extends Controller
                 } elseif (preg_match('#^https?://#i', $linkMaps)) {
                     $mapsRouteUrl = $linkMaps;
                 } elseif ($alamat !== '') {
-                    $mapsRouteUrl = "https://www.google.com/maps/dir/?api=1&origin={$originLat},{$originLng}&destination=" . urlencode($alamat) . "&travelmode=driving";
+                    $mapsRouteUrl = "https://www.google.com/maps/dir/?api=1&origin={$originLat},{$originLng}&destination=".urlencode($alamat).'&travelmode=driving';
                 } else {
-                    $koordinat = round($originLat + 0.008 * $jarakKm, 5) . ',' . round($originLng + 0.005 * $jarakKm, 5);
+                    $koordinat = round($originLat + 0.008 * $jarakKm, 5).','.round($originLng + 0.005 * $jarakKm, 5);
                     $mapsRouteUrl = "https://www.google.com/maps/dir/?api=1&origin={$originLat},{$originLng}&destination={$koordinat}&travelmode=driving";
                 }
 

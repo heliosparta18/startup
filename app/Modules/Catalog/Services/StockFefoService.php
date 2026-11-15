@@ -11,7 +11,7 @@ class StockFefoService
     /**
      * @return Collection<int, StokClient>
      */
-    public function getBatchesByFefo(string $clientId, ?string $obatId = null): Collection
+    public function getBatchesByFefo(string $clientId, ?string $obatId = null, bool $includeEmpty = false): Collection
     {
         $resolvedClient = Client::findByIdentifier($clientId);
         $actualClientId = $resolvedClient ? $resolvedClient->id_client : $clientId;
@@ -20,8 +20,11 @@ class StockFefoService
             ->with('obat')
             ->select('stok_client.*')
             ->join('obat', 'stok_client.id_obat', '=', 'obat.id_obat')
-            ->where('stok_client.id_client', $actualClientId)
-            ->where('stok_client.jumlah_stok', '>', 0);
+            ->where('stok_client.id_client', $actualClientId);
+
+        if (! $includeEmpty) {
+            $query->where('stok_client.jumlah_stok', '>', 0);
+        }
 
         if ($obatId) {
             $query->where('stok_client.id_obat', $obatId);

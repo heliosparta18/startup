@@ -53,6 +53,8 @@
     $userRole = $user->role ?? ($user->peran ?? 'pelanggan');
     $isApoteker = $user && ($user->hasRole('apoteker') || $user->role === 'apoteker');
     $isSuperAdmin = $user && ($user->hasRole('super_admin') || $user->role === 'super_admin');
+    $isKasir = $user && ! $isSuperAdmin && ($user->hasRole('kasir') || in_array($user->role, ['admin', 'kasir'], true));
+    $isInternalStaff = $isSuperAdmin || $isApoteker || $isKasir;
     $userClientSlug = $user && method_exists($user, 'getClientSlug') ? $user->getClientSlug() : 'banyuwangi-kota';
     $userClientName = $user && method_exists($user, 'getClientName') ? $user->getClientName() : 'Cabang Banyuwangi Kota';
     $activeBranchSlug = session('active_branch') ?? (session('active_client') ?? $userClientSlug);
@@ -423,9 +425,11 @@
                         </div>
                         <span class="block text-[10px] sm:text-[11px] font-medium text-slate-600 leading-tight truncate mt-0.5 max-w-[140px] sm:max-w-[230px]">
                             @if($isSuperAdmin)
-                                Dashboard Pusat (Super Admin)
+                                Portal Pusat Multi-Cabang
                             @elseif($isApoteker)
-                                Portal Apoteker ({{ $userClientName }})
+                                Portal Cabang ({{ $userClientName }})
+                            @elseif($isKasir)
+                                Kasir &amp; Loket ({{ $userClientName }})
                             @else
                                 Portal Farmasi Resmi Terverifikasi
                             @endif
@@ -758,7 +762,7 @@
                 <span x-show="cartCount > 0" x-cloak x-text="cartCount > 99 ? '99+' : cartCount" class="px-2 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-extrabold leading-none"></span>
             </a>
 
-            @if(!$isSuperAdmin && !$isApoteker)
+            @if(!$isInternalStaff)
                 <a href="#katalog-utama" @click="mobileNav = false" class="flex items-center gap-2.5 min-h-[44px] px-3 py-2 rounded-xl text-slate-800 hover:bg-slate-50 font-bold">
                     <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
                     <span>Katalog Obat Utama</span>
@@ -840,7 +844,7 @@
                         {{ number_format($totalProdukCount, 0, ',', '.') }} Produk BPOM Terdata
                     </span>
                     <span class="text-slate-400 hidden md:inline" aria-hidden="true">|</span>
-                    @if(!$isSuperAdmin && !$isApoteker)
+                    @if(!$isInternalStaff)
                         <a href="#katalog-utama" class="hidden md:inline font-semibold text-emerald-800 hover:underline py-1 focus-visible:outline-2 focus-visible:outline-emerald-700 rounded">
                             Katalog Utama
                         </a>
@@ -911,7 +915,7 @@
     {{-- Main Content --}}
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8">
 
-        @if(!$isSuperAdmin && !$isApoteker)
+        @if(!$isInternalStaff)
             {{-- Inline Prescription Upload Feedback --}}
             <div
                 x-show="notifSukses"
@@ -1299,6 +1303,8 @@
                             Akses modul manajerial pusat, pelaporan konsolidasi, dan pengawasan operasional seluruh cabang.
                         @elseif($isApoteker)
                             Akses modul operasional apoteker untuk {{ $userClientName }} (Verifikasi Resep, Antrean &amp; Stok FEFO).
+                        @elseif($isKasir)
+                            Akses cepat loket pembayaran kasir, transaksi walk-in, dan buku ledger untuk {{ $userClientName }}.
                         @else
                             Pilih cabang aktif apotek untuk memfilter stok langsung di Dashboard atau buka keranjang pengambilan loket.
                         @endif
@@ -1453,6 +1459,55 @@
                         </div>
                         <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
                             Periksa Batch Obat
+                        </div>
+                    </a>
+
+                @elseif($isKasir)
+                    <a
+                        href="{{ route('kasir.dashboard') }}"
+                        class="group p-6 rounded-2xl bg-white border border-slate-200 border-l-4 border-l-emerald-600 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-[180px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                    >
+                        <div>
+                            <div class="flex items-center justify-between gap-2 mb-3">
+                                <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Portal Kasir</span>
+                            </div>
+                            <h3 class="text-base font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">Kasir &amp; POS Loket</h3>
+                            <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Layani pembayaran pesanan online maupun penjualan langsung walk-in tunai atau QRIS di cabang.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-semibold text-emerald-700">
+                            Buka Kasir &amp; POS
+                        </div>
+                    </a>
+
+                    <a
+                        href="{{ route('kasir.ledger') }}"
+                        class="group p-6 rounded-2xl bg-white border border-slate-200 border-l-4 border-l-slate-700 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-[180px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                    >
+                        <div>
+                            <div class="flex items-center justify-between gap-2 mb-3">
+                                <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Rekonsiliasi</span>
+                            </div>
+                            <h3 class="text-base font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">Buku Ledger &amp; Struk</h3>
+                            <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Pantau riwayat transaksi pembayaran lunas, setoran tunai/QRIS, dan cetak struk pelanggan.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-semibold text-slate-700 group-hover:text-emerald-700">
+                            Buka Buku Ledger
+                        </div>
+                    </a>
+
+                    <a
+                        href="{{ route('profile.edit') }}"
+                        class="group p-6 rounded-2xl bg-white border border-slate-200 border-l-4 border-l-sky-600 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-[180px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                    >
+                        <div>
+                            <div class="flex items-center justify-between gap-2 mb-3">
+                                <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Akun Staf</span>
+                            </div>
+                            <h3 class="text-base font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">Profil &amp; Keamanan</h3>
+                            <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Kelola detail akun kasir, sandi masuk, dan preferensi tema tampilan portal Anda.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-semibold text-sky-700 group-hover:text-emerald-700">
+                            Kelola Profil
                         </div>
                     </a>
 

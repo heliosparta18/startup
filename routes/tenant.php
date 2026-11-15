@@ -24,7 +24,7 @@ use Illuminate\Support\Str;
  * Konteks OPERATOR TENANT / APOTEKER CABANG (internal). Prefix: cabang/{client}, name: tenant.*
  * Melayani verifikasi resep (#ORD-20260917-0042) dan inspeksi stok batch FEFO (Mockup Layar 2).
  */
-Route::get('/dashboard', function (string $client) {
+Route::get('/dashboard', function (string $client, StockFefoService $fefoService) {
     $clientModel = Client::where('id_client', $client)->orWhere('slug', $client)->first();
     $clientId = $clientModel ? $clientModel->id_client : $client;
 
@@ -44,10 +44,7 @@ Route::get('/dashboard', function (string $client) {
         ->where('status_verifikasi', 'menunggu')
         ->count();
 
-    $fefoBatches = Obat::query()
-        ->with('stokClient')
-        ->orderBy('expired', 'asc')
-        ->get();
+    $fefoBatches = $fefoService->getBatchesByFefo($client);
 
     $antreanBerjalan = Cache::get("antrean_berjalan:{$clientId}", 'A-001');
 
@@ -59,6 +56,12 @@ Route::get('/dashboard', function (string $client) {
         ->take(10)
         ->get();
 
+    $orderSelesaiHariIni = Pesanan::withoutGlobalScopes()
+        ->where('id_client', $clientId)
+        ->where('status', 'selesai')
+        ->whereDate('dibuat_pada', now()->toDateString())
+        ->count();
+
     return view('tenant.dashboard', [
         'client' => $client,
         'clientModel' => $clientModel,
@@ -67,6 +70,7 @@ Route::get('/dashboard', function (string $client) {
         'fefoBatches' => $fefoBatches,
         'antreanBerjalan' => $antreanBerjalan,
         'pesanansAktif' => $pesanansAktif,
+        'orderSelesaiHariIni' => $orderSelesaiHariIni,
     ]);
 })->name('dashboard');
 
@@ -221,14 +225,77 @@ Route::get('/resep', function (string $client) {
     ]);
 })->name('resep.antrean');
 
-Route::get('/stok-fefo', function (string $client, StockFefoService $fefoService) {
-    $fefoBatches = $fefoService->getBatchesByFefo($client);
+Route::get('/stok-fefo', function (string $client, Request $request, StockFefoService $fefoService) {
+    $filter = (string) $request->query('filter', 'all');
+    $search = trim((string) $request->query('q', ''));
+    $includeEmpty = in_array($filter, ['empty', 'all'], true);
+
+    $fefoBatches = $fefoService->getBatchesByFefo($client, null, $includeEmpty);
+
+    if ($search !== '') {
+        $needle = mb_strtolower($search);
+        $fefoBatches = $fefoBatches->filter(function (StokClient $batch) use ($needle): bool {
+            $nama = mb_strtolower((string) ($batch->obat->nama_obat ?? ''));
+            $batchNo = mb_strtolower((string) ($batch->obat->batch_number ?? ''));
+
+            return str_contains($nama, $needle) || str_contains($batchNo, $needle);
+        })->values();
+    }
+
+    if ($filter === 'critical') {
+        $fefoBatches = $fefoBatches->filter(fn (StokClient $b) => $b->is_critical_ed)->values();
+    } elseif ($filter === 'near_ed') {
+        $fefoBatches = $fefoBatches->filter(fn (StokClient $b) => $b->is_near_ed)->values();
+    } elseif ($filter === 'low') {
+        $fefoBatches = $fefoBatches->filter(fn (StokClient $b) => $b->jumlah_stok > 0 && $b->jumlah_stok <= 10)->values();
+    } elseif ($filter === 'empty') {
+        $fefoBatches = $fefoBatches->filter(fn (StokClient $b) => $b->jumlah_stok <= 0)->values();
+    }
+
+    $allObats = Obat::orderBy('nama_obat', 'asc')->get();
 
     return view('tenant.stok-fefo', [
         'client' => $client,
         'fefoBatches' => $fefoBatches,
+        'allObats' => $allObats,
+        'filter' => $filter,
+        'search' => $search,
     ]);
 })->name('stok.fefo');
+
+Route::post('/stok/tambah', function (string $client, Request $request) {
+    $clientModel = Client::where('id_client', $client)->orWhere('slug', $client)->firstOrFail();
+
+    $validated = $request->validate([
+        'id_obat' => ['required', 'uuid', 'exists:obat,id_obat'],
+        'jumlah_stok' => ['required', 'integer', 'min:0', 'max:10000'],
+        'batch_number' => ['nullable', 'string', 'max:50'],
+        'expired' => ['nullable', 'date'],
+    ]);
+
+    $obat = Obat::where('id_obat', $validated['id_obat'])->firstOrFail();
+
+    StokClient::updateOrCreate(
+        [
+            'id_client' => $clientModel->id_client,
+            'id_obat' => $obat->id_obat,
+        ],
+        [
+            'id' => (string) Str::uuid(),
+            'jumlah_stok' => (int) $validated['jumlah_stok'],
+            'diperbarui_pada' => now(),
+        ]
+    );
+
+    if (! empty($validated['batch_number']) || ! empty($validated['expired'])) {
+        $obat->update(array_filter([
+            'batch_number' => $validated['batch_number'] ?? null,
+            'expired' => $validated['expired'] ?? null,
+        ]));
+    }
+
+    return back()->with('success', "Stok {$obat->nama_obat} pada cabang {$clientModel->nama_client} diperbarui menjadi {$validated['jumlah_stok']} unit.");
+})->name('stok.store');
 
 Route::get('/bantuan', function (string $client) {
     return view('tenant.bantuan', [
@@ -237,10 +304,31 @@ Route::get('/bantuan', function (string $client) {
 })->name('bantuan.index');
 
 Route::get('/pasien', function (string $client) {
-    $pasiens = Pengguna::where('peran', 'pelanggan')->get();
+    $clientModel = Client::where('id_client', $client)->orWhere('slug', $client)->firstOrFail();
+
+    $branchOrders = Pesanan::withoutGlobalScopes()
+        ->where('id_client', $clientModel->id_client)
+        ->with(['items', 'resep'])
+        ->orderBy('dibuat_pada', 'desc')
+        ->get();
+
+    $patientOrdersMap = $branchOrders->groupBy('id_pengguna');
+    $patientIds = $patientOrdersMap->keys()->filter()->values();
+
+    $pasiens = $patientIds->isNotEmpty()
+        ? Pengguna::whereIn('id_pengguna', $patientIds)->orderBy('nama_lengkap')->get()
+        : collect();
+
+    $pasiens->each(function (Pengguna $pasien) use ($patientOrdersMap): void {
+        $orders = $patientOrdersMap->get($pasien->id_pengguna, collect());
+        $pasien->setAttribute('pesanan_count', $orders->count());
+        $pasien->setAttribute('pesanan_terbaru', $orders->take(5));
+        $pasien->setAttribute('resep_count', $orders->filter(fn (Pesanan $o) => $o->resep !== null)->count());
+    });
 
     return view('tenant.pasien', [
         'client' => $client,
+        'clientModel' => $clientModel,
         'pasiens' => $pasiens,
     ]);
 })->name('pasien.index');
@@ -309,17 +397,45 @@ Route::post('/resep/{id}/verifikasi', function (string $client, string $id, Veri
 })->name('resep.verifikasi');
 
 Route::post('/stok/{id}/penyesuaian', function (string $client, string $id, Request $request) {
-    $stok = (int) $request->input('jumlah_stok', 12);
-    $stokRecord = StokClient::query()->find($id);
-    if ($stokRecord) {
-        $stokRecord->update(['jumlah_stok' => $stok]);
+    $clientModel = Client::where('id_client', $client)->orWhere('slug', $client)->first();
+    $stokRecord = StokClient::query()->with('obat')->find($id);
+
+    $nextQty = (int) $request->input('jumlah_stok', 12);
+    if ($request->filled('delta')) {
+        $current = $stokRecord ? (int) $stokRecord->jumlah_stok : 0;
+        $nextQty = max(0, $current + (int) $request->input('delta'));
+    } elseif ($request->boolean('karantina')) {
+        $nextQty = 0;
+    } else {
+        $nextQty = max(0, $nextQty);
     }
 
-    return response()->json([
-        'success' => true,
-        'message' => "Stok obat pada cabang {$client} berhasil disesuaikan.",
-        'jumlah_stok' => $stok,
-    ]);
+    if ($stokRecord) {
+        $stokRecord->update([
+            'jumlah_stok' => $nextQty,
+            'diperbarui_pada' => now(),
+        ]);
+
+        if ($stokRecord->obat && ($request->filled('batch_number') || $request->filled('expired'))) {
+            $stokRecord->obat->update(array_filter([
+                'batch_number' => $request->filled('batch_number') ? trim(strip_tags((string) $request->input('batch_number'))) : null,
+                'expired' => $request->filled('expired') ? (string) $request->input('expired') : null,
+            ]));
+        }
+    }
+
+    $branchName = $clientModel->nama_client ?? $client;
+    $itemName = $stokRecord->obat->nama_obat ?? 'Obat';
+
+    if ($request->expectsJson() || (! $request->has('_token') && ! str_contains((string) $request->header('Accept'), 'text/html'))) {
+        return response()->json([
+            'success' => true,
+            'message' => "Stok {$itemName} pada cabang {$branchName} berhasil disesuaikan.",
+            'jumlah_stok' => $nextQty,
+        ]);
+    }
+
+    return back()->with('success', "Stok {$itemName} di {$branchName} disesuaikan menjadi {$nextQty} unit.");
 })->name('stok.penyesuaian');
 
 Route::get('/pesanan/{id}', function (string $client, string $id) {

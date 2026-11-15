@@ -1,92 +1,130 @@
-<x-layouts.admin title="Manajemen Staf & Pengawasan APJ Cabang">
-    <div class="space-y-6 sm:space-y-8">
-        <!-- Breadcrumb & Navigasi -->
+<x-layouts.admin title="Manajemen Staf &amp; Pengawasan APJ Cabang">
+    <div x-data="{ showCreateStaff: false }" class="space-y-6 sm:space-y-8">
+        <!-- Breadcrumb & Cabang Switcher -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div class="flex items-center gap-2 text-xs text-slate-500 flex-wrap">
-                <a href="{{ route('admin.dashboard') }}" class="hover:text-emerald-800 font-medium transition py-1">Dashboard Pusat</a>
+            <div class="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                <a href="{{ route('admin.dashboard') }}" class="hover:text-emerald-800 font-medium transition">Dashboard Pusat</a>
                 <span>/</span>
-                <span class="text-slate-900 font-bold py-1">Manajemen Staf &amp; Supervisi APJ</span>
+                <span class="text-slate-900 font-bold">Manajemen Staf &amp; Supervisi APJ</span>
             </div>
-            <a href="{{ route('admin.dashboard') }}" class="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-2xs transition">
-                &larr; Kembali ke Dashboard
-            </a>
-        </div>
-
-        <!-- Hero Banner: Nuansa Hijau Deep Spruce Sesuai Halaman Login -->
-        <div class="rounded-3xl bg-gradient-to-br from-[#0A231E] via-[#0E352E] to-[#0A231E] text-white p-6 sm:p-8 lg:p-10 shadow-xl border border-emerald-500/20 relative overflow-hidden">
-            <!-- Lingkaran Dekorasi Geometris Halus Sesuai Login -->
-            <div class="absolute -top-24 -left-24 w-72 h-72 rounded-full border border-emerald-500/10 pointer-events-none"></div>
-            <div class="absolute -bottom-24 -right-24 w-80 h-80 rounded-full border border-emerald-500/15 pointer-events-none"></div>
-
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
-                <div>
-                    <div class="flex flex-wrap items-center gap-2">
-                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-emerald-200 border border-emerald-500/30">
-                            Standar Permenkes RI No. 73/2016
-                        </span>
-                        <span class="px-2.5 py-1 rounded-full text-[11px] font-mono font-bold bg-white/10 text-[#D4F94E] border border-white/15">
-                            5NF Hierarki Pengawasan
-                        </span>
-                    </div>
-
-                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white mt-3 leading-tight">
-                        Supervisi Staf &amp; Apoteker Penanggung Jawab
-                    </h1>
-                    <p class="text-xs sm:text-sm text-emerald-200/90 mt-1 max-w-3xl leading-relaxed">
-                        Pengelolaan tenaga kefarmasian resmi (APJ, Tenaga Teknis Kefarmasian, dan Kasir) untuk <strong>{{ $clientModel->nama_client }}</strong>.
-                    </p>
-
-                    <div class="flex flex-wrap items-center gap-2 mt-4 text-xs">
-                        <span class="px-3 py-1 rounded-xl bg-white/10 border border-white/15 text-white font-bold">
-                            {{ $clientModel->nama_client }}
-                        </span>
-                        <span class="px-3 py-1 rounded-xl bg-white/10 border border-white/15 text-emerald-200 font-mono">
-                            Kode Cabang: {{ $clientModel->slug ?? $clientModel->id_client }}
-                        </span>
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-[#D4F94E] font-bold">
-                            Operasional Aktif
-                        </span>
-                    </div>
-                </div>
-
-                <div class="shrink-0 flex flex-col gap-2">
-                    <div class="rounded-2xl bg-white/10 border border-white/15 p-4 text-center backdrop-blur-xs">
-                        <span class="block text-2xl font-black text-[#D4F94E]">{{ count($staff) }}</span>
-                        <span class="text-[11px] font-bold text-emerald-100 uppercase tracking-wider">Staf Terdaftar</span>
-                    </div>
-                </div>
+            <div class="flex flex-wrap items-center gap-2">
+                <button type="button" @click="showCreateStaff = !showCreateStaff" class="min-h-[44px] inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition cursor-pointer">
+                    <span x-text="showCreateStaff ? 'Tutup Form Akun' : '+ Buat Akun Staf Baru'"></span>
+                </button>
+                <a href="{{ route('admin.dashboard') }}" class="min-h-[44px] inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-2xs transition">
+                    &larr; Kembali ke Dashboard
+                </a>
             </div>
         </div>
 
-        <!-- Notifikasi Pesan Flash -->
+        <!-- Clean Light Header Banner -->
+        <div class="rounded-3xl bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                        Standar Permenkes RI No. 73/2016
+                    </span>
+                    <span class="px-2.5 py-1 rounded-full text-[11px] font-mono font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                        5NF Hierarki Pengawasan
+                    </span>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-3 leading-tight">
+                    Supervisi Staf &amp; Apoteker Penanggung Jawab
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-3xl leading-relaxed">
+                    Pengelolaan akun staf, penugasan peran resmi, dan pengawasan APJ pada <strong>{{ $clientModel->nama_client }}</strong>.
+                </p>
+
+                <!-- Switcher Cabang -->
+                @if(isset($clients) && $clients->count() > 0)
+                    <div class="flex flex-wrap items-center gap-2 mt-4">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mr-1">Cabang:</span>
+                        @foreach($clients as $c)
+                            @php $cSlug = $c->slug ?? $c->id_client; @endphp
+                            <a href="{{ route('admin.cabang.staf', ['client' => $cSlug]) }}"
+                               class="px-3 py-1.5 rounded-xl text-xs font-bold transition {{ ($client === $cSlug || $clientModel->id_client === $c->id_client) ? 'bg-emerald-600 text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
+                                {{ $c->nama_client }}
+                            </a>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+
+            <div class="shrink-0">
+                <div class="rounded-2xl bg-emerald-50 border border-emerald-200 p-4 px-6 text-center">
+                    <span class="block text-2xl font-black text-emerald-800">{{ count($staff) }}</span>
+                    <span class="text-[11px] font-bold text-emerald-700 uppercase tracking-wider">Staf Terdaftar</span>
+                </div>
+            </div>
+        </div>
+
         @if (session('success'))
-            <div class="rounded-2xl border border-emerald-300 bg-emerald-50 p-4 text-xs font-bold text-emerald-900 shadow-xs flex items-center justify-between">
-                <div class="flex items-center gap-2.5">
-                    <svg class="h-5 w-5 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                    </svg>
-                    <span>{{ session('success') }}</span>
+            <div class="rounded-2xl border border-emerald-300 bg-emerald-50 p-4 text-xs font-bold text-emerald-900 shadow-xs flex items-center gap-2.5">
+                <svg class="h-5 w-5 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+                <span>{{ session('success') }}</span>
+            </div>
+        @endif
+
+        @if (session('error') || $errors->any())
+            <div class="rounded-2xl border border-rose-300 bg-rose-50 p-4 text-xs font-bold text-rose-900 shadow-xs space-y-1">
+                @if (session('error'))<p>{{ session('error') }}</p>@endif
+                @foreach ($errors->all() as $error)<p>{{ $error }}</p>@endforeach
+            </div>
+        @endif
+
+        <!-- Modal / Panel Buat Akun Staf Baru -->
+        <div x-show="showCreateStaff" x-cloak class="rounded-3xl border border-emerald-200 bg-white p-6 sm:p-8 shadow-xs space-y-4">
+            <div class="border-b border-slate-100 pb-3">
+                <h2 class="text-base font-extrabold text-slate-900">Buat Akun Login Staf &amp; Tugaskan ke {{ $clientModel->nama_client }}</h2>
+                <p class="text-xs text-slate-500 mt-0.5">Membuat akun login baru (Apoteker atau Kasir) sekaligus menautkannya ke cabang aktif ini.</p>
+            </div>
+            <form action="{{ route('admin.cabang.staf.akun', ['client' => $client]) }}" method="POST" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                @csrf
+                <div>
+                    <label for="new_nama_lengkap" class="block font-bold text-slate-700 mb-1">Nama Lengkap *</label>
+                    <input id="new_nama_lengkap" type="text" name="nama_lengkap" required placeholder="apt. Rina Kartika, S.Farm" class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3.5 text-slate-900 focus:border-emerald-600 focus:outline-none">
                 </div>
-            </div>
-        @endif
+                <div>
+                    <label for="new_email" class="block font-bold text-slate-700 mb-1">Email Login *</label>
+                    <input id="new_email" type="email" name="email" required placeholder="staf@omnipharma.test" class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3.5 text-slate-900 focus:border-emerald-600 focus:outline-none">
+                </div>
+                <div>
+                    <label for="new_password" class="block font-bold text-slate-700 mb-1">Password Awal *</label>
+                    <input id="new_password" type="password" name="password" required minlength="6" placeholder="Minimal 6 karakter" class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3.5 text-slate-900 focus:border-emerald-600 focus:outline-none">
+                </div>
+                <div>
+                    <label for="new_role" class="block font-bold text-slate-700 mb-1">Portal Login *</label>
+                    <select id="new_role" name="role" required class="w-full min-h-[44px] rounded-xl border border-slate-300 bg-white px-3 text-slate-900">
+                        <option value="apoteker">Portal Apoteker (Tenaga Kefarmasian)</option>
+                        <option value="kasir">Portal Kasir &amp; Loket POS</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="new_peran_lokal" class="block font-bold text-slate-700 mb-1">Jabatan Lokal Cabang</label>
+                    <select id="new_peran_lokal" name="peran_lokal" class="w-full min-h-[44px] rounded-xl border border-slate-300 bg-white px-3 text-slate-900">
+                        <option value="apoteker">Apoteker (APJ)</option>
+                        <option value="asisten_apoteker">Asisten Apoteker (TTK)</option>
+                        <option value="kasir">Kasir Pelaksana</option>
+                        <option value="staf_klien">Staf Administrasi Cabang</option>
+                    </select>
+                </div>
+                <div class="flex items-end gap-2">
+                    <button type="submit" class="w-full min-h-[44px] rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-xs cursor-pointer">
+                        Buat Akun &amp; Tugaskan
+                    </button>
+                </div>
+            </form>
+        </div>
 
-        @if ($errors->any())
-            <div class="rounded-2xl border border-rose-300 bg-rose-50 p-4 text-xs font-bold text-rose-900 shadow-xs">
-                <ul class="list-disc list-inside space-y-1">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-        <!-- 2 Formulir Penugasan & Supervisi (Gaya Tombol Hijau Menu Login) -->
+        <!-- 2 Formulir Penugasan & Supervisi -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
             <!-- Form 1: Beri Peran Staf Cabang -->
             <div class="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs flex flex-col justify-between">
                 <div>
                     <div class="flex items-center gap-3 pb-4 border-b border-slate-100">
-                        <div class="h-10 w-10 rounded-2xl bg-gradient-to-br from-[#0A231E] to-[#0E352E] text-[#D4F94E] flex items-center justify-center font-black text-sm border border-emerald-500/20 shadow-xs shrink-0">
+                        <div class="h-10 w-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-black text-sm shadow-xs shrink-0">
                             1
                         </div>
                         <div>
@@ -99,7 +137,7 @@
                         @csrf
                         <div>
                             <label for="id_pengguna" class="block text-xs font-bold text-slate-700 mb-1.5">Pilih Pengguna / Akun Terdaftar</label>
-                            <select name="id_pengguna" id="id_pengguna" required class="w-full min-h-[46px] rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-600 transition">
+                            <select name="id_pengguna" id="id_pengguna" required class="w-full min-h-[46px] rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-emerald-600 transition">
                                 <option value="">-- Pilih Akun Terdaftar --</option>
                                 @foreach ($users as $user)
                                     <option value="{{ $user->id_pengguna }}">
@@ -111,7 +149,7 @@
 
                         <div>
                             <label for="peran" class="block text-xs font-bold text-slate-700 mb-1.5">Peran Resmi di Cabang Ini</label>
-                            <select name="peran" id="peran" required class="w-full min-h-[46px] rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-600 transition">
+                            <select name="peran" id="peran" required class="w-full min-h-[46px] rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-emerald-600 transition">
                                 <option value="apoteker">Apoteker (Apoteker Penanggung Jawab / APJ)</option>
                                 <option value="asisten_apoteker">Asisten Apoteker (Tenaga Teknis Kefarmasian)</option>
                                 <option value="kasir">Kasir Pelaksana</option>
@@ -120,9 +158,8 @@
                         </div>
 
                         <div class="pt-2">
-                            <button type="submit" class="w-full min-h-[46px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs shadow-xs transition cursor-pointer">
+                            <button type="submit" class="w-full min-h-[46px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition cursor-pointer">
                                 <span>Simpan Penugasan Peran</span>
-                                <span class="text-sm">&rarr;</span>
                             </button>
                         </div>
                     </form>
@@ -146,11 +183,11 @@
                         @csrf
                         <div>
                             <label for="id_apj" class="block text-xs font-bold text-slate-700 mb-1.5">Apoteker Penanggung Jawab (APJ Pengawas)</label>
-                            <select name="id_apj" id="id_apj" required class="w-full min-h-[46px] rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-600 transition">
+                            <select name="id_apj" id="id_apj" required class="w-full min-h-[46px] rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-emerald-600 transition">
                                 <option value="">-- Pilih Apoteker Ber-SIPA --</option>
                                 @foreach ($users as $user)
                                     <option value="{{ $user->id_pengguna }}">
-                                        apt. {{ $user->nama_lengkap }} ({{ $user->id_pengguna }})
+                                        apt. {{ $user->nama_lengkap }} ({{ $user->telepon_email ?? '-' }})
                                     </option>
                                 @endforeach
                             </select>
@@ -158,7 +195,7 @@
 
                         <div>
                             <label for="id_staf" class="block text-xs font-bold text-slate-700 mb-1.5">Staf Teknis yang Disupervisi</label>
-                            <select name="id_staf" id="id_staf" required class="w-full min-h-[46px] rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-600 transition">
+                            <select name="id_staf" id="id_staf" required class="w-full min-h-[46px] rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-emerald-600 transition">
                                 <option value="">-- Pilih Staf Pelaksana / Asisten --</option>
                                 @foreach ($users as $user)
                                     <option value="{{ $user->id_pengguna }}">
@@ -168,14 +205,13 @@
                             </select>
                         </div>
 
-                        <div class="rounded-xl bg-emerald-50/70 border border-emerald-200/80 p-3 text-[11px] text-emerald-900 leading-relaxed font-medium">
-                            Relasi 5NF menjamin integritas hukum delegasi resep dokter dan pengawasan penyerahan obat keras (Standar Permenkes No. 73/2016).
+                        <div class="rounded-xl bg-emerald-50 border border-emerald-200 p-3 text-[11px] text-emerald-900 leading-relaxed font-medium">
+                            Relasi 5NF menjamin kepatuhan delegasi telaah resep dan penyerahan obat keras sesuai Standar Permenkes No. 73/2016.
                         </div>
 
                         <div class="pt-2">
-                            <button type="submit" class="w-full min-h-[46px] inline-flex items-center justify-center gap-2 rounded-xl bg-[#0A231E] hover:bg-[#0E352E] text-[#D4F94E] border border-emerald-500/30 font-bold text-xs shadow-xs transition cursor-pointer">
+                            <button type="submit" class="w-full min-h-[46px] inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition cursor-pointer">
                                 <span>Tetapkan Hierarki Pengawasan (5NF)</span>
-                                <span class="text-sm">&rarr;</span>
                             </button>
                         </div>
                     </form>
@@ -188,43 +224,65 @@
             <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                     <h3 class="text-base font-extrabold text-slate-900">Daftar Staf Aktif Cabang</h3>
-                    <p class="text-xs text-slate-500 mt-0.5">Seluruh tenaga kefarmasian yang memiliki penugasan legal pada cabang ini</p>
+                    <p class="text-xs text-slate-500 mt-0.5">Kelola status aktif/nonaktif akun maupun pencabutan peran pada cabang ini</p>
                 </div>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
                     Total: {{ count($staff) }} Staf
                 </span>
             </div>
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs min-w-[36rem]">
-                    <thead class="bg-slate-100 text-slate-700 font-extrabold uppercase border-b border-slate-200 whitespace-nowrap">
+                <table class="w-full text-left text-xs min-w-[48rem]">
+                    <thead class="bg-slate-50 text-slate-700 font-extrabold uppercase border-b border-slate-200 whitespace-nowrap">
                         <tr>
                             <th class="py-3.5 px-4">Nama Lengkap</th>
                             <th class="py-3.5 px-4">Kontak / Email</th>
                             <th class="py-3.5 px-4">Peran Cabang</th>
                             <th class="py-3.5 px-4">Ditugaskan Sejak</th>
-                            <th class="py-3.5 px-4 text-right">Status Legal</th>
+                            <th class="py-3.5 px-4">Status Akun</th>
+                            <th class="py-3.5 px-4 text-right">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 font-medium text-slate-800">
                         @forelse ($staff as $item)
+                            @php $isAktif = (bool) ($item->pengguna->aktif ?? true); @endphp
                             <tr class="hover:bg-slate-50/80 transition">
                                 <td class="py-3.5 px-4 font-bold text-slate-900 whitespace-nowrap">{{ $item->pengguna->nama_lengkap ?? '-' }}</td>
                                 <td class="py-3.5 px-4 text-slate-500 font-mono whitespace-nowrap">{{ $item->pengguna->telepon_email ?? '-' }}</td>
                                 <td class="py-3.5 px-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-extrabold {{ $item->peran === 'apoteker' ? 'bg-[#0A231E] text-[#D4F94E] border border-emerald-500/20' : 'bg-emerald-50 text-emerald-900 border border-emerald-200' }}">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-extrabold {{ $item->peran === 'apoteker' ? 'bg-emerald-600 text-white' : 'bg-emerald-50 text-emerald-900 border border-emerald-200' }}">
                                         {{ ucfirst(str_replace('_', ' ', $item->peran)) }}
                                     </span>
                                 </td>
                                 <td class="py-3.5 px-4 text-slate-500 whitespace-nowrap">{{ $item->ditugaskan_dari ? \Carbon\Carbon::parse($item->ditugaskan_dari)->format('d M Y') : '-' }}</td>
-                                <td class="py-3.5 px-4 whitespace-nowrap text-right">
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">
-                                        Aktif Terdaftar
+                                <td class="py-3.5 px-4 whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold {{ $isAktif ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-rose-50 text-rose-800 border border-rose-200' }}">
+                                        {{ $isAktif ? 'Aktif' : 'Nonaktif' }}
                                     </span>
+                                </td>
+                                <td class="py-3.5 px-4 whitespace-nowrap text-right">
+                                    <div class="inline-flex items-center gap-2">
+                                        @if($item->pengguna)
+                                            <form method="POST" action="{{ route('admin.cabang.staf.status', ['client' => $client, 'pengguna' => $item->id_pengguna]) }}">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-[11px] transition cursor-pointer">
+                                                    {{ $isAktif ? 'Nonaktifkan' : 'Aktifkan' }}
+                                                </button>
+                                            </form>
+                                        @endif
+                                        <form method="POST" action="{{ route('admin.cabang.staf.role.destroy', ['client' => $client, 'roleId' => $item->id]) }}" onsubmit="return confirm('Cabut peran staf ini dari cabang?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="px-2.5 py-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-800 font-bold text-[11px] transition cursor-pointer">
+                                                Hapus Peran
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="py-8 text-center text-slate-400">Belum ada staf yang ditugaskan ke cabang ini.</td>
+                                <td colspan="6" class="py-8 text-center text-slate-400">Belum ada staf yang ditugaskan ke cabang ini.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -239,18 +297,19 @@
                     <h3 class="text-base font-extrabold text-slate-900">Matriks Supervisi APJ &amp; Tenaga Teknis (5NF)</h3>
                     <p class="text-xs text-slate-500 mt-0.5">Struktur garis komando farmasi antara Apoteker Penanggung Jawab dan staf pelaksana</p>
                 </div>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
                     Total: {{ count($supervisions) }} Relasi 5NF
                 </span>
             </div>
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs min-w-[36rem]">
-                    <thead class="bg-slate-100 text-slate-700 font-extrabold uppercase border-b border-slate-200 whitespace-nowrap">
+                <table class="w-full text-left text-xs min-w-[40rem]">
+                    <thead class="bg-slate-50 text-slate-700 font-extrabold uppercase border-b border-slate-200 whitespace-nowrap">
                         <tr>
                             <th class="py-3.5 px-4">Staf Pelaksana</th>
-                            <th class="py-3.5 px-4">APJ Pengawas (Supervising Pharmacist)</th>
+                            <th class="py-3.5 px-4">APJ Pengawas</th>
                             <th class="py-3.5 px-4">Berlaku Sejak</th>
-                            <th class="py-3.5 px-4 text-right">Derajat Normalisasi</th>
+                            <th class="py-3.5 px-4">Normalisasi</th>
+                            <th class="py-3.5 px-4 text-right">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 font-medium text-slate-800">
@@ -258,18 +317,27 @@
                             <tr class="hover:bg-slate-50/80 transition">
                                 <td class="py-3.5 px-4 font-bold text-slate-900 whitespace-nowrap">{{ $sup->staf->nama_lengkap ?? '-' }}</td>
                                 <td class="py-3.5 px-4 whitespace-nowrap">
-                                    <span class="font-extrabold text-emerald-800">apt. {{ $sup->pengawas->nama_lengkap ?? '-' }}</span>
+                                    <span class="font-extrabold text-emerald-700">apt. {{ $sup->pengawas->nama_lengkap ?? '-' }}</span>
                                 </td>
                                 <td class="py-3.5 px-4 text-slate-500 whitespace-nowrap">{{ $sup->berlaku_dari ? \Carbon\Carbon::parse($sup->berlaku_dari)->format('d M Y') : '-' }}</td>
-                                <td class="py-3.5 px-4 whitespace-nowrap text-right">
+                                <td class="py-3.5 px-4 whitespace-nowrap">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-emerald-50 text-emerald-900 border border-emerald-200">
-                                        5NF (peta_pengawas_staf)
+                                        5NF
                                     </span>
+                                </td>
+                                <td class="py-3.5 px-4 whitespace-nowrap text-right">
+                                    <form method="POST" action="{{ route('admin.cabang.staf.pengawas.destroy', ['client' => $client, 'supervisionId' => $sup->id]) }}" onsubmit="return confirm('Hapus relasi supervisi APJ ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="px-2.5 py-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-800 font-bold text-[11px] transition cursor-pointer">
+                                            Hapus Relasi
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="py-8 text-center text-slate-400">Belum ada relasi supervisi APJ yang dipetakan pada cabang ini.</td>
+                                <td colspan="5" class="py-8 text-center text-slate-400">Belum ada relasi supervisi APJ yang dipetakan pada cabang ini.</td>
                             </tr>
                         @endforelse
                     </tbody>

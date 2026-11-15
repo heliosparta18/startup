@@ -28,14 +28,7 @@ class FortifyServiceProvider extends ServiceProvider
                 public function toResponse($request)
                 {
                     $user = $request->user();
-                    $redirectUrl = route('dashboard');
-
-                    if ($user?->hasRole('super_admin') || $user?->role === 'super_admin') {
-                        $redirectUrl = route('admin.dashboard');
-                    } elseif ($user?->hasRole('apoteker') || $user?->role === 'apoteker') {
-                        $clientSlug = ($user->email === 'dewi@omnipharma.test' || $user->email === 'dinda@omnipharma.test') ? 'rogojampi' : 'banyuwangi-kota';
-                        $redirectUrl = route('tenant.dashboard', ['client' => $clientSlug]);
-                    }
+                    $redirectUrl = $user?->homeRoute() ?? route('dashboard');
 
                     $intended = session()->get('url.intended');
                     if ($intended && (

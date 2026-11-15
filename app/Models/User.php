@@ -91,13 +91,33 @@ class User extends Authenticatable implements PasskeyUser
     public function hasRole(string $role): bool
     {
         return ($this->role === $role
-            || ($role === 'super_admin' && $this->role === 'admin')
             || ($role === 'apoteker' && $this->role === 'tenant')
             || ($role === 'pelanggan' && $this->role === 'customer')
-            || ($role === 'admin' && $this->role === 'super_admin')
+            || ($role === 'admin' && in_array($this->role, ['super_admin', 'kasir'], true))
+            || ($role === 'kasir' && $this->role === 'admin')
             || ($role === 'tenant' && $this->role === 'apoteker')
             || ($role === 'customer' && $this->role === 'pelanggan'))
             && $this->isActive();
+    }
+
+    /**
+     * Tentukan URL dashboard utama sesuai peran pengguna terautentikasi.
+     */
+    public function homeRoute(): string
+    {
+        if ($this->hasRole('super_admin') || $this->role === 'super_admin') {
+            return route('admin.dashboard');
+        }
+
+        if ($this->hasRole('apoteker') || in_array($this->role, ['apoteker', 'tenant'], true)) {
+            return route('tenant.dashboard', ['client' => $this->getClientSlug()]);
+        }
+
+        if ($this->hasRole('kasir') || in_array($this->role, ['admin', 'kasir'], true)) {
+            return route('kasir.dashboard');
+        }
+
+        return route('dashboard');
     }
 
     public function isAdmin(): bool

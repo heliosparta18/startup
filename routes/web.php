@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\EmailOtpAuthController;
 use App\Http\Controllers\Auth\FirebaseAuthSessionController;
 use App\Models\Obat;
 use App\Models\Scopes\TenantScope;
+use App\Models\User;
 use App\Modules\Catalog\Services\CustomerSessionService;
 use App\Modules\Ordering\Http\Controllers\CartController;
 use App\Modules\Ordering\Http\Controllers\CheckoutController;
@@ -18,13 +19,8 @@ Route::get('/', function (Request $request) {
         }
 
         $user = auth()->user();
-        if ($user->hasRole('super_admin') || $user->role === 'super_admin') {
-            return redirect()->route('admin.dashboard');
-        }
-        if ($user->hasRole('apoteker') || $user->role === 'apoteker') {
-            $branchSlug = method_exists($user, 'getClientSlug') ? $user->getClientSlug() : 'banyuwangi-kota';
-
-            return redirect()->route('tenant.dashboard', ['client' => $branchSlug]);
+        if ($user instanceof User) {
+            return redirect()->to($user->homeRoute());
         }
 
         return redirect()->route('dashboard');
@@ -53,9 +49,7 @@ Route::middleware(['auth'])->group(function () {
     $resolveBranchSlug = static function (Request $request): string {
         $user = $request->user();
 
-        return $user && method_exists($user, 'getClientSlug')
-            ? ($user->getClientSlug() ?: 'banyuwangi-kota')
-            : 'banyuwangi-kota';
+        return $user?->getClientSlug() ?: 'banyuwangi-kota';
     };
 
     Route::get('/apoteker', fn (Request $request) => redirect()->route('tenant.dashboard', [
@@ -70,6 +64,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/stok-fefo', fn (Request $request) => redirect()->route('tenant.stok.fefo', [
         'client' => $resolveBranchSlug($request),
     ]));
+    Route::get('/kasir', fn () => redirect()->route('kasir.dashboard'));
     Route::get('/admin', fn () => redirect()->route('admin.dashboard'));
 });
 Route::post('/cabang/switch', function (Request $request) {

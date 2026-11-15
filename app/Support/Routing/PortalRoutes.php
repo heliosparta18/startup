@@ -38,6 +38,17 @@ final class PortalRoutes
     }
 
     /**
+     * Portal kasir dan loket pembayaran cabang (internal).
+     */
+    public static function kasir(Closure|string $routes): void
+    {
+        Route::middleware(['web', 'auth', 'verified', 'role:kasir'])
+            ->prefix('kasir')
+            ->name('kasir.')
+            ->group($routes);
+    }
+
+    /**
      * Portal super admin pengelola apotek pusat (internal).
      * Melayani executive dashboard agregasi penjualan dan tutup periode (Mockup Layar 3-4).
      */

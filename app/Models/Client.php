@@ -32,6 +32,8 @@ class Client extends Model
         'nama_klien',
         'slug',
         'alamat',
+        'radius_km',
+        'jam_buka',
         'aktif',
     ];
 
@@ -69,6 +71,7 @@ class Client extends Model
     {
         return [
             'aktif' => 'boolean',
+            'radius_km' => 'integer',
             'dibuat_pada' => 'datetime',
             'diperbarui_pada' => 'datetime',
         ];

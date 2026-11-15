@@ -4,11 +4,15 @@ namespace Tests\Feature;
 
 use App\Models\Client;
 use App\Models\Obat;
+use App\Models\Pesanan;
 use App\Models\StokClient;
 use App\Models\User;
 use App\Modules\Catalog\Livewire\PublicCatalog;
+use App\Modules\Ordering\Services\CartService;
 use Database\Seeders\DatabaseSeeder;
+use Database\Seeders\DemoApotekSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -224,7 +228,7 @@ class UnifiedCatalogAndMultiBranchAvailabilityTest extends TestCase
         $response->assertOk();
         $response->assertSee('Mulai Belanja Obat');
         $response->assertSee('Cari di Kategori');
-        $response->assertSeeLivewire(\App\Modules\Catalog\Livewire\PublicCatalog::class);
+        $response->assertSeeLivewire(PublicCatalog::class);
         $response->assertSee(route('customer.cart', ['client' => 'banyuwangi-kota']));
         $response->assertDontSee(route('customer.catalog', ['client' => 'banyuwangi-kota']));
 
@@ -239,7 +243,7 @@ class UnifiedCatalogAndMultiBranchAvailabilityTest extends TestCase
         $authClientCatalogRedirect->assertRedirect(route('dashboard', ['search' => 'posti']));
 
         // Pencarian via query ?search= di /dashboard langsung merender obat berstok yang cocok
-        $sampleObat = \App\Models\Obat::query()
+        $sampleObat = Obat::query()
             ->whereNotNull('nama_obat')
             ->whereHas('stokClient', fn ($q) => $q->withoutGlobalScopes()->where('jumlah_stok', '>', 0))
             ->orderBy('nama_obat')
@@ -271,16 +275,16 @@ class UnifiedCatalogAndMultiBranchAvailabilityTest extends TestCase
 
     public function test_clean_short_endpoints_and_role_shortcuts(): void
     {
-        $bwiClient = \App\Models\Client::where('slug', 'banyuwangi-kota')->first();
+        $bwiClient = Client::where('slug', 'banyuwangi-kota')->first();
         if (! $bwiClient) {
-            $this->seed(\Database\Seeders\DemoApotekSeeder::class);
-            $bwiClient = \App\Models\Client::where('slug', 'banyuwangi-kota')->firstOrFail();
+            $this->seed(DemoApotekSeeder::class);
+            $bwiClient = Client::where('slug', 'banyuwangi-kota')->firstOrFail();
         }
 
-        $sampleObat = \App\Models\Obat::query()->whereNotNull('nama_obat')->firstOrFail();
+        $sampleObat = Obat::query()->whereNotNull('nama_obat')->firstOrFail();
         $identifier = $sampleObat->slug ?: $sampleObat->id_obat;
 
-        \App\Models\StokClient::withoutTenancy()->updateOrCreate(
+        StokClient::withoutTenancy()->updateOrCreate(
             [
                 'id_client' => $bwiClient->id_client,
                 'id_obat' => $sampleObat->id_obat,
@@ -290,11 +294,11 @@ class UnifiedCatalogAndMultiBranchAvailabilityTest extends TestCase
             ]
         );
 
-        $customer = \App\Models\User::factory()->create([
+        $customer = User::factory()->create([
             'role' => 'pelanggan',
             'status' => 'active',
         ]);
-        $sessionToken = 'clean-endpoint-test-'.\Illuminate\Support\Str::random(10);
+        $sessionToken = 'clean-endpoint-test-'.Str::random(10);
 
         // 1. Detail produk & produk alias redirect
         $detailResponse = $this->actingAs($customer)
@@ -356,7 +360,7 @@ class UnifiedCatalogAndMultiBranchAvailabilityTest extends TestCase
                 'catatan' => 'Pengujian endpoint bersih',
             ]);
 
-        $pesanan = \App\Models\Pesanan::withoutTenancy()
+        $pesanan = Pesanan::withoutTenancy()
             ->where('token_sesi', $sessionToken)
             ->latest('dibuat_pada')
             ->firstOrFail();
@@ -381,7 +385,7 @@ class UnifiedCatalogAndMultiBranchAvailabilityTest extends TestCase
         $this->assertSame('dibatalkan', $pesanan->fresh()->status);
 
         // 5. Role shortcuts terautentikasi (/apoteker, /antrean, /verifikasi-resep, /stok-fefo, /admin)
-        $apoteker = \App\Models\User::factory()->create([
+        $apoteker = User::factory()->create([
             'role' => 'apoteker',
             'status' => 'active',
         ]);
@@ -396,7 +400,7 @@ class UnifiedCatalogAndMultiBranchAvailabilityTest extends TestCase
         $this->actingAs($apoteker)->get('/stok-fefo')
             ->assertRedirect(route('tenant.stok.fefo', ['client' => $slug]));
 
-        $superAdmin = \App\Models\User::factory()->create([
+        $superAdmin = User::factory()->create([
             'role' => 'super_admin',
             'status' => 'active',
         ]);
@@ -460,9 +464,9 @@ class UnifiedCatalogAndMultiBranchAvailabilityTest extends TestCase
         $detailResponse->assertDontSee('aria-label="Kembali ke Dashboard Utama"', false);
 
         // 3. Tambah obat keras ke keranjang via JSON API mengembalikan cart_count akurat
-        $cartService = app(\App\Modules\Ordering\Services\CartService::class);
+        $cartService = app(CartService::class);
         $cartService->clear('test-cart-badge-session', (string) $clientBwi->id_client);
-        $sessionToken = 'test-cart-badge-'.\Illuminate\Support\Str::random(10);
+        $sessionToken = 'test-cart-badge-'.Str::random(10);
 
         $addFirst = $this->actingAs($customer)
             ->withCredentials()

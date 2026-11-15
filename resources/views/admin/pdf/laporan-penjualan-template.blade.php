@@ -67,7 +67,7 @@
     </table>
 
     <div style="margin-top: 32px; font-size: 10px; color: #6b7280;">
-        <p>Dokumen ini disahkan secara digital oleh Sistem Rekonsiliasi OmniPharma Network (ADR-0008: Snapshot Immutability)[cite: 1, 2]. Dicetak pada: {{ now()->format('d M Y H:i:s') }} WIB.</p>
+        <p>Dokumen ini disahkan secara digital oleh Sistem Rekonsiliasi OmniPharma Network (ADR-0008: Snapshot Immutability). Dicetak pada: {{ now()->format('d M Y H:i:s') }} WIB.</p>
     </div>
 </body>
 </html>

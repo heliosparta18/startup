@@ -22,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
             // Model binding canteen/tenant + scopeBindings di-wire pada Modul 4.
             PortalRoutes::customer(base_path('routes/customer.php'));
             PortalRoutes::tenant(base_path('routes/tenant.php'));
+            PortalRoutes::kasir(base_path('routes/kasir.php'));
             PortalRoutes::admin(base_path('routes/admin.php'));
         },
     )

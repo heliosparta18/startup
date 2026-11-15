@@ -17,30 +17,23 @@
             </div>
         </div>
 
-        <!-- Hero Banner: Nuansa Deep Spruce Hijau Sesuai Menu Login -->
-        <div class="rounded-3xl bg-gradient-to-br from-[#0A231E] via-[#0E352E] to-[#0A231E] text-white p-6 sm:p-8 lg:p-10 shadow-xl border border-emerald-500/20 relative overflow-hidden">
-            <div class="absolute -top-24 -left-24 w-72 h-72 rounded-full border border-emerald-500/10 pointer-events-none"></div>
-            <div class="absolute -bottom-24 -right-24 w-80 h-80 rounded-full border border-emerald-500/15 pointer-events-none"></div>
-
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
-                <div>
-                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-emerald-200 border border-emerald-500/30">
-                        Standar Permenkes RI No. 73/2016 • Skrining Resep Dokter
-                    </span>
-
-                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white mt-3 leading-tight">
-                        Antrean Telaah &amp; Verifikasi Resep Digital
-                    </h1>
-                    <p class="text-xs sm:text-sm text-emerald-200/90 mt-1 max-w-2xl leading-relaxed">
-                        Verifikasi Surat Izin Praktik (SIP) dokter, skrining klinis dosis geriatri/pediatri, dan validasi legalitas penyerahan obat keras.
-                    </p>
-                </div>
-
-                <div class="shrink-0">
-                    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-[#D4F94E] font-bold text-xs backdrop-blur-xs">
-                        {{ count($resepPending) }} Resep Menunggu
-                    </span>
-                </div>
+        <!-- Clean Light Header Banner -->
+        <div class="rounded-3xl bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                    Standar Permenkes RI No. 73/2016 | Skrining Resep Dokter
+                </span>
+                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-3 leading-tight">
+                    Antrean Telaah &amp; Verifikasi Resep Digital
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl leading-relaxed">
+                    Verifikasi Surat Izin Praktik (SIP) dokter, skrining klinis dosis geriatri/pediatri, dan validasi legalitas penyerahan obat keras.
+                </p>
+            </div>
+            <div class="shrink-0">
+                <span class="inline-flex items-center px-4 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold text-xs">
+                    {{ count($resepPending) }} Resep Menunggu
+                </span>
             </div>
         </div>
 
@@ -202,7 +195,7 @@
                 </div>
             @empty
                 <div class="rounded-3xl border border-dashed border-slate-300 p-12 text-center bg-white shadow-xs">
-                    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0A231E] to-[#0E352E] text-[#D4F94E] border border-emerald-500/30 shadow-xs">
+                    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-xs">
                         <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                         </svg>

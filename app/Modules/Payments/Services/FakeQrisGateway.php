@@ -41,23 +41,17 @@ class FakeQrisGateway implements PaymentGatewayInterface
             $cacheKey = "midtrans_qris:{$pesanan->id_pesanan}";
             $cached = Cache::get($cacheKey);
             if (is_array($cached) && ! empty($cached['qr_image_url'])) {
-                $cached['expired_at'] = $expiry->toIso8601String();
-                $cached['expires_at_ts'] = $expiry->timestamp;
-                $cached['remaining_seconds'] = $remainingSeconds;
-
-                return $cached;
+                return $this->hydrateMidtransQrisPayload($cached, $amount, $expiry, $remainingSeconds);
             }
 
             $midtransData = $this->chargeMidtransQris($pesanan, $serverKey);
             if ($midtransData !== null) {
-                $midtransData['expired_at'] = $expiry->toIso8601String();
-                $midtransData['expires_at_ts'] = $expiry->timestamp;
-                $midtransData['remaining_seconds'] = $remainingSeconds;
+                $payload = $this->hydrateMidtransQrisPayload($midtransData, $amount, $expiry, $remainingSeconds);
 
-                Cache::put($cacheKey, $midtransData, now()->addMinutes(30));
-                Cache::put("midtrans_order_id:{$pesanan->id_pesanan}", $midtransData['midtrans_order_id'] ?? ltrim((string) $pesanan->nomor_pesanan, '#'), now()->addHours(24));
+                Cache::put($cacheKey, $payload, now()->addMinutes(30));
+                Cache::put("midtrans_order_id:{$pesanan->id_pesanan}", $payload['midtrans_order_id'] ?? ltrim((string) $pesanan->nomor_pesanan, '#'), now()->addHours(24));
 
-                return $midtransData;
+                return $payload;
             }
         }
 
@@ -65,9 +59,62 @@ class FakeQrisGateway implements PaymentGatewayInterface
     }
 
     /**
+     * @param  array<mixed, mixed>  $raw
+     * @return array{
+     *     gateway: string,
+     *     qris_string: string,
+     *     qr_image_url: string,
+     *     expired_at: string,
+     *     expires_at_ts: int,
+     *     remaining_seconds: int,
+     *     amount: float,
+     *     merchant_id?: string,
+     *     transaction_id?: string,
+     *     midtrans_order_id?: string,
+     *     acquirer?: string,
+     *     simulator_url?: string
+     * }
+     */
+    private function hydrateMidtransQrisPayload(
+        array $raw,
+        float $fallbackAmount,
+        CarbonInterface $expiry,
+        int $remainingSeconds
+    ): array {
+        $payload = [
+            'gateway' => (string) ($raw['gateway'] ?? 'midtrans_qris_sandbox'),
+            'qris_string' => (string) ($raw['qris_string'] ?? ''),
+            'qr_image_url' => (string) ($raw['qr_image_url'] ?? ''),
+            'expired_at' => $expiry->toIso8601String(),
+            'expires_at_ts' => $expiry->getTimestamp(),
+            'remaining_seconds' => $remainingSeconds,
+            'amount' => isset($raw['amount']) && is_numeric($raw['amount']) ? (float) $raw['amount'] : $fallbackAmount,
+        ];
+
+        foreach (['merchant_id', 'transaction_id', 'midtrans_order_id', 'acquirer', 'simulator_url'] as $optionalKey) {
+            if (isset($raw[$optionalKey]) && (string) $raw[$optionalKey] !== '') {
+                $payload[$optionalKey] = (string) $raw[$optionalKey];
+            }
+        }
+
+        return $payload;
+    }
+
+    /**
      * Panggil Midtrans Core API v2/charge dengan metode QRIS.
      *
-     * @return array<string, mixed>|null
+     * @return array{
+     *     gateway: string,
+     *     merchant_id: string,
+     *     transaction_id: string,
+     *     midtrans_order_id: string,
+     *     acquirer: string,
+     *     simulator_url: string,
+     *     qris_string: string,
+     *     qr_image_url: string,
+     *     expired_at: string,
+     *     amount: float
+     * }|null
      */
     private function chargeMidtransQris(Pesanan $pesanan, string $serverKey): ?array
     {
@@ -263,7 +310,7 @@ class FakeQrisGateway implements PaymentGatewayInterface
             'qris_string' => $qrisString,
             'qr_image_url' => 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data='.urlencode($qrisString),
             'expired_at' => $expiry->toIso8601String(),
-            'expires_at_ts' => $expiry->timestamp,
+            'expires_at_ts' => $expiry->getTimestamp(),
             'remaining_seconds' => $remainingSeconds,
             'amount' => $amount,
         ];

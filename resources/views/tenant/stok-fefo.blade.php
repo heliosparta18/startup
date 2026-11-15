@@ -1,5 +1,26 @@
-<x-layouts.tenant title="Pemantauan Stok FEFO & Indikator Kedaluwarsa">
-    <div class="space-y-6 sm:space-y-8">
+<x-layouts.tenant title="Pemantauan & Manajemen Stok FEFO - OmniPharma">
+    <div x-data="{
+        addModal: false,
+        editModal: false,
+        penyesuaianBase: '{{ url('/cabang/' . $client . '/stok') }}',
+        editBatch: {
+            id: '',
+            nama_obat: '',
+            jumlah_stok: 0,
+            batch_number: '',
+            expired: ''
+        },
+        openEdit(batch) {
+            this.editBatch = {
+                id: batch.id,
+                nama_obat: batch.nama_obat,
+                jumlah_stok: Number(batch.jumlah_stok || 0),
+                batch_number: batch.batch_number || '',
+                expired: batch.expired ? String(batch.expired).slice(0, 10) : ''
+            };
+            this.editModal = true;
+        }
+    }" class="space-y-6 sm:space-y-8">
         <!-- Breadcrumb & Navigasi -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div class="flex items-center gap-2 text-xs text-slate-500">
@@ -7,101 +28,118 @@
                 <span>/</span>
                 <span class="text-slate-900 font-bold">Stok Batch FEFO</span>
             </div>
-            <div class="flex flex-wrap sm:flex-nowrap items-center gap-2">
-                <a href="{{ route('tenant.dashboard', ['client' => $client]) }}" class="flex-1 sm:flex-initial min-h-[44px] inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-2xs transition">
+            <div class="flex flex-wrap items-center gap-2">
+                <button type="button" @click="addModal = true" class="min-h-[44px] inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition cursor-pointer">
+                    + Tambah / Atur Stok Cabang
+                </button>
+                <a href="{{ route('tenant.dashboard', ['client' => $client]) }}" class="min-h-[44px] inline-flex items-center justify-center px-4 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-2xs transition">
                     &larr; Dashboard Cabang
                 </a>
-                <a href="{{ route('tenant.antrean.index', ['client' => $client]) }}" class="flex-1 sm:flex-initial min-h-[44px] inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition">
-                    ⏱️ Kelola Antrean &rarr;
+                <a href="{{ route('tenant.antrean.index', ['client' => $client]) }}" class="min-h-[44px] inline-flex items-center justify-center px-4 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 shadow-2xs transition">
+                    Kelola Antrean &rarr;
                 </a>
             </div>
         </div>
 
-        <!-- Hero Banner: Nuansa Deep Spruce Hijau Sesuai Menu Login -->
-        <div class="rounded-3xl bg-gradient-to-br from-[#0A231E] via-[#0E352E] to-[#0A231E] text-white p-6 sm:p-8 lg:p-10 shadow-xl border border-emerald-500/20 relative overflow-hidden">
-            <div class="absolute -top-24 -left-24 w-72 h-72 rounded-full border border-emerald-500/10 pointer-events-none"></div>
-            <div class="absolute -bottom-24 -right-24 w-80 h-80 rounded-full border border-emerald-500/15 pointer-events-none"></div>
-
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
-                <div>
-                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-emerald-200 border border-emerald-500/30">
-                        Standar Permenkes RI No. 73/2016 • Rotasi Mutu FEFO
-                    </span>
-
-                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white mt-3 leading-tight">
-                        Kartu Stok FEFO &amp; Monitoring Kedaluwarsa
-                    </h1>
-                    <p class="text-xs sm:text-sm text-emerald-200/90 mt-1 max-w-2xl leading-relaxed">
-                        Algoritma <em>First-Expired, First-Out</em> secara ketat memprioritaskan nomor batch dengan tanggal kedaluwarsa terdekat untuk dikeluarkan terlebih dahulu.
-                    </p>
-                </div>
-
-                <div class="shrink-0 flex items-center gap-2">
-                    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-[#D4F94E] font-bold text-xs backdrop-blur-xs">
-                        Rotasi Otomatis Aktif
-                    </span>
-                </div>
+        <!-- Clean Light Header Banner -->
+        <div class="rounded-3xl bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                    Standar Permenkes RI No. 73/2016 | Rotasi Mutu FEFO
+                </span>
+                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-3 leading-tight">
+                    Kartu Stok FEFO &amp; Manajemen Batch Cabang
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl leading-relaxed">
+                    Kelola jumlah stok fisik, perbarui nomor batch dan tanggal kedaluwarsa, atau lakukan karantina batch mendekati masa kadaluarsa.
+                </p>
+            </div>
+            <div class="shrink-0">
+                <span class="inline-flex items-center px-4 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold text-xs">
+                    Rotasi Otomatis FEFO Aktif
+                </span>
             </div>
         </div>
+
+        @if(session('success'))
+            <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-xs font-bold text-emerald-900 flex items-center gap-2.5">
+                <svg class="h-5 w-5 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                <span>{{ session('success') }}</span>
+            </div>
+        @endif
+
+        @if(session('error') || $errors->any())
+            <div class="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-xs font-bold text-rose-900 space-y-1">
+                @if(session('error'))<p>{{ session('error') }}</p>@endif
+                @foreach($errors->all() as $err)<p>{{ $err }}</p>@endforeach
+            </div>
+        @endif
 
         @php
             $criticalBatches = $fefoBatches->filter(fn($b) => $b->is_critical_ed);
             $nearBatches = $fefoBatches->filter(fn($b) => $b->is_near_ed && ! $b->is_critical_ed);
         @endphp
 
-        <!-- Banner Peringatan Kritis H-7 -->
         @if ($criticalBatches->isNotEmpty())
-            <div class="rounded-3xl border border-rose-300 bg-rose-50 p-5 text-rose-900 shadow-xs">
-                <div class="flex items-start gap-3">
-                    <div class="p-2.5 rounded-2xl bg-rose-600 text-white shrink-0 mt-0.5">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                        </svg>
-                    </div>
-                    <div>
-                        <h2 class="text-sm font-black tracking-tight">PERINGATAN KRITIS: {{ $criticalBatches->count() }} Batch Mendekati Kedaluwarsa (&le; 7 Hari)</h2>
-                        <p class="text-xs mt-1 text-rose-800 leading-relaxed">
-                            Batch berikut memerlukan tindakan karantina atau retur segera ke distributor sesuai standar operasional penanganan sediaan farmasi kedaluwarsa.
-                        </p>
-                    </div>
-                </div>
+            <div class="rounded-2xl border border-rose-300 bg-rose-50 p-4 sm:p-5 text-rose-900 shadow-xs">
+                <h2 class="text-sm font-black tracking-tight">PERINGATAN KRITIS: {{ $criticalBatches->count() }} Batch Mendekati/Melewati Kedaluwarsa (&le; 7 Hari)</h2>
+                <p class="text-xs mt-1 text-rose-800">Gunakan tombol Karantina (0) pada batch yang sudah tidak layak edar.</p>
             </div>
         @endif
 
-        <!-- Banner Peringatan Dini H-30 -->
         @if ($nearBatches->isNotEmpty())
-            <div class="rounded-3xl border border-amber-300 bg-amber-50 p-5 text-amber-900 shadow-xs">
-                <div class="flex items-start gap-3">
-                    <div class="p-2.5 rounded-2xl bg-amber-500 text-white shrink-0 mt-0.5">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
-                    <div>
-                        <h2 class="text-sm font-black tracking-tight">PERINGATAN DINI: {{ $nearBatches->count() }} Batch Waspada Kedaluwarsa (&le; 30 Hari)</h2>
-                        <p class="text-xs mt-1 text-amber-800 leading-relaxed">
-                            Algoritma rotasi stok FEFO secara otomatis memprioritaskan batch ini di antrean paling depan untuk penyiapan resep dokter maupun transaksi bebas.
-                        </p>
-                    </div>
-                </div>
+            <div class="rounded-2xl border border-amber-300 bg-amber-50 p-4 sm:p-5 text-amber-900 shadow-xs">
+                <h2 class="text-sm font-black tracking-tight">PERINGATAN DINI: {{ $nearBatches->count() }} Batch Waspada Kedaluwarsa (&le; 30 Hari)</h2>
+                <p class="text-xs mt-1 text-amber-800">Prioritaskan pengeluaran batch di urutan teratas terlebih dahulu.</p>
             </div>
         @endif
 
-        <!-- Tabel Kartu Stok Berdasarkan Urutan FEFO -->
-        <div class="rounded-3xl border border-slate-200/90 bg-white overflow-hidden shadow-xs space-y-4">
+        <!-- Search & Filter Bar -->
+        <div class="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div class="flex flex-wrap items-center gap-2 text-xs font-bold">
+                @php
+                    $tabs = [
+                        '' => 'Semua Batch',
+                        'critical' => 'H-7 Kritis',
+                        'near_ed' => 'H-30 Near ED',
+                        'low' => 'Stok Menipis (<=10)',
+                        'empty' => 'Stok Habis (0)',
+                    ];
+                @endphp
+                @foreach($tabs as $key => $label)
+                    <a href="{{ route('tenant.stok.fefo', array_filter(['client' => $client, 'filter' => $key, 'q' => $search])) }}"
+                       class="px-3.5 py-2 rounded-xl transition {{ ($filter ?? '') === $key ? 'bg-emerald-600 text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
+                        {{ $label }}
+                    </a>
+                @endforeach
+            </div>
+
+            <form method="GET" action="{{ route('tenant.stok.fefo', ['client' => $client]) }}" class="flex items-center gap-2 text-xs">
+                @if(!empty($filter))
+                    <input type="hidden" name="filter" value="{{ $filter }}">
+                @endif
+                <input type="text" name="q" value="{{ $search ?? '' }}" placeholder="Cari obat atau nomor batch..." class="min-h-[40px] rounded-xl border border-slate-300 bg-white px-3 text-slate-900 focus:border-emerald-600 focus:outline-none">
+                <button type="submit" class="min-h-[40px] px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold cursor-pointer">
+                    Cari
+                </button>
+            </form>
+        </div>
+
+        <!-- Tabel Kartu Stok FEFO -->
+        <div class="rounded-3xl border border-slate-200/90 bg-white overflow-hidden shadow-xs">
             <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                     <h2 class="text-base font-extrabold text-slate-900">Daftar Batch Obat (Urutan FEFO Terdepan)</h2>
-                    <p class="text-xs text-slate-500 mt-0.5">Disortir berdasarkan <code class="font-mono text-emerald-800 font-bold">tanggal_kadaluarsa ASC</code> sesuai regulasi kefarmasian</p>
+                    <p class="text-xs text-slate-500 mt-0.5">Disortir otomatis berdasarkan tanggal kedaluwarsa tercepat</p>
                 </div>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
                     Total {{ $fefoBatches->count() }} Batch Terdata
                 </span>
             </div>
 
             <div class="overflow-x-auto">
-                <table class="w-full min-w-[44rem] text-left text-xs">
-                    <thead class="bg-slate-100 text-slate-700 font-extrabold uppercase border-b border-slate-200">
+                <table class="w-full min-w-[58rem] text-left text-xs">
+                    <thead class="bg-slate-50 text-slate-700 font-extrabold uppercase border-b border-slate-200">
                         <tr>
                             <th class="py-3.5 px-4 text-center">Prioritas FEFO</th>
                             <th class="py-3.5 px-4">Nomor Batch</th>
@@ -110,6 +148,7 @@
                             <th class="py-3.5 px-4 text-center">Sisa Waktu</th>
                             <th class="py-3.5 px-4 text-center">Status Mutu</th>
                             <th class="py-3.5 px-4 text-right">Stok Fisik</th>
+                            <th class="py-3.5 px-4 text-right">Penyesuaian Stok</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 font-medium text-slate-800">
@@ -117,19 +156,26 @@
                             @php
                                 $expiredDate = $batch->obat?->expired ?? $batch->tanggal_kadaluarsa;
                                 $sisaHari = $batch->sisa_hari_ed ?? 0;
+                                $editPayload = [
+                                    'id' => $batch->id,
+                                    'nama_obat' => $batch->obat?->nama_obat ?? 'Sediaan Obat',
+                                    'jumlah_stok' => (int) $batch->jumlah_stok,
+                                    'batch_number' => $batch->obat?->batch_number ?? '',
+                                    'expired' => $expiredDate,
+                                ];
                             @endphp
-                            <tr class="hover:bg-slate-50/80 transition {{ $batch->is_critical_ed ? 'bg-rose-50/50' : ($batch->is_near_ed ? 'bg-amber-50/40' : '') }}">
+                            <tr class="hover:bg-slate-50/80 transition {{ $batch->is_critical_ed ? 'bg-rose-50/40' : ($batch->is_near_ed ? 'bg-amber-50/30' : '') }}">
                                 <td class="py-3.5 px-4 text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-black {{ $index === 0 ? 'bg-[#0A231E] text-[#D4F94E] border border-emerald-500/20' : 'bg-slate-100 text-slate-700' }}">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-black {{ $index === 0 ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200' }}">
                                         #{{ $index + 1 }} FEFO
                                     </span>
                                 </td>
                                 <td class="py-3.5 px-4 font-mono font-bold text-slate-900">
-                                    {{ $batch->obat?->batch_number ?? 'BTC-'.substr($batch->id, 0, 6) }}
+                                    {{ $batch->obat?->batch_number ?? 'BTC-'.substr((string) $batch->id, 0, 6) }}
                                 </td>
                                 <td class="py-3.5 px-4">
                                     <div class="font-bold text-slate-900">{{ $batch->obat?->nama_obat ?? 'Sediaan Obat' }}</div>
-                                    <div class="text-[11px] text-slate-500 capitalize">{{ $batch->obat?->jenis_sediaan ?? 'tablet' }} • {{ $batch->obat?->merek ?? 'Generic' }}</div>
+                                    <div class="text-[11px] text-slate-500 capitalize">{{ $batch->obat?->jenis_sediaan ?? 'tablet' }} | {{ $batch->obat?->merek ?? 'Generic' }}</div>
                                 </td>
                                 <td class="py-3.5 px-4 font-medium text-slate-700">
                                     {{ $expiredDate ? \Carbon\Carbon::parse($expiredDate)->format('d M Y') : '-' }}
@@ -147,34 +193,118 @@
                                 </td>
                                 <td class="py-3.5 px-4 text-center">
                                     @if ($sisaHari < 0)
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-600 text-white">
-                                            KEDALUWARSA
-                                        </span>
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-600 text-white">KEDALUWARSA</span>
                                     @elseif ($batch->is_critical_ed)
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300">
-                                            Kritis (H-7)
-                                        </span>
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300">Kritis (H-7)</span>
                                     @elseif ($batch->is_near_ed)
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
-                                            Waspada (H-30)
-                                        </span>
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">Waspada (H-30)</span>
                                     @else
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-900 border border-emerald-200">
-                                            ✓ Aman
-                                        </span>
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-900 border border-emerald-200">Aman</span>
                                     @endif
                                 </td>
                                 <td class="py-3.5 px-4 text-right font-black text-slate-900">
-                                    {{ $batch->jumlah_stok }} unit
+                                    {{ (int) $batch->jumlah_stok }} unit
+                                </td>
+                                <td class="py-3.5 px-4 text-right whitespace-nowrap">
+                                    <div class="inline-flex items-center gap-1.5">
+                                        <form method="POST" action="{{ route('tenant.stok.penyesuaian', ['client' => $client, 'id' => $batch->id]) }}">
+                                            @csrf
+                                            <input type="hidden" name="delta" value="-1">
+                                            <button type="submit" title="Kurangi 1 unit" class="min-h-[34px] px-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 font-bold text-slate-700 cursor-pointer">-1</button>
+                                        </form>
+                                        <form method="POST" action="{{ route('tenant.stok.penyesuaian', ['client' => $client, 'id' => $batch->id]) }}">
+                                            @csrf
+                                            <input type="hidden" name="delta" value="1">
+                                            <button type="submit" title="Tambah 1 unit" class="min-h-[34px] px-2.5 rounded-lg border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 font-bold text-emerald-800 cursor-pointer">+1</button>
+                                        </form>
+                                        <button type="button" @click='openEdit(@json($editPayload))' class="min-h-[34px] px-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 font-bold text-slate-700 cursor-pointer">
+                                            Edit
+                                        </button>
+                                        @if((int) $batch->jumlah_stok > 0)
+                                            <form method="POST" action="{{ route('tenant.stok.penyesuaian', ['client' => $client, 'id' => $batch->id]) }}" onsubmit="return confirm('Karantina batch ini dengan mengosongkan stok menjadi 0?')">
+                                                @csrf
+                                                <input type="hidden" name="karantina" value="1">
+                                                <button type="submit" class="min-h-[34px] px-2.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 font-bold text-rose-800 cursor-pointer">
+                                                    Karantina
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="py-8 text-center text-slate-400">Belum ada data batch stok obat untuk cabang ini.</td>
+                                <td colspan="8" class="py-8 text-center text-slate-400">Belum ada data batch stok obat yang cocok untuk filter ini.</td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <!-- Modal Tambah / Atur Stok Obat Cabang -->
+        <div x-show="addModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-xs">
+            <div @click.away="addModal = false" class="w-full max-w-md rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-slate-200 space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <h3 class="text-base font-black text-slate-900">Tambah / Atur Stok Obat Cabang</h3>
+                    <button type="button" @click="addModal = false" class="min-h-[44px] min-w-[44px] inline-flex items-center justify-center text-slate-500 hover:text-slate-900 rounded-xl cursor-pointer">&times;</button>
+                </div>
+                <form method="POST" action="{{ route('tenant.stok.store', ['client' => $client]) }}" class="space-y-4 text-xs">
+                    @csrf
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Pilih Obat Master *</label>
+                        <select name="id_obat" required class="w-full min-h-[42px] rounded-xl border border-slate-300 bg-white px-3 text-slate-900">
+                            @foreach($allObats ?? [] as $ob)
+                                <option value="{{ $ob->id_obat }}">{{ $ob->nama_obat }} ({{ $ob->merek ?? 'Generic' }})</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Jumlah Stok Cabang *</label>
+                        <input type="number" name="jumlah_stok" min="0" max="10000" required value="20" class="w-full min-h-[42px] rounded-xl border border-slate-300 px-3 text-slate-900">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Nomor Batch (Opsional)</label>
+                        <input type="text" name="batch_number" placeholder="BTC-2026-NEW" class="w-full min-h-[42px] rounded-xl border border-slate-300 px-3 text-slate-900">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Tanggal Kedaluwarsa Baru (Opsional)</label>
+                        <input type="date" name="expired" class="w-full min-h-[42px] rounded-xl border border-slate-300 px-3 text-slate-900">
+                    </div>
+                    <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                        <button type="button" @click="addModal = false" class="min-h-[44px] px-4 rounded-xl border border-slate-300 text-slate-700 font-bold cursor-pointer">Batal</button>
+                        <button type="submit" class="min-h-[44px] px-5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold cursor-pointer">Simpan Stok Cabang</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal Edit Batch Stok -->
+        <div x-show="editModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-xs">
+            <div @click.away="editModal = false" class="w-full max-w-md rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-slate-200 space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <h3 class="text-base font-black text-slate-900">Penyesuaian Stok: <span x-text="editBatch.nama_obat"></span></h3>
+                    <button type="button" @click="editModal = false" class="min-h-[44px] min-w-[44px] inline-flex items-center justify-center text-slate-500 hover:text-slate-900 rounded-xl cursor-pointer">&times;</button>
+                </div>
+                <form method="POST" :action="penyesuaianBase + '/' + editBatch.id + '/penyesuaian'" class="space-y-4 text-xs">
+                    @csrf
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Stok Fisik Aktual (Unit) *</label>
+                        <input type="number" name="jumlah_stok" min="0" max="10000" required x-model="editBatch.jumlah_stok" class="w-full min-h-[42px] rounded-xl border border-slate-300 px-3 text-slate-900">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Nomor Batch</label>
+                        <input type="text" name="batch_number" x-model="editBatch.batch_number" class="w-full min-h-[42px] rounded-xl border border-slate-300 px-3 text-slate-900">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Tanggal Kedaluwarsa</label>
+                        <input type="date" name="expired" x-model="editBatch.expired" class="w-full min-h-[42px] rounded-xl border border-slate-300 px-3 text-slate-900">
+                    </div>
+                    <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                        <button type="button" @click="editModal = false" class="min-h-[44px] px-4 rounded-xl border border-slate-300 text-slate-700 font-bold cursor-pointer">Batal</button>
+                        <button type="submit" class="min-h-[44px] px-5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold cursor-pointer">Perbarui Stok</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

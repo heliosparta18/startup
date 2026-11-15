@@ -10,6 +10,7 @@ use App\Modules\Ordering\OrderingServiceProvider;
 use App\Modules\Payments\PaymentsServiceProvider;
 use App\Modules\Prescription\PrescriptionServiceProvider;
 use App\Modules\Reporting\ReportingServiceProvider;
+use Database\Seeders\DemoApotekSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\ServiceProvider;
 use Tests\TestCase;
@@ -92,29 +93,34 @@ class ApotekFoundationTest extends TestCase
 
     public function test_apoteker_can_access_tenant_portal(): void
     {
+        $this->seed(DemoApotekSeeder::class);
+
         $apoteker = $this->user('apoteker');
         $this->actingAs($apoteker);
 
         $response = $this->get(route('tenant.dashboard', ['client' => 'banyuwangi-kota']));
         $response->assertOk();
         $response->assertSee('Portal Apoteker Cabang');
-        $response->assertSee('#ORD-20260917-0042');
+        $response->assertSee('ORD-20260917-0042');
         $response->assertSee('Peringatan Batch Kedaluwarsa (FEFO)');
         $response->assertSee('#1 FEFO');
     }
 
     public function test_super_admin_can_access_admin_portal(): void
     {
+        $this->seed(DemoApotekSeeder::class);
+
         $superAdmin = $this->user('super_admin');
         $this->actingAs($superAdmin);
 
         $response = $this->get(route('admin.dashboard'));
         $response->assertOk();
         $response->assertSee('Executive Dashboard');
-        $response->assertSee('142.850.000');
-        $response->assertSee('1.840 Pesanan');
+        $response->assertSee('Agregasi Cabang');
         $response->assertSee('Cabang Banyuwangi Kota');
         $response->assertSee('Cabang Rogojampi');
+        $response->assertSee('2 Pesanan');
+        $response->assertSee('Kelola Master Obat');
     }
 
     public function test_cross_role_access_is_forbidden_with_403(): void

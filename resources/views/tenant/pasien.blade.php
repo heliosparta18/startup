@@ -1,98 +1,152 @@
-<x-layouts.tenant :title="'Rekam Pasien - OmniPharma'">
-    <div class="space-y-6 sm:space-y-8">
-        <!-- Breadcrumb & Navigasi -->
+<x-layouts.tenant title="Rekam Medis &amp; Daftar Pasien Cabang - OmniPharma">
+    <div x-data="{
+        historyModal: false,
+        selectedPasien: { nama: '', kontak: '', orders: [] },
+        openHistory(nama, kontak, orders) {
+            this.selectedPasien = { nama: nama, kontak: kontak, orders: orders || [] };
+            this.historyModal = true;
+        }
+    }" class="space-y-6 sm:space-y-8">
+        <!-- Breadcrumb -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div class="flex items-center gap-2 text-xs text-slate-500">
-                <a href="{{ route('tenant.dashboard', ['client' => $client]) }}" class="hover:text-emerald-800 font-medium transition">Portal Apoteker</a>
+                <a href="{{ route('tenant.dashboard', ['client' => $client]) }}" class="hover:text-emerald-800 font-medium transition">Dashboard Cabang</a>
                 <span>/</span>
-                <span class="text-slate-900 font-bold">Rekam Data Pasien</span>
+                <span class="text-slate-900 font-bold">Rekam Medis &amp; Pasien</span>
             </div>
             <a href="{{ route('tenant.dashboard', ['client' => $client]) }}" class="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-2xs transition">
-                &larr; Kembali ke Dashboard
+                &larr; Dashboard Cabang
             </a>
         </div>
 
-        <!-- Hero Banner: Nuansa Deep Spruce Hijau Sesuai Menu Login -->
-        <div class="rounded-3xl bg-gradient-to-br from-[#0A231E] via-[#0E352E] to-[#0A231E] text-white p-6 sm:p-8 lg:p-10 shadow-xl border border-emerald-500/20 relative overflow-hidden">
-            <div class="absolute -top-24 -left-24 w-72 h-72 rounded-full border border-emerald-500/10 pointer-events-none"></div>
-            <div class="absolute -bottom-24 -right-24 w-80 h-80 rounded-full border border-emerald-500/15 pointer-events-none"></div>
-
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
-                <div>
-                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/60 text-emerald-200 border border-emerald-500/30">
-                        Rekam Medis Farmasi Digital
-                    </span>
-
-                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white mt-3 leading-tight">
-                        Buku Induk &amp; Riwayat Pasien Cabang
-                    </h1>
-                    <p class="text-xs sm:text-sm text-emerald-200/90 mt-1 max-w-2xl leading-relaxed">
-                        Daftar pasien yang terhubung dan memiliki riwayat transaksi atau penebusan resep di Cabang {{ ucwords(str_replace('-', ' ', $client)) }}.
-                    </p>
-                </div>
-
-                <div class="shrink-0">
-                    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-[#D4F94E] font-bold text-xs backdrop-blur-xs">
-                        {{ count($pasiens ?? []) }} Pasien Terdaftar
-                    </span>
-                </div>
+        <!-- Clean Light Header Banner -->
+        <div class="rounded-3xl bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                    Kepatuhan Privasi Cabang | Standar Permenkes RI No. 73/2016
+                </span>
+                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-3 leading-tight">
+                    Rekam Pasien &amp; Riwayat Transaksi Cabang
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl leading-relaxed">
+                    Daftar pasien yang pernah bertransaksi di <strong>{{ $clientModel->nama_client ?? ucwords(str_replace('-', ' ', $client)) }}</strong> (terisolasi per cabang apotek).
+                </p>
+            </div>
+            <div class="shrink-0">
+                <span class="inline-flex items-center px-4 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold text-xs">
+                    {{ count($pasiens) }} Pasien Cabang Terdata
+                </span>
             </div>
         </div>
 
-        <!-- Tabel Rekam Pasien -->
-        <div class="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs space-y-4">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+        <!-- Tabel Pasien Terisolasi Cabang -->
+        <div class="rounded-3xl border border-slate-200/90 bg-white overflow-hidden shadow-xs">
+            <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                    <h3 class="text-base font-extrabold text-slate-900">Daftar Pasien Terdaftar</h3>
-                    <p class="text-xs text-slate-500 mt-0.5">Kerahasiaan data pasien terlindungi standar etika kefarmasian</p>
+                    <h2 class="text-base font-extrabold text-slate-900">Daftar Pasien Terlayani Cabang</h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Hanya menampilkan pasien dengan riwayat pesanan pada cabang ini</p>
                 </div>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                    Total: {{ count($pasiens ?? []) }} Data
-                </span>
             </div>
 
-            <div class="overflow-x-auto rounded-2xl border border-slate-200">
-                <table class="w-full text-left text-xs min-w-[38rem]">
-                    <thead class="bg-slate-100 text-slate-700 font-extrabold uppercase border-b border-slate-200">
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[46rem] text-left text-xs">
+                    <thead class="bg-slate-50 text-slate-700 font-extrabold uppercase border-b border-slate-200">
                         <tr>
                             <th class="p-3.5">Nama Pasien</th>
-                            <th class="p-3.5">Kontak (Email/HP)</th>
-                            <th class="p-3.5">Riwayat Pesanan</th>
-                            <th class="p-3.5">Terdaftar Sejak</th>
-                            <th class="p-3.5 text-right">Status Akun</th>
+                            <th class="p-3.5">Kontak / Akun</th>
+                            <th class="p-3.5 text-center">Order Cabang</th>
+                            <th class="p-3.5 text-center">Order Resep</th>
+                            <th class="p-3.5">Transaksi Terakhir</th>
+                            <th class="p-3.5 text-right">Riwayat</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-100 font-medium">
+                    <tbody class="divide-y divide-slate-100 font-medium text-slate-800">
                         @forelse ($pasiens as $pasien)
-                            <tr class="hover:bg-slate-50/80 transition">
-                                <td class="p-3.5">
-                                    <div class="font-bold text-sm text-slate-900">{{ $pasien->nama_lengkap ?? $pasien->name ?? 'Pasien' }}</div>
-                                    <div class="text-[11px] font-mono text-slate-400">ID: {{ substr($pasien->id_pengguna ?? $pasien->id ?? '', 0, 8) }}...</div>
+                            @php
+                                $ordersCollection = collect($pasien->pesanan_terbaru ?? []);
+                                $latestOrder = $ordersCollection->first();
+                                $ordersPayload = $ordersCollection->map(fn ($o) => [
+                                    'nomor' => $o->nomor_pesanan,
+                                    'tanggal' => $o->dibuat_pada ? \Carbon\Carbon::parse($o->dibuat_pada)->format('d M Y H:i') : '-',
+                                    'status' => ucfirst(str_replace('_', ' ', (string) ($o->status ?? $o->status_pesanan ?? '-'))),
+                                    'total' => number_format((float) ($o->total_harga ?? 0), 0, ',', '.'),
+                                    'items' => $o->items->count(),
+                                ])->values();
+                            @endphp
+                            <tr class="hover:bg-slate-50/70 transition">
+                                <td class="p-3.5 font-bold text-slate-900">
+                                    {{ $pasien->nama_lengkap }}
                                 </td>
                                 <td class="p-3.5 text-slate-600 font-mono">
-                                    <div>{{ $pasien->telepon_email ?? $pasien->email ?? '-' }}</div>
+                                    {{ $pasien->telepon_email ?? '-' }}
                                 </td>
-                                <td class="p-3.5">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-900 border border-emerald-200">
-                                        {{ $pasien->pesanan_count ?? 1 }} Transaksi
+                                <td class="p-3.5 text-center">
+                                    <span class="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                                        {{ (int) ($pasien->pesanan_count ?? 0) }} order
+                                    </span>
+                                </td>
+                                <td class="p-3.5 text-center">
+                                    <span class="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                                        {{ (int) ($pasien->resep_count ?? 0) }} resep
                                     </span>
                                 </td>
                                 <td class="p-3.5 text-slate-500">
-                                    {{ $pasien->terdaftar_pada ?? now()->format('Y-m-d') }}
+                                    @if ($latestOrder)
+                                        <span class="font-bold text-slate-800">{{ $latestOrder->nomor_pesanan }}</span>
+                                        <span class="block text-[11px]">{{ $latestOrder->dibuat_pada ? \Carbon\Carbon::parse($latestOrder->dibuat_pada)->format('d M Y H:i') : '-' }}</span>
+                                    @else
+                                        -
+                                    @endif
                                 </td>
                                 <td class="p-3.5 text-right">
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">
-                                        Aktif
-                                    </span>
+                                    <button type="button"
+                                        @click='openHistory(@json($pasien->nama_lengkap), @json($pasien->telepon_email ?? "-"), @json($ordersPayload))'
+                                        class="min-h-[38px] px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold text-[11px] transition cursor-pointer">
+                                        Lihat Riwayat
+                                    </button>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="p-8 text-center text-slate-400">Belum ada pasien yang terdaftar di cabang apotek ini.</td>
+                                <td colspan="6" class="p-8 text-center text-slate-400">Belum ada pasien dengan riwayat transaksi di cabang apotek ini.</td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <!-- Modal Riwayat Order Pasien Cabang -->
+        <div x-show="historyModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-xs">
+            <div @click.away="historyModal = false" class="w-full max-w-lg rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-slate-200 space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div>
+                        <h3 class="text-base font-black text-slate-900" x-text="selectedPasien.nama"></h3>
+                        <p class="text-xs text-slate-500 font-mono" x-text="selectedPasien.kontak"></p>
+                    </div>
+                    <button type="button" @click="historyModal = false" class="min-h-[44px] min-w-[44px] inline-flex items-center justify-center text-slate-500 hover:text-slate-900 rounded-xl cursor-pointer">&times;</button>
+                </div>
+
+                <div class="space-y-2.5 max-h-[55vh] overflow-y-auto text-xs">
+                    <template x-for="ord in selectedPasien.orders" :key="ord.nomor">
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-3.5 flex items-center justify-between gap-3">
+                            <div>
+                                <div class="font-bold text-slate-900" x-text="ord.nomor"></div>
+                                <div class="text-[11px] text-slate-500" x-text="ord.tanggal + ' | ' + ord.items + ' item'"></div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-black text-emerald-700" x-text="'Rp ' + ord.total"></div>
+                                <div class="text-[10px] font-bold text-slate-600" x-text="ord.status"></div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="flex justify-end pt-2 border-t border-slate-100">
+                    <button type="button" @click="historyModal = false" class="min-h-[44px] px-5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs cursor-pointer">
+                        Tutup
+                    </button>
+                </div>
             </div>
         </div>
     </div>

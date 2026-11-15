@@ -56,10 +56,10 @@ class Pengguna extends Authenticatable
     {
         return ($this->peran === $role
             || ($role === 'tenant' && $this->peran === 'apoteker')
-            || ($role === 'admin' && $this->peran === 'super_admin')
+            || ($role === 'admin' && in_array($this->peran, ['super_admin', 'kasir'], true))
+            || ($role === 'kasir' && $this->peran === 'admin')
             || ($role === 'customer' && $this->peran === 'pelanggan')
             || ($role === 'apoteker' && $this->peran === 'tenant')
-            || ($role === 'super_admin' && $this->peran === 'admin')
             || ($role === 'pelanggan' && $this->peran === 'customer'))
             && $this->isActive();
     }

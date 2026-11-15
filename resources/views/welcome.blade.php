@@ -71,15 +71,10 @@
                         $userRoleLabel = match($userAuth->role ?? '') {
                             'super_admin' => 'Super Admin',
                             'apoteker' => 'Apoteker',
-                            'admin' => 'Kasir Staf',
+                            'admin', 'kasir' => 'Kasir',
                             default => 'Pasien'
                         };
-                        $dashboardTarget = match($userAuth->role ?? '') {
-                            'super_admin' => route('admin.dashboard'),
-                            'apoteker' => route('tenant.dashboard', ['client' => (($userAuth->email === 'dewi@omnipharma.test' || $userAuth->email === 'dinda@omnipharma.test') ? 'rogojampi' : 'banyuwangi-kota')]),
-                            'admin' => route('admin.kasir.ledger'),
-                            default => route('dashboard')
-                        };
+                        $dashboardTarget = method_exists($userAuth, 'homeRoute') ? $userAuth->homeRoute() : route('dashboard');
                     @endphp
                     <a
                         href="{{ route('katalog') }}"
@@ -200,12 +195,7 @@
                             <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3">
                                 @auth
                                     @php
-                                        $heroDashboardTarget = match(auth()->user()->role ?? '') {
-                                            'super_admin' => route('admin.dashboard'),
-                                            'apoteker' => route('tenant.dashboard', ['client' => ((auth()->user()->email === 'dewi@omnipharma.test' || auth()->user()->email === 'dinda@omnipharma.test') ? 'rogojampi' : 'banyuwangi-kota')]),
-                                            'admin' => route('admin.kasir.ledger'),
-                                            default => route('dashboard')
-                                        };
+                                        $heroDashboardTarget = method_exists(auth()->user(), 'homeRoute') ? auth()->user()->homeRoute() : route('dashboard');
                                     @endphp
                                     <a
                                         href="{{ $heroDashboardTarget }}"
