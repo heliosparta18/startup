@@ -2,260 +2,196 @@
 
 > **Mata Kuliah:** Proyek Praktikum Pengembangan Sistem Informasi  
 > **Dosen Pengampu:** Pak Devit Suwardiyanto  
-> **Basis Teknologi:** Laravel 13.25, Livewire 4.1, Tailwind CSS v4, Laravel Reverb (WebSockets), MariaDB 11.4, Redis 7.2  
+> **Repositori:** [github.com/heliosparta18/startup](https://github.com/heliosparta18/startup)  
+> **Basis Teknologi:** PHP `^8.3` (teruji PHP `8.4.24`), Laravel `13.25.0`, Livewire `^4.1` + Flux `^2.13.1`, Laravel Fortify (2FA & Passkeys), Laravel Reverb (WebSockets), Tailwind CSS `^4.0.7`, Vite `^8.0.0`, MySQL/MariaDB, Redis
 
 ---
 
-Ringkasan Progres Proyek
-| Metrik | Status | Keterangan |
-| :--- | :---: | :--- |
-| **Progres Ter-merge di `main`** | **~98%** | 120/120 tests passed, PHPStan Level 7 lulus, Pint PSR-12 passed, Firebase Auth, Google 1-Click, Email OTP, dan optimasi mobile tuntas. |
-| **Status Integrasi Pull Request** | **Lengkap** | Seluruh cabang kerja modul inti (Daffa, Guntur, Arya, Candi) telah berhasil digabungkan ke `main`. |
-| **Sisa Pekerjaan (Penyempurnaan / Polish)**| **~2%** | FormRequest sanitasi file resep, 1 test E2E terpadu, refactor routing closure, dan gladi resik demo. |
+## Ringkasan Audit & Status Implementasi
 
-```
-Progres Integrasi Sistem:
-[=========================-] 98% Selesai
-- Ter-merge di branch main (98%): M01 s/d M14, Firebase Auth + Google Login, Email OTP, Mobile Reflow 10 Layar
-- Sisa backlog penyempurnaan (2%): FormRequest sanitasi, Test E2E terpadu, Refactor controller modular, & Gladi demo
-```
----
+Berdasarkan audit menyeluruh terhadap kode sumber, migrasi basis data, routing portal, layanan bisnis, antarmuka pengguna, dan hasil quality gate, sistem **OmniPharma Network** telah mencapai status **100% terintegrasi pada branch `main`**. Seluruh item yang sebelumnya masuk daftar backlog (FormRequest sanitasi resep, refactor controller `CartController` & `CheckoutController`, antrean & pelacakan pesanan, CRUD multi-cabang/obat/staf, portal khusus Kasir, hingga `EndToEndOrderFlowTest`) telah selesai diimplementasikan dan terverifikasi otomatis.
 
-## Matriks Pembagian Tugas dan Status Anggota (Struktur 4 - 4 - 4 - 3)
+| Aspek Audit | Hasil Verifikasi Nyata di Kodebase |
+| :--- | :--- |
+| **Arsitektur Backend** | **Modular Monolith** — `6` *bounded context* (`Admin`, `Catalog`, `Ordering`, `Payments`, `Prescription`, `Reporting`) lewat `App\Modules\ModuleServiceProvider` |
+| **Model & Skema Basis Data** | `18` Model Eloquent (`app/Models/`) dan `17` File Migrasi (`database/migrations/`) menggunakan kunci utama UUID (`CHAR(36)`) |
+| **Dataset & Seeder** | `4` Seeder (`DatabaseSeeder`, `DemoApotekSeeder`, `GoApotikCatalogSeeder` berisi `42` produk terkurasi, serta `GoApotikFullCatalogSeeder` dengan `1.576` produk lengkap) |
+| **Isolasi Multi-Portal (RBAC)** | `4` Portal Terproteksi (`PortalRoutes` + `EnsureUserHasRole` + `TenantContext` + `TenantScope` + `PesananPolicy`): **Pelanggan**, **Apoteker/Tenant**, **Kasir/POS**, dan **Super Admin** |
+| **Quality Gate — PHPUnit** | **196 tests, 1.246 assertions — 100% PASSED** (`34` file test di `tests/Feature` & `tests/Unit`, menggunakan SQLite `:memory:` per `phpunit.xml`) |
+| **Quality Gate — PHPStan** | **Level 7 — 0 errors** (`phpstan.neon`, Larastan `^3.9`) |
+| **Quality Gate — Laravel Pint** | **PSR-12 — PASSED** (`php vendor/bin/pint --test`) |
 
-| Anggota Tim | Peran & Alokasi Modul | Status Pengerjaan | Status di `main` |
-| :--- | :--- | :---: | :--- |
-| **Muhammad Daffa Ariby** | **Architecture & Multi-Tenancy Kernel**<br>• M01: Setup Toolchain & Environment<br>• M02: Modular Monolith 6 Providers<br>• M03: Database 16 Tabel Domain & Seeder<br>• M04: Isolasi Multi-Tenant Context & Scope | **SELESAI**<br>(4 dari 4 Tugas) | Ter-merge di `main`<br>(Commit `1b6b0d8` & PR #4) |
-| **Guntur Afandi** | **Commerce Pipeline & Payment Gateway QRIS**<br>• M-UI: Refaktor UI Katalog & Touch Target 44px<br>• M08: Keranjang Belanja Redis Multi-Tenant<br>• M09: Checkout Atomik & Snapshot Harga<br>• M10: Payment Gateway Dynamic QRIS Sandbox<br>• M11: Webhook Idempoten & Auto-Settlement | **SELESAI**<br>(4 dari 4 Tugas) | Ter-merge di `main`<br>(PR #3 & PR #5) |
-| **Arya Dwi Mahendra** | **Branch Admin, Guest Session & FEFO Inventory**<br>• M05: Administrasi Staf Cabang & APJ (5NF)<br>• M06: Sesi Tamu Opaque Token Cookie<br>• M07: Katalog Obat Multi-Cabang Livewire<br>• M12: Telaah Resep Dokter & Rotasi Stok FEFO | **SELESAI**<br>(4 dari 4 Tugas) | Ter-merge di `main`<br>(PR #6 & PR #7) |
-| **Candia Purwa** | **Real-Time, Financial Reporting & Hardening**<br>• M12-RT: Real-time Order Tracking (Reverb)<br>• M13: Dashboard Analitik & Ekspor Laporan<br>• M14: Security Hardening & Rate Limiting | **SELESAI**<br>(3 dari 3 Tugas) | Ter-merge di `main`<br>(Commit `69d1e81` & `c397112`) |
+> Catatan arsip: Dokumen [README_TUGAS_ANGGOTA_DAN_BACKLOG.md](./README_TUGAS_ANGGOTA_DAN_BACKLOG.md) dan [TUGAS_DAFFA.md](./TUGAS_DAFFA.md) disimpan sebagai catatan historis pembagian kerja tim pada fase awal pengembangan.
 
 ---
 
-## Rincian Modul yang Telah Selesai dan Terintegrasi
+## Tim Pengembang & Pembagian Domain (Struktur 4 - 4 - 4 - 3)
 
-### 1. Fondasi Sistem dan Multi-Tenancy (Daffa)
-- [x] **M01 — Toolchain:** Setup Laravel 13, MariaDB 11, Redis 7, Reverb, PHPStan, dan Laravel Pint.
-- [x] **M02 — Modular Monolith:** 6 Bounded Context (`Admin`, `Catalog`, `Ordering`, `Payments`, `Prescription`, `Reporting`), registrasi route portal, dan blade layout.
-- [x] **M03 — Skema Database:** 16 tabel domain utama PDM (UUID primary keys, relasi integritas FK), seeder `DemoApotekSeeder`, dan automated test suite.
-- [x] **M04 — Isolasi Multi-Tenant:** `TenantContext`, global scope `TenantScope` (`WHERE id_client = ?`), middleware `ResolveTenantContext`, domain exceptions, artisan audit command `tenant:audit`, dan policy pencegahan IDOR (PR #4).
-
-### 2. Transaksi dan Pembayaran QRIS (Guntur)
-- [x] **UI Refactor:** Optimasi mobile touch-target 44px, grid katalog responsif, dan badge klasifikasi obat (PR #3).
-- [x] **M08 — Keranjang Redis:** Hash in-memory `cart:{sessionId}:{clientId}` (TTL 7 hari) dan revalidasi ketersediaan stok fisik cabang (PR #5).
-- [x] **M09 — Checkout Atomik:** Transaksi aman konkurensi (`DB::transaction` + `lockForUpdate`), denormalisasi harga satuan (`item_pesanan` sesuai ADR-0008), dan generate order code `#ORD-YYYYMMDD-XXXX` (PR #5).
-- [x] **M10 — Dynamic QRIS Sandbox:** Abstraksi `PaymentGatewayInterface`, emulator `FakeQrisGateway`, generator string QRIS standar EMVCo (NMID, MCC 5912 Apotek, CRC16 CCITT), dan antarmuka countdown timer 15 menit (PR #5).
-- [x] **M11 — Webhook Idempoten:** Endpoint `POST /api/webhooks/qris` dengan verifikasi signature HMAC-SHA256, auto-settlement, dan ledger split allocation (PR #5).
-
-### 3. Operasional Cabang, Katalog dan Resep (Arya)
-- [x] **M05 — Administrasi Cabang & APJ:** Manajemen staf cabang berbasis peran (RBAC) pada `StaffManagementService` dan pemetaan hierarki Apoteker Penanggung Jawab (APJ) berderajat 5NF pada `peta_pengawas_staf` (PR #6 & PR #7).
-- [x] **M06 — Sesi Tamu Anonim:** Pengelolaan token buram (opaque token 32 karakter via cookie) tanpa mewajibkan login awal serta pendeteksi cabang terdekat via `CustomerSessionService` (PR #6 & PR #7).
-- [x] **M07 — Katalog Livewire:** Pencarian obat reaktif per cabang, filter sediaan farmasi (tablet, sirup, salep), badge `wajib_resep`, dan ketersediaan stok real-time (PR #6).
-- [x] **M12 — Telaah Resep & FEFO:** Portal apoteker terpadu pada `tenant/dashboard.blade.php` untuk validasi keabsahan nomor SIP dokter (`503/SIP/2024`), telaah resep (approve/reject via `VerifyPrescriptionAction`), serta inspeksi batch kedaluwarsa terdekat (#1 FEFO via `StockFefoService`) dengan peringatan dini H-30 hari (PR #6).
-
-### 4. Real-Time WebSockets, Pelaporan Finansial & Pengerasan Keamanan (Candi)
-- [x] **M12-RT — Real-Time Order Tracking via WebSockets (Laravel Reverb):**
-  - Konfigurasi broadcasting Laravel Reverb port 8080 (`config/reverb.php`).
-  - Event broadcast `OrderStatusUpdated` dan `IncomingOrderPlaced` ke private channel (`private-order.{id}` dan `private-tenant.{id_client}`).
-  - Otorisasi private channel di `routes/channels.php` untuk mencegah penyadapan data pasien.
-  - Antarmuka pelacakan status pesanan real-time pelanggan terintegrasi Laravel Echo (`resources/views/customer/order-track.blade.php`).
-  - Automated test suite siaran event Reverb (`tests/Feature/ReverbOrderStatusBroadcastTest.php`).
-- [x] **M13 — Dashboard Analitik Penjualan, Rekonsiliasi & Ekspor Laporan:**
-  - Penegakan composite key & snapshot immutability pada `RingkasanPeriodePenjualan` sesuai ADR-0008.
-  - Agregasi omzet dan metrik transaksi multi-cabang via `SalesReportService`.
-  - Aksi penutupan buku kas transaksi apotek cabang berstatus terkunci via `CloseSalesPeriodAction`.
-  - Service streaming ekspor CSV aman dengan sanitasi mitigasi *Formula Injection* via `SalesReportExportService`.
-  - Antarmuka dashboard analitik eksekutif (`laporan-penjualan.blade.php`) dan template cetak PDF formal (`laporan-penjualan-template.blade.php`).
-  - Automated test suite kalkulasi laporan & penutupan periode (`tests/Feature/SalesReportAndPeriodLockTest.php`).
-- [x] **M14 — Security Hardening, Rate Limiting & Quality Gate:**
-  - Middleware keamanan `SecurityHeadersMiddleware` (X-Frame-Options, X-Content-Type-Options, HSTS, Referrer-Policy) dan Content Security Policy (CSP).
-  - Proteksi brute force API & broadcast rate limiter di `AppServiceProvider.php`.
-  - Automated test suite uji keamanan (`tests/Feature/SecurityHardeningTest.php`).
-  - Perbaikan dan integrasi stok obat cabang pada skenario pengujian checkout (`tests/Feature/CartCheckoutPaymentTest.php`).
-  - Standarisasi kode menggunakan Laravel Pint (`c397112`).
-
-### 5. Progresi Status Pesanan & Sistem Antrean Virtual (Click & Collect)
-- [x] **Tombol Progresi Status Pesanan di Tenant (FR-APT-01 / UC-05):**
-  - Antarmuka aksi bagi apoteker/staf cabang untuk memajukan siklus penyiapan obat: `menunggu_pembayaran` $\rightarrow$ `diproses` $\rightarrow$ `siap_diambil` $\rightarrow$ `selesai` (atau `dibatalkan`).
-  - Endpoint `POST /cabang/{client}/pesanan/{id}/progres-status` dengan pemancaran event real-time Laravel Reverb `OrderStatusUpdated`.
-  - Akses cepat tombol progresi status langsung dari Dashboard Cabang (`tenant/dashboard.blade.php`) dan Panel Antrean (`tenant/antrean.blade.php`).
-- [x] **Slot Jam Pengambilan Click & Collect (FR-PEL-06 / UC-11):**
-  - Pemilihan jadwal slot jam pengambilan obat pada form checkout (`customer/checkout.blade.php`) saat metode "Ambil di Apotek" dipilih (pilihan: *15 Menit Lagi (Segera)*, *10:00 - 12:00*, *13:00 - 15:00*, *16:00 - 18:00*, *19:00 - 21:00 WIB*).
-  - Penyimpanan nilai `slot_waktu` secara atomik di tabel `pesanan`.
-- [x] **Antrean Virtual Apotek & Tiket Pasien (Fitur Unggulan SRS 2.3):**
-  - Penomoran antrean otomatis (`A-001`, `A-002`, dst.) per hari per cabang pada transaksi baru.
-  - Kartu Antrean Virtual di layar pelacakan pelanggan (`customer/order-track.blade.php`) yang menampilkan: Nomor Antrean Anda, Antrean Berjalan (sedang dilayani), Sisa Giliran di Depan Pasien, Estimasi Waktu Penyiapan Obat (~5 menit/antrean), dan Rincian Obat yang Sedang Dipersiapkan.
-- [x] **Manajemen Antrean & Walk-In untuk Apoteker:**
-  - Panel kontrol apoteker di `/cabang/{client}/antrean` untuk memanggil antrean berikutnya (*Panggil Berikutnya +1* via `POST /antrean/update`), mengatur nomor antrean manual, dan menerbitkan tiket antrean baru untuk pasien datang langsung (*Walk-In* via `POST /antrean/tambah-walkin`).
-- [x] **Live Monitoring Progres Obat Super Admin (Read-Only Mode):**
-  - Portal pengawasan eksekutif di `/admin/monitoring-progres` (`admin.progres.index`) dengan KPI akumulasi obat sedang diracik lintas cabang, filter cabang apotek, serta rincian nama obat & kuantitas yang sedang diproses. Super Admin murni berada dalam status pengawasan (*read-only*) tanpa tombol manipulasi status.
-- [x] **Automated Test Suite:**
-  - `tests/Feature/QueueAndStatusProgressionTest.php` memvalidasi seluruh alur penomoran antrean, pemilihan slot waktu, progresi status apoteker, mutasi antrean berjalan, penerbitan tiket walk-in, dan akses monitoring Super Admin.
+| Anggota Tim | Peran Utama | Cakupan Domain & Kontribusi Utama |
+| :--- | :--- | :--- |
+| **Muhammad Daffa Ariby** (`heliosparta18`) | **Lead Architect & Core Multi-Tenancy Kernel** | Setup toolchain Laravel 13, 6 modul `ModuleServiceProvider`, skema UUID multi-tabel, `TenantContext` & `TenantScope`, middleware `ResolveTenantContext`, `PortalRoutes`, `php artisan tenant:audit`, layout internal portal, dan CRUD pengaturan cabang (`admin/pengaturan-cabang`). |
+| **Guntur Afandi** (`Callme Zettx`) | **Commerce Pipeline, Payment Gateway & Auth Lead** | Katalog responsif GoApotik-style, `CartService` (Redis/session), `CartController`, `CheckoutController` (cache lock idempotensi `30` detik, kalkulator ongkir & link/koordinat Google Maps), `CreateOrderAction` (`lockForUpdate`), `FakeQrisGateway` (**Midtrans Sandbox** + fallback `QrisEmvcoBuilder` CRC16), webhook HMAC-SHA256, serta autentikasi Firebase Google & Email OTP. |
+| **Arya Dwi Mahendra** (`Miinggg67`) | **Branch Operations, Guest Session & FEFO Inventory** | `StaffManagementService` (RBAC & hierarki pengawasan APJ berderajat 5NF di `peta_pengawas_staf`), `CustomerSessionService` (token sesi pelanggan anonim), komponen Livewire `PublicCatalog`, `StockFefoService` (prioritas *First Expired, First Out* + peringatan H-30/H-7), serta halaman operasional `tenant/pasien` dan `tenant/bantuan`. |
+| **Candia Purwa** (`candia.purwa`) | **Real-Time WebSockets, Analytics & Security Hardening** | Laravel Reverb WebSockets & channel privat (`routes/channels.php`), event `OrderStatusUpdated` & `IncomingOrderPlaced`, `SalesReportService`, `CloseSalesPeriodAction`, `SalesReportExportService` (CSV anti *Formula Injection* + cetak PDF), `SecurityHeadersMiddleware`, rate limiter di `AppServiceProvider`, validasi `UnggahResepRequest` (magic bytes) & `VerifikasiResepRequest`, serta `EndToEndOrderFlowTest`. |
 
 ---
 
-## Sisa Pekerjaan & Backlog Penyempurnaan (~2%)
+## Arsitektur Sistem & Struktur Kode Nyata
 
-> 📌 **PANDUAN LENGKAP TUGAS ANGGOTA & BACKLOG:** Buka dokumen resmi **[`README_TUGAS_ANGGOTA_DAN_BACKLOG.md`](./README_TUGAS_ANGGOTA_DAN_BACKLOG.md)** untuk melihat rincian tugas mandiri setiap anggota (Candia, Guntur, Arya, Daffa), tugas kolaboratif barengan, checklist 22 artboard FigCraft, dan skenario presentasi live demo.
-
-### Ringkasan Pembagian Sisa Tugas per Individu:
-1. **Candia Purwa (Security & QA):**
-   - Buat `app/Http/Requests/Customer/UnggahResepRequest.php` (validasi MIME magic bytes file foto resep).
-   - Buat `app/Http/Requests/Tenant/VerifikasiResepRequest.php` (sanitasi XSS catatan apoteker).
-   - Buat `tests/Feature/EndToEndOrderFlowTest.php` (uji terpadu 1 siklus transaksi utuh hulu ke hilir).
-2. **Guntur Afandi (Commerce & Payments):**
-   - Refactor routing closure di `routes/customer.php` ke controller modular (`CartController.php` & `CheckoutController.php`).
-   - Tambahkan cache lock idempotensi 60 detik pencegah double-submit saat checkout.
-3. **Arya Dwi Mahendra (Branch Operations):**
-   - Buat halaman rekam data pasien `resources/views/tenant/pasien.blade.php` (FigCraft Artboard #5).
-   - Buat halaman panduan SOP regulasi farmasi `resources/views/tenant/bantuan.blade.php` (FigCraft Artboard #7).
-4. **Muhammad Daffa Ariby (Lead Architect):**
-   - Tambahkan komponen navigasi sidebar terpadu di layout Admin dan Tenant (`layouts/admin.blade.php` & `tenant.blade.php`).
-   - Buat halaman konfigurasi apotek cabang `resources/views/admin/pengaturan-cabang.blade.php` (FigCraft Artboard #8).
-
-### 🤝 Tugas yang Dikerjakan Barengan (Kolaboratif):
-- **Gladi Resik Demo 4 Layar (15 Menit):** Pasien (Guntur) $\rightarrow$ Apoteker (Arya) $\rightarrow$ QRIS Reverb (Candia & Guntur) $\rightarrow$ Super Admin Tutup Kas (Daffa).
-- **Pemeriksaan Quality Gate Terpadu:** Menjalankan `php artisan test`, `phpstan`, dan `pint` sebelum presentasi akhir.
----
-
-## Panduan Instalasi Lokal
-
-1. **Clone repositori:**
-   ```bash
-   git clone https://github.com/heliosparta18/startup.git
-   cd startup
-   ```
-
-2. **Setup environment dan dependencies:**
-   ```bash
-   composer install
-   npm install
-   cp .env.example .env
-   php artisan key:generate
-   ```
-
-3. **Konfigurasi Database dan Redis di file `.env`:**
-   ```env
-   DB_CONNECTION=mysql
-   DB_HOST=127.0.0.1
-   DB_PORT=3306
-   DB_DATABASE=startup
-   DB_USERNAME=root
-   DB_PASSWORD=
-
-   REDIS_CLIENT=phpredis
-   REDIS_HOST=127.0.0.1
-   REDIS_PORT=6379
-   ```
-
-4. **Migrasi Database dan Seeder:**
-   ```bash
-   php artisan migrate:fresh --seed
-   ```
-
-5. **Menjalankan Layanan Aplikasi:**
-   ```bash
-   # Terminal 1: Web Server
-   php artisan serve
-
-   # Terminal 2: Asset Compiler
-   npm run dev
-
-   # Terminal 3: WebSocket Server (Laravel Reverb)
-   php artisan reverb:start
-   ```
-
----
-
-## Eksekusi Pengujian Otomatis
-
-```bash
-php artisan test
+```text
+app/
+├── Console/Commands/
+│   └── AuditTenantIsolationCommand.php      # Artisan: php artisan tenant:audit
+├── Http/
+│   ├── Controllers/
+│   │   └── Auth/                            # EmailOtpAuthController, FirebaseAuthSessionController
+│   ├── Middleware/
+│   │   ├── EnsureUserHasRole.php            # Validasi role & status aktif di sisi server (403 jika tidak cocok)
+│   │   ├── ResolveTenantContext.php         # Resolusi tenant/cabang per request (/klien/{client}, /cabang/{client})
+│   │   └── SecurityHeadersMiddleware.php    # X-Frame-Options, CSP (Reverb + Firebase), Permissions-Policy, dll.
+│   └── Requests/
+│       ├── Customer/UnggahResepRequest.php  # Validasi file resep maks 5 MB + cek MIME Magic Bytes (finfo)
+│       └── Tenant/VerifikasiResepRequest.php# Sanitasi tag HTML (XSS) catatan & alasan penolakan apoteker
+├── Models/                                  # 18 Model Eloquent berbasis UUID
+│   ├── Client, Pengguna, User, SuperAdmin, AdminClient, PeranClientPengguna, PetaPengawasStaf
+│   ├── KategoriObat, SubkategoriObat, Obat, StokClient
+│   ├── Pesanan, ItemPesanan, Pembayaran, Resep, PermintaanRetur
+│   └── RingkasanPeriodePenjualan, LogAudit
+├── Modules/                                 # 6 Bounded Context (Modular Monolith)
+│   ├── Admin/                               # AdminServiceProvider, StaffController, StaffManagementService
+│   ├── Catalog/                             # CatalogServiceProvider, PublicCatalog (Livewire), CatalogService,
+│   │                                        # StockFefoService, CustomerSessionService, GoApotikCatalogAssets
+│   ├── Ordering/                            # OrderingServiceProvider, CartController, CheckoutController,
+│   │                                        # OrderTrackingController, CartService, CreateOrderAction, CancelOrderAction
+│   ├── Payments/                            # PaymentsServiceProvider, PaymentWebhookController,
+│   │                                        # PaymentGatewayInterface, FakeQrisGateway, QrisEmvcoBuilder
+│   ├── Prescription/                        # PrescriptionServiceProvider, VerifyPrescriptionAction
+│   └── Reporting/                           # ReportingServiceProvider, SalesReportService,
+│                                            # SalesReportExportService, CloseSalesPeriodAction
+├── Policies/PesananPolicy.php               # Proteksi IDOR lintas cabang
+└── Support/Routing/PortalRoutes.php         # Grup route tunggal per portal (customer, tenant, kasir, admin)
 ```
 
 ---
 
-## Pembaruan Antarmuka & RBAC Dashboard (Sesuai Desain Halaman Login)
+## Peta Portal, Hak Akses (RBAC) & Fitur Terverifikasi
 
-1. **Penyelarasan Desain Visual (Theme Harmonization):**
-   - Mengadopsi palet warna resmi halaman login: **Deep Forest Spruce** (`#0A231E` s/d `#0E352E`), aksen **Citron/Lime** (`#D4F94E`), dan tombol aksi utama **Emerald Green** (`bg-emerald-600 hover:bg-emerald-700`).
-   - Menghilangkan warna pelangi yang acak (ungu, kuning/amber, biru) pada dashboard utama, digantikan dengan kartu-kartu bersih berstandar medis farmasi (`rounded-3xl border-slate-200/90 hover:border-emerald-500 hover:shadow-lg`).
-   - Penambahan badge kepatuhan legal: `Standar Permenkes RI No. 73/2016` dan status verifikasi SIA/SIPA.
+Setiap portal diikat langsung di `bootstrap/app.php` via `App\Support\Routing\PortalRoutes` dan diverifikasi melalui `EnsureUserHasRole`. Selain pembatasan endpoint, dropdown **Menu Pengguna** dan halaman `/settings/profile` secara dinamis menyesuaikan daftar pintasan portal & CRUD melalui `User::profileActions()`.
 
-2. **Pembatasan Hak Akses Menu Dashboard (Role-Based Access Control):**
-   - **Role Apoteker Cabang (Banyuwangi Kota & Rogojampi):**
-     - Menu **Super Admin Eksekutif** dan **Live Monitoring Pusat** disembunyikan total.
-     - Hanya menampilkan modul operasional apoteker cabang masing-masing: *Telaah Resep Dokter & FEFO*, *Antrean & Progres Status Cabang*, *Manajemen Stok Batch FEFO*, *Antrean Resep Masuk*, *Rekam Data Pasien*, dan *Katalog Publik Cabang*.
-   - **Role Super Admin:**
-     - Menampilkan modul manajerial pusat: *Super Admin Eksekutif & KPI*, *Live Monitoring Obat Lintas Cabang (Read-Only)*, *Buku Kasir & Ledger Finansial*, *Inspeksi Cabang BWI & Rogojampi*, serta *Supervisi Staf & SIPA*.
-   - **Role Pelanggan (Customer):**
-     - Menampilkan katalog belanja multi-cabang, keranjang dengan slot jam ambil (*Click & Collect*), dan lacak nomor antrean virtual.
-
-
----
-
-## Panduan Push ke Git Remote (Branch Per Fitur)
-
-Untuk mendorong fitur-fitur baru ke remote repository sesuai pembagian branch:
-
-### 1. Fitur Tombol Progresi Status (`feat/status-progress`)
-```bash
-git checkout -b feat/status-progress
-git add app/Http/Controllers/TenantController.php routes/tenant.php resources/views/tenant/antrean.blade.php resources/views/tenant/dashboard.blade.php resources/views/admin/monitoring-progres.blade.php tests/Feature/QueueAndStatusProgressionTest.php
-git commit -m "feat(tenant): implementasi tombol progresi status pesanan apoteker dan live monitoring read-only super admin"
-git push -u origin feat/status-progress
-```
-
-### 2. Fitur Slot Jam Ambil & Antrean Virtual (`feat/antrean`)
-```bash
-git checkout -b feat/antrean
-git add database/migrations/2026_11_11_000002_add_antrean_and_slot_waktu_to_pesanan_table.php app/Models/Pesanan.php app/Modules/Ordering/Http/Controllers/CheckoutController.php app/Modules/Ordering/Actions/CreateOrderAction.php app/Modules/Ordering/Http/Controllers/OrderTrackingController.php resources/views/customer/checkout.blade.php resources/views/customer/order-track.blade.php resources/views/tenant/antrean.blade.php
-git commit -m "feat(antrean): tambahkan slot jam pengambilan click & collect serta antrean virtual pasien dan manajemen loket apoteker"
-git push -u origin feat/antrean
-```
-
-### 3. Fitur Penyelarasan Desain & RBAC Dashboard (`feat/roles-dashboard`)
-```bash
-git checkout feat/roles-dashboard
-git add .
-git commit -m "feat(ui): harmonisasi visual palet hijau login permenkes dan pengetatan RBAC dashboard multi-role"
-git push -u origin feat/roles-dashboard
-```
-
----
-
-## Akun Demo Praktikum
-
-| Role | Email / Akun | Cabang Terhubung | Kata Sandi |
+| Role (`users.role`) | Portal Utama (`User::homeRoute()`) | Middleware & Prefix | Cakupan Fitur Utama |
 | :--- | :--- | :--- | :--- |
-| **Super Admin** | `daffa@omnipharma.test` | Kantor Pusat (Headquarter) | `password` |
-| **Apoteker Banyuwangi** | `bambang@omnipharma.test` | Cabang Banyuwangi Kota (`banyuwangi-kota`) | `password` |
-| **Apoteker Rogojampi** | `dewi@omnipharma.test` | Cabang Rogojampi (`rogojampi`) | `password` |
-| **Kasir Banyuwangi** | `kasir.bwi@omnipharma.test` | Cabang Banyuwangi Kota (`banyuwangi-kota`) | `password` |
-| **Pelanggan / Pasien** | `candi@omnipharma.test` | Pelanggan Publik | `password` |
+| **`super_admin`** | `/admin/dashboard` | `auth`, `verified`, `role:super_admin` (`routes/admin.php`) | • Executive dashboard omzet & pesanan konsolidasi lintas cabang<br>• Tutup periode penjualan terkunci (`POST /admin/tutup-periode`) & ekspor CSV/PDF konsolidasi<br>• **CRUD Cabang & Pengaturan** (`/admin/cabang/{client}/pengaturan`, `jam_buka`, `radius_km`, tambah/hapus cabang)<br>• **CRUD Master Obat & Alokasi Stok Cabang** (`/admin/obat`)<br>• **CRUD Akun Staf, Role & Pengawasan APJ 5NF** (`/admin/cabang/{client}/staf`)<br>• **Audit Read-Only**: Cek Operasional Apoteker (`/admin/apoteker/{client?}`), Monitoring Progres Obat Live (`/admin/monitoring-progres`), Ledger Kasir Konsolidasi (`/admin/kasir-ledger`) |
+| **`apoteker` / `tenant`** | `/cabang/{client}/dashboard` | `auth`, `verified`, `role:apoteker`, `tenant` (`routes/tenant.php`) | • Dashboard Apoteker Cabang (terisolasi tenant via `TenantScope`)<br>• **Telaah Resep Dokter** (`/cabang/{client}/resep`, validasi nomor SIP `503/SIP/2024`, pencatatan `LogAudit`)<br>• **Manajemen Stok & Batch FEFO** (`/cabang/{client}/stok-fefo`, tambah stok, penyesuaian stok, peringatan dini H-30 & kritis H-7)<br>• **Antrean Loket & Walk-In** (`/cabang/{client}/antrean`, progresi status `menunggu_pembayaran` -> `diproses` -> `siap_diambil` -> `selesai` dengan broadcast Reverb, panggil nomor antrean +1)<br>• Rekam Data Pasien Cabang, Laporan & Tutup Periode Cabang, Panduan SOP Farmasi |
+| **`kasir` / `admin` / `staf_klien`** | `/kasir/dashboard` | `auth`, `verified`, `role:kasir` (`routes/kasir.php`) | • Dashboard Kasir & POS Loket Cabang<br>• Pencarian obat cepat POS (`/kasir/pos-obat-search`)<br>• Input transaksi **Walk-In Tunai / QRIS** (`/kasir/transaksi-walkin`)<br>• Pelunasan pesanan menunggu bayar (`/kasir/pesanan/{id}/lunasi`) & pembatalan transaksi (`/kasir/pesanan/{id}/batalkan`)<br>• **Buku Ledger Kasir** (`/kasir/ledger`) & **Cetak Struk Pembayaran** (`/kasir/struk/{id}`) |
+| **`pelanggan` / `customer`** | `/dashboard` | Publik/Session + `tenant` (`routes/web.php`, `routes/customer.php`) | • Etalase Katalog GoApotik (`PublicCatalog` Livewire): `7` kategori induk, filter subkategori, filter jenis sediaan, badge golongan BPOM, live search autocomplete (`/api/search-obat`), & tukar cabang aktif (`/cabang/switch`)<br>• Keranjang terisolasi per cabang (`cart.*` / `keranjang.*`)<br>• Checkout **Click & Collect** (slot jam ambil) atau **Delivery Kurir Apotek** (kalkulasi jarak Haversine, parsing link/koordinat Google Maps, & ongkir otomatis: <= `2 km` Rp `5.000`, selanjutnya `+Rp 2.500/km`)<br>• Pembayaran **QRIS Dinamis** (Midtrans Sandbox Core API + fallback EMVCo lokal, timer countdown persisten `30` menit, webhook `/api/webhooks/qris`, cek status, & batal pesanan)<br>• Pelacakan Pesanan & Antrean Virtual Real-Time via Laravel Echo (`order.{id}`) serta Unggah Resep Dokter Digital |
 
 ---
 
-## 6. Fitur Katalog Obat & Kesehatan GoApotik (Branch `feat/katalog`)
+## Autentikasi, Keamanan & Optimasi Performa
 
-Integrasi fitur katalog produk kesehatan berbasis dataset terkurasi GoApotik dengan antarmuka bertema hijau-putih yang bersih dan arsitektur non-konflik:
+1. **Autentikasi Multi-Jalur:**
+   - **Laravel Fortify:** Login standar email & kata sandi, registrasi, verifikasi email, reset kata sandi, *Two-Factor Authentication* (2FA + recovery codes), dan login tanpa kata sandi dengan **Passkeys** (`@laravel/passkeys`).
+   - **Email OTP:** Pengiriman, verifikasi, dan registrasi berbasis kode OTP (`/auth/send-otp`, `/auth/verify-otp`, `/auth/register-otp`) dengan pembatasan laju permintaan (`throttle:5,1` & `throttle:10,1`).
+   - **Firebase Google 1-Click:** Autentikasi sisi klien menggunakan Firebase JS SDK (`resources/js/firebase-auth.js`), sinkronisasi sesi ke Laravel (`/auth/firebase-session`), serta halaman kelengkapan profil awal (`/auth/complete-profile`).
 
-### Rincian Fungsionalitas & Arsitektur
-- **Dataset Terkurasi 42 Produk (`database/data/goapotik_catalog_42.json`):**
-  - Mencakup 7 kategori utama: *Obat*, *Suplemen*, *Nutrisi*, *Herbal*, *Ibu & Anak*, *Alat Kesehatan*, dan *Perawatan Diri*.
-  - Atribut lengkap: nama resmi, NIE BPOM, indikasi klinis, komposisi, dosis, aturan pakai, satuan kemasan, dan tautan gambar packshot.
-- **Migrasi Non-Breaking (`2026_11_13_000001_add_catalog_attributes_to_obat_and_kategori_table.php`):**
-  - Menambahkan kolom nullable pada tabel `obat` dan `kategori_obat`, serta tabel relasi baru `subkategori_obat`.
-- **Seeder Idempoten (`GoApotikCatalogSeeder`):**
-  - Dapat dieksekusi berulang kali tanpa duplikasi data (`updateOrCreate` berbasis slug unik) serta mengalokasikan stok multi-klien untuk cabang aktif.
-- **Service & Komponen Reaktif Livewire (`PublicCatalog` & `CatalogService`):**
-  - Navigasi tab kategori utama horizontal dengan scroll responsif.
-  - Sidebar filter subkategori anatomis/terapeutik dengan penghitung jumlah stok real-time.
-  - Pencarian debounced instan dengan placeholder dinamis sesuai kategori aktif.
-  - Filter cepat jenis sediaan obat (tablet, sirup, kapsul, salep, dll.).
-- **Antarmuka Hijau-Putih Berstandar Medis:**
-  - Palet warna: Deep Forest Spruce (`#0A231E`), Emerald (`#059669` / `#047857`), dan Putih Bersih (`#FFFFFF`).
-  - Badge regulasi BPOM resmi: Lingkaran merah K (Obat Keras / Wajib Resep), lingkaran biru (Bebas Terbatas), dan lingkaran hijau (Obat Bebas).
-  - Ketahanan status (empty state & loading skeleton) serta kepatuhan aksesibilitas WCAG AA (kontras rasio hingga 16.2:1 dan touch target $\ge$ 44px).
-- **Automated Test Suite:**
-  - `tests/Feature/GoApotikCatalogIntegrationTest.php` memverifikasi seeder idempoten, 42 produk, reaktivitas filter Livewire, rendering badge BPOM, dan isolasi stok tenant.
+2. **Pengerasan Keamanan (*Security Hardening*):**
+   - `SecurityHeadersMiddleware`: Menyuntikkan `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `X-XSS-Protection`, `Referrer-Policy`, `Permissions-Policy`, dan `Content-Security-Policy` yang terkonfigurasi untuk WebSocket Reverb (`ws://`/`wss://`) serta Firebase Auth.
+   - `AppServiceProvider`: Pembatas laju (`RateLimiter`) khusus `api` (`60/menit`), `broadcasting` (`30/menit`), dan `transaksi` (`15/menit`).
+   - Integritas Data: Pessimistic database lock (`lockForUpdate`) pada stok saat checkout (`CreateOrderAction`), cache lock idempotensi `30` detik saat submit checkout (`CheckoutController`), validasi magic bytes gambar resep (`UnggahResepRequest`), dan sanitasi Formula Injection saat ekspor CSV (`SalesReportExportService`).
+
+3. **Konsistensi Tema Visual & Optimasi Kecepatan:**
+   - Halaman sambutan (`resources/views/welcome.blade.php`) dan seluruh layout autentikasi (`layouts/auth/{card,simple,split}.blade.php`) menjaga konsistensi tema terang medis (`data-force-light="true"`, latar `#F8FAFC`/`#FFFFFF`, palet Deep Forest Spruce & Emerald), sedangkan portal operasional internal mendukung mode terang/gelap lewat `partials/omni-theme-script.blade.php`.
+   - Optimasi performa backend mencakup memoisasi slug cabang pada `User::getClientSlug()`, agregasi ringkasan kedaluwarsa di level SQL pada `StockFefoService::getExpirySummary()`, serta proteksi dispatch non-blocking bila server Reverb tidak aktif.
+
+---
+
+## Akun Demo Terverifikasi (`DemoApotekSeeder`)
+
+Seluruh akun demo di bawah ini dibuat otomatis oleh `database/seeders/DemoApotekSeeder.php` dan disinkronkan ke tabel `users` (kata sandi seluruh akun: **`password`**):
+
+| Role | Email Login | Cabang Terhubung | Kata Sandi |
+| :--- | :--- | :--- | :---: |
+| **Super Admin Pusat** | `daffa@omnipharma.test` | Kantor Pusat & Lintas Cabang | `password` |
+| **Apoteker Banyuwangi** | `bambang@omnipharma.test` | Cabang Banyuwangi Kota (`banyuwangi-kota`) | `password` |
+| **Apoteker Rogojampi** | `dewi@omnipharma.test` atau `dinda@omnipharma.test` | Cabang Rogojampi (`rogojampi`) | `password` |
+| **Kasir Banyuwangi** | `kasir.bwi@omnipharma.test` | Cabang Banyuwangi Kota (`banyuwangi-kota`) | `password` |
+| **Pelanggan / Pasien** | `gunturafandy5@gmail.com` / `candi@gmail.com` | Pelanggan Publik (Default `banyuwangi-kota`) | `password` |
+
+---
+
+## Panduan Instalasi & Menjalankan Secara Lokal
+
+### 1. Setup Dependensi & Environment
+```bash
+git clone https://github.com/heliosparta18/startup.git
+cd startup
+
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+```
+
+### 2. Konfigurasi `.env`
+Sesuaikan koneksi database MySQL/MariaDB dan Redis di `.env`:
+```env
+APP_NAME="OmniPharma Network"
+APP_URL=http://localhost:8000
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=startup
+DB_USERNAME=root
+DB_PASSWORD=
+
+REDIS_CLIENT=phpredis
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+```
+*(Opsional: tambahkan `MIDTRANS_MERCHANT_ID`, `MIDTRANS_CLIENT_KEY`, `MIDTRANS_SERVER_KEY`, dan `MIDTRANS_IS_PRODUCTION=false` untuk memakai Midtrans Sandbox QRIS secara live; jika dikosongkan, sistem otomatis memakai fallback emulator QRIS EMVCo lokal.)*
+
+### 3. Migrasi, Seeder & Build Aset
+```bash
+# Seeding standar (2 cabang, akun demo, dan 42 produk terkurasi GoApotik)
+php artisan migrate:fresh --seed
+
+# Opsional: muat seluruh 1.576 produk katalog lengkap GoApotik
+php artisan db:seed --class=GoApotikFullCatalogSeeder
+
+# Kompilasi aset produksi Tailwind CSS v4 + Vite
+npm run build
+```
+
+### 4. Menjalankan Layanan Aplikasi
+- **Cara standar (Laravel Artisan & Vite):**
+  ```bash
+  # Terminal 1 — Web server Laravel
+  php artisan serve
+
+  # Terminal 2 — Build mode pengembangan (opsional jika sudah npm run build)
+  npm run dev
+
+  # Terminal 3 — WebSocket server real-time (opsional untuk live status tracking)
+  php artisan reverb:start
+  ```
+- **Catatan Performa di Windows:** Pada Windows, `php artisan serve` berjalan *single-threaded* dan bisa terasa lambat saat browser membuka banyak request paralel atau menyelesaikan DNS `localhost` (`[::1]` vs `127.0.0.1`). Untuk performa lokal yang responsif (~100 ms per halaman), disarankan menjalankan **Nginx** yang mendengarkan `127.0.0.1` dan `[::1]` di belakang beberapa worker `php-cgi` dengan ekstensi `opcache` aktif.
+
+---
+
+## Verifikasi & Quality Gate
+
+```bash
+# 1. Jalankan seluruh unit & feature test (SQLite in-memory sesuai phpunit.xml)
+php vendor/bin/phpunit
+
+# 2. Analisis statis PHPStan / Larastan Level 7
+php -d memory_limit=1G vendor/bin/phpstan analyse --no-progress
+
+# 3. Pemeriksaan gaya kode PSR-12 dengan Laravel Pint
+# (Di Windows dengan OPcache CLI aktif, jalankan single-process tanpa --parallel)
+php vendor/bin/pint --test
+
+# 4. Audit isolasi multi-tenant
+php artisan tenant:audit
+```
