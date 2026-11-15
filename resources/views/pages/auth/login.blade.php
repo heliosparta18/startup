@@ -371,12 +371,7 @@
                     this.password = userPass;
                     this.loadingSubmit = true;
                     this.isRedirecting = true;
-                    if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.showToast === 'function') {
-                        window.OmniFirebaseAuth.showToast('Memproses masuk akun demo...', 'info');
-                    }
-                    setTimeout(() => {
-                        this.$refs.loginForm.submit();
-                    }, 200);
+                    this.$refs.loginForm.submit();
                 },
 
                 async ensureFirebaseAuth() {
@@ -391,11 +386,11 @@
                             console.warn('Dynamic import fallback note:', e);
                         }
                     }
-                    for (let i = 0; i < 25; i++) {
+                    for (let i = 0; i < 60; i++) {
                         if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.loginWithGoogle === 'function') {
                             return window.OmniFirebaseAuth;
                         }
-                        await new Promise(r => setTimeout(r, 100));
+                        await new Promise(r => setTimeout(r, 25));
                     }
                     throw new Error('Modul autentikasi Firebase belum siap. Silakan refresh halaman.');
                 },
@@ -406,14 +401,8 @@
                     try {
                         const fb = await this.ensureFirebaseAuth();
                         const result = await fb.loginWithGoogle();
-                        const userName = result.user.displayName || result.user.email;
-                        if (fb.showToast) {
-                            fb.showToast(`Selamat datang, ${userName}!`, 'success');
-                        }
                         this.isRedirecting = true;
-                        setTimeout(() => {
-                            window.location.href = result.session?.redirect || '{{ route('dashboard') }}';
-                        }, 600);
+                        window.location.href = result.session?.redirect || '{{ route('dashboard') }}';
                     } catch (err) {
                         console.error('Google Auth Error:', err);
                         const errorMsg = window.OmniFirebaseAuth?.formatFirebaseError

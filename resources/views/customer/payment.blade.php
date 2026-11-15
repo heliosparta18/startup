@@ -107,14 +107,11 @@
                             clearInterval(pollTimer);
                             return;
                         }
-                        this.cekStatusPembayaran(true, false);
-                    }, 3000);
-
-                    setTimeout(() => {
-                        if (!this.isPaid && !this.redirecting) {
-                            this.cekStatusPembayaran(true, false);
+                        if (document.hidden) {
+                            return;
                         }
-                    }, 600);
+                        this.cekStatusPembayaran(true, false);
+                    }, 8000);
 
                     const triggerImmediateCheck = () => {
                         if (!this.isPaid && !this.redirecting && !document.hidden) {

@@ -40,14 +40,52 @@ $resolveCustomerSession = function (Request $request): string {
  * Melayani katalog OmniPharma, detail obat, pencarian, unggah resep digital (Mockup Layar 1),
  * serta keranjang belanja Redis, checkout atomik, dan pembayaran QRIS (Modul Guntur M08-M11).
  */
-Route::get('/', function (string $client) {
+Route::get('/', function (string $client, Request $request) {
+    $search = trim((string) $request->query('q', ''));
+    $kategoriFilter = trim((string) $request->query('kategori', 'semua'));
+
     $kategori = KategoriObat::query()->orderBy('nama_kategori')->get();
-    $obat = Obat::query()->with(['kategori', 'stokClient'])->orderBy('nama_obat')->get();
+
+    $obat = Obat::query()
+        ->with(['kategori', 'stokClient'])
+        ->when($search !== '', function ($q) use ($search): void {
+            $q->where(function ($sub) use ($search): void {
+                $sub->where('nama_obat', 'like', "%{$search}%")
+                    ->orWhere('merek', 'like', "%{$search}%")
+                    ->orWhere('komposisi', 'like', "%{$search}%");
+            });
+        })
+        ->when($kategoriFilter !== '' && $kategoriFilter !== 'semua', function ($q) use ($kategoriFilter, $kategori): void {
+            if ($kategoriFilter === 'keras') {
+                $q->where(function ($sub): void {
+                    $sub->where('badge_status', 'like', '%Keras%')
+                        ->orWhereHas('kategori', fn ($kq) => $kq->where('wajib_resep', true));
+                });
+            } elseif ($kategoriFilter === 'bebas') {
+                $q->where(function ($sub): void {
+                    $sub->where(function ($b) {
+                        $b->whereNull('badge_status')->orWhere('badge_status', 'not like', '%Keras%');
+                    })->whereDoesntHave('kategori', fn ($kq) => $kq->where('wajib_resep', true));
+                });
+            } else {
+                $matchedIds = $kategori
+                    ->filter(fn ($k) => Str::slug($k->nama_kategori) === $kategoriFilter || $k->slug === $kategoriFilter)
+                    ->pluck('id_kategori');
+                if ($matchedIds->isNotEmpty()) {
+                    $q->whereIn('id_kategori', $matchedIds);
+                }
+            }
+        })
+        ->orderBy('nama_obat')
+        ->paginate(24)
+        ->withQueryString();
 
     return view('customer.home', [
         'client' => $client,
         'kategori' => $kategori,
         'obat' => $obat,
+        'searchQuery' => $search,
+        'kategoriAktif' => $kategoriFilter ?: 'semua',
     ]);
 })->name('home');
 Route::get('/katalog', PublicCatalog::class)->name('catalog');

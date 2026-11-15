@@ -125,7 +125,8 @@ class FakeQrisGateway implements PaymentGatewayInterface
         try {
             $response = Http::withBasicAuth($serverKey, '')
                 ->acceptJson()
-                ->timeout(12)
+                ->connectTimeout(3)
+                ->timeout(5)
                 ->post("{$baseUrl}/v2/charge", [
                     'payment_type' => 'qris',
                     'transaction_details' => [
@@ -214,7 +215,8 @@ class FakeQrisGateway implements PaymentGatewayInterface
         try {
             $response = Http::withBasicAuth($serverKey, '')
                 ->acceptJson()
-                ->timeout(10)
+                ->connectTimeout(2)
+                ->timeout(4)
                 ->get($this->midtransBaseUrl().'/v2/'.urlencode($midtransOrderId).'/status');
 
             if (! $response->successful()) {

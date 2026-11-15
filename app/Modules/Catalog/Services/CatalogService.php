@@ -10,9 +10,24 @@ use App\Models\SubkategoriObat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Cache;
 
 class CatalogService
 {
+    /**
+     * Versi cache metadata katalog agar invalidasi saat CRUD admin tetap O(1).
+     */
+    private function metaCacheVersion(): int
+    {
+        return (int) Cache::rememberForever('catalog:meta_version', static fn () => 1);
+    }
+
+    public function clearMetadataCache(): void
+    {
+        $next = $this->metaCacheVersion() + 1;
+        Cache::forever('catalog:meta_version', $next);
+    }
+
     /**
      * Mengambil daftar produk katalog berpaginasi untuk cabang klien tertentu.
      *
@@ -103,35 +118,47 @@ class CatalogService
     /**
      * Mendapatkan daftar kategori utama katalog obat & kesehatan.
      *
+     * Disimpan sebagai array primitif di cache karena config/cache.php menetapkan
+     * serializable_classes => false (objek model ter-unserialize jadi __PHP_Incomplete_Class).
+     *
      * @return Collection<int, KategoriObat>
      */
     public function getDaftarKategori(): Collection
     {
-        return KategoriObat::query()
-            ->withCount('obat')
-            ->whereIn('nama_kategori', [
-                'Obat',
-                'Suplemen',
-                'Nutrisi',
-                'Herbal',
-                'Ibu & Anak',
-                'Alat Kesehatan',
-                'Perawatan Diri',
-                'Mata',
-            ])
-            ->orWhereNotNull('slug')
-            ->orderByRaw("CASE 
-                WHEN nama_kategori = 'Obat' THEN 1 
-                WHEN nama_kategori = 'Suplemen' THEN 2 
-                WHEN nama_kategori = 'Nutrisi' THEN 3 
-                WHEN nama_kategori = 'Herbal' THEN 4 
-                WHEN nama_kategori = 'Ibu & Anak' THEN 5 
-                WHEN nama_kategori = 'Alat Kesehatan' THEN 6 
-                WHEN nama_kategori = 'Perawatan Diri' THEN 7 
-                WHEN nama_kategori = 'Mata' THEN 8 
-                ELSE 9 END")
-            ->orderBy('nama_kategori')
-            ->get();
+        $ver = $this->metaCacheVersion();
+
+        /** @var array<int, array<string, mixed>> $rows */
+        $rows = Cache::remember("catalog:v{$ver}:kategori:arr", now()->addMinutes(5), function (): array {
+            return KategoriObat::query()
+                ->withCount('obat')
+                ->whereIn('nama_kategori', [
+                    'Obat',
+                    'Suplemen',
+                    'Nutrisi',
+                    'Herbal',
+                    'Ibu & Anak',
+                    'Alat Kesehatan',
+                    'Perawatan Diri',
+                    'Mata',
+                ])
+                ->orWhereNotNull('slug')
+                ->orderByRaw("CASE 
+                    WHEN nama_kategori = 'Obat' THEN 1 
+                    WHEN nama_kategori = 'Suplemen' THEN 2 
+                    WHEN nama_kategori = 'Nutrisi' THEN 3 
+                    WHEN nama_kategori = 'Herbal' THEN 4 
+                    WHEN nama_kategori = 'Ibu & Anak' THEN 5 
+                    WHEN nama_kategori = 'Alat Kesehatan' THEN 6 
+                    WHEN nama_kategori = 'Perawatan Diri' THEN 7 
+                    WHEN nama_kategori = 'Mata' THEN 8 
+                    ELSE 9 END")
+                ->orderBy('nama_kategori')
+                ->get()
+                ->map(static fn (KategoriObat $kat): array => $kat->getAttributes())
+                ->all();
+        });
+
+        return KategoriObat::hydrate($rows);
     }
 
     /**
@@ -141,62 +168,85 @@ class CatalogService
      */
     public function getDaftarSubkategori(?string $kategori = null, ?string $clientId = null): Collection
     {
-        $resolvedClientId = null;
-        if ($clientId) {
-            $client = Client::where('id_client', $clientId)
-                ->orWhere('slug', $clientId)
-                ->orWhere('nama_client', $clientId)
-                ->first();
-            $resolvedClientId = $client ? $client->id_client : $clientId;
-        }
+        $ver = $this->metaCacheVersion();
+        $katKey = md5((string) ($kategori ?? 'all').'|'.(string) ($clientId ?? 'global'));
 
-        $query = SubkategoriObat::query()->with('kategori');
+        /** @var array<int, array{attributes: array<string, mixed>, kategori: array<string, mixed>|null}> $rows */
+        $rows = Cache::remember("catalog:v{$ver}:subkategori:{$katKey}:arr", now()->addMinutes(5), function () use ($kategori, $clientId): array {
+            $resolvedClientId = null;
+            if ($clientId) {
+                $client = Client::where('id_client', $clientId)
+                    ->orWhere('slug', $clientId)
+                    ->orWhere('nama_client', $clientId)
+                    ->first();
+                $resolvedClientId = $client ? $client->id_client : $clientId;
+            }
 
-        if ($resolvedClientId) {
-            $query->withCount(['obat' => function (Builder $oq) {
-                $oq->whereHas('stokClient', function (Builder $sq) {
-                    $sq->withoutGlobalScope(TenantScope::class)->where('jumlah_stok', '>', 0);
+            $query = SubkategoriObat::query()->with('kategori');
+
+            if ($resolvedClientId) {
+                $query->withCount(['obat' => function (Builder $oq) {
+                    $oq->whereHas('stokClient', function (Builder $sq) {
+                        $sq->withoutGlobalScope(TenantScope::class)->where('jumlah_stok', '>', 0);
+                    });
+                }]);
+            }
+
+            if ($kategori && strtolower($kategori) !== 'semua') {
+                $query->whereHas('kategori', function (Builder $q) use ($kategori) {
+                    if (strtolower($kategori) === 'obat') {
+                        $q->where('nama_kategori', 'like', '%Obat%')
+                            ->orWhere('slug', 'obat');
+                    } else {
+                        $q->where('nama_kategori', $kategori)
+                            ->orWhere('slug', $kategori)
+                            ->orWhere('id_kategori', $kategori);
+                    }
                 });
-            }]);
+            }
+
+            $subkategoris = $query->orderBy('urutan')->orderBy('nama_subkategori')->get();
+
+            $canonicalOrder = [
+                'Darah' => 1,
+                'Hormon' => 2,
+                'Hormon & Kontrasepsi' => 3,
+                'Kepala' => 4,
+                'Kulit' => 5,
+                'Liver/Hati, Pankreas & Empedu' => 6,
+                'Otot, Sendi & Tulang' => 7,
+                'Rambut' => 8,
+                'Rongga Mulut & Gigi' => 9,
+                'Obat Saluran Pencernaan' => 10,
+                'Saluran Kemih, Ginjal & Prostat' => 11,
+                'Telinga, Hidung & Tenggorokan' => 12,
+                'Tubuh' => 13,
+                'Obat Lainnya' => 14,
+            ];
+
+            return $subkategoris->sortBy(function (SubkategoriObat $sub) use ($canonicalOrder): array {
+                $prio = $canonicalOrder[$sub->nama_subkategori] ?? 100;
+
+                return [$prio, (int) ($sub->urutan ?? 0), strtolower($sub->nama_subkategori)];
+            })
+                ->values()
+                ->map(static fn (SubkategoriObat $sub): array => [
+                    'attributes' => $sub->getAttributes(),
+                    'kategori' => $sub->kategori instanceof KategoriObat ? $sub->kategori->getAttributes() : null,
+                ])
+                ->all();
+        });
+
+        $hydrated = SubkategoriObat::hydrate(array_column($rows, 'attributes'));
+        foreach ($hydrated as $index => $sub) {
+            $katAttrs = $rows[$index]['kategori'] ?? null;
+            $sub->setRelation(
+                'kategori',
+                is_array($katAttrs) ? (new KategoriObat)->newFromBuilder($katAttrs) : null
+            );
         }
 
-        if ($kategori && strtolower($kategori) !== 'semua') {
-            $query->whereHas('kategori', function (Builder $q) use ($kategori) {
-                if (strtolower($kategori) === 'obat') {
-                    $q->where('nama_kategori', 'like', '%Obat%')
-                        ->orWhere('slug', 'obat');
-                } else {
-                    $q->where('nama_kategori', $kategori)
-                        ->orWhere('slug', $kategori)
-                        ->orWhere('id_kategori', $kategori);
-                }
-            });
-        }
-
-        $subkategoris = $query->orderBy('urutan')->orderBy('nama_subkategori')->get();
-
-        $canonicalOrder = [
-            'Darah' => 1,
-            'Hormon' => 2,
-            'Hormon & Kontrasepsi' => 3,
-            'Kepala' => 4,
-            'Kulit' => 5,
-            'Liver/Hati, Pankreas & Empedu' => 6,
-            'Otot, Sendi & Tulang' => 7,
-            'Rambut' => 8,
-            'Rongga Mulut & Gigi' => 9,
-            'Obat Saluran Pencernaan' => 10,
-            'Saluran Kemih, Ginjal & Prostat' => 11,
-            'Telinga, Hidung & Tenggorokan' => 12,
-            'Tubuh' => 13,
-            'Obat Lainnya' => 14,
-        ];
-
-        return $subkategoris->sortBy(function (SubkategoriObat $sub) use ($canonicalOrder): array {
-            $prio = $canonicalOrder[$sub->nama_subkategori] ?? 100;
-
-            return [$prio, (int) ($sub->urutan ?? 0), strtolower($sub->nama_subkategori)];
-        })->values();
+        return $hydrated;
     }
 
     /**
@@ -204,54 +254,58 @@ class CatalogService
      */
     public function getDaftarSediaan(): array
     {
-        $rawList = Obat::query()
-            ->distinct()
-            ->whereNotNull('jenis_sediaan')
-            ->pluck('jenis_sediaan')
-            ->toArray();
+        $ver = $this->metaCacheVersion();
 
-        $standardMap = [
-            'tablet' => 'Tablet',
-            'kaplet' => 'Kaplet',
-            'kapsul' => 'Kapsul',
-            'sirup' => 'Sirup',
-            'suspensi' => 'Suspensi',
-            'tetes' => 'Tetes (Drops)',
-            'drop' => 'Tetes (Drops)',
-            'salep' => 'Salep/Krim',
-            'krim' => 'Salep/Krim',
-            'serbuk' => 'Serbuk/Sachet',
-            'sachet' => 'Serbuk/Sachet',
-            'larutan' => 'Larutan/Cairan',
-            'cairan' => 'Larutan/Cairan',
-            'alat' => 'Alat Medis',
-            'plester' => 'Plester/Strip',
-        ];
+        return Cache::remember("catalog:v{$ver}:sediaan", now()->addMinutes(5), function (): array {
+            $rawList = Obat::query()
+                ->distinct()
+                ->whereNotNull('jenis_sediaan')
+                ->pluck('jenis_sediaan')
+                ->toArray();
 
-        $cleaned = [];
-        foreach ($rawList as $s) {
-            $matched = false;
-            foreach ($standardMap as $key => $std) {
-                if (str_contains(strtolower($s), $key)) {
-                    $cleaned[$std] = true;
-                    $matched = true;
-                    break;
+            $standardMap = [
+                'tablet' => 'Tablet',
+                'kaplet' => 'Kaplet',
+                'kapsul' => 'Kapsul',
+                'sirup' => 'Sirup',
+                'suspensi' => 'Suspensi',
+                'tetes' => 'Tetes (Drops)',
+                'drop' => 'Tetes (Drops)',
+                'salep' => 'Salep/Krim',
+                'krim' => 'Salep/Krim',
+                'serbuk' => 'Serbuk/Sachet',
+                'sachet' => 'Serbuk/Sachet',
+                'larutan' => 'Larutan/Cairan',
+                'cairan' => 'Larutan/Cairan',
+                'alat' => 'Alat Medis',
+                'plester' => 'Plester/Strip',
+            ];
+
+            $cleaned = [];
+            foreach ($rawList as $s) {
+                $matched = false;
+                foreach ($standardMap as $key => $std) {
+                    if (str_contains(strtolower($s), $key)) {
+                        $cleaned[$std] = true;
+                        $matched = true;
+                        break;
+                    }
+                }
+                if (! $matched && strlen($s) <= 20) {
+                    $cleaned[ucwords(strtolower($s))] = true;
                 }
             }
-            if (! $matched && strlen($s) <= 20) {
-                $cleaned[ucwords(strtolower($s))] = true;
-            }
-        }
 
-        $order = ['Tablet', 'Kaplet', 'Kapsul', 'Sirup', 'Suspensi', 'Tetes (Drops)', 'Salep/Krim', 'Serbuk/Sachet', 'Larutan/Cairan', 'Alat Medis', 'Plester/Strip'];
-        $sorted = [];
-        foreach ($order as $item) {
-            if (isset($cleaned[$item])) {
-                $sorted[] = $item;
-                unset($cleaned[$item]);
+            $order = ['Tablet', 'Kaplet', 'Kapsul', 'Sirup', 'Suspensi', 'Tetes (Drops)', 'Salep/Krim', 'Serbuk/Sachet', 'Larutan/Cairan', 'Alat Medis', 'Plester/Strip'];
+            $sorted = [];
+            foreach ($order as $item) {
+                if (isset($cleaned[$item])) {
+                    $sorted[] = $item;
+                    unset($cleaned[$item]);
+                }
             }
-        }
 
-        return array_merge($sorted, array_keys($cleaned));
+            return array_merge($sorted, array_keys($cleaned));
+        });
     }
 }

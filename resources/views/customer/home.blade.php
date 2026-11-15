@@ -68,56 +68,70 @@
 
         <!-- Search & Filter Controls -->
         <section class="space-y-3">
-            <!-- Search Bar: Bersih, Putih Sesuai Form Login -->
-            <div class="relative w-full">
-                <label for="search-input" class="sr-only">Cari obat, keluhan, atau suplemen</label>
-                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
+            <!-- Search Bar: Bersih, Putih Sesuai Form Login (mendukung pencarian server & filter cepat) -->
+            <form method="GET" action="{{ route('customer.home', ['client' => $client ?? 'banyuwangi-kota']) }}" class="flex flex-col sm:flex-row gap-2 w-full">
+                @if(($kategoriAktif ?? 'semua') !== 'semua')
+                    <input type="hidden" name="kategori" value="{{ $kategoriAktif }}">
+                @endif
+                <div class="relative flex-1">
+                    <label for="search-input" class="sr-only">Cari obat, keluhan, atau suplemen</label>
+                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                    <input
+                        id="search-input"
+                        name="q"
+                        value="{{ $searchQuery ?? request('q', '') }}"
+                        x-model="searchQuery"
+                        type="text"
+                        placeholder="Cari obat, merk, atau suplemen lalu tekan Enter..."
+                        class="w-full min-h-[46px] rounded-2xl border border-slate-300 bg-white pl-10 pr-4 text-base sm:text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 shadow-2xs"
+                    />
                 </div>
-                <input
-                    id="search-input"
-                    x-model="searchQuery"
-                    type="text"
-                    placeholder="Cari obat, merk, atau suplemen..."
-                    class="w-full min-h-[46px] rounded-2xl border border-slate-300 bg-white pl-10 pr-4 text-base sm:text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 shadow-2xs"
-                />
-            </div>
+                <button
+                    type="submit"
+                    class="inline-flex min-h-[46px] items-center justify-center rounded-2xl bg-emerald-600 hover:bg-emerald-700 px-5 text-xs font-bold text-white shadow-xs transition cursor-pointer shrink-0">
+                    Cari Produk
+                </button>
+                <a
+                    href="{{ route('customer.catalog', ['client' => $client ?? 'banyuwangi-kota']) }}"
+                    class="inline-flex min-h-[46px] items-center justify-center rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 px-4 text-xs font-bold text-emerald-700 shadow-2xs transition shrink-0">
+                    Katalog Filter Lengkap &rarr;
+                </a>
+            </form>
 
             <!-- Category Pills: Bersih & Terang -->
+            @php
+                $activeKat = $kategoriAktif ?? request('kategori', 'semua');
+                $qParam = filled($searchQuery ?? null) ? $searchQuery : null;
+            @endphp
             <div class="w-full flex items-center gap-2 overflow-x-auto pb-1.5 pt-0.5 sm:flex-wrap text-xs font-semibold no-scrollbar [scrollbar-width:none] [&::-webkit-scrollbar]:hidden overscroll-x-contain touch-pan-x">
-                <button
-                    type="button"
-                    @click="kategoriAktif = 'semua'"
-                    :class="kategoriAktif === 'semua' ? 'bg-emerald-600 text-white border border-emerald-600 shadow-xs' : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 shadow-2xs'"
-                    class="inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-xl px-4 transition">
+                <a
+                    href="{{ route('customer.home', ['client' => $client ?? 'banyuwangi-kota', 'q' => $qParam]) }}"
+                    class="{{ $activeKat === 'semua' ? 'bg-emerald-600 text-white border border-emerald-600 shadow-xs' : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 shadow-2xs' }} inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-xl px-4 transition">
                     Semua Obat
-                </button>
-                <button
-                    type="button"
-                    @click="kategoriAktif = 'keras'"
-                    :class="kategoriAktif === 'keras' ? 'bg-rose-700 text-white shadow-xs' : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 shadow-2xs'"
-                    class="inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-xl px-4 transition">
+                </a>
+                <a
+                    href="{{ route('customer.home', ['client' => $client ?? 'banyuwangi-kota', 'kategori' => 'keras', 'q' => $qParam]) }}"
+                    class="{{ $activeKat === 'keras' ? 'bg-rose-700 text-white shadow-xs' : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 shadow-2xs' }} inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-xl px-4 transition">
                     Wajib Resep
-                </button>
-                <button
-                    type="button"
-                    @click="kategoriAktif = 'bebas'"
-                    :class="kategoriAktif === 'bebas' ? 'bg-emerald-600 text-white shadow-xs' : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 shadow-2xs'"
-                    class="inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-xl px-4 transition">
+                </a>
+                <a
+                    href="{{ route('customer.home', ['client' => $client ?? 'banyuwangi-kota', 'kategori' => 'bebas', 'q' => $qParam]) }}"
+                    class="{{ $activeKat === 'bebas' ? 'bg-emerald-600 text-white shadow-xs' : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 shadow-2xs' }} inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-xl px-4 transition">
                     Obat Bebas
-                </button>
+                </a>
                 @if(isset($kategori) && $kategori->isNotEmpty())
                     @foreach($kategori as $kat)
                         @if(!in_array(strtolower($kat->nama_kategori), ['obat bebas', 'wajib resep (keras)']))
-                            <button
-                                type="button"
-                                @click="kategoriAktif = '{{ Str::slug($kat->nama_kategori) }}'"
-                                :class="kategoriAktif === '{{ Str::slug($kat->nama_kategori) }}' ? 'bg-emerald-600 text-white shadow-xs' : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 shadow-2xs'"
-                                class="inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-xl px-4 transition">
+                            @php $katSlugItem = Str::slug($kat->nama_kategori); @endphp
+                            <a
+                                href="{{ route('customer.home', ['client' => $client ?? 'banyuwangi-kota', 'kategori' => $katSlugItem, 'q' => $qParam]) }}"
+                                class="{{ $activeKat === $katSlugItem ? 'bg-emerald-600 text-white shadow-xs' : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 shadow-2xs' }} inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-xl px-4 transition">
                                 {{ $kat->nama_kategori }}
-                            </button>
+                            </a>
                         @endif
                     @endforeach
                 @endif
@@ -151,7 +165,7 @@
                     $idJs = \Illuminate\Support\Js::from($item->id_obat);
                 @endphp
                 <article
-                    x-show="(kategoriAktif === 'semua' || kategoriAktif === '{{ $katSlug }}' || (kategoriAktif === 'keras' && {{ $isResep ? 'true' : 'false' }}) || (kategoriAktif === 'bebas' && {{ !$isResep ? 'true' : 'false' }})) && ({{ $namaLowerJs }}.includes(searchQuery.toLowerCase()) || {{ $merekLowerJs }}.includes(searchQuery.toLowerCase()))"
+                    x-show="searchQuery.trim() === '' || {{ $namaLowerJs }}.includes(searchQuery.toLowerCase()) || {{ $merekLowerJs }}.includes(searchQuery.toLowerCase())"
                     class="flex flex-col justify-between rounded-3xl border border-slate-200/90 bg-white p-5 sm:p-6 shadow-xs hover:border-emerald-500/40 hover:shadow-md transition">
                     
                     <div class="space-y-3">
@@ -209,6 +223,12 @@
                 </div>
             @endforelse
         </section>
+
+        @if($obat instanceof \Illuminate\Contracts\Pagination\Paginator && $obat->hasPages())
+            <div class="pt-2">
+                {{ $obat->links() }}
+            </div>
+        @endif
 
         <!-- Prescription Upload Modal: Clean White -->
         <div
@@ -365,8 +385,8 @@
     <script>
     document.addEventListener('alpine:init', () => {
         Alpine.data('customerCatalog', () => ({
-            kategoriAktif: 'semua',
-            searchQuery: '',
+            kategoriAktif: @js($kategoriAktif ?? request('kategori', 'semua')),
+            searchQuery: @js($searchQuery ?? request('q', '')),
             modalUnggah: false,
             notifSukses: '',
             selectedFile: null,

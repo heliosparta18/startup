@@ -10,15 +10,14 @@
         x-init="
             setTimeout(() => {
                 visible = false;
-                setTimeout(() => $el.remove(), 200);
-            }, 1100);
+                setTimeout(() => $el.remove(), 150);
+            }, 400);
         "
-        class="animate-welcome-overlay fixed inset-0 z-[999999] flex flex-col items-center justify-center bg-white select-none px-6 text-center"
-        style="background-color: #ffffff;"
+        class="animate-welcome-overlay fixed inset-0 z-[999999] pointer-events-none flex flex-col items-center justify-center bg-white/95 select-none px-6 text-center transition-opacity duration-150"
         aria-live="polite"
         role="status"
     >
-        <div class="animate-welcome-text flex flex-col items-center justify-center max-w-4xl mx-auto">
+        <div class="animate-welcome-text pointer-events-auto flex flex-col items-center justify-center max-w-4xl mx-auto">
             <!-- Brand Badge -->
             <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/80 mb-5 text-xs sm:text-sm font-bold tracking-wider uppercase shadow-2xs">
                 <img src="/logo.png" alt="Logo" class="w-4 h-4 object-contain">
@@ -51,7 +50,7 @@
                         if (splash && splash.parentNode) {
                             splash.parentNode.removeChild(splash);
                         }
-                    }, 1200);
+                    }, 550);
                 }
             })();
         </script>

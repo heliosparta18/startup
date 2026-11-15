@@ -6,8 +6,24 @@
         notifSukses: '{{ session('success') ?? '' }}',
         notifError: '{{ session('error') ?? '' }}',
         loadingId: null,
+        rowStatuses: @js($pesanans->mapWithKeys(fn ($o) => [$o->id_pesanan => ($o->status ?? 'menunggu_pembayaran')])),
+        statusBadgeText(st) {
+            if (st === 'diproses') return 'Diproses Apotek';
+            if (st === 'siap_diambil') return 'Siap Diambil';
+            if (st === 'selesai') return 'Selesai';
+            if (st === 'menunggu_pembayaran') return 'Menunggu Bayar';
+            return String(st || '').replaceAll('_', ' ');
+        },
+        statusBadgeClass(st) {
+            if (st === 'diproses') return 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-200';
+            if (st === 'siap_diambil') return 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-950 border border-emerald-300';
+            if (st === 'selesai') return 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-600 text-white';
+            if (st === 'menunggu_pembayaran') return 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200';
+            return 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200';
+        },
         updateStatus(orderId, status) {
             this.loadingId = orderId;
+            this.notifError = '';
             fetch('{{ url('/cabang/'.$client.'/pesanan') }}/' + orderId + '/progres-status', {
                 method: 'POST',
                 headers: {
@@ -21,15 +37,15 @@
             .then(data => {
                 this.loadingId = null;
                 if (data.success) {
+                    this.rowStatuses[orderId] = data.status || status;
                     this.notifSukses = data.message;
-                    setTimeout(() => window.location.reload(), 1200);
                 } else {
                     this.notifError = data.message || 'Gagal mengubah status.';
                 }
             })
-            .catch(err => {
+            .catch(() => {
                 this.loadingId = null;
-                window.location.reload();
+                this.notifError = 'Terjadi gangguan koneksi saat memperbarui status antrean.';
             });
         }
     }" class="space-y-6">
@@ -236,69 +252,57 @@
                                         @endif
                                     </div>
                                 </td>
-                                <td class="p-3.5">
-                                    @if($status === 'diproses')
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                                            Diproses Apotek
-                                        </span>
-                                    @elseif($status === 'siap_diambil')
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-950 border border-emerald-300">
-                                            Siap Diambil
-                                        </span>
-                                    @elseif($status === 'selesai')
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-600 text-white">
-                                            Selesai
-                                        </span>
-                                    @elseif($status === 'menunggu_pembayaran')
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200">
-                                            Menunggu Bayar
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200">
-                                            {{ str_replace('_', ' ', $status) }}
-                                        </span>
-                                    @endif
+                                <td class="p-3.5" x-data="{ get st() { return rowStatuses['{{ $order->id_pesanan }}'] ?? '{{ $status }}'; } }">
+                                    <span :class="statusBadgeClass(st)" x-text="statusBadgeText(st)">
+                                        @if($status === 'diproses') Diproses Apotek
+                                        @elseif($status === 'siap_diambil') Siap Diambil
+                                        @elseif($status === 'selesai') Selesai
+                                        @elseif($status === 'menunggu_pembayaran') Menunggu Bayar
+                                        @else {{ str_replace('_', ' ', $status) }}
+                                        @endif
+                                    </span>
                                 </td>
-                                <td class="p-3.5 text-right">
+                                <td class="p-3.5 text-right" x-data="{ get st() { return rowStatuses['{{ $order->id_pesanan }}'] ?? '{{ $status }}'; } }">
                                     <div class="inline-flex items-center justify-end gap-2 flex-wrap">
-                                        @if($status === 'menunggu_pembayaran')
-                                            <button
-                                                type="button"
-                                                @click="updateStatus('{{ $order->id_pesanan }}', 'diproses')"
-                                                :disabled="loadingId === '{{ $order->id_pesanan }}'"
-                                                class="min-h-[44px] px-3.5 py-2 rounded-xl border border-emerald-600/50 bg-emerald-50 text-emerald-900 hover:bg-emerald-100 hover:border-emerald-600 font-bold text-xs shadow-2xs transition cursor-pointer disabled:opacity-50">
-                                                Mulai Proses
-                                            </button>
-                                        @elseif($status === 'diproses')
-                                            <button
-                                                type="button"
-                                                @click="updateStatus('{{ $order->id_pesanan }}', 'siap_diambil')"
-                                                :disabled="loadingId === '{{ $order->id_pesanan }}'"
-                                                class="min-h-[44px] px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs shadow-xs transition cursor-pointer disabled:opacity-50">
-                                                Tandai Siap Ambil
-                                            </button>
-                                        @elseif($status === 'siap_diambil')
-                                            <button
-                                                type="button"
-                                                @click="updateStatus('{{ $order->id_pesanan }}', 'selesai')"
-                                                :disabled="loadingId === '{{ $order->id_pesanan }}'"
-                                                class="min-h-[44px] px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition cursor-pointer disabled:opacity-50">
-                                                Selesaikan Penyerahan
-                                            </button>
-                                        @elseif($status === 'selesai')
-                                            <span class="text-xs text-emerald-800 font-extrabold pr-2">Transaksi Tuntas</span>
-                                        @endif
+                                        <button
+                                            x-show="st === 'menunggu_pembayaran'"
+                                            x-cloak
+                                            type="button"
+                                            @click="updateStatus('{{ $order->id_pesanan }}', 'diproses')"
+                                            :disabled="loadingId === '{{ $order->id_pesanan }}'"
+                                            class="min-h-[44px] px-3.5 py-2 rounded-xl border border-emerald-600/50 bg-emerald-50 text-emerald-900 hover:bg-emerald-100 hover:border-emerald-600 font-bold text-xs shadow-2xs transition cursor-pointer disabled:opacity-50">
+                                            Mulai Proses
+                                        </button>
+                                        <button
+                                            x-show="st === 'diproses'"
+                                            x-cloak
+                                            type="button"
+                                            @click="updateStatus('{{ $order->id_pesanan }}', 'siap_diambil')"
+                                            :disabled="loadingId === '{{ $order->id_pesanan }}'"
+                                            class="min-h-[44px] px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs shadow-xs transition cursor-pointer disabled:opacity-50">
+                                            Tandai Siap Ambil
+                                        </button>
+                                        <button
+                                            x-show="st === 'siap_diambil'"
+                                            x-cloak
+                                            type="button"
+                                            @click="updateStatus('{{ $order->id_pesanan }}', 'selesai')"
+                                            :disabled="loadingId === '{{ $order->id_pesanan }}'"
+                                            class="min-h-[44px] px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition cursor-pointer disabled:opacity-50">
+                                            Selesaikan Penyerahan
+                                        </button>
+                                        <span x-show="st === 'selesai'" x-cloak class="text-xs text-emerald-800 font-extrabold pr-2">Transaksi Tuntas</span>
 
-                                        @if($status !== 'selesai' && $status !== 'dibatalkan')
-                                            <button
-                                                type="button"
-                                                @click="if(confirm('Batalkan pesanan ini?')) updateStatus('{{ $order->id_pesanan }}', 'dibatalkan')"
-                                                :disabled="loadingId === '{{ $order->id_pesanan }}'"
-                                                class="min-h-[44px] px-3 py-2 rounded-xl border border-rose-200 text-rose-700 hover:bg-rose-50 text-xs font-bold transition cursor-pointer disabled:opacity-50"
-                                                title="Batalkan Pesanan">
-                                                Batalkan
-                                            </button>
-                                        @endif
+                                        <button
+                                            x-show="st !== 'selesai' && st !== 'dibatalkan'"
+                                            x-cloak
+                                            type="button"
+                                            @click="if(confirm('Batalkan pesanan ini?')) updateStatus('{{ $order->id_pesanan }}', 'dibatalkan')"
+                                            :disabled="loadingId === '{{ $order->id_pesanan }}'"
+                                            class="min-h-[44px] px-3 py-2 rounded-xl border border-rose-200 text-rose-700 hover:bg-rose-50 text-xs font-bold transition cursor-pointer disabled:opacity-50"
+                                            title="Batalkan Pesanan">
+                                            Batalkan
+                                        </button>
                                     </div>
                                 </td>
                             </tr>

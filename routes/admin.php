@@ -11,6 +11,7 @@ use App\Models\Resep;
 use App\Models\RingkasanPeriodePenjualan;
 use App\Models\StokClient;
 use App\Modules\Admin\Http\Controllers\StaffController;
+use App\Modules\Catalog\Services\CatalogService;
 use App\Modules\Catalog\Services\StockFefoService;
 use App\Modules\Reporting\Actions\CloseSalesPeriodAction;
 use App\Modules\Reporting\Services\SalesReportExportService;
@@ -413,6 +414,8 @@ Route::post('/obat', function (Request $request) {
         return $obat;
     });
 
+    app(CatalogService::class)->clearMetadataCache();
+
     return back()->with('success', "Obat {$obat->nama_obat} dan stok cabang berhasil ditambahkan.");
 })->name('obat.store');
 
@@ -460,6 +463,8 @@ Route::put('/obat/{id}', function (string $id, Request $request) {
         ]);
     });
 
+    app(CatalogService::class)->clearMetadataCache();
+
     return back()->with('success', "Data master & stok {$obat->nama_obat} berhasil diperbarui.");
 })->name('obat.update');
 
@@ -468,12 +473,14 @@ Route::delete('/obat/{id}', function (string $id) {
 
     if (DB::table('item_pesanan')->where('id_obat', $obat->id_obat)->exists()) {
         StokClient::withoutTenancy()->where('id_obat', $obat->id_obat)->update(['jumlah_stok' => 0]);
+        app(CatalogService::class)->clearMetadataCache();
 
         return back()->with('success', "Stok {$obat->nama_obat} dikosongkan di semua cabang karena masih tercatat pada riwayat pesanan.");
     }
 
     $nama = $obat->nama_obat;
     $obat->delete();
+    app(CatalogService::class)->clearMetadataCache();
 
     return back()->with('success', "Master obat {$nama} berhasil dihapus.");
 })->name('obat.destroy');

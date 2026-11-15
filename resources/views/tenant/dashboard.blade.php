@@ -27,7 +27,6 @@
                     this.statusVerifikasi = action;
                     this.notifTipe = action === 'ditolak' ? 'error' : 'sukses';
                     this.notifAksi = data.message || ('Resep berhasil ditandai: ' + action.toUpperCase());
-                    setTimeout(() => window.location.reload(), 1000);
                 })
                 .catch(() => {
                     this.sedangProses = false;
