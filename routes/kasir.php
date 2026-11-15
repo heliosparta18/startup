@@ -77,20 +77,34 @@ Route::get('/dashboard', function (Request $request) use ($resolveKasirBranch) {
         ->where('status', 'lunas')
         ->whereHas('pesanan', fn ($q) => $q->withoutGlobalScopes()->where('id_client', $client->id_client));
 
-    $omzetHariIni = (float) (clone $settledQuery)->whereDate('dibuat_pada', now()->toDateString())->sum('jumlah');
-    $totalOmzetLunas = (float) (clone $settledQuery)->sum('jumlah');
-    $jumlahStrukLunas = (clone $settledQuery)->count();
-    $totalTunai = (float) (clone $settledQuery)->where('metode_pembayaran', 'tunai')->sum('jumlah');
-    $totalQris = (float) (clone $settledQuery)->where('metode_pembayaran', 'qris')->sum('jumlah');
+    $todayStart = now()->startOfDay()->toDateTimeString();
+    $todayEnd = now()->endOfDay()->toDateTimeString();
+
+    $paymentStats = (clone $settledQuery)
+        ->selectRaw(
+            'COALESCE(SUM(jumlah), 0) as total_omzet, COUNT(*) as jumlah_struk, '
+            .'COALESCE(SUM(CASE WHEN dibuat_pada >= ? AND dibuat_pada <= ? THEN jumlah ELSE 0 END), 0) as omzet_hari_ini, '
+            ."COALESCE(SUM(CASE WHEN metode_pembayaran = 'tunai' THEN jumlah ELSE 0 END), 0) as total_tunai, "
+            ."COALESCE(SUM(CASE WHEN metode_pembayaran = 'qris' THEN jumlah ELSE 0 END), 0) as total_qris",
+            [$todayStart, $todayEnd]
+        )
+        ->first();
+
+    $omzetHariIni = (float) ($paymentStats->omzet_hari_ini ?? 0);
+    $totalOmzetLunas = (float) ($paymentStats->total_omzet ?? 0);
+    $jumlahStrukLunas = (int) ($paymentStats->jumlah_struk ?? 0);
+    $totalTunai = (float) ($paymentStats->total_tunai ?? 0);
+    $totalQris = (float) ($paymentStats->total_qris ?? 0);
 
     $stokObat = StokClient::withoutTenancy()
-        ->with('obat')
-        ->where('id_client', $client->id_client)
-        ->where('jumlah_stok', '>', 0)
-        ->orderBy('diperbarui_pada', 'desc')
-        ->get()
-        ->sortBy(fn (StokClient $item) => $item->obat->nama_obat ?? '')
-        ->values();
+        ->with('obat:id_obat,nama_obat,harga,jenis_sediaan,badge_status')
+        ->join('obat', 'stok_client.id_obat', '=', 'obat.id_obat')
+        ->select('stok_client.id', 'stok_client.id_obat', 'stok_client.id_client', 'stok_client.jumlah_stok', 'stok_client.diperbarui_pada')
+        ->where('stok_client.id_client', $client->id_client)
+        ->where('stok_client.jumlah_stok', '>', 0)
+        ->orderBy('obat.nama_obat', 'asc')
+        ->limit(80)
+        ->get();
 
     return view('kasir.dashboard', [
         'client' => $client,
@@ -351,3 +365,37 @@ Route::get('/struk/{id}', function (string $id, Request $request) use ($resolveK
         'pesanan' => $pembayaran->pesanan,
     ]);
 })->name('struk');
+
+Route::get('/pos-obat-search', function (Request $request) use ($resolveKasirBranch) {
+    /** @var User|null $authUser */
+    $authUser = $request->user();
+    $client = $resolveKasirBranch($authUser);
+    $keyword = trim((string) $request->query('q', ''));
+
+    $query = StokClient::withoutTenancy()
+        ->with('obat:id_obat,nama_obat,harga,jenis_sediaan,badge_status')
+        ->join('obat', 'stok_client.id_obat', '=', 'obat.id_obat')
+        ->select('stok_client.id', 'stok_client.id_obat', 'stok_client.id_client', 'stok_client.jumlah_stok')
+        ->where('stok_client.id_client', $client->id_client)
+        ->where('stok_client.jumlah_stok', '>', 0);
+
+    if ($keyword !== '') {
+        $escaped = addcslashes($keyword, '%_\\');
+        $query->where('obat.nama_obat', 'like', '%'.$escaped.'%');
+    }
+
+    $items = $query->orderBy('obat.nama_obat', 'asc')
+        ->limit(50)
+        ->get()
+        ->map(fn (StokClient $s): array => [
+            'id' => $s->id_obat,
+            'nama' => $s->obat->nama_obat ?? 'Obat',
+            'harga' => (float) ($s->obat->harga ?? 0),
+            'stok' => (int) $s->jumlah_stok,
+            'sediaan' => $s->obat->jenis_sediaan ?? 'Sediaan',
+            'golongan' => $s->obat->badge_status ?? 'Obat Bebas',
+        ])
+        ->values();
+
+    return response()->json(['items' => $items]);
+})->name('pos.search');

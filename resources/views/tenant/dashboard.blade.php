@@ -142,11 +142,19 @@
                 </div>
 
                 @if ($resepPending)
+                    @php
+                        $resepImgPath = $resepPending->url_gambar;
+                        $hasValidResepImage = $resepImgPath && (
+                            str_starts_with($resepImgPath, 'http://')
+                            || str_starts_with($resepImgPath, 'https://')
+                            || file_exists(public_path(ltrim($resepImgPath, '/')))
+                        );
+                    @endphp
                     <!-- Prescription Image Preview Box -->
                     <div class="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 p-4 sm:p-6">
-                        @if ($resepPending->url_gambar)
+                        @if ($hasValidResepImage)
                             <div class="flex h-36 w-full items-center justify-center rounded-xl overflow-hidden border border-slate-200 bg-white shadow-2xs">
-                                <img src="{{ $resepPending->url_gambar }}" alt="Foto Resep Dokter" class="max-h-full max-w-full object-contain" />
+                                <img src="{{ $resepImgPath }}" alt="Foto Resep Dokter" class="max-h-full max-w-full object-contain" />
                             </div>
                         @else
                             <div class="flex h-32 w-full items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white text-slate-500 text-xs font-medium text-center px-4">
@@ -233,8 +241,8 @@
             <section class="lg:col-span-6 rounded-3xl border border-slate-200/90 bg-white p-5 sm:p-6 shadow-xs space-y-5">
                 @php
                     $fefoList = collect($fefoBatches ?? []);
-                    $criticalCount = $fefoList->filter(fn ($b) => (bool) ($b->is_critical_ed ?? false))->count();
-                    $nearCount = $fefoList->filter(fn ($b) => (bool) ($b->is_near_ed ?? false))->count();
+                    $criticalCount = (int) ($fefoSummary['critical_count'] ?? $fefoList->filter(fn ($b) => (bool) ($b->is_critical_ed ?? false))->count());
+                    $nearCount = (int) ($fefoSummary['near_count'] ?? $fefoList->filter(fn ($b) => (bool) ($b->is_near_ed ?? false))->count());
                 @endphp
 
                 <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -437,9 +445,9 @@
                         </h3>
                         <button type="button" @click="modalResepBesar = false" class="min-h-[44px] min-w-[44px] inline-flex items-center justify-center text-slate-400 hover:text-slate-800 rounded-xl cursor-pointer">&times;</button>
                     </div>
-                    @if ($resepPending->url_gambar)
+                    @if ($hasValidResepImage)
                         <div class="flex max-h-[60vh] items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 p-2">
-                            <img src="{{ $resepPending->url_gambar }}" alt="Resep {{ $resepPending->nama_dokter }}" class="max-h-[55vh] max-w-full object-contain rounded-lg" />
+                            <img src="{{ $resepImgPath }}" alt="Resep {{ $resepPending->nama_dokter }}" class="max-h-[55vh] max-w-full object-contain rounded-lg" />
                         </div>
                     @else
                         <div class="flex h-56 items-center justify-center rounded-2xl bg-slate-50 border border-slate-200 text-xs font-mono text-slate-600 p-4 text-center">

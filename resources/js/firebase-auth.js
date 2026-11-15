@@ -1,5 +1,4 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import {
     getAuth,
     signInWithEmailAndPassword,
@@ -25,15 +24,6 @@ const firebaseConfig = {
 
 // Inisialisasi Firebase App
 export const app = initializeApp(firebaseConfig);
-
-let analytics = null;
-try {
-    if (typeof window !== 'undefined') {
-        analytics = getAnalytics(app);
-    }
-} catch (e) {
-    // Analytics fallback jika diblokir ekstensi adblock / CSP
-}
 
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();

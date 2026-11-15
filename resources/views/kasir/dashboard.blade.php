@@ -92,7 +92,11 @@
             <div
                 class="lg:col-span-5 rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-5"
                 x-data='{
+                    initialItems: @json($posItemsJs),
                     items: @json($posItemsJs),
+                    searchQuery: "",
+                    searching: false,
+                    searchTimer: null,
                     selectedObat: "{{ $posItemsJs->first()['id'] ?? '' }}",
                     qty: 1,
                     get currentItem() {
@@ -103,6 +107,34 @@
                     },
                     formatRupiah(num) {
                         return "Rp " + Number(num || 0).toLocaleString("id-ID");
+                    },
+                    onSearchInput() {
+                        clearTimeout(this.searchTimer);
+                        const q = this.searchQuery.trim();
+                        if (q === "") {
+                            this.items = this.initialItems;
+                            if (this.items.length && !this.items.some(i => i.id === this.selectedObat)) {
+                                this.selectedObat = this.items[0].id;
+                            }
+                            return;
+                        }
+                        this.searchTimer = setTimeout(async () => {
+                            this.searching = true;
+                            try {
+                                const res = await fetch("{{ route('kasir.pos.search') }}?q=" + encodeURIComponent(q), {
+                                    headers: { "Accept": "application/json" }
+                                });
+                                if (res.ok) {
+                                    const data = await res.json();
+                                    this.items = data.items || [];
+                                    if (this.items.length) {
+                                        this.selectedObat = this.items[0].id;
+                                    }
+                                }
+                            } finally {
+                                this.searching = false;
+                            }
+                        }, 220);
                     }
                 }'
             >
@@ -114,15 +146,22 @@
                 <form method="POST" action="{{ route('kasir.walkin.store') }}" class="space-y-4 text-xs">
                     @csrf
                     <div>
-                        <label for="pos-obat" class="block font-bold text-slate-700 mb-1.5">Pilih Obat Tersedia di Cabang</label>
-                        <select id="pos-obat" name="id_obat" x-model="selectedObat" required class="w-full min-h-[44px] rounded-xl border border-slate-300 bg-white px-3 text-xs sm:text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600">
-                            @forelse($stokObat as $stokItem)
-                                <option value="{{ $stokItem->id_obat }}">
-                                    {{ $stokItem->obat->nama_obat ?? 'Obat' }} (Stok: {{ $stokItem->jumlah_stok }} | Rp {{ number_format((float) ($stokItem->obat->harga ?? 0), 0, ',', '.') }})
-                                </option>
-                            @empty
-                                <option value="" disabled>Stok obat cabang kosong</option>
-                            @endforelse
+                        <label for="pos-obat-search" class="block font-bold text-slate-700 mb-1.5">Cari &amp; Pilih Obat Tersedia di Cabang</label>
+                        <input
+                            id="pos-obat-search"
+                            type="search"
+                            x-model="searchQuery"
+                            @input="onSearchInput()"
+                            placeholder="Ketik nama obat (mis. Paracetamol, Amoxicillin)..."
+                            class="mb-2 w-full min-h-[40px] rounded-xl border border-slate-300 bg-white px-3 text-xs text-slate-900 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600"
+                        >
+                        <select id="pos-obat" name="id_obat" x-model="selectedObat" x-effect="if (items.length && !items.some(i => i.id === selectedObat)) { selectedObat = items[0].id; } $nextTick(() => { $el.value = selectedObat; })" required class="w-full min-h-[44px] rounded-xl border border-slate-300 bg-white px-3 text-xs sm:text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600">
+                            <template x-for="item in items" :key="item.id">
+                                <option :value="item.id" x-text="item.nama + ' (Stok: ' + item.stok + ' | ' + formatRupiah(item.harga) + ')'"></option>
+                            </template>
+                            <template x-if="items.length === 0">
+                                <option value="" disabled x-text="searching ? 'Mencari obat...' : 'Obat tidak ditemukan di stok cabang'"></option>
+                            </template>
                         </select>
                         <div class="mt-1.5 flex items-center justify-between text-[11px] text-slate-500">
                             <span>Golongan: <strong class="text-slate-700" x-text="currentItem.golongan"></strong></span>

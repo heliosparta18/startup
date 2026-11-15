@@ -211,6 +211,7 @@
         </div>
     </footer>
 
+    @fluxScripts
     @stack('scripts')
 </body>
 </html>

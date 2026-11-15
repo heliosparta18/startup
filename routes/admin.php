@@ -15,6 +15,7 @@ use App\Modules\Catalog\Services\StockFefoService;
 use App\Modules\Reporting\Actions\CloseSalesPeriodAction;
 use App\Modules\Reporting\Services\SalesReportExportService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -556,11 +557,31 @@ Route::get('/apoteker/{client?}', function (StockFefoService $fefoService, ?stri
         ->take(30)
         ->get();
 
-    $resepMenungguCount = (clone $resepBaseQuery)->where('status_verifikasi', 'menunggu')->count();
-    $resepDisetujuiCount = (clone $resepBaseQuery)->where('status_verifikasi', 'disetujui')->count();
-    $resepDitolakCount = (clone $resepBaseQuery)->where('status_verifikasi', 'ditolak')->count();
+    $resepCounts = (clone $resepBaseQuery)
+        ->selectRaw('status_verifikasi, COUNT(*) as total')
+        ->groupBy('status_verifikasi')
+        ->pluck('total', 'status_verifikasi');
 
-    $fefoBatches = $fefoService->getBatchesByFefo($branchSlug);
+    $resepMenungguCount = (int) ($resepCounts['menunggu'] ?? 0);
+    $resepDisetujuiCount = (int) ($resepCounts['disetujui'] ?? 0);
+    $resepDitolakCount = (int) ($resepCounts['ditolak'] ?? 0);
+
+    $fefoBatches = $fefoService->getBatchesByFefo($branchSlug, null, false, 15)
+        ->map(function ($batch): array {
+            $expired = $batch->obat->expired ?? $batch->tanggal_kadaluarsa;
+            $urgency = ($batch->is_critical_ed ?? false)
+                ? 'critical'
+                : (($batch->is_near_ed ?? false) ? 'near' : 'normal');
+
+            return [
+                'nama_obat' => $batch->obat->nama_obat ?? 'Sediaan Obat',
+                'batch_number' => $batch->obat->batch_number ?? ('BTC-'.substr((string) $batch->id, 0, 6)),
+                'stok' => (int) $batch->jumlah_stok,
+                'expired' => $expired ? Carbon::parse($expired)->format('d M Y') : '-',
+                'urgency' => $urgency,
+            ];
+        });
+    $fefoSummary = $fefoService->getExpirySummary($activeBranch->id_client);
     $antreanBerjalan = Cache::get("antrean_berjalan:{$activeBranch->id_client}", 'A-001');
 
     $branchOrders = Pesanan::withoutGlobalScopes()
@@ -581,6 +602,7 @@ Route::get('/apoteker/{client?}', function (StockFefoService $fefoService, ?stri
         'resepDisetujuiCount' => $resepDisetujuiCount,
         'resepDitolakCount' => $resepDitolakCount,
         'fefoBatches' => $fefoBatches,
+        'fefoSummary' => $fefoSummary,
         'antreanBerjalan' => $antreanBerjalan,
         'branchOrders' => $branchOrders,
     ]);

@@ -45,7 +45,8 @@
 
         <!-- 4 Real Database KPI Cards -->
         @php
-            $kritisCount = $fefoBatches->filter(fn ($b) => ($b['urgency'] ?? '') !== 'normal' || (int) ($b['stok'] ?? 0) <= 10)->count();
+            $kritisCount = (int) ($fefoSummary['low_stock_or_expiring_count'] ?? $fefoBatches->filter(fn ($b) => ($b['urgency'] ?? '') !== 'normal' || (int) ($b['stok'] ?? 0) <= 10)->count());
+            $totalFefoCount = (int) ($fefoSummary['total_batches'] ?? $fefoBatches->count());
         @endphp
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             <div class="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs">
@@ -65,7 +66,7 @@
                 <div class="mt-2 text-2xl sm:text-3xl font-black {{ $kritisCount > 0 ? 'text-rose-700' : 'text-slate-900' }}">
                     {{ $kritisCount }} Batch
                 </div>
-                <p class="mt-1 text-xs text-slate-500">Dari total {{ $fefoBatches->count() }} item terdaftar</p>
+                <p class="mt-1 text-xs text-slate-500">Dari total {{ $totalFefoCount }} item terdaftar</p>
             </div>
             <div class="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs">
                 <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Nomor Antrean Loket Live</span>

@@ -43,6 +43,11 @@ class User extends Authenticatable implements PasskeyUser
     use HasFactory, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
 
     /**
+     * Cache slug cabang per request untuk menghindari query duplikat ke pengguna/admin_client.
+     */
+    protected ?string $cachedClientSlug = null;
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -397,8 +402,17 @@ class User extends Authenticatable implements PasskeyUser
      */
     public function getClientSlug(): string
     {
+        if ($this->cachedClientSlug !== null) {
+            return $this->cachedClientSlug;
+        }
+
         if ($this->email === 'dewi@omnipharma.test' || $this->email === 'apoteker.rogojampi@omnipharma.test' || str_contains($this->name, 'apt. Dinda Ayu Shafira')) {
-            return 'rogojampi';
+            return $this->cachedClientSlug = 'rogojampi';
+        }
+
+        $normalizedRole = strtolower((string) $this->role);
+        if (in_array($normalizedRole, ['pelanggan', 'customer'], true)) {
+            return $this->cachedClientSlug = 'banyuwangi-kota';
         }
 
         try {
@@ -406,18 +420,18 @@ class User extends Authenticatable implements PasskeyUser
             if ($pengguna) {
                 $admin = AdminClient::where('id_pengguna', $pengguna->id_pengguna)->with('client')->first();
                 if ($admin && $admin->client && ! empty($admin->client->slug)) {
-                    return $admin->client->slug;
+                    return $this->cachedClientSlug = $admin->client->slug;
                 }
                 $peran = PeranClientPengguna::where('id_pengguna', $pengguna->id_pengguna)->with('client')->first();
                 if ($peran && $peran->client && ! empty($peran->client->slug)) {
-                    return $peran->client->slug;
+                    return $this->cachedClientSlug = $peran->client->slug;
                 }
             }
         } catch (\Throwable $e) {
             // fallback bila database belum termigrasi lengkap
         }
 
-        return 'banyuwangi-kota';
+        return $this->cachedClientSlug = 'banyuwangi-kota';
     }
 
     /**

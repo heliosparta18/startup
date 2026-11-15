@@ -14,30 +14,51 @@
 
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 <script>
-    window.omniGetTheme = function() {
-        try {
-            const saved = localStorage.getItem('omni_theme') || localStorage.getItem('theme') || localStorage.getItem('flux.appearance');
-            return saved === 'dark' ? 'dark' : 'light';
-        } catch (e) {
-            return 'light';
-        }
-    };
-    window.omniApplyTheme = function(mode) {
-        const theme = mode === 'dark' ? 'dark' : 'light';
-        document.documentElement.classList.remove('light', 'dark');
-        document.documentElement.classList.add(theme);
-        document.documentElement.style.colorScheme = theme;
-        try {
-            localStorage.setItem('omni_theme', theme);
-            localStorage.setItem('theme', theme);
-            localStorage.setItem('flux.appearance', theme);
-        } catch (e) {}
-        return theme;
-    };
-    window.omniSetTheme = function(mode) {
-        const applied = window.omniApplyTheme(mode);
-        window.dispatchEvent(new CustomEvent('omni-theme-changed', { detail: { theme: applied } }));
-        return applied;
-    };
-    window.omniApplyTheme(window.omniGetTheme());
+    (function() {
+        const isForceLight = @json((bool) ($forceLight ?? false));
+
+        window.omniGetTheme = function() {
+            if (isForceLight) {
+                return 'light';
+            }
+            try {
+                const saved = localStorage.getItem('omni_theme') || localStorage.getItem('theme') || localStorage.getItem('flux.appearance');
+                return saved === 'dark' ? 'dark' : 'light';
+            } catch (e) {
+                return 'light';
+            }
+        };
+
+        window.omniApplyTheme = function(mode) {
+            const theme = isForceLight ? 'light' : (mode === 'dark' ? 'dark' : 'light');
+            const root = document.documentElement;
+            root.classList.remove('light', 'dark');
+            root.classList.add(theme);
+            root.style.colorScheme = theme;
+
+            if (isForceLight) {
+                root.setAttribute('data-force-light', 'true');
+                return 'light';
+            }
+
+            root.removeAttribute('data-force-light');
+            try {
+                localStorage.setItem('omni_theme', theme);
+                localStorage.setItem('theme', theme);
+                localStorage.setItem('flux.appearance', theme);
+            } catch (e) {}
+            return theme;
+        };
+
+        window.omniSetTheme = function(mode) {
+            if (isForceLight) {
+                return window.omniApplyTheme('light');
+            }
+            const applied = window.omniApplyTheme(mode);
+            window.dispatchEvent(new CustomEvent('omni-theme-changed', { detail: { theme: applied } }));
+            return applied;
+        };
+
+        window.omniApplyTheme(window.omniGetTheme());
+    })();
 </script>

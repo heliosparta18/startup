@@ -44,7 +44,8 @@ Route::get('/dashboard', function (string $client, StockFefoService $fefoService
         ->where('status_verifikasi', 'menunggu')
         ->count();
 
-    $fefoBatches = $fefoService->getBatchesByFefo($client);
+    $fefoBatches = $fefoService->getBatchesByFefo($client, null, false, 6);
+    $fefoSummary = $fefoService->getExpirySummary($clientId);
 
     $antreanBerjalan = Cache::get("antrean_berjalan:{$clientId}", 'A-001');
 
@@ -68,6 +69,7 @@ Route::get('/dashboard', function (string $client, StockFefoService $fefoService
         'resepPending' => $resepPending,
         'resepPendingCount' => $resepPendingCount,
         'fefoBatches' => $fefoBatches,
+        'fefoSummary' => $fefoSummary,
         'antreanBerjalan' => $antreanBerjalan,
         'pesanansAktif' => $pesanansAktif,
         'orderSelesaiHariIni' => $orderSelesaiHariIni,

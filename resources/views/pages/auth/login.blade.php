@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-slate-100">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="light h-full bg-slate-100" data-force-light="true" style="color-scheme: light;">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +12,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @fluxAppearance
+    <script>
+        (function() {
+            const root = document.documentElement;
+            root.classList.remove('dark');
+            root.classList.add('light');
+            root.setAttribute('data-force-light', 'true');
+            root.style.colorScheme = 'light';
+        })();
+    </script>
     <style>
         [x-cloak] { display: none !important; }
     </style>
@@ -421,40 +429,18 @@
                     }
                 },
 
-                async handleLoginSubmit(e) {
-                    if (this.selectedRole) {
-                        return true;
-                    }
-
-                    e.preventDefault();
+                handleLoginSubmit(e) {
                     if (!this.identifier || !this.password) {
+                        e.preventDefault();
                         if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.showToast === 'function') {
                             window.OmniFirebaseAuth.showToast('Silakan masukkan email atau username beserta kata sandi.', 'error');
                         }
-                        return;
+                        return false;
                     }
 
                     this.loadingSubmit = true;
-                    try {
-                        await this.ensureFirebaseAuth();
-                        if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.loginWithEmailOrUsername === 'function') {
-                            const result = await window.OmniFirebaseAuth.loginWithEmailOrUsername(this.identifier, this.password);
-                            if (window.OmniFirebaseAuth?.showToast) {
-                                window.OmniFirebaseAuth.showToast('Login berhasil! Mengalihkan ke dashboard...', 'success');
-                            }
-                            this.isRedirecting = true;
-                            setTimeout(() => {
-                                window.location.href = result.session?.redirect || '{{ route('dashboard') }}';
-                            }, 600);
-                        } else {
-                            this.isRedirecting = true;
-                            this.$refs.loginForm.submit();
-                        }
-                    } catch (err) {
-                        console.warn('Firebase login attempt fallback to Fortify:', err);
-                        this.isRedirecting = true;
-                        this.$refs.loginForm.submit();
-                    }
+                    this.isRedirecting = true;
+                    return true;
                 }
             };
         }

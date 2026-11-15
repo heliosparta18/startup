@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-slate-100">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="light h-full bg-slate-100" data-force-light="true" style="color-scheme: light;">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +12,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @fluxAppearance
+    <script>
+        (function() {
+            const root = document.documentElement;
+            root.classList.remove('dark');
+            root.classList.add('light');
+            root.setAttribute('data-force-light', 'true');
+            root.style.colorScheme = 'light';
+        })();
+    </script>
     <style>
         [x-cloak] { display: none !important; }
     </style>
@@ -113,7 +121,7 @@
                 </div>
 
                 <!-- TAHAP 1: FORMULIR INPUT DATA AKUN -->
-                <div x-show="!otpStep" class="space-y-3.5">
+                <form x-show="!otpStep" @submit.prevent="requestRegisterOtp()" class="space-y-3.5">
                     <!-- Input 1: Username -->
                     <div>
                         <label for="reg_username" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
@@ -235,7 +243,7 @@
                             <span>Menghubungkan Akun Google...</span>
                         </span>
                     </button>
-                </div>
+                </form>
 
                 <!-- TAHAP 2: VALIDASI KODE OTP EMAIL -->
                 <div x-show="otpStep" x-cloak class="space-y-4 pt-1">

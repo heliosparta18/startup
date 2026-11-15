@@ -10,8 +10,8 @@
         x-init="
             setTimeout(() => {
                 visible = false;
-                setTimeout(() => $el.remove(), 400);
-            }, 2600);
+                setTimeout(() => $el.remove(), 200);
+            }, 1100);
         "
         class="animate-welcome-overlay fixed inset-0 z-[999999] flex flex-col items-center justify-center bg-white select-none px-6 text-center"
         style="background-color: #ffffff;"
@@ -51,7 +51,7 @@
                         if (splash && splash.parentNode) {
                             splash.parentNode.removeChild(splash);
                         }
-                    }, 2800);
+                    }, 1200);
                 }
             })();
         </script>
