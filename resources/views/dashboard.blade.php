@@ -803,7 +803,7 @@
     ])
 
     {{-- Main Content --}}
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-6 lg:py-8 space-y-4 sm:space-y-6 lg:space-y-8">
 
         @if(!$isInternalStaff)
             {{-- Inline Prescription Upload Feedback --}}
@@ -839,7 +839,7 @@
                 ];
             @endphp
 
-            <section aria-labelledby="patient-command-heading" class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+            <section aria-labelledby="patient-command-heading" class="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-5 items-stretch">
                 <div
                     x-data="{
                         activeSlide: 0,
@@ -867,7 +867,7 @@
                     x-init="startAutoSlide()"
                     @mouseenter="stopAutoSlide()"
                     @mouseleave="startAutoSlide()"
-                    class="lg:col-span-8 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 shadow-2xs relative group h-[210px] sm:h-[280px] lg:h-auto lg:min-h-[320px]"
+                    class="lg:col-span-8 rounded-xl sm:rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 shadow-2xs relative group h-[168px] sm:h-[250px] lg:h-auto lg:min-h-[320px]"
                     role="region"
                     aria-roledescription="carousel"
                     aria-label="Banner Promo Obat"
@@ -936,84 +936,108 @@
                     @endif
                 </div>
 
-                {{-- Secondary Interactive Prescription Dropzone Card (Tempat Unggah Resep Dokter) --}}
-                <div id="unggah-resep" class="lg:col-span-4 rounded-2xl bg-white border border-slate-200 p-4 sm:p-6 shadow-2xs flex flex-col justify-between gap-3.5 sm:gap-4">
-                    <div class="space-y-3 sm:space-y-3.5">
-                        <div class="flex items-start gap-2.5 sm:gap-3">
-                            {!! \App\Modules\Catalog\Support\GoApotikCatalogAssets::uiSvg('checkout_resep', 'w-7 h-7 text-emerald-700 shrink-0 mt-0.5') !!}
+                {{-- Secondary Interactive Prescription Dropzone Card (Compact Mobile Strip -> Full Desktop Dropzone) --}}
+                <div id="unggah-resep" class="lg:col-span-4 rounded-xl sm:rounded-2xl bg-white border border-slate-200 shadow-2xs flex flex-col justify-between">
+                    <input
+                        x-ref="quickResepInput"
+                        type="file"
+                        accept="image/jpeg,image/png,image/jpg"
+                        class="hidden"
+                        @change="handleQuickFileAndOpen($event)"
+                    />
+
+                    {{-- Mobile / Tablet Compact Single-Row Upload Resep Strip right above Catalog --}}
+                    <div class="flex lg:hidden items-center justify-between gap-2.5 p-2.5 sm:px-4 sm:py-3">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            {!! \App\Modules\Catalog\Support\GoApotikCatalogAssets::uiSvg('checkout_resep', 'w-6 h-6 text-emerald-700 shrink-0') !!}
                             <div class="min-w-0">
-                                <h2 class="text-[15px] sm:text-base font-bold text-slate-900 leading-snug">Tempat Unggah Resep Dokter</h2>
-                                <p class="text-[11px] font-semibold text-emerald-800 mt-0.5 flex items-center gap-1">
-                                    {!! \App\Modules\Catalog\Support\GoApotikCatalogAssets::uiSvg('ic_official_fill', 'w-3.5 h-3.5 text-emerald-700 shrink-0') !!}
-                                    <span class="truncate">Telaah APJ {{ $activeBranchName }}</span>
-                                </p>
+                                <p class="text-[13px] sm:text-sm font-bold text-slate-900 leading-tight truncate">Unggah Resep Dokter</p>
+                                <p class="text-[11px] font-medium text-emerald-800 leading-tight mt-0.5 truncate">Telaah APJ · Foto/Galeri</p>
                             </div>
                         </div>
 
-                        {{-- Quick Interactive Prescription Photo Dropzone --}}
-                        <div
-                            @click="$refs.quickResepInput.click()"
-                            @dragover.prevent="isQuickDragging = true"
-                            @dragleave.prevent="isQuickDragging = false"
-                            @drop.prevent="handleQuickDropAndOpen($event)"
-                            role="button"
-                            tabindex="0"
-                            @keydown.enter.prevent="$refs.quickResepInput.click()"
-                            @keydown.space.prevent="$refs.quickResepInput.click()"
-                            class="border-2 border-dashed rounded-xl p-3 sm:p-3.5 text-center cursor-pointer transition-colors flex flex-col items-center justify-center gap-1.5 min-h-[100px] sm:min-h-[116px] focus-visible:outline-2 focus-visible:outline-emerald-700"
-                            :class="isQuickDragging ? 'border-emerald-700 bg-emerald-50/90' : 'border-emerald-300 bg-emerald-50/40 hover:border-emerald-600 hover:bg-emerald-50/70'"
-                            aria-label="Pilih atau tarik foto resep dokter untuk diunggah"
+                        <button
+                            type="button"
+                            @click="openResepModal('')"
+                            class="min-h-[44px] px-3.5 sm:px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold inline-flex items-center justify-center gap-1.5 shrink-0 cursor-pointer transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
                         >
-                            {!! \App\Modules\Catalog\Support\GoApotikCatalogAssets::uiSvg('icon_camera', 'w-7 h-7 text-emerald-700 shrink-0') !!}
-                            <div>
-                                <p class="text-xs font-bold text-emerald-900">Pilih atau Tarik Foto Resep ke Sini</p>
-                                <p class="text-[11px] text-slate-600 mt-0.5">JPG, JPEG, atau PNG (maks. 5 MB)</p>
-                            </div>
-                        </div>
-                        <input
-                            x-ref="quickResepInput"
-                            type="file"
-                            accept="image/jpeg,image/png,image/jpg"
-                            class="hidden"
-                            @change="handleQuickFileAndOpen($event)"
-                        />
-
-                        {{-- 3-Step Verification Flow Indicator --}}
-                        <ol class="grid grid-cols-3 gap-1.5 pt-2 border-t border-slate-100 text-[10px] font-semibold text-slate-700 text-center">
-                            <li class="rounded-lg bg-slate-50 px-1.5 py-1.5 border border-slate-100">
-                                <span class="block font-extrabold text-emerald-800">1. Foto</span>
-                                <span class="block truncate">Unggah Resep</span>
-                            </li>
-                            <li class="rounded-lg bg-slate-50 px-1.5 py-1.5 border border-slate-100">
-                                <span class="block font-extrabold text-emerald-800">2. Telaah</span>
-                                <span class="block truncate">Verifikasi APJ</span>
-                            </li>
-                            <li class="rounded-lg bg-slate-50 px-1.5 py-1.5 border border-slate-100">
-                                <span class="block font-extrabold text-emerald-800">3. Ambil</span>
-                                <span class="block truncate">Tebus di Gerai</span>
-                            </li>
-                        </ol>
+                            {!! \App\Modules\Catalog\Support\GoApotikCatalogAssets::uiSvg('icon_camera', 'w-4 h-4 shrink-0') !!}
+                            <span>Unggah Foto</span>
+                        </button>
                     </div>
 
-                    <button
-                        type="button"
-                        @click="openResepModal('')"
-                        class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs sm:text-sm transition-colors min-h-[44px] cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
-                    >
-                        {!! \App\Modules\Catalog\Support\GoApotikCatalogAssets::uiSvg('checkout_resep', 'w-4 h-4 shrink-0') !!}
-                        <span>Unggah Foto Resep Dokter</span>
-                    </button>
+                    {{-- Desktop Full Interactive Prescription Dropzone Card --}}
+                    <div class="hidden lg:flex lg:flex-col lg:justify-between lg:gap-4 lg:p-6 lg:flex-1">
+                        <div class="space-y-3.5">
+                            <div class="flex items-start gap-3">
+                                {!! \App\Modules\Catalog\Support\GoApotikCatalogAssets::uiSvg('checkout_resep', 'w-7 h-7 text-emerald-700 shrink-0 mt-0.5') !!}
+                                <div class="min-w-0">
+                                    <h2 class="text-base font-bold text-slate-900 leading-snug">Tempat Unggah Resep Dokter</h2>
+                                    <p class="text-[11px] font-semibold text-emerald-800 mt-0.5 flex items-center gap-1">
+                                        {!! \App\Modules\Catalog\Support\GoApotikCatalogAssets::uiSvg('ic_official_fill', 'w-3.5 h-3.5 text-emerald-700 shrink-0') !!}
+                                        <span class="truncate">Telaah APJ {{ $activeBranchName }}</span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            {{-- Quick Interactive Prescription Photo Dropzone --}}
+                            <div
+                                @click="$refs.quickResepInput.click()"
+                                @dragover.prevent="isQuickDragging = true"
+                                @dragleave.prevent="isQuickDragging = false"
+                                @drop.prevent="handleQuickDropAndOpen($event)"
+                                role="button"
+                                tabindex="0"
+                                @keydown.enter.prevent="$refs.quickResepInput.click()"
+                                @keydown.space.prevent="$refs.quickResepInput.click()"
+                                class="border-2 border-dashed rounded-xl p-3.5 text-center cursor-pointer transition-colors flex flex-col items-center justify-center gap-1.5 min-h-[116px] focus-visible:outline-2 focus-visible:outline-emerald-700"
+                                :class="isQuickDragging ? 'border-emerald-700 bg-emerald-50/90' : 'border-emerald-300 bg-emerald-50/40 hover:border-emerald-600 hover:bg-emerald-50/70'"
+                                aria-label="Pilih atau tarik foto resep dokter untuk diunggah"
+                            >
+                                {!! \App\Modules\Catalog\Support\GoApotikCatalogAssets::uiSvg('icon_camera', 'w-7 h-7 text-emerald-700 shrink-0') !!}
+                                <div>
+                                    <p class="text-xs font-bold text-emerald-900">Pilih atau Tarik Foto Resep ke Sini</p>
+                                    <p class="text-[11px] text-slate-600 mt-0.5">JPG, JPEG, atau PNG (maks. 5 MB)</p>
+                                </div>
+                            </div>
+
+                            {{-- 3-Step Verification Flow Indicator --}}
+                            <ol class="grid grid-cols-3 gap-1.5 pt-2 border-t border-slate-100 text-[10px] font-semibold text-slate-700 text-center">
+                                <li class="rounded-lg bg-slate-50 px-1.5 py-1.5 border border-slate-100">
+                                    <span class="block font-extrabold text-emerald-800">1. Foto</span>
+                                    <span class="block truncate">Unggah Resep</span>
+                                </li>
+                                <li class="rounded-lg bg-slate-50 px-1.5 py-1.5 border border-slate-100">
+                                    <span class="block font-extrabold text-emerald-800">2. Telaah</span>
+                                    <span class="block truncate">Verifikasi APJ</span>
+                                </li>
+                                <li class="rounded-lg bg-slate-50 px-1.5 py-1.5 border border-slate-100">
+                                    <span class="block font-extrabold text-emerald-800">3. Ambil</span>
+                                    <span class="block truncate">Tebus di Gerai</span>
+                                </li>
+                            </ol>
+                        </div>
+
+                        <button
+                            type="button"
+                            @click="openResepModal('')"
+                            class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm transition-colors min-h-[44px] cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                        >
+                            {!! \App\Modules\Catalog\Support\GoApotikCatalogAssets::uiSvg('checkout_resep', 'w-4 h-4 shrink-0') !!}
+                            <span>Unggah Foto Resep Dokter</span>
+                        </button>
+                    </div>
                 </div>
             </section>
 
             {{-- 2. Full Unified Catalog Embedded Directly in Dashboard --}}
-            <section id="katalog-utama" class="space-y-4" aria-labelledby="katalog-lengkap-heading">
-                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-200 pb-3">
+            <section id="katalog-utama" class="space-y-2.5 sm:space-y-4" aria-labelledby="katalog-lengkap-heading">
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-1 sm:gap-2 border-b border-slate-200 pb-2 sm:pb-3">
                     <div>
-                        <h2 id="katalog-lengkap-heading" class="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
+                        <h2 id="katalog-lengkap-heading" class="text-[15px] sm:text-xl font-bold text-slate-900 tracking-tight">
                             Katalog Lengkap Sediaan Farmasi ({{ $activeBranchName }})
                         </h2>
-                        <p class="text-xs text-slate-600 mt-0.5">
+                        <p class="text-[11px] sm:text-xs text-slate-600 mt-0.5 line-clamp-1 sm:line-clamp-none">
                             Seluruh {{ number_format($totalProdukCount, 0, ',', '.') }} produk BPOM lintas kategori, subkategori, bentuk sediaan, dan stok cabang aktif.
                         </p>
                     </div>
