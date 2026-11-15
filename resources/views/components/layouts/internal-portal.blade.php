@@ -114,31 +114,20 @@
                                 x-transition:leave="transition ease-in duration-100"
                                 x-transition:leave-start="opacity-100 scale-100 translate-y-0"
                                 x-transition:leave-end="opacity-0 scale-95 translate-y-1"
-                                class="absolute right-0 mt-2 w-64 rounded-2xl bg-white shadow-xl border border-slate-200 py-1.5 z-50 origin-top-right text-xs font-medium"
+                                class="absolute right-0 mt-2 w-72 max-h-[78vh] overflow-y-auto rounded-2xl bg-white shadow-xl border border-slate-200 p-2 z-50 origin-top-right text-xs font-medium"
                                 role="menu"
                                 aria-orientation="vertical"
                                 aria-labelledby="internal-user-menu-button"
                             >
-                                <div class="px-4 py-2.5 border-b border-slate-100">
+                                <div class="px-3 py-2.5 bg-slate-50 rounded-xl mb-1.5 border border-slate-200">
                                     <p class="font-bold text-slate-900 truncate">{{ $userName }}</p>
                                     @if($userEmail !== '')
                                         <p class="text-[11px] text-slate-500 truncate mt-0.5">{{ $userEmail }}</p>
                                     @endif
                                 </div>
 
-                                <div class="py-1">
-                                    <a href="{{ route('profile.edit') }}" class="flex items-center gap-2.5 px-4 py-2 min-h-[44px] text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition-colors font-semibold" role="menuitem">
-                                        <svg class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                                        <span>Profile</span>
-                                    </a>
-                                    <a href="{{ $portalHomeRoute }}" class="flex items-center gap-2.5 px-4 py-2 min-h-[44px] text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition-colors font-semibold" role="menuitem">
-                                        <svg class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-                                        <span>{{ $portalHomeLabel }}</span>
-                                    </a>
-                                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 px-4 py-2 min-h-[44px] text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition-colors font-semibold" role="menuitem">
-                                        <svg class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
-                                        <span>Ringkasan Portal</span>
-                                    </a>
+                                <div class="pb-1">
+                                    @include('partials.profile-role-menu', ['branchSlug' => request()->route('client')])
                                 </div>
 
                                 <div

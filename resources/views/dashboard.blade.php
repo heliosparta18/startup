@@ -53,7 +53,7 @@
     $userRole = $user->role ?? ($user->peran ?? 'pelanggan');
     $isApoteker = $user && ($user->hasRole('apoteker') || $user->role === 'apoteker');
     $isSuperAdmin = $user && ($user->hasRole('super_admin') || $user->role === 'super_admin');
-    $isKasir = $user && ! $isSuperAdmin && ($user->hasRole('kasir') || in_array($user->role, ['admin', 'kasir'], true));
+    $isKasir = $user && ! $isSuperAdmin && ! $isApoteker && ($user->hasRole('kasir') || in_array($user->role, ['admin', 'kasir', 'staf_klien'], true));
     $isInternalStaff = $isSuperAdmin || $isApoteker || $isKasir;
     $userClientSlug = $user && method_exists($user, 'getClientSlug') ? $user->getClientSlug() : 'banyuwangi-kota';
     $userClientName = $user && method_exists($user, 'getClientName') ? $user->getClientName() : 'Cabang Banyuwangi Kota';
@@ -585,7 +585,7 @@
                     <div
                         x-show="open"
                         x-cloak
-                        class="absolute right-0 mt-2 w-64 rounded-xl bg-white p-2 shadow-sm border border-slate-300 z-50 text-xs"
+                        class="absolute right-0 mt-2 w-72 max-h-[78vh] overflow-y-auto rounded-xl bg-white p-2 shadow-sm border border-slate-300 z-50 text-xs"
                         role="menu"
                         aria-orientation="vertical"
                         aria-labelledby="user-menu-button"
@@ -595,24 +595,8 @@
                             <p class="text-[11px] text-slate-600 truncate mt-0.5">{{ $userEmail }}</p>
                         </div>
 
-                        <div class="space-y-1">
-                            <a
-                                href="{{ route('profile.edit') }}"
-                                class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-slate-800 hover:text-slate-900 hover:bg-slate-100 font-semibold transition-colors min-h-[44px] focus-visible:outline-2 focus-visible:outline-emerald-700"
-                                role="menuitem"
-                            >
-                                <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                                <span>Profile</span>
-                            </a>
-
-                            <a
-                                href="{{ $riwayatPesananUrl }}"
-                                class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-slate-800 hover:text-slate-900 hover:bg-slate-100 font-semibold transition-colors min-h-[44px] focus-visible:outline-2 focus-visible:outline-emerald-700"
-                                role="menuitem"
-                            >
-                                <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
-                                <span>Riwayat Pesanan</span>
-                            </a>
+                        <div class="space-y-1.5">
+                            @include('partials.profile-role-menu', ['branchSlug' => $activeBranchSlug])
 
                             <div
                                 class="px-3 py-2 rounded-lg bg-slate-50 border border-slate-200/80"
@@ -803,12 +787,7 @@
             </div>
 
             <div class="pt-2 border-t border-slate-100 space-y-1">
-                <a href="{{ route('profile.edit') }}" class="flex items-center gap-2.5 min-h-[44px] px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-50 font-semibold">
-                    <span>Profile</span>
-                </a>
-                <a href="{{ $riwayatPesananUrl }}" class="flex items-center gap-2.5 min-h-[44px] px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-50 font-semibold">
-                    <span>Riwayat Pesanan</span>
-                </a>
+                @include('partials.profile-role-menu', ['branchSlug' => $activeBranchSlug])
                 <div
                     class="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-2"
                     x-data="{ themeMode: window.omniGetTheme ? window.omniGetTheme() : 'light' }"
@@ -1312,7 +1291,7 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 {{ $isSuperAdmin ? 'lg:grid-cols-4' : 'lg:grid-cols-3' }} gap-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 @if($isSuperAdmin)
                     <a
                         href="{{ route('admin.dashboard') }}"
@@ -1336,28 +1315,64 @@
                     </a>
 
                     <a
+                        href="{{ route('admin.apoteker.index', ['client' => $activeBranchSlug]) }}"
+                        class="group p-6 rounded-2xl bg-white border border-slate-200 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-[180px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                    >
+                        <div>
+                            <div class="flex items-center justify-between gap-2 mb-4">
+                                <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors shrink-0">
+                                    @include('partials.profile-role-icon', ['icon' => 'apoteker', 'class' => 'w-5 h-5'])
+                                </div>
+                                <span class="text-xs font-semibold text-slate-600">Audit Farmasi Cabang</span>
+                            </div>
+                            <h3 class="font-bold text-slate-900 text-base group-hover:text-emerald-800 transition-colors">Cek Operasional Apoteker</h3>
+                            <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Periksa kinerja APJ, antrean resep dokter, stok FEFO, serta antrean loket per cabang.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
+                            Cek Apoteker Cabang
+                        </div>
+                    </a>
+
+                    <a
                         href="{{ route('admin.progres.index') }}"
                         class="group p-6 rounded-2xl bg-white border border-slate-200 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-[180px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
                     >
                         <div>
                             <div class="flex items-center justify-between gap-2 mb-4">
                                 <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors shrink-0">
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
+                                    @include('partials.profile-role-icon', ['icon' => 'activity', 'class' => 'w-5 h-5'])
                                 </div>
-                                <span class="text-xs font-semibold text-slate-600">Monitoring Lintas Cabang</span>
+                                <span class="text-xs font-semibold text-slate-600">Monitor Lintas Cabang</span>
                             </div>
                             <h3 class="font-bold text-slate-900 text-base group-hover:text-emerald-800 transition-colors">Live Monitoring Obat Lintas Cabang</h3>
-                            <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Pantau obat yang sedang diracik dan disiapkan di Banyuwangi Kota dan Rogojampi secara langsung.</p>
+                            <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Pantau aliran progres resep dokter, penyiapan obat, dan kendala layanan real-time seluruh cabang.</p>
                         </div>
                         <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
-                            Buka Live Monitoring
+                            Buka Monitoring Obat
                         </div>
                     </a>
 
                     <a
-                        href="{{ route('admin.cabang.staf', ['client' => 'banyuwangi-kota']) }}"
+                        href="{{ route('admin.obat.index') }}"
+                        class="group p-6 rounded-2xl bg-white border border-slate-200 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-[180px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                    >
+                        <div>
+                            <div class="flex items-center justify-between gap-2 mb-4">
+                                <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors shrink-0">
+                                    @include('partials.profile-role-icon', ['icon' => 'medicine', 'class' => 'w-5 h-5'])
+                                </div>
+                                <span class="text-xs font-semibold text-slate-600">CRUD Katalog &amp; Pengaturan</span>
+                            </div>
+                            <h3 class="font-bold text-slate-900 text-base group-hover:text-emerald-800 transition-colors">CRUD Master Obat &amp; Cabang</h3>
+                            <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Tambah, ubah, dan hapus data obat master beserta distribusi stok dan cabang aktif.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
+                            Kelola Obat &amp; Cabang
+                        </div>
+                    </a>
+
+                    <a
+                        href="{{ route('admin.cabang.staf', ['client' => $activeBranchSlug]) }}"
                         class="group p-6 rounded-2xl bg-white border border-slate-200 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-[180px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
                     >
                         <div>

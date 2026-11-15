@@ -347,4 +347,71 @@ class RoleCrudAndKasirPortalTest extends TestCase
         $reportRes->assertOk();
         $reportRes->assertSee('Analitik Penjualan');
     }
+
+    public function test_dashboard_and_profile_adapt_buttons_for_each_role_and_super_admin_can_audit_apoteker(): void
+    {
+        $superAdmin = User::where('email', 'daffa@omnipharma.test')->firstOrFail();
+        $apoteker = User::where('email', 'bambang@omnipharma.test')->firstOrFail();
+        $kasir = User::where('email', 'kasir.bwi@omnipharma.test')->firstOrFail();
+        $pelanggan = User::where('email', 'gunturafandy5@gmail.com')->firstOrFail();
+
+        // 1. Apoteker di /dashboard & /settings/profile melihat tombol arah Apoteker
+        $this->actingAs($apoteker)->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('Dashboard Apoteker')
+            ->assertSee('Telaah Resep Dokter');
+
+        $this->actingAs($apoteker)->get(route('profile.edit'))
+            ->assertOk()
+            ->assertSee('Dashboard Apoteker')
+            ->assertSee('Stok &amp; Batch FEFO', false);
+
+        // 2. Super Admin di /dashboard & /settings/profile melihat CRUD lengkap + Cek Apoteker
+        $this->actingAs($superAdmin)->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('CRUD Cabang &amp; Pengaturan', false)
+            ->assertSee('CRUD Master Obat &amp; Stok', false)
+            ->assertSee('CRUD Staf, Role &amp; Hak Akses', false)
+            ->assertSee('Cek Operasional Apoteker');
+
+        $this->actingAs($superAdmin)->get(route('profile.edit'))
+            ->assertOk()
+            ->assertSee('CRUD Pengaturan Lengkap &amp; Hak Akses', false)
+            ->assertSee('Cek Operasional Apoteker')
+            ->assertSee('Audit Kasir &amp; Ledger Cabang', false);
+
+        // 3. Super Admin dapat membuka /admin/apoteker untuk cek cabang Banyuwangi Kota & Rogojampi
+        $this->actingAs($superAdmin)->get(route('admin.apoteker.index'))
+            ->assertOk()
+            ->assertSee('Cek Operasional Apoteker: Cabang Banyuwangi Kota')
+            ->assertSee('apt. Bambang, S.Farm');
+
+        $this->actingAs($superAdmin)->get(route('admin.apoteker.index', ['client' => 'rogojampi']))
+            ->assertOk()
+            ->assertSee('Cek Operasional Apoteker: Cabang Rogojampi');
+
+        // Role lain tetap ditolak 403 di /admin/apoteker
+        $this->actingAs($apoteker)->get(route('admin.apoteker.index'))->assertForbidden();
+        $this->actingAs($kasir)->get(route('admin.apoteker.index'))->assertForbidden();
+        $this->actingAs($pelanggan)->get(route('admin.apoteker.index'))->assertForbidden();
+
+        // 4. Kasir di /dashboard & /settings/profile menyesuaikan ke POS Loket & Ledger
+        $this->actingAs($kasir)->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('Dashboard Kasir &amp; POS Loket', false)
+            ->assertSee('Buku Ledger Kasir');
+
+        $this->actingAs($kasir)->get(route('profile.edit'))
+            ->assertOk()
+            ->assertSee('Dashboard Kasir &amp; POS Loket', false)
+            ->assertSee('Buku Ledger Kasir');
+
+        // 5. Pelanggan biasa tidak melihat tombol internal portal di /settings/profile
+        $this->actingAs($pelanggan)->get(route('profile.edit'))
+            ->assertOk()
+            ->assertSee('Keranjang Belanja')
+            ->assertDontSee('Executive Dashboard Pusat')
+            ->assertDontSee('Dashboard Apoteker')
+            ->assertDontSee('Dashboard Kasir');
+    }
 }

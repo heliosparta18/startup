@@ -10,6 +10,11 @@
             'active' => request()->routeIs('admin.dashboard'),
         ],
         [
+            'label' => 'Cek Apoteker',
+            'href' => route('admin.apoteker.index'),
+            'active' => request()->routeIs('admin.apoteker.*'),
+        ],
+        [
             'label' => 'Monitoring Obat',
             'href' => route('admin.progres.index'),
             'active' => request()->routeIs('admin.progres.index*'),

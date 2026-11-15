@@ -6,9 +6,12 @@ use App\Models\Obat;
 use App\Models\Pembayaran;
 use App\Models\PeranClientPengguna;
 use App\Models\Pesanan;
+use App\Models\PetaPengawasStaf;
+use App\Models\Resep;
 use App\Models\RingkasanPeriodePenjualan;
 use App\Models\StokClient;
 use App\Modules\Admin\Http\Controllers\StaffController;
+use App\Modules\Catalog\Services\StockFefoService;
 use App\Modules\Reporting\Actions\CloseSalesPeriodAction;
 use App\Modules\Reporting\Services\SalesReportExportService;
 use Illuminate\Http\Request;
@@ -515,3 +518,70 @@ Route::get('/monitoring-progres', function (Request $request) {
         'totalObatDiproses' => $totalObatDiproses,
     ]);
 })->name('progres.index');
+
+/*
+|--------------------------------------------------------------------------
+| Cek & Audit Operasional Apoteker Cabang (Super Admin Supervision)
+|--------------------------------------------------------------------------
+*/
+Route::get('/apoteker/{client?}', function (StockFefoService $fefoService, ?string $client = null) {
+    $clients = Client::orderBy('nama_client')->get();
+    $requestedSlug = $client ?: 'banyuwangi-kota';
+
+    $activeBranch = $clients->first(fn (Client $c) => $c->slug === $requestedSlug || $c->id_client === $requestedSlug)
+        ?? $clients->first();
+
+    if (! $activeBranch) {
+        abort(404, 'Cabang apotek belum tersedia.');
+    }
+
+    $branchSlug = $activeBranch->slug ?? $activeBranch->id_client;
+
+    $staffs = PeranClientPengguna::with('pengguna')
+        ->where('id_client', $activeBranch->id_client)
+        ->orderBy('peran')
+        ->get();
+
+    $supervisions = PetaPengawasStaf::with(['pengawas', 'staf'])
+        ->where('id_client', $activeBranch->id_client)
+        ->get();
+
+    $resepBaseQuery = Resep::query()->whereHas('pesanan', function ($q) use ($activeBranch): void {
+        $q->withoutGlobalScopes()->where('id_client', $activeBranch->id_client);
+    });
+
+    $reseps = (clone $resepBaseQuery)
+        ->with(['pesanan.pengguna', 'pesanan.itemPesanan.obat', 'verifikator'])
+        ->latest('dibuat_pada')
+        ->take(30)
+        ->get();
+
+    $resepMenungguCount = (clone $resepBaseQuery)->where('status_verifikasi', 'menunggu')->count();
+    $resepDisetujuiCount = (clone $resepBaseQuery)->where('status_verifikasi', 'disetujui')->count();
+    $resepDitolakCount = (clone $resepBaseQuery)->where('status_verifikasi', 'ditolak')->count();
+
+    $fefoBatches = $fefoService->getBatchesByFefo($branchSlug);
+    $antreanBerjalan = Cache::get("antrean_berjalan:{$activeBranch->id_client}", 'A-001');
+
+    $branchOrders = Pesanan::withoutGlobalScopes()
+        ->with(['pengguna', 'items'])
+        ->where('id_client', $activeBranch->id_client)
+        ->latest('dibuat_pada')
+        ->take(20)
+        ->get();
+
+    return view('admin.cek-apoteker', [
+        'clients' => $clients,
+        'activeBranch' => $activeBranch,
+        'branchSlug' => $branchSlug,
+        'staffs' => $staffs,
+        'supervisions' => $supervisions,
+        'reseps' => $reseps,
+        'resepMenungguCount' => $resepMenungguCount,
+        'resepDisetujuiCount' => $resepDisetujuiCount,
+        'resepDitolakCount' => $resepDitolakCount,
+        'fefoBatches' => $fefoBatches,
+        'antreanBerjalan' => $antreanBerjalan,
+        'branchOrders' => $branchOrders,
+    ]);
+})->name('apoteker.index');

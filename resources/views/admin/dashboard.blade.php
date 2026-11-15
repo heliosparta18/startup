@@ -78,6 +78,9 @@
                 <a href="{{ route('admin.obat.index') }}" class="inline-flex min-h-[44px] items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition">
                     <span>Kelola Master Obat</span>
                 </a>
+                <a href="{{ route('admin.apoteker.index') }}" class="inline-flex min-h-[44px] items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-emerald-50 text-slate-800 hover:text-emerald-800 font-bold text-xs shadow-2xs transition">
+                    <span>Cek Apoteker</span>
+                </a>
                 <a href="{{ route('admin.progres.index') }}" class="inline-flex min-h-[44px] items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-emerald-50 text-slate-800 hover:text-emerald-800 font-bold text-xs shadow-2xs transition">
                     <span>Monitoring Obat</span>
                 </a>
@@ -219,12 +222,15 @@
                                     </span>
                                 </td>
                                 <td class="p-4 text-right whitespace-nowrap">
-                                    <div class="inline-flex items-center gap-2">
-                                        <a href="{{ route('admin.cabang.staf', ['client' => $branchSlug]) }}" class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold text-[11px] transition">
-                                            Staf
+                                    <div class="inline-flex items-center gap-1.5">
+                                        <a href="{{ route('admin.apoteker.index', ['client' => $branchSlug]) }}" class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold text-[11px] transition">
+                                            Apoteker
                                         </a>
-                                        <a href="{{ route('tenant.laporan.index', ['client' => $branchSlug]) }}" class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold text-[11px] transition">
-                                            Laporan
+                                        <a href="{{ route('admin.cabang.staf', ['client' => $branchSlug]) }}" class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold text-[11px] transition">
+                                            Staf &amp; Akses
+                                        </a>
+                                        <a href="{{ route('admin.cabang.pengaturan', ['client' => $branchSlug]) }}" class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold text-[11px] transition">
+                                            Pengaturan
                                         </a>
                                     </div>
                                 </td>

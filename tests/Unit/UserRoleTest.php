@@ -102,4 +102,48 @@ class UserRoleTest extends TestCase
         $this->assertTrue($superAdmin->hasRole('admin'));
         $this->assertFalse($superAdmin->hasRole('kasir'));
     }
+
+    public function test_profile_actions_adapt_strictly_per_role(): void
+    {
+        $superAdmin = new User(['name' => 'SA', 'email' => 'sa@test.com']);
+        $superAdmin->role = 'super_admin';
+        $superAdmin->status = 'active';
+        $saKeys = array_column($superAdmin->profileActions('rogojampi'), 'key');
+        $this->assertContains('admin-dashboard', $saKeys);
+        $this->assertContains('admin-cabang', $saKeys);
+        $this->assertContains('admin-obat', $saKeys);
+        $this->assertContains('admin-staf', $saKeys);
+        $this->assertContains('admin-cek-apoteker', $saKeys);
+        $this->assertNotContains('kasir-dashboard', $saKeys);
+
+        $apoteker = new User(['name' => 'Apt', 'email' => 'dewi@omnipharma.test']);
+        $apoteker->role = 'apoteker';
+        $apoteker->status = 'active';
+        $aptActions = $apoteker->profileActions('banyuwangi-kota');
+        $aptKeys = array_column($aptActions, 'key');
+        $this->assertContains('apoteker-dashboard', $aptKeys);
+        $this->assertContains('apoteker-resep', $aptKeys);
+        $this->assertContains('apoteker-stok', $aptKeys);
+        $this->assertNotContains('admin-obat', $aptKeys);
+        $this->assertStringContainsString('/cabang/rogojampi/dashboard', $aptActions[0]['href']);
+
+        $stafKasir = new User(['name' => 'Kasir', 'email' => 'kasir@test.com']);
+        $stafKasir->role = 'staf_klien';
+        $stafKasir->status = 'active';
+        $this->assertTrue($stafKasir->hasRole('kasir'));
+        $kasirKeys = array_column($stafKasir->profileActions(), 'key');
+        $this->assertContains('kasir-dashboard', $kasirKeys);
+        $this->assertContains('kasir-ledger', $kasirKeys);
+        $this->assertNotContains('apoteker-dashboard', $kasirKeys);
+
+        $pelanggan = new User(['name' => 'User', 'email' => 'user@test.com']);
+        $pelanggan->role = 'pelanggan';
+        $pelanggan->status = 'active';
+        $custKeys = array_column($pelanggan->profileActions(), 'key');
+        $this->assertContains('pelanggan-katalog', $custKeys);
+        $this->assertContains('pelanggan-riwayat', $custKeys);
+        $this->assertNotContains('admin-dashboard', $custKeys);
+        $this->assertNotContains('apoteker-dashboard', $custKeys);
+        $this->assertNotContains('kasir-dashboard', $custKeys);
+    }
 }
