@@ -22,23 +22,25 @@
         <span>Profile &amp; Akses Akun</span>
     </a>
 
-    @foreach($groupedActions as $sectionKey => $items)
-        <div class="pt-1.5 mt-1 border-t border-slate-100 space-y-0.5">
-            @if(!empty($sectionHeadings[$sectionKey]))
-                <p class="px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
-                    {{ $sectionHeadings[$sectionKey] }}
-                </p>
-            @endif
-            @foreach($items as $action)
-                <a
-                    href="{{ $action['href'] }}"
-                    class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors min-h-[44px] {{ !empty($action['primary']) ? 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100 font-bold' : 'text-slate-800 hover:text-slate-900 hover:bg-slate-100 font-semibold' }}"
-                    role="menuitem"
-                >
-                    @include('partials.profile-role-icon', ['icon' => $action['icon'], 'class' => 'w-4 h-4 text-emerald-700 shrink-0'])
-                    <span class="truncate">{{ $action['label'] }}</span>
-                </a>
-            @endforeach
-        </div>
-    @endforeach
+    <div class="{{ !empty($hideActionsOnMobile) ? 'hidden md:block space-y-1' : 'space-y-1' }}">
+        @foreach($groupedActions as $sectionKey => $items)
+            <div class="pt-1.5 mt-1 border-t border-slate-100 space-y-0.5">
+                @if(!empty($sectionHeadings[$sectionKey]))
+                    <p class="px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
+                        {{ $sectionHeadings[$sectionKey] }}
+                    </p>
+                @endif
+                @foreach($items as $action)
+                    <a
+                        href="{{ $action['href'] }}"
+                        class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors min-h-[44px] {{ !empty($action['primary']) ? 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100 font-bold' : 'text-slate-800 hover:text-slate-900 hover:bg-slate-100 font-semibold' }}"
+                        role="menuitem"
+                    >
+                        @include('partials.profile-role-icon', ['icon' => $action['icon'], 'class' => 'w-4 h-4 text-emerald-700 shrink-0'])
+                        <span class="truncate">{{ $action['label'] }}</span>
+                    </a>
+                @endforeach
+            </div>
+        @endforeach
+    </div>
 </div>

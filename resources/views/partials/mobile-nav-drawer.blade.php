@@ -52,20 +52,8 @@
 
         {{-- Scrollable Body --}}
         <div class="flex-1 overflow-y-auto px-4 py-4 space-y-5 text-xs">
-            {{-- 1. Akun / Akses --}}
-            @auth
-                <div class="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-200/80">
-                    @include('partials.user-avatar', [
-                        'photoUrl' => $photoUrl ?? null,
-                        'userName' => $userName ?? 'Pengguna',
-                        'sizeClass' => 'w-10 h-10 text-sm',
-                    ])
-                    <div class="min-w-0 flex-1">
-                        <p class="font-bold text-slate-900 text-sm truncate">{{ $userName }}</p>
-                        <p class="text-[11px] text-slate-600 truncate">{{ $userEmail }}</p>
-                    </div>
-                </div>
-            @else
+            {{-- 1. Akses Tamu (Pengguna login mengakses Profil, Tema & Keluar dari menu profil kanan atas) --}}
+            @guest
                 <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2.5">
                     <p class="text-[11px] font-semibold text-slate-600 leading-snug">
                         Masuk untuk unggah resep dokter, pantau antrean apotek, dan kelola pesanan.
@@ -87,7 +75,7 @@
                         @endif
                     </div>
                 </div>
-            @endauth
+            @endguest
 
             {{-- 2. Segmented Branch Switcher --}}
             <div class="space-y-1.5">
@@ -207,22 +195,6 @@
                         </span>
                         <span class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-[10px] font-bold shrink-0">Segera</span>
                     </button>
-
-                    @auth
-                        <a
-                            href="{{ route('profile.edit') }}"
-                            @click="mobileNav = false"
-                            class="flex items-center justify-between gap-3 px-3.5 min-h-[46px] text-slate-800 hover:bg-slate-50 font-semibold transition"
-                        >
-                            <span class="flex items-center gap-3 min-w-0">
-                                <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
-                                <span class="truncate">Profil &amp; Akun</span>
-                            </span>
-                            <svg class="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
-                        </a>
-                    @endauth
                 </nav>
             </div>
 
@@ -263,48 +235,35 @@
             @endif
         </div>
 
-        {{-- Sticky Footer: Tema + Logout --}}
-        <div class="border-t border-slate-200 bg-slate-50/80 px-4 py-3 space-y-2.5 shrink-0">
-            <div
-                class="flex items-center justify-between gap-2"
-                x-data="{ themeMode: window.omniGetTheme ? window.omniGetTheme() : 'light' }"
-                @omni-theme-changed.window="themeMode = $event.detail.theme"
-            >
-                <span class="text-xs font-bold text-slate-700">Tampilan Tema</span>
-                <div class="grid grid-cols-2 gap-1 p-0.5 rounded-xl bg-white border border-slate-200">
-                    <button
-                        type="button"
-                        @click="themeMode = window.omniSetTheme('light')"
-                        :class="themeMode === 'light' ? 'bg-emerald-700 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'"
-                        class="min-h-[44px] px-3 rounded-lg text-[11px] font-bold transition cursor-pointer"
-                    >
-                        Putih
-                    </button>
-                    <button
-                        type="button"
-                        @click="themeMode = window.omniSetTheme('dark')"
-                        :class="themeMode === 'dark' ? 'bg-emerald-700 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'"
-                        class="min-h-[44px] px-3 rounded-lg text-[11px] font-bold transition cursor-pointer"
-                    >
-                        Dark
-                    </button>
+        @guest
+            {{-- Sticky Footer (Khusus Tamu karena tidak memiliki dropdown profil di header kanan atas) --}}
+            <div class="border-t border-slate-200 bg-slate-50/80 px-4 py-3 shrink-0">
+                <div
+                    class="flex items-center justify-between gap-2"
+                    x-data="{ themeMode: window.omniGetTheme ? window.omniGetTheme() : 'light' }"
+                    @omni-theme-changed.window="themeMode = $event.detail.theme"
+                >
+                    <span class="text-xs font-bold text-slate-700">Tampilan Tema</span>
+                    <div class="grid grid-cols-2 gap-1 p-0.5 rounded-xl bg-white border border-slate-200">
+                        <button
+                            type="button"
+                            @click="themeMode = window.omniSetTheme('light')"
+                            :class="themeMode === 'light' ? 'bg-emerald-700 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'"
+                            class="min-h-[44px] px-3 rounded-lg text-[11px] font-bold transition cursor-pointer"
+                        >
+                            Putih
+                        </button>
+                        <button
+                            type="button"
+                            @click="themeMode = window.omniSetTheme('dark')"
+                            :class="themeMode === 'dark' ? 'bg-emerald-700 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'"
+                            class="min-h-[44px] px-3 rounded-lg text-[11px] font-bold transition cursor-pointer"
+                        >
+                            Dark
+                        </button>
+                    </div>
                 </div>
             </div>
-
-            @auth
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button
-                        type="submit"
-                        class="w-full flex items-center justify-center gap-2 min-h-[44px] px-3 rounded-xl border border-rose-200 bg-white hover:bg-rose-50 text-rose-700 font-bold text-xs transition cursor-pointer"
-                    >
-                        <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                        </svg>
-                        <span>Keluar dari Akun</span>
-                    </button>
-                </form>
-            @endauth
-        </div>
+        @endguest
     </div>
 </div>

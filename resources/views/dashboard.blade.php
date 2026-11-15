@@ -594,7 +594,7 @@
                         </div>
 
                         <div class="space-y-1.5">
-                            @include('partials.profile-role-menu', ['branchSlug' => $activeBranchSlug])
+                            @include('partials.profile-role-menu', ['branchSlug' => $activeBranchSlug, 'hideActionsOnMobile' => true])
 
                             <div
                                 class="px-3 py-2 rounded-lg bg-slate-50 border border-slate-200/80"
