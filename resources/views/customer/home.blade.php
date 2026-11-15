@@ -92,7 +92,7 @@
                 </div>
                 <button
                     type="submit"
-                    class="inline-flex min-h-[46px] items-center justify-center rounded-2xl bg-emerald-600 hover:bg-emerald-700 px-5 text-xs font-bold text-white shadow-xs transition cursor-pointer shrink-0">
+                    class="inline-flex min-h-[46px] items-center justify-center rounded-2xl bg-emerald-700 hover:bg-emerald-800 px-5 text-xs font-bold text-white shadow-xs transition cursor-pointer shrink-0">
                     Cari Produk
                 </button>
                 <a
@@ -110,7 +110,7 @@
             <div class="w-full flex items-center gap-2 overflow-x-auto pb-1.5 pt-0.5 sm:flex-wrap text-xs font-semibold no-scrollbar [scrollbar-width:none] [&::-webkit-scrollbar]:hidden overscroll-x-contain touch-pan-x">
                 <a
                     href="{{ route('customer.home', ['client' => $client ?? 'banyuwangi-kota', 'q' => $qParam]) }}"
-                    class="{{ $activeKat === 'semua' ? 'bg-emerald-600 text-white border border-emerald-600 shadow-xs' : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 shadow-2xs' }} inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-xl px-4 transition">
+                    class="{{ $activeKat === 'semua' ? 'bg-emerald-700 text-white border border-emerald-700 shadow-xs' : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 shadow-2xs' }} inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-xl px-4 transition">
                     Semua Obat
                 </a>
                 <a
@@ -120,7 +120,7 @@
                 </a>
                 <a
                     href="{{ route('customer.home', ['client' => $client ?? 'banyuwangi-kota', 'kategori' => 'bebas', 'q' => $qParam]) }}"
-                    class="{{ $activeKat === 'bebas' ? 'bg-emerald-600 text-white shadow-xs' : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 shadow-2xs' }} inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-xl px-4 transition">
+                    class="{{ $activeKat === 'bebas' ? 'bg-emerald-700 text-white shadow-xs' : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 shadow-2xs' }} inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-xl px-4 transition">
                     Obat Bebas
                 </a>
                 @if(isset($kategori) && $kategori->isNotEmpty())
@@ -129,7 +129,7 @@
                             @php $katSlugItem = Str::slug($kat->nama_kategori); @endphp
                             <a
                                 href="{{ route('customer.home', ['client' => $client ?? 'banyuwangi-kota', 'kategori' => $katSlugItem, 'q' => $qParam]) }}"
-                                class="{{ $activeKat === $katSlugItem ? 'bg-emerald-600 text-white shadow-xs' : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 shadow-2xs' }} inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-xl px-4 transition">
+                                class="{{ $activeKat === $katSlugItem ? 'bg-emerald-700 text-white shadow-xs' : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 shadow-2xs' }} inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-xl px-4 transition">
                                 {{ $kat->nama_kategori }}
                             </a>
                         @endif
@@ -209,7 +209,7 @@
                         <button
                             type="button"
                             @click="beliLangsung({{ $idJs }}, {{ $namaJs }})"
-                            class="w-full min-h-[44px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 px-4 py-2.5 text-xs font-bold text-white shadow-xs transition cursor-pointer">
+                            class="w-full min-h-[44px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 px-4 py-2.5 text-xs font-bold text-white shadow-xs transition cursor-pointer">
                             <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
@@ -230,11 +230,11 @@
             </div>
         @endif
 
-        <!-- Prescription Upload Modal: Clean White -->
+        <!-- Prescription Upload Modal: Responsive Mobile Bottom Sheet -->
         <div
             x-show="modalUnggah"
             x-cloak
-            class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto"
+            class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto"
             @keydown.escape.window="modalUnggah = false"
             role="dialog"
             aria-modal="true"
@@ -242,15 +242,16 @@
             
             <div
                 @click.outside="modalUnggah = false"
-                class="w-full max-w-lg max-h-[calc(100dvh-1.5rem)] sm:max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-slate-200 space-y-4 my-auto">
+                class="omni-bottom-sheet-panel w-full max-w-lg max-h-[90dvh] sm:max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-t-[20px] sm:rounded-3xl bg-white p-5 sm:p-8 shadow-2xl border border-slate-200 space-y-4 sm:my-auto">
                 
+                <div class="sm:hidden mx-auto w-10 h-1 rounded-full bg-slate-300 -mt-1 mb-2" aria-hidden="true"></div>
                 <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                     <h3 id="modal-resep-title" class="font-extrabold text-base text-slate-900">Unggah Resep Dokter</h3>
                     <button
                         type="button"
                         @click="modalUnggah = false"
                         aria-label="Tutup modal"
-                        class="text-slate-400 hover:text-slate-600 min-h-[44px] min-w-[44px] rounded-xl flex items-center justify-center text-xl font-bold transition">
+                        class="text-slate-500 hover:text-slate-800 min-h-[44px] min-w-[44px] rounded-xl flex items-center justify-center text-xl font-bold transition cursor-pointer">
                         &times;
                     </button>
                 </div>
@@ -340,13 +341,13 @@
                                 <button
                                     type="button"
                                     @click="$refs.fileInput.click()"
-                                    class="min-h-[36px] px-3 py-1 text-xs font-semibold rounded-lg border border-slate-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-slate-700 dark:text-zinc-200 hover:bg-slate-50 transition cursor-pointer">
+                                    class="min-h-[44px] px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-slate-700 dark:text-zinc-200 hover:bg-slate-50 transition cursor-pointer">
                                     Ganti
                                 </button>
                                 <button
                                     type="button"
                                     @click="removeFile()"
-                                    class="min-h-[36px] px-3 py-1 text-xs font-semibold rounded-lg bg-rose-50 text-rose-700 hover:bg-rose-100 dark:bg-rose-950/50 dark:text-rose-300 transition cursor-pointer">
+                                    class="min-h-[44px] px-3 py-1.5 text-xs font-semibold rounded-lg bg-rose-50 text-rose-700 hover:bg-rose-100 dark:bg-rose-950/50 dark:text-rose-300 transition cursor-pointer">
                                     Hapus
                                 </button>
                             </div>
@@ -372,7 +373,7 @@
                         </button>
                         <button
                             type="submit"
-                            class="w-full sm:w-auto min-h-[44px] px-5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition shadow-xs">
+                            class="w-full sm:w-auto min-h-[44px] px-5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold transition shadow-xs">
                             Kirim Resep ke Apoteker
                         </button>
                     </div>

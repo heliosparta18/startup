@@ -14,18 +14,18 @@
                 </p>
             </div>
 
-            <form method="GET" action="{{ url()->current() }}" class="flex flex-wrap items-center gap-2 text-xs">
+            <form method="GET" action="{{ url()->current() }}" class="grid grid-cols-1 sm:flex sm:flex-wrap items-center gap-2 text-xs w-full lg:w-auto">
                 <input type="date" name="periode_mulai" value="{{ $periodeMulai }}"
-                    class="min-h-[42px] px-3 py-2 border border-slate-300 bg-white rounded-xl text-slate-900 focus:border-emerald-600 focus:outline-none">
-                <span class="text-slate-500 font-bold">s/d</span>
+                    class="w-full sm:w-auto min-h-[44px] px-3 py-2 border border-slate-300 bg-white rounded-xl text-slate-900 focus:border-emerald-600 focus:outline-none">
+                <span class="text-slate-500 font-bold text-center sm:text-left">s/d</span>
                 <input type="date" name="periode_selesai" value="{{ $periodeSelesai }}"
-                    class="min-h-[42px] px-3 py-2 border border-slate-300 bg-white rounded-xl text-slate-900 focus:border-emerald-600 focus:outline-none">
+                    class="w-full sm:w-auto min-h-[44px] px-3 py-2 border border-slate-300 bg-white rounded-xl text-slate-900 focus:border-emerald-600 focus:outline-none">
                 <button type="submit"
-                    class="min-h-[42px] px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-xs transition cursor-pointer">
+                    class="w-full sm:w-auto min-h-[44px] px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-bold shadow-xs transition cursor-pointer">
                     Terapkan Filter
                 </button>
                 @if(auth()->user()?->hasRole('super_admin'))
-                    <a href="{{ route('admin.dashboard') }}" class="min-h-[42px] inline-flex items-center px-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold transition">
+                    <a href="{{ route('admin.dashboard') }}" class="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center px-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold transition">
                         &larr; Pusat Admin
                     </a>
                 @endif
@@ -98,7 +98,7 @@
                         <input type="hidden" name="periode_mulai" value="{{ $periodeMulai }}">
                         <input type="hidden" name="periode_selesai" value="{{ $periodeSelesai }}">
                         <button type="submit"
-                            class="min-h-[44px] inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-xs font-bold rounded-xl hover:bg-emerald-700 transition cursor-pointer shadow-xs">
+                            class="min-h-[44px] inline-flex items-center gap-2 px-4 py-2 bg-emerald-700 text-white text-xs font-bold rounded-xl hover:bg-emerald-800 transition cursor-pointer shadow-xs">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                             <span>Tutup &amp; Kunci Periode Buku</span>
                         </button>
@@ -109,11 +109,38 @@
 
         <!-- Tabel Rincian Transaksi -->
         <div class="bg-white rounded-3xl border border-slate-200/90 shadow-xs overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between gap-2">
                 <h2 class="text-sm font-extrabold text-slate-900">Rincian Transaksi Pesanan</h2>
                 <span class="text-xs text-slate-500">Maksimal 100 baris terbaru</span>
             </div>
-            <div class="overflow-x-auto">
+
+            <!-- Mobile Card View: Rincian Transaksi -->
+            <div class="md:hidden divide-y divide-slate-100 text-xs">
+                @forelse($summary['daftar_pesanan'] as $order)
+                    <article class="p-4 space-y-2">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <h3 class="font-bold text-sm text-slate-900">{{ $order->nomor_pesanan }}</h3>
+                                <p class="text-[11px] text-slate-500 mt-0.5">{{ $order->dibuat_pada ? \Carbon\Carbon::parse($order->dibuat_pada)->format('d M Y H:i') : '-' }}</p>
+                            </div>
+                            <span class="shrink-0 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 capitalize">
+                                {{ str_replace('_', ' ', $order->status ?? $order->status_pesanan ?? '-') }}
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between gap-2 pt-1.5 border-t border-slate-100">
+                            <span class="capitalize text-slate-600">{{ str_replace('_', ' ', $order->metode_layanan ?? '-') }}</span>
+                            <span class="font-extrabold text-slate-900">Rp {{ number_format((float) ($order->total_harga ?? 0), 0, ',', '.') }}</span>
+                        </div>
+                    </article>
+                @empty
+                    <div class="px-6 py-10 text-center text-slate-500">
+                        Belum ada transaksi pesanan tercatat pada rentang tanggal ini.
+                    </div>
+                @endforelse
+            </div>
+
+            <!-- Desktop Table View: Rincian Transaksi -->
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left text-xs min-w-[40rem]">
                     <thead class="bg-slate-50 text-slate-700 font-extrabold uppercase border-b border-slate-200">
                         <tr>

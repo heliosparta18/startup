@@ -4,7 +4,7 @@
             <a href="{{ route('kasir.dashboard') }}" class="min-h-[44px] inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 transition">
                 &larr; Kembali ke Kasir
             </a>
-            <button type="button" onclick="window.print()" class="min-h-[44px] inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs cursor-pointer transition">
+            <button type="button" onclick="window.print()" class="min-h-[44px] inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shadow-xs cursor-pointer transition">
                 <span>Cetak Struk</span>
             </button>
         </div>

@@ -15,16 +15,16 @@
 
 <div class="bg-white rounded-2xl border border-slate-200/90 p-2.5 sm:p-3.5 flex flex-col justify-between hover:border-emerald-700/60 hover:shadow-sm transition-all relative min-w-0">
     {{-- Official GoApotik Drug Class SVG Badge (Top Right) --}}
-    <div class="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 z-10" title="{{ $drugBadge['title'] }}">
+    <div class="absolute top-2 right-2 sm:top-3 sm:right-3 z-10" title="{{ $drugBadge['title'] }}">
         <img
             src="{{ $drugBadge['svg_url'] }}"
             alt="{{ $drugBadge['title'] }}"
             title="{{ $drugBadge['title'] }}"
-            class="w-6 h-6 rounded-full object-contain shadow-2xs bg-white"
+            class="w-5 h-5 sm:w-6 sm:h-6 rounded-full object-contain shadow-2xs bg-white"
             loading="lazy"
             onerror="this.style.display='none';this.nextElementSibling.classList.remove('hidden');"
         />
-        <span class="hidden w-6 h-6 rounded-full {{ $isKeras ? 'bg-rose-700 text-white' : 'bg-emerald-700 text-white' }} border border-slate-900 flex items-center justify-center font-extrabold text-[11px]" title="{{ $drugBadge['title'] }}">
+        <span class="hidden w-5 h-5 sm:w-6 sm:h-6 rounded-full {{ $isKeras ? 'bg-rose-700 text-white' : 'bg-emerald-700 text-white' }} border border-slate-900 flex items-center justify-center font-extrabold text-[10px] sm:text-[11px]" title="{{ $drugBadge['title'] }}">
             {{ $drugBadge['label'] }}
         </span>
     </div>
@@ -50,7 +50,7 @@
         </div>
 
         {{-- Product Title --}}
-        <h4 class="text-xs sm:text-sm font-bold text-slate-900 line-clamp-2 min-h-[2.5rem] leading-snug">
+        <h4 class="text-xs sm:text-sm font-bold text-slate-900 line-clamp-2 min-h-[2.125rem] sm:min-h-[2.5rem] leading-snug">
             <a
                 href="{{ \Illuminate\Support\Facades\Route::has('obat.show') ? route('obat.show', ['id' => $obat->slug ?: $obat->id_obat]) : route('customer.obat.detail', ['client' => $client, 'id' => $obat->id_obat]) }}"
                 class="hover:text-emerald-800 hover:underline focus-visible:outline-2 focus-visible:outline-emerald-700 rounded"
@@ -86,7 +86,7 @@
         <div class="flex items-center gap-1.5 sm:gap-2">
             <a
                 href="{{ \Illuminate\Support\Facades\Route::has('obat.show') ? route('obat.show', ['id' => $obat->slug ?: $obat->id_obat]) : route('customer.obat.detail', ['client' => $client, 'id' => $obat->id_obat]) }}"
-                class="flex-1 inline-flex items-center justify-center px-3 py-2 min-h-[40px] sm:min-h-[44px] rounded-xl bg-emerald-50 hover:bg-emerald-700 text-emerald-800 hover:text-white border border-emerald-200 font-bold text-xs transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 cursor-pointer"
+                class="flex-1 inline-flex items-center justify-center px-3 py-2 min-h-[44px] rounded-xl bg-emerald-50 hover:bg-emerald-700 text-emerald-800 hover:text-white border border-emerald-200 font-bold text-xs transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 cursor-pointer"
                 aria-label="Lihat detail {{ $namaObat }}"
             >
                 Detail
@@ -96,7 +96,7 @@
                 <button
                     type="button"
                     @click.prevent="$dispatch('add-to-cart', { id: @js($obat->id_obat), nama: @js($namaObat), client: @js($client), qty: 1 })"
-                    class="inline-flex items-center justify-center gap-1 px-3 py-2 min-h-[40px] sm:min-h-[44px] min-w-[44px] rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs shadow-2xs transition-colors cursor-pointer shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                    class="inline-flex items-center justify-center gap-1 px-3 py-2 min-h-[44px] min-w-[44px] rounded-xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white font-bold text-xs shadow-2xs transition-colors cursor-pointer shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
                     title="Masukkan {{ $namaObat }} ke Keranjang"
                     aria-label="Masukkan {{ $namaObat }} ke Keranjang"
                 >

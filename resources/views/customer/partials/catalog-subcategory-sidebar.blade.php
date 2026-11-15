@@ -56,7 +56,7 @@
             <button
                 type="button"
                 wire:click="selectSubCategory('')"
-                class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs transition-colors cursor-pointer min-h-[44px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 {{ empty($subKategoriAktif) ? 'bg-emerald-600 text-white font-bold shadow-xs' : 'text-slate-800 font-semibold hover:bg-slate-50' }}"
+                class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs transition-colors cursor-pointer min-h-[44px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 {{ empty($subKategoriAktif) ? 'bg-emerald-700 text-white font-bold shadow-xs' : 'text-slate-800 font-semibold hover:bg-slate-50' }}"
                 aria-pressed="{{ empty($subKategoriAktif) ? 'true' : 'false' }}"
             >
                 <span class="flex items-center gap-2.5 min-w-0">
@@ -81,7 +81,7 @@
                 <button
                     type="button"
                     wire:click='selectSubCategory(@json($subkat->nama_subkategori))'
-                    class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs transition-colors cursor-pointer min-h-[44px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 {{ $isSubActive ? 'bg-emerald-600 text-white font-bold shadow-xs' : 'text-slate-800 font-medium hover:bg-slate-50 hover:text-emerald-900' }}"
+                    class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs transition-colors cursor-pointer min-h-[44px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 {{ $isSubActive ? 'bg-emerald-700 text-white font-bold shadow-xs' : 'text-slate-800 font-medium hover:bg-slate-50 hover:text-emerald-900' }}"
                     aria-pressed="{{ $isSubActive ? 'true' : 'false' }}"
                 >
                     <span class="flex items-center gap-2.5 min-w-0">

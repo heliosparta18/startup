@@ -69,7 +69,7 @@
             </div>
 
             <div class="shrink-0 flex flex-wrap items-center gap-2.5">
-                <a href="{{ route('tenant.antrean.index', ['client' => $client]) }}" class="inline-flex min-h-[44px] items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition">
+                <a href="{{ route('tenant.antrean.index', ['client' => $client]) }}" class="inline-flex min-h-[44px] items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-xs transition">
                     <span>Antrean: {{ $antreanBerjalan ?? 'A-001' }}</span>
                     <span>&rarr;</span>
                 </a>
@@ -134,7 +134,7 @@
                                 class="inline-flex items-center rounded-xl border px-3 py-1 text-xs font-bold">
                             </span>
                         @endif
-                        <a href="{{ route('tenant.resep.antrean', ['client' => $client]) }}" class="text-xs font-bold text-emerald-700 hover:text-emerald-800 underline">
+                        <a href="{{ route('tenant.resep.antrean', ['client' => $client]) }}" class="inline-flex items-center min-h-[44px] px-1 text-xs font-bold text-emerald-700 hover:text-emerald-800 underline">
                             Semua Resep &rarr;
                         </a>
                     </div>
@@ -201,7 +201,7 @@
 
                     <div class="space-y-2 text-xs">
                         <label for="catatan-apoteker" class="block font-bold text-slate-700">Catatan Verifikasi Apoteker:</label>
-                        <input id="catatan-apoteker" type="text" x-model="catatanApoteker" class="w-full min-h-[42px] rounded-xl border border-slate-300 bg-white px-3 text-xs text-slate-900 focus:border-emerald-600 focus:outline-none">
+                        <input id="catatan-apoteker" type="text" x-model="catatanApoteker" class="w-full min-h-[44px] rounded-xl border border-slate-300 bg-white px-3 text-xs text-slate-900 focus:border-emerald-600 focus:outline-none">
                     </div>
 
                     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">
@@ -209,14 +209,14 @@
                             type="button"
                             @click="verifikasi('disetujui')"
                             :disabled="sedangProses || statusVerifikasi === 'disetujui'"
-                            class="flex-1 min-h-[44px] inline-flex items-center justify-center rounded-xl bg-emerald-600 px-4 text-xs font-bold text-white shadow-xs hover:bg-emerald-700 disabled:opacity-50 transition cursor-pointer">
+                            class="flex-1 min-h-[44px] inline-flex items-center justify-center rounded-xl bg-emerald-700 px-4 text-xs font-bold text-white shadow-xs hover:bg-emerald-800 disabled:opacity-50 transition cursor-pointer">
                             Setujui Resep
                         </button>
                         <button
                             type="button"
                             @click="verifikasi('ditolak')"
                             :disabled="sedangProses || statusVerifikasi === 'ditolak'"
-                            class="flex-1 min-h-[44px] inline-flex items-center justify-center rounded-xl bg-rose-600 px-4 text-xs font-bold text-white shadow-xs hover:bg-rose-700 disabled:opacity-50 transition cursor-pointer">
+                            class="flex-1 min-h-[44px] inline-flex items-center justify-center rounded-xl bg-rose-700 px-4 text-xs font-bold text-white shadow-xs hover:bg-rose-800 disabled:opacity-50 transition cursor-pointer">
                             Tolak Resep
                         </button>
                     </div>
@@ -229,7 +229,7 @@
                         </div>
                         <p class="text-sm font-extrabold text-slate-900">Semua Resep Sudah Ditelaah</p>
                         <p class="text-xs text-slate-500 max-w-xs mx-auto">Tidak ada resep dokter berstatus menunggu verifikasi untuk cabang ini.</p>
-                        <a href="{{ route('tenant.resep.antrean', ['client' => $client]) }}" class="inline-flex min-h-[40px] items-center justify-center px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-bold text-slate-700 transition">
+                        <a href="{{ route('tenant.resep.antrean', ['client' => $client]) }}" class="inline-flex min-h-[44px] items-center justify-center px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-bold text-slate-700 transition">
                             Buka Halaman Telaah Resep
                         </a>
                     </div>
@@ -249,7 +249,7 @@
                         <span class="text-xs font-bold uppercase tracking-wider text-amber-700">Manajemen Inventori Batch</span>
                         <h2 class="text-lg font-extrabold text-slate-900">Peringatan Batch Kedaluwarsa (FEFO)</h2>
                     </div>
-                    <a href="{{ route('tenant.stok.fefo', ['client' => $client]) }}" class="text-xs font-bold text-emerald-700 hover:text-emerald-800 underline">
+                    <a href="{{ route('tenant.stok.fefo', ['client' => $client]) }}" class="inline-flex items-center min-h-[44px] px-1 text-xs font-bold text-emerald-700 hover:text-emerald-800 underline">
                         Kelola Stok FEFO &rarr;
                     </a>
                 </div>
@@ -297,7 +297,7 @@
                                         {{ (int) $batch->jumlah_stok }} unit
                                     </td>
                                     <td class="p-3 text-right">
-                                        <span class="inline-flex items-center rounded-lg px-2.5 py-1 text-[11px] font-extrabold {{ $index === 0 ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200' }}">
+                                        <span class="inline-flex items-center rounded-lg px-2.5 py-1 text-[11px] font-extrabold {{ $index === 0 ? 'bg-emerald-700 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200' }}">
                                             #{{ $index + 1 }} FEFO
                                         </span>
                                     </td>
@@ -330,17 +330,79 @@
                     <div>
                         <div class="flex items-center gap-2">
                             <span class="text-xs font-bold uppercase tracking-wider text-emerald-800">Antrean Berjalan:</span>
-                            <span class="px-2.5 py-0.5 rounded-lg bg-emerald-600 text-white font-mono font-black text-xs">{{ $antreanBerjalan ?? 'A-001' }}</span>
+                            <span class="px-2.5 py-0.5 rounded-lg bg-emerald-700 text-white font-mono font-black text-xs">{{ $antreanBerjalan ?? 'A-001' }}</span>
                         </div>
                         <h2 class="text-lg font-extrabold text-slate-900 mt-0.5">Pesanan Aktif &amp; Kontrol Progresi Status</h2>
                     </div>
                 </div>
-                <a href="{{ route('tenant.antrean.index', ['client' => $client]) }}" class="inline-flex min-h-[44px] items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-2xs transition">
+                <a href="{{ route('tenant.antrean.index', ['client' => $client]) }}" class="inline-flex min-h-[44px] items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-2xs transition">
                     <span>Kelola Antrean &amp; Walk-In &rarr;</span>
                 </a>
             </div>
 
-            <div class="overflow-x-auto rounded-2xl border border-slate-200">
+            {{-- Mobile Card List --}}
+            <div class="md:hidden space-y-3">
+                @forelse($pesanansAktif ?? [] as $activeOrder)
+                    @php $curStatus = $activeOrder->status ?? $activeOrder->status_pesanan ?? 'diproses'; @endphp
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 space-y-3 text-xs">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200 font-mono font-bold text-[11px]">
+                                    {{ $activeOrder->nomor_antrean ?? 'A-001' }}
+                                </span>
+                                <div class="font-bold text-slate-900 mt-1">{{ $activeOrder->nomor_pesanan }}</div>
+                                <div class="text-[11px] text-slate-600">{{ $activeOrder->pengguna->nama_lengkap ?? 'Pasien Umum' }}</div>
+                            </div>
+                            <div class="shrink-0 text-right space-y-1">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold {{ $curStatus === 'selesai' ? 'bg-emerald-700 text-white' : ($curStatus === 'menunggu_verifikasi' ? 'bg-amber-50 text-amber-900 border border-amber-200' : 'bg-emerald-50 text-emerald-800 border border-emerald-200') }}">
+                                    {{ str_replace('_', ' ', $curStatus) }}
+                                </span>
+                                <div class="text-[11px] font-semibold text-slate-600">{{ $activeOrder->slot_waktu ?? 'Segera' }}</div>
+                            </div>
+                        </div>
+                        <div class="text-[11px] text-slate-700 space-y-0.5">
+                            @foreach($activeOrder->items->take(2) as $item)
+                                <div class="truncate">{{ $item->nama_obat }} ({{ $item->kuantitas }}x)</div>
+                            @endforeach
+                        </div>
+                        <div class="pt-2 border-t border-slate-200/80">
+                            @if($curStatus === 'menunggu_verifikasi')
+                                <a href="{{ route('tenant.resep.antrean', ['client' => $client]) }}" class="w-full min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-xs transition">
+                                    Telaah Resep
+                                </a>
+                            @else
+                                <form action="{{ route('tenant.pesanan.progres-status', ['client' => $client, 'id' => $activeOrder->id_pesanan]) }}" method="POST">
+                                    @csrf
+                                    @if($curStatus === 'menunggu_pembayaran')
+                                        <input type="hidden" name="status" value="diproses">
+                                        <button type="submit" class="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-emerald-600/50 bg-emerald-50 text-emerald-900 hover:bg-emerald-100 font-bold text-xs transition cursor-pointer">
+                                            Mulai Proses
+                                        </button>
+                                    @elseif($curStatus === 'diproses')
+                                        <input type="hidden" name="status" value="siap_diambil">
+                                        <button type="submit" class="w-full min-h-[44px] px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-xs transition cursor-pointer">
+                                            Tandai Siap Ambil
+                                        </button>
+                                    @elseif($curStatus === 'siap_diambil')
+                                        <input type="hidden" name="status" value="selesai">
+                                        <button type="submit" class="w-full min-h-[44px] px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition cursor-pointer">
+                                            Selesaikan
+                                        </button>
+                                    @else
+                                        <span class="block text-center text-xs text-emerald-800 font-extrabold py-1">Tuntas</span>
+                                    @endif
+                                </form>
+                            @endif
+                        </div>
+                    </div>
+                @empty
+                    <div class="rounded-2xl border border-dashed border-slate-300 p-6 text-center text-xs text-slate-500">
+                        Belum ada pesanan aktif yang sedang diproses di cabang ini.
+                    </div>
+                @endforelse
+            </div>
+
+            <div class="hidden md:block overflow-x-auto rounded-2xl border border-slate-200">
                 <table class="w-full text-left text-xs min-w-[48rem]">
                     <thead class="bg-slate-50 text-slate-700 font-extrabold uppercase border-b border-slate-200">
                         <tr>
@@ -387,7 +449,7 @@
                                             Siap Diambil
                                         </span>
                                     @elseif($curStatus === 'selesai')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-600 text-white">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-700 text-white">
                                             Selesai
                                         </span>
                                     @else
@@ -396,7 +458,7 @@
                                 </td>
                                 <td class="p-3.5 text-right">
                                     @if($curStatus === 'menunggu_verifikasi')
-                                        <a href="{{ route('tenant.resep.antrean', ['client' => $client]) }}" class="min-h-[42px] px-3.5 py-2 inline-flex items-center justify-center rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-xs transition">
+                                        <a href="{{ route('tenant.resep.antrean', ['client' => $client]) }}" class="min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-xs transition">
                                             Telaah Resep
                                         </a>
                                     @else
@@ -404,17 +466,17 @@
                                             @csrf
                                             @if($curStatus === 'menunggu_pembayaran')
                                                 <input type="hidden" name="status" value="diproses">
-                                                <button type="submit" class="min-h-[42px] px-3.5 py-2 rounded-xl border border-emerald-600/50 bg-emerald-50 text-emerald-900 hover:bg-emerald-100 font-bold text-xs transition cursor-pointer">
+                                                <button type="submit" class="min-h-[44px] px-3.5 py-2 rounded-xl border border-emerald-600/50 bg-emerald-50 text-emerald-900 hover:bg-emerald-100 font-bold text-xs transition cursor-pointer">
                                                     Mulai Proses
                                                 </button>
                                             @elseif($curStatus === 'diproses')
                                                 <input type="hidden" name="status" value="siap_diambil">
-                                                <button type="submit" class="min-h-[42px] px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition cursor-pointer">
+                                                <button type="submit" class="min-h-[44px] px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-xs transition cursor-pointer">
                                                     Tandai Siap Ambil
                                                 </button>
                                             @elseif($curStatus === 'siap_diambil')
                                                 <input type="hidden" name="status" value="selesai">
-                                                <button type="submit" class="min-h-[42px] px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition cursor-pointer">
+                                                <button type="submit" class="min-h-[44px] px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition cursor-pointer">
                                                     Selesaikan
                                                 </button>
                                             @else
@@ -426,7 +488,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="p-6 text-center text-slate-400">Belum ada pesanan aktif yang sedang diproses di cabang ini.</td>
+                                <td colspan="6" class="p-6 text-center text-slate-500">Belum ada pesanan aktif yang sedang diproses di cabang ini.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -436,13 +498,14 @@
 
         @if ($resepPending)
             <!-- Modal Perbesar Resep -->
-            <div x-show="modalResepBesar" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-xs">
-                <div @click.away="modalResepBesar = false" class="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-white p-5 sm:p-8 shadow-2xl border border-slate-200 space-y-4">
+            <div x-show="modalResepBesar" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-950/60 p-0 sm:p-4 backdrop-blur-xs">
+                <div @click.away="modalResepBesar = false" class="omni-bottom-sheet-panel w-full max-w-2xl max-h-[90dvh] overflow-y-auto rounded-t-[20px] sm:rounded-3xl bg-white p-5 sm:p-8 shadow-2xl border border-slate-200 space-y-4">
+                    <div class="sm:hidden mx-auto w-10 h-1 rounded-full bg-slate-300 -mt-1 mb-1" aria-hidden="true"></div>
                     <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                         <h3 class="text-sm sm:text-base font-bold text-slate-900">
                             Pratinjau Resep Dokter : {{ $resepPending->pesanan->nomor_pesanan ?? 'Resep Masuk' }}
                         </h3>
-                        <button type="button" @click="modalResepBesar = false" class="min-h-[44px] min-w-[44px] inline-flex items-center justify-center text-slate-400 hover:text-slate-800 rounded-xl cursor-pointer">&times;</button>
+                        <button type="button" @click="modalResepBesar = false" class="min-h-[44px] min-w-[44px] inline-flex items-center justify-center text-slate-500 hover:text-slate-800 rounded-xl cursor-pointer">&times;</button>
                     </div>
                     @if ($hasValidResepImage)
                         <div class="flex max-h-[60vh] items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 p-2">
@@ -454,7 +517,7 @@
                         </div>
                     @endif
                     <div class="flex justify-end pt-2 border-t border-slate-100">
-                        <button type="button" @click="modalResepBesar = false" class="min-h-[44px] inline-flex items-center justify-center rounded-xl bg-emerald-600 hover:bg-emerald-700 px-5 text-xs font-bold text-white cursor-pointer">
+                        <button type="button" @click="modalResepBesar = false" class="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center rounded-xl bg-emerald-700 hover:bg-emerald-800 px-5 text-xs font-bold text-white cursor-pointer">
                             Tutup Pratinjau
                         </button>
                     </div>

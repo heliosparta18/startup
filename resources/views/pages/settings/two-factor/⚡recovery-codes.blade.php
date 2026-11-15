@@ -120,7 +120,7 @@ new class extends Component {
                             <div
                                 role="listitem"
                                 class="select-text"
-                                wire:loading.class="opacity-50 animate-pulse"
+                                wire:loading.class="opacity-50"
                             >
                                 {{ $code }}
                             </div>

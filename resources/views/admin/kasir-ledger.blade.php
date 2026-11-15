@@ -87,7 +87,7 @@
                 </select>
             </div>
             <div class="flex items-center gap-2">
-                <button type="submit" class="flex-1 min-h-[44px] rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-xs cursor-pointer transition">
+                <button type="submit" class="flex-1 min-h-[44px] rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold shadow-xs cursor-pointer transition">
                     Terapkan Filter
                 </button>
                 <a href="{{ route('admin.kasir.ledger') }}" class="min-h-[44px] inline-flex items-center px-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold transition">
@@ -103,12 +103,58 @@
                     <h2 class="text-base font-extrabold text-slate-900">Mutasi Pembayaran Transaksi Terkini</h2>
                     <p class="text-xs text-slate-500 mt-0.5">Rekam jejak pembayaran melalui webhook QRIS maupun pelunasan loket kasir</p>
                 </div>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 self-start sm:self-auto">
                     {{ $pembayarans->count() }} Data Pembayaran
                 </span>
             </div>
 
-            <div class="overflow-x-auto rounded-2xl border border-slate-200">
+            <!-- Mobile Card View: Mutasi Pembayaran -->
+            <div class="md:hidden space-y-3">
+                @forelse ($pembayarans as $bayar)
+                    <article class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 space-y-2.5 text-xs">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <span class="font-mono text-[11px] text-slate-500">{{ substr($bayar->id_pembayaran, 0, 8) }}...</span>
+                                <h3 class="font-bold text-sm text-slate-900">{{ $bayar->pesanan->nomor_pesanan ?? '#ORD-REGULER' }}</h3>
+                                <p class="text-[11px] text-slate-600">{{ $bayar->pesanan->client->nama_client ?? 'Cabang Apotek' }} &bull; {{ $bayar->pesanan->pengguna->nama_lengkap ?? 'Pasien Walk-in' }}</p>
+                            </div>
+                            @if ($bayar->status === 'lunas')
+                                <span class="shrink-0 inline-flex items-center text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+                                    Lunas
+                                </span>
+                            @elseif ($bayar->status === 'ditolak')
+                                <span class="shrink-0 inline-flex items-center text-[11px] font-bold text-rose-800 bg-rose-50 border border-rose-200 px-2.5 py-0.5 rounded-full">
+                                    Ditolak
+                                </span>
+                            @else
+                                <span class="shrink-0 inline-flex items-center text-[11px] font-bold text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full">
+                                    Menunggu
+                                </span>
+                            @endif
+                        </div>
+
+                        <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-200/70">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase bg-emerald-50 text-emerald-900 border border-emerald-200">
+                                {{ $bayar->metode_pembayaran ?? 'qris' }}
+                            </span>
+                            <span class="font-black text-sm text-slate-900">
+                                Rp {{ number_format((float) ($bayar->jumlah ?? 0), 0, ',', '.') }}
+                            </span>
+                        </div>
+
+                        <p class="text-[11px] text-slate-500 text-right">
+                            {{ $bayar->dibuat_pada ? \Carbon\Carbon::parse($bayar->dibuat_pada)->format('d M Y, H:i') : '-' }}
+                        </p>
+                    </article>
+                @empty
+                    <div class="rounded-2xl border border-slate-200 p-8 text-center text-xs text-slate-500">
+                        Belum ada data mutasi pembayaran pada filter yang dipilih.
+                    </div>
+                @endforelse
+            </div>
+
+            <!-- Desktop Table View: Mutasi Pembayaran -->
+            <div class="hidden md:block overflow-x-auto rounded-2xl border border-slate-200">
                 <table class="w-full text-left text-xs min-w-[52rem]">
                     <thead class="bg-slate-50 text-slate-700 font-extrabold uppercase border-b border-slate-200">
                         <tr>
@@ -157,7 +203,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="p-8 text-center text-slate-400">Belum ada data mutasi pembayaran pada filter yang dipilih.</td>
+                                <td colspan="7" class="p-8 text-center text-slate-500">Belum ada data mutasi pembayaran pada filter yang dipilih.</td>
                             </tr>
                         @endforelse
                     </tbody>

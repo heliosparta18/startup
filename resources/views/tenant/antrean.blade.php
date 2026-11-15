@@ -17,7 +17,7 @@
         statusBadgeClass(st) {
             if (st === 'diproses') return 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-200';
             if (st === 'siap_diambil') return 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-950 border border-emerald-300';
-            if (st === 'selesai') return 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-600 text-white';
+            if (st === 'selesai') return 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-700 text-white';
             if (st === 'menunggu_pembayaran') return 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200';
             return 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200';
         },
@@ -61,7 +61,7 @@
                 <button
                     type="button"
                     @click="modalWalkin = true"
-                    class="inline-flex min-h-[44px] items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs shadow-xs transition cursor-pointer">
+                    class="inline-flex min-h-[44px] items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white font-bold text-xs shadow-xs transition cursor-pointer">
                     <span>Tambah Antrean Walk-In</span>
                 </button>
                 <a href="{{ route('tenant.dashboard', ['client' => $client]) }}" class="inline-flex min-h-[44px] items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-2xs transition">
@@ -88,7 +88,7 @@
                 <button
                     type="button"
                     @click="modalManualAntrean = true"
-                    class="inline-flex min-h-[44px] items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition cursor-pointer">
+                    class="inline-flex min-h-[44px] items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-xs transition cursor-pointer">
                     <span>Antrean Aktif: <strong class="text-sm" x-text="nomorManual"></strong></span>
                 </button>
             </div>
@@ -115,7 +115,7 @@
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 <!-- Left: Info Antrean Berjalan Saat Ini -->
                 <div class="flex items-center gap-4 sm:gap-6">
-                    <div class="h-20 w-20 sm:h-24 sm:w-24 rounded-3xl bg-emerald-600 text-white flex flex-col items-center justify-center border border-emerald-700 shadow-xs shrink-0">
+                    <div class="h-20 w-20 sm:h-24 sm:w-24 rounded-3xl bg-emerald-700 text-white flex flex-col items-center justify-center border border-emerald-800 shadow-xs shrink-0">
                         <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-100">Sedang Dipanggil</span>
                         <span class="text-2xl sm:text-3xl font-black tracking-tight">{{ $antreanBerjalan }}</span>
                     </div>
@@ -142,7 +142,7 @@
                         <input type="hidden" name="action" value="panggil_berikutnya">
                         <button
                             type="submit"
-                            class="min-h-[44px] inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs shadow-xs transition cursor-pointer">
+                            class="min-h-[44px] inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white font-bold text-xs shadow-xs transition cursor-pointer">
                             <span>Panggil Berikutnya (+1)</span>
                         </button>
                     </form>
@@ -173,7 +173,102 @@
                 </div>
             </div>
 
-            <div class="overflow-x-auto rounded-2xl border border-slate-200">
+            {{-- Mobile Card List --}}
+            <div class="md:hidden space-y-3">
+                @forelse($pesanans as $order)
+                    @php
+                        $status = $order->status ?? 'menunggu_pembayaran';
+                    @endphp
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 space-y-3 text-xs" x-data="{ get st() { return rowStatuses['{{ $order->id_pesanan }}'] ?? '{{ $status }}'; } }">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-xl font-black text-xs shrink-0 {{ $order->nomor_antrean === $antreanBerjalan ? 'bg-emerald-700 text-white' : 'bg-slate-200/80 text-slate-800' }}">
+                                    {{ $order->nomor_antrean ?? 'A-'.substr($order->nomor_pesanan, -3) }}
+                                </span>
+                                <div class="min-w-0">
+                                    <div class="font-bold text-slate-900 truncate">{{ $order->nomor_pesanan }}</div>
+                                    <div class="text-[11px] text-slate-500">{{ $order->created_at ? $order->created_at->format('H:i') : '-' }} WIB</div>
+                                </div>
+                            </div>
+                            <span :class="statusBadgeClass(st)" x-text="statusBadgeText(st)"></span>
+                        </div>
+
+                        <div class="space-y-1">
+                            <div class="font-bold text-slate-900">{{ $order->pengguna->nama_lengkap ?? 'Pasien Umum' }}</div>
+                            <div class="text-[11px] text-slate-500">{{ $order->pengguna->telepon_email ?? '-' }}</div>
+                            @if ($order->metode_layanan === 'delivery')
+                                <div class="pt-1 flex flex-wrap items-center gap-2">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-sky-50 text-sky-700 border border-sky-200">
+                                        Kurir ({{ $order->jarak_km ?? 2 }} km)
+                                    </span>
+                                    @if ($order->maps_route_url)
+                                        <a href="{{ $order->maps_route_url }}" target="_blank" rel="noopener noreferrer" class="min-h-[44px] inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-[11px] font-bold transition shadow-xs">
+                                            Buka Rute Maps
+                                        </a>
+                                    @endif
+                                </div>
+                            @else
+                                <div class="text-[11px] font-semibold text-slate-700">Slot: {{ $order->slot_waktu ?? '15 Menit Lagi' }}</div>
+                            @endif
+                        </div>
+
+                        <div class="space-y-1 bg-white rounded-xl p-2.5 border border-slate-200/80">
+                            @foreach($order->items->take(2) as $item)
+                                <div class="text-xs text-slate-800 truncate font-semibold">&bull; {{ $item->nama_obat }} ({{ $item->kuantitas }}x)</div>
+                            @endforeach
+                            @if($order->items->count() > 2)
+                                <div class="text-[10px] text-emerald-700 font-bold">+{{ $order->items->count() - 2 }} obat lainnya</div>
+                            @endif
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-200/80">
+                            <button
+                                x-show="st === 'menunggu_pembayaran'"
+                                x-cloak
+                                type="button"
+                                @click="updateStatus('{{ $order->id_pesanan }}', 'diproses')"
+                                :disabled="loadingId === '{{ $order->id_pesanan }}'"
+                                class="flex-1 min-h-[44px] px-3.5 py-2 rounded-xl border border-emerald-600/50 bg-emerald-50 text-emerald-900 hover:bg-emerald-100 font-bold text-xs transition cursor-pointer disabled:opacity-50">
+                                Mulai Proses
+                            </button>
+                            <button
+                                x-show="st === 'diproses'"
+                                x-cloak
+                                type="button"
+                                @click="updateStatus('{{ $order->id_pesanan }}', 'siap_diambil')"
+                                :disabled="loadingId === '{{ $order->id_pesanan }}'"
+                                class="flex-1 min-h-[44px] px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-xs transition cursor-pointer disabled:opacity-50">
+                                Tandai Siap Ambil
+                            </button>
+                            <button
+                                x-show="st === 'siap_diambil'"
+                                x-cloak
+                                type="button"
+                                @click="updateStatus('{{ $order->id_pesanan }}', 'selesai')"
+                                :disabled="loadingId === '{{ $order->id_pesanan }}'"
+                                class="flex-1 min-h-[44px] px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition cursor-pointer disabled:opacity-50">
+                                Selesaikan Penyerahan
+                            </button>
+                            <span x-show="st === 'selesai'" x-cloak class="text-xs text-emerald-800 font-extrabold py-1">Transaksi Tuntas</span>
+                            <button
+                                x-show="st !== 'selesai' && st !== 'dibatalkan'"
+                                x-cloak
+                                type="button"
+                                @click="if(confirm('Batalkan pesanan ini?')) updateStatus('{{ $order->id_pesanan }}', 'dibatalkan')"
+                                :disabled="loadingId === '{{ $order->id_pesanan }}'"
+                                class="min-h-[44px] px-3 py-2 rounded-xl border border-rose-200 text-rose-700 hover:bg-rose-50 text-xs font-bold transition cursor-pointer disabled:opacity-50">
+                                Batalkan
+                            </button>
+                        </div>
+                    </div>
+                @empty
+                    <div class="rounded-2xl border border-dashed border-slate-300 p-8 text-center text-xs text-slate-500 font-semibold">
+                        Belum ada transaksi atau antrean masuk di cabang ini hari ini.
+                    </div>
+                @endforelse
+            </div>
+
+            <div class="hidden md:block overflow-x-auto rounded-2xl border border-slate-200">
                 <table class="w-full text-left text-xs min-w-[50rem]">
                     <thead class="bg-slate-50 text-slate-700 font-extrabold uppercase border-b border-slate-200">
                         <tr>
@@ -193,18 +288,18 @@
                             <tr class="hover:bg-slate-50/80 transition">
                                 <td class="p-3.5">
                                     <div class="flex items-center gap-2">
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-xl font-black text-xs {{ $order->nomor_antrean === $antreanBerjalan ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-800' }}">
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-xl font-black text-xs {{ $order->nomor_antrean === $antreanBerjalan ? 'bg-emerald-700 text-white' : 'bg-slate-100 text-slate-800' }}">
                                             {{ $order->nomor_antrean ?? 'A-'.substr($order->nomor_pesanan, -3) }}
                                         </span>
                                         <div>
                                             <div class="font-bold text-slate-900">{{ $order->nomor_pesanan }}</div>
-                                            <div class="text-[11px] text-slate-400">{{ $order->created_at ? $order->created_at->format('H:i') : '-' }} WIB</div>
+                                            <div class="text-[11px] text-slate-500">{{ $order->created_at ? $order->created_at->format('H:i') : '-' }} WIB</div>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="p-3.5">
                                     <div class="font-bold text-slate-900">{{ $order->pengguna->nama_lengkap ?? 'Pasien Umum' }}</div>
-                                    <div class="text-[11px] text-slate-400">{{ $order->pengguna->telepon_email ?? '-' }}</div>
+                                    <div class="text-[11px] text-slate-500">{{ $order->pengguna->telepon_email ?? '-' }}</div>
                                 </td>
                                 <td class="p-3.5">
                                     @if ($order->metode_layanan === 'delivery')
@@ -222,7 +317,7 @@
                                                     href="{{ $order->maps_route_url }}"
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#059669] hover:bg-[#047857] text-white text-[11px] font-bold transition shadow-xs"
+                                                    class="min-h-[44px] inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-[11px] font-bold transition shadow-xs"
                                                 >
                                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
@@ -279,7 +374,7 @@
                                             type="button"
                                             @click="updateStatus('{{ $order->id_pesanan }}', 'siap_diambil')"
                                             :disabled="loadingId === '{{ $order->id_pesanan }}'"
-                                            class="min-h-[44px] px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs shadow-xs transition cursor-pointer disabled:opacity-50">
+                                            class="min-h-[44px] px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white font-bold text-xs shadow-xs transition cursor-pointer disabled:opacity-50">
                                             Tandai Siap Ambil
                                         </button>
                                         <button
@@ -317,41 +412,43 @@
         </div>
 
         <!-- MODAL 1: Tambah Antrean Walk-In (Pasien Datang Langsung) -->
-        <div x-show="modalWalkin" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-            <div @click.outside="modalWalkin = false" class="w-full max-w-md rounded-3xl bg-white border border-slate-200 p-6 sm:p-8 shadow-2xl space-y-4">
+        <div x-show="modalWalkin" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-xs">
+            <div @click.outside="modalWalkin = false" class="omni-bottom-sheet-panel w-full max-w-md max-h-[90dvh] overflow-y-auto rounded-t-[20px] sm:rounded-3xl bg-white border border-slate-200 p-5 sm:p-8 shadow-2xl space-y-4">
+                <div class="sm:hidden mx-auto w-10 h-1 rounded-full bg-slate-300 -mt-1 mb-1" aria-hidden="true"></div>
                 <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                     <div>
                         <h3 class="text-lg font-black text-slate-900">Tambah Antrean Walk-In</h3>
                         <p class="text-xs text-slate-500">Penerbitan tiket antrean pasien datang langsung di apotek</p>
                     </div>
-                    <button @click="modalWalkin = false" class="text-slate-400 hover:text-slate-600 text-xl font-bold min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl">&times;</button>
+                    <button @click="modalWalkin = false" class="text-slate-500 hover:text-slate-800 text-xl font-bold min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl cursor-pointer">&times;</button>
                 </div>
 
                 <form action="{{ route('tenant.antrean.walkin', ['client' => $client]) }}" method="POST" class="space-y-4">
                     @csrf
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">Nama Pasien / Tamu</label>
-                        <input type="text" name="nama_pasien" required placeholder="Contoh: Ny. Sri Wahyuni" class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-xs text-slate-900 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 focus:outline-none">
+                        <input type="text" name="nama_pasien" required placeholder="Contoh: Ny. Sri Wahyuni" class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-xs text-slate-900 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-700 focus:outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">Catatan Obat / Keluhan</label>
-                        <textarea name="catatan" rows="2" placeholder="Contoh: Pembelian obat batuk sirup langsung di kasir" class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-xs text-slate-900 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 focus:outline-none"></textarea>
+                        <textarea name="catatan" rows="2" placeholder="Contoh: Pembelian obat batuk sirup langsung di kasir" class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-xs text-slate-900 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-700 focus:outline-none"></textarea>
                     </div>
 
-                    <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
-                        <button type="button" @click="modalWalkin = false" class="min-h-[44px] px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50">Batal</button>
-                        <button type="submit" class="min-h-[44px] px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs">Cetak &amp; Terbitkan Tiket</button>
+                    <div class="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3 pt-3 border-t border-slate-100">
+                        <button type="button" @click="modalWalkin = false" class="min-h-[44px] px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 cursor-pointer">Batal</button>
+                        <button type="submit" class="min-h-[44px] px-5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-xs cursor-pointer">Cetak &amp; Terbitkan Tiket</button>
                     </div>
                 </form>
             </div>
         </div>
 
         <!-- MODAL 2: Atur Nomor Antrean Berjalan Manual -->
-        <div x-show="modalManualAntrean" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-            <div @click.outside="modalManualAntrean = false" class="w-full max-w-sm rounded-3xl bg-white border border-slate-200 p-6 sm:p-8 shadow-2xl space-y-4">
+        <div x-show="modalManualAntrean" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-xs">
+            <div @click.outside="modalManualAntrean = false" class="omni-bottom-sheet-panel w-full max-w-sm max-h-[85dvh] overflow-y-auto rounded-t-[20px] sm:rounded-3xl bg-white border border-slate-200 p-5 sm:p-8 shadow-2xl space-y-4">
+                <div class="sm:hidden mx-auto w-10 h-1 rounded-full bg-slate-300 -mt-1 mb-1" aria-hidden="true"></div>
                 <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                     <h3 class="text-base font-black text-slate-900">Atur Nomor Antrean Berjalan</h3>
-                    <button @click="modalManualAntrean = false" class="text-slate-400 hover:text-slate-600 text-xl font-bold min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl">&times;</button>
+                    <button @click="modalManualAntrean = false" class="text-slate-500 hover:text-slate-800 text-xl font-bold min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl cursor-pointer">&times;</button>
                 </div>
 
                 <form action="{{ route('tenant.antrean.update', ['client' => $client]) }}" method="POST" class="space-y-4">
@@ -359,12 +456,12 @@
                     <input type="hidden" name="action" value="set_nomor">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">Nomor Antrean Aktif</label>
-                        <input type="text" name="nomor_antrean" value="{{ $antreanBerjalan }}" placeholder="Contoh: A-005" required class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-base font-mono font-bold focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 focus:outline-none text-center text-slate-900">
+                        <input type="text" name="nomor_antrean" value="{{ $antreanBerjalan }}" placeholder="Contoh: A-005" required class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-base font-mono font-bold focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-700 focus:outline-none text-center text-slate-900">
                     </div>
 
-                    <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
-                        <button type="button" @click="modalManualAntrean = false" class="min-h-[44px] px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50">Batal</button>
-                        <button type="submit" class="min-h-[44px] px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs">Simpan Nomor</button>
+                    <div class="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3 pt-3 border-t border-slate-100">
+                        <button type="button" @click="modalManualAntrean = false" class="min-h-[44px] px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 cursor-pointer">Batal</button>
+                        <button type="submit" class="min-h-[44px] px-5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-xs cursor-pointer">Simpan Nomor</button>
                     </div>
                 </form>
             </div>

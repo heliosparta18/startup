@@ -228,9 +228,9 @@
     </div>
     <!-- Top Navigation Header -->
     <header class="sticky top-0 z-30 bg-white border-b border-slate-200 shadow-2xs">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2 sm:gap-4">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-1.5 sm:gap-4">
             <!-- Mobile Hamburger & Brand Logo -->
-            <div class="flex items-center gap-2 sm:gap-2.5 min-w-0">
+            <div class="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
                 <button
                     type="button"
                     @click="mobileNav = !mobileNav"
@@ -245,16 +245,16 @@
 
                 <a
                     href="{{ route('dashboard') }}"
-                    class="flex items-center gap-2 sm:gap-2.5 min-h-[44px] py-1 min-w-0 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                    class="flex items-center gap-1.5 sm:gap-2.5 min-h-[44px] py-1 min-w-0 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
                     aria-label="OmniPharma Dashboard Utama"
                 >
                     <span class="sr-only">Dashboard Utama</span>
-                    <img src="/logo.png" alt="OmniPharma Logo" class="h-8 w-8 sm:h-9 sm:w-9 object-contain shrink-0">
+                    <img src="/logo.png" alt="OmniPharma Logo" class="h-7 w-7 sm:h-9 sm:w-9 object-contain shrink-0">
                     <div class="min-w-0">
                         <div class="flex items-center gap-1.5 sm:gap-2 min-w-0">
-                            <span class="block text-sm sm:text-lg font-extrabold text-slate-900 tracking-tight leading-none truncate">OmniPharma</span>
+                            <span class="block text-sm sm:text-lg font-extrabold text-slate-900 tracking-tight leading-none whitespace-nowrap">OmniPharma</span>
                         </div>
-                        <span class="block text-[10px] sm:text-[11px] font-medium text-slate-600 leading-tight truncate mt-0.5 max-w-[140px] sm:max-w-[230px]">
+                        <span class="hidden sm:block text-[11px] font-medium text-slate-600 leading-tight truncate mt-0.5 max-w-[230px]">
                             Portal Farmasi Resmi Terverifikasi
                         </span>
                     </div>
@@ -330,7 +330,7 @@
                         <button
                             type="button"
                             @click="goToCatalogSearch()"
-                            class="inline-flex items-center justify-center px-3 py-2 min-h-[44px] rounded-lg bg-emerald-600 text-white text-xs font-bold cursor-pointer hover:bg-emerald-700"
+                            class="inline-flex items-center justify-center px-3 py-2 min-h-[44px] rounded-lg bg-emerald-700 text-white text-xs font-bold cursor-pointer hover:bg-emerald-800"
                         >
                             Cari di Katalog Utama
                         </button>
@@ -339,7 +339,7 @@
                         <button
                             type="button"
                             @click="goToCatalogSearch()"
-                            class="w-full flex items-center justify-center px-3 py-2 min-h-[44px] rounded-lg bg-emerald-600 text-white text-xs font-bold cursor-pointer hover:bg-emerald-700"
+                            class="w-full flex items-center justify-center px-3 py-2 min-h-[44px] rounded-lg bg-emerald-700 text-white text-xs font-bold cursor-pointer hover:bg-emerald-800"
                         >
                             Tampilkan Semua Hasil di Katalog
                         </button>
@@ -347,12 +347,12 @@
                 </div>
             </div>
 
-            <!-- Right Actions: Chat Konsultasi (Coming Soon), Keranjang & Account Menu -->
+            <!-- Right Actions: Chat Konsultasi (Desktop/Tablet), Keranjang & Account Menu -->
             <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
                 <button
                     type="button"
                     @click="triggerChatComingSoon()"
-                    class="relative inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white hover:bg-emerald-50 hover:border-emerald-300 text-slate-700 hover:text-emerald-900 transition shadow-2xs min-h-[44px] min-w-[44px] px-2.5 py-2 shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                    class="hidden md:inline-flex relative items-center justify-center rounded-xl border border-slate-200 bg-white hover:bg-emerald-50 hover:border-emerald-300 text-slate-700 hover:text-emerald-900 transition shadow-2xs min-h-[44px] min-w-[44px] px-2.5 py-2 shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
                     title="Konsultasi Apoteker (Coming Soon)"
                     aria-label="Konsultasi Apoteker (Coming Soon)"
                 >
@@ -377,7 +377,7 @@
                         x-cloak
                         x-text="cartCount > 99 ? '99+' : cartCount"
                         :class="cartBounce ? 'scale-125' : 'scale-100'"
-                        class="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 rounded-full bg-emerald-600 text-white text-[10px] font-black leading-none flex items-center justify-center border-2 border-white shadow-xs transition-transform duration-200"
+                        class="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 rounded-full bg-emerald-700 text-white text-[10px] font-black leading-none flex items-center justify-center border-2 border-white shadow-xs transition-transform duration-200"
                     >{{ $initialCartCount > 99 ? '99+' : $initialCartCount }}</span>
                 </a>
 
@@ -392,13 +392,11 @@
                             aria-haspopup="true"
                             aria-label="Menu Pengguna"
                         >
-                            @if($photoUrl)
-                                <img src="{{ $photoUrl }}" alt="Foto Profil {{ $userName }}" class="w-7 h-7 rounded-full object-cover shrink-0 border border-slate-300">
-                            @else
-                                <div class="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0">
-                                    {{ strtoupper(substr($userName, 0, 2)) }}
-                                </div>
-                            @endif
+                            @include('partials.user-avatar', [
+                                'photoUrl' => $photoUrl,
+                                'userName' => $userName,
+                                'sizeClass' => 'w-7 h-7 text-xs',
+                            ])
                             <div class="hidden sm:flex flex-col text-left leading-none">
                                 <span class="font-bold text-slate-900 text-xs truncate max-w-[120px]">{{ $userName }}</span>
                             </div>
@@ -452,8 +450,8 @@
                                         <button
                                             type="button"
                                             @click="themeMode = window.omniSetTheme('light')"
-                                            :class="themeMode === 'light' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'"
-                                            class="min-h-[34px] px-2.5 py-1.5 rounded-lg border text-[11px] font-bold flex items-center justify-center gap-1.5 transition cursor-pointer"
+                                            :class="themeMode === 'light' ? 'bg-emerald-700 text-white border-emerald-700' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'"
+                                            class="min-h-[44px] px-2.5 py-1.5 rounded-lg border text-[11px] font-bold flex items-center justify-center gap-1.5 transition cursor-pointer"
                                         >
                                             <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                                             <span>Putih</span>
@@ -461,8 +459,8 @@
                                         <button
                                             type="button"
                                             @click="themeMode = window.omniSetTheme('dark')"
-                                            :class="themeMode === 'dark' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'"
-                                            class="min-h-[34px] px-2.5 py-1.5 rounded-lg border text-[11px] font-bold flex items-center justify-center gap-1.5 transition cursor-pointer"
+                                            :class="themeMode === 'dark' ? 'bg-emerald-700 text-white border-emerald-700' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'"
+                                            class="min-h-[44px] px-2.5 py-1.5 rounded-lg border text-[11px] font-bold flex items-center justify-center gap-1.5 transition cursor-pointer"
                                         >
                                             <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
                                             <span>Dark</span>
@@ -490,7 +488,7 @@
                 @else
                     <a
                         href="{{ route('login') }}"
-                        class="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl bg-emerald-600 px-3.5 sm:px-4 py-2 text-xs font-bold text-white hover:bg-emerald-700 transition shadow-xs shrink-0"
+                        class="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl bg-emerald-700 px-3 sm:px-4 py-2 text-xs font-bold text-white hover:bg-emerald-800 transition shadow-xs shrink-0"
                         title="Masuk ke Akun"
                     >
                         <span>Masuk</span>
@@ -499,12 +497,13 @@
             </div>
         </div>
 
-        <!-- Mobile Search Row (< md) -->
-        <div
-            class="md:hidden border-t border-slate-200 bg-white px-4 py-2.5 relative"
-            @click.outside="searchDropdownOpen = false"
-            @keydown.escape.stop="searchDropdownOpen = false"
-        >
+        @if (! request()->routeIs('katalog', 'customer.catalog'))
+            <!-- Mobile Search Row (< md) -->
+            <div
+                class="md:hidden border-t border-slate-100 bg-slate-50/50 px-3 py-2 relative"
+                @click.outside="searchDropdownOpen = false"
+                @keydown.escape.stop="searchDropdownOpen = false"
+            >
             <div class="relative w-full">
                 <label for="mobile-customer-layout-search" class="sr-only">Cari obat atau suplemen</label>
                 <div class="pointer-events-none absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500">
@@ -559,121 +558,24 @@
                 </template>
                 <div x-show="!searchLoading && !searchError && searchResults.length === 0" class="p-3 text-center space-y-2">
                     <p class="text-xs text-slate-700">Tidak ada hasil cepat untuk kata kunci ini.</p>
-                    <button type="button" @click="goToCatalogSearch()" class="inline-flex items-center justify-center px-3 py-2 min-h-[44px] rounded-lg bg-emerald-600 text-white text-xs font-bold cursor-pointer hover:bg-emerald-700">
+                    <button type="button" @click="goToCatalogSearch()" class="inline-flex items-center justify-center px-3 py-2 min-h-[44px] rounded-lg bg-emerald-700 text-white text-xs font-bold cursor-pointer hover:bg-emerald-800">
                         Cari di Katalog Utama
                     </button>
                 </div>
             </div>
         </div>
-
-        <!-- Mobile Drawer Menu (< md) -->
-        <div
-            x-show="mobileNav"
-            x-cloak
-            @click.outside="mobileNav = false"
-            class="md:hidden border-t border-slate-200 bg-white px-4 py-3 space-y-2 text-xs font-medium"
-        >
-            @auth
-                <div class="px-3 py-2 bg-slate-50 rounded-xl border border-slate-200/80">
-                    <p class="font-bold text-slate-900 truncate">{{ $userName }}</p>
-                    <p class="text-[11px] text-slate-600 truncate">{{ $userEmail }}</p>
-                </div>
-            @endauth
-
-            <button
-                type="button"
-                @click="triggerChatComingSoon(); mobileNav = false"
-                class="w-full flex items-center justify-between gap-2.5 min-h-[44px] px-3 py-2 rounded-xl bg-emerald-50 text-emerald-900 font-bold border border-emerald-200 cursor-pointer text-left"
-            >
-                <span class="flex items-center gap-2.5">
-                    <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
-                    <span>Chat Konsultasi Apoteker</span>
-                </span>
-                <span class="px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300 text-[10px] font-extrabold leading-none">Coming Soon</span>
-            </button>
-
-            <a href="{{ $keranjangUrl }}" class="flex items-center justify-between gap-2.5 min-h-[44px] px-3 py-2 rounded-xl text-slate-800 hover:bg-slate-50 font-bold">
-                <span class="flex items-center gap-2.5">
-                    <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
-                    <span>Keranjang Belanja</span>
-                </span>
-                <span x-show="cartCount > 0" x-cloak x-text="cartCount > 99 ? '99+' : cartCount" class="px-2 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-extrabold leading-none"></span>
-            </a>
-
-            <a href="{{ $resepFormUrl }}" class="flex items-center gap-2.5 min-h-[44px] px-3 py-2 rounded-xl text-slate-800 hover:bg-slate-50 font-bold">
-                <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                <span>Unggah Resep Dokter</span>
-            </a>
-
-            <div class="pt-2 border-t border-slate-100 space-y-1">
-                <p class="px-3 text-[11px] font-bold uppercase tracking-wide text-slate-500">Pilih Cabang Aktif</p>
-                <form method="POST" action="{{ route('branch.switch') }}">
-                    @csrf
-                    <input type="hidden" name="branch" value="banyuwangi-kota">
-                    <button type="submit" class="w-full flex items-center justify-between px-3 py-2 min-h-[44px] rounded-xl text-left cursor-pointer {{ $activeBranchSlug === 'banyuwangi-kota' ? 'bg-emerald-600 text-white font-bold' : 'text-slate-700 hover:bg-slate-50 font-semibold' }}">
-                        <span>Cabang Banyuwangi Kota</span>
-                        @if($activeBranchSlug === 'banyuwangi-kota')
-                            <span aria-hidden="true">&#10003;</span>
-                        @endif
-                    </button>
-                </form>
-                <form method="POST" action="{{ route('branch.switch') }}">
-                    @csrf
-                    <input type="hidden" name="branch" value="rogojampi">
-                    <button type="submit" class="w-full flex items-center justify-between px-3 py-2 min-h-[44px] rounded-xl text-left cursor-pointer {{ $activeBranchSlug === 'rogojampi' ? 'bg-emerald-600 text-white font-bold' : 'text-slate-700 hover:bg-slate-50 font-semibold' }}">
-                        <span>Cabang Rogojampi</span>
-                        @if($activeBranchSlug === 'rogojampi')
-                            <span aria-hidden="true">&#10003;</span>
-                        @endif
-                    </button>
-                </form>
-            </div>
-
-            <div class="pt-2 border-t border-slate-100 space-y-1">
-                @auth
-                    <a href="{{ route('profile.edit') }}" class="flex items-center gap-2.5 min-h-[44px] px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-50 font-semibold">
-                        <span>Profile</span>
-                    </a>
-                    <a href="{{ $riwayatPesananUrl }}" class="flex items-center gap-2.5 min-h-[44px] px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-50 font-semibold">
-                        <span>Riwayat Pesanan</span>
-                    </a>
-                    <div
-                        class="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-2"
-                        x-data="{ themeMode: window.omniGetTheme ? window.omniGetTheme() : 'light' }"
-                        @omni-theme-changed.window="themeMode = $event.detail.theme"
-                    >
-                        <span class="text-xs font-bold text-slate-700">Tema</span>
-                        <div class="flex items-center gap-1.5">
-                            <button type="button" @click="themeMode = window.omniSetTheme('light')" :class="themeMode === 'light' ? 'bg-emerald-600 text-white' : 'bg-white text-slate-700 border border-slate-200'" class="px-2.5 py-1 rounded-lg text-[11px] font-bold cursor-pointer">Putih</button>
-                            <button type="button" @click="themeMode = window.omniSetTheme('dark')" :class="themeMode === 'dark' ? 'bg-emerald-600 text-white' : 'bg-white text-slate-700 border border-slate-200'" class="px-2.5 py-1 rounded-lg text-[11px] font-bold cursor-pointer">Dark</button>
-                        </div>
-                    </div>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="w-full flex items-center gap-2.5 min-h-[44px] px-3 py-2 rounded-xl text-rose-700 hover:bg-rose-50 font-bold text-left cursor-pointer">
-                            <span>Keluar dari Akun</span>
-                        </button>
-                    </form>
-                @else
-                    <a href="{{ $riwayatPesananUrl }}" class="flex items-center gap-2.5 min-h-[44px] px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-50 font-semibold">
-                        <span>Riwayat Pesanan</span>
-                    </a>
-                    <a href="{{ route('login') }}" class="flex items-center justify-center min-h-[44px] px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold">
-                        <span>Masuk ke Akun</span>
-                    </a>
-                @endauth
-            </div>
-        </div>
+        @endif
 
         <!-- Operational Sub-bar: Regulatory Scope & Interactive Branch Switcher -->
-        <div class="bg-slate-50 border-t border-slate-200 px-4 sm:px-6 lg:px-8 py-2 text-xs">
+        <div class="bg-slate-50 border-t border-slate-200 px-3 sm:px-6 lg:px-8 py-1.5 sm:py-2 text-xs">
             <div class="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-3">
                 <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-slate-700 min-w-0">
                     <span class="hidden sm:inline font-semibold text-slate-800 truncate">
                         Standar Permenkes RI No. 73/2016
                     </span>
-                    <span class="sm:hidden font-semibold text-slate-700 truncate">
-                        Apotek Resmi Terverifikasi
+                    <span class="sm:hidden inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-700 whitespace-nowrap shrink-0">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-700 shrink-0" aria-hidden="true"></span>
+                        <span>Resmi BPOM</span>
                     </span>
                     <span class="text-slate-400 hidden md:inline" aria-hidden="true">|</span>
                     <a href="{{ route('dashboard') }}" class="hidden md:inline font-semibold text-emerald-800 hover:underline py-1">
@@ -689,7 +591,7 @@
                     <button
                         type="button"
                         @click="branchMenuOpen = !branchMenuOpen"
-                        class="flex items-center gap-1.5 sm:gap-2 bg-white border border-slate-300 shadow-2xs rounded-xl px-2.5 sm:px-3 py-1.5 font-bold text-slate-900 hover:border-emerald-700 transition-colors cursor-pointer min-h-[44px] max-w-[210px] sm:max-w-none"
+                        class="flex items-center gap-1.5 sm:gap-2 bg-white border border-slate-300 shadow-2xs rounded-xl px-2.5 sm:px-3 py-1.5 font-bold text-slate-900 hover:border-emerald-700 transition-colors cursor-pointer min-h-[44px]"
                         :aria-expanded="branchMenuOpen"
                         aria-haspopup="true"
                     >
@@ -697,7 +599,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
-                        <span class="text-xs truncate">{{ $activeBranchName }}</span>
+                        <span class="text-[11px] sm:text-xs whitespace-nowrap">{{ $activeBranchName }}</span>
                         <svg class="w-3.5 h-3.5 text-slate-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </button>
 
@@ -712,7 +614,7 @@
                             <input type="hidden" name="branch" value="banyuwangi-kota">
                             <button
                                 type="submit"
-                                class="w-full flex items-center justify-between px-3 py-2 min-h-[44px] rounded-lg text-left transition-colors cursor-pointer {{ $activeBranchSlug === 'banyuwangi-kota' ? 'bg-emerald-600 text-white font-bold' : 'hover:bg-slate-100 text-slate-800 font-medium' }}"
+                                class="w-full flex items-center justify-between px-3 py-2 min-h-[44px] rounded-lg text-left transition-colors cursor-pointer {{ $activeBranchSlug === 'banyuwangi-kota' ? 'bg-emerald-700 text-white font-bold' : 'hover:bg-slate-100 text-slate-800 font-medium' }}"
                             >
                                 <span>Cabang Banyuwangi Kota</span>
                                 @if($activeBranchSlug === 'banyuwangi-kota')
@@ -725,7 +627,7 @@
                             <input type="hidden" name="branch" value="rogojampi">
                             <button
                                 type="submit"
-                                class="w-full flex items-center justify-between px-3 py-2 min-h-[44px] rounded-lg text-left transition-colors cursor-pointer {{ $activeBranchSlug === 'rogojampi' ? 'bg-emerald-600 text-white font-bold' : 'hover:bg-slate-100 text-slate-800 font-medium' }}"
+                                class="w-full flex items-center justify-between px-3 py-2 min-h-[44px] rounded-lg text-left transition-colors cursor-pointer {{ $activeBranchSlug === 'rogojampi' ? 'bg-emerald-700 text-white font-bold' : 'hover:bg-slate-100 text-slate-800 font-medium' }}"
                             >
                                 <span>Cabang Rogojampi</span>
                                 @if($activeBranchSlug === 'rogojampi')
@@ -738,6 +640,11 @@
             </div>
         </div>
     </header>
+
+    @include('partials.mobile-nav-drawer', [
+        'isInternalStaff' => ($isSuperAdmin ?? false) || ($isApoteker ?? false) || ($isKasir ?? false),
+        'inDashboard' => false,
+    ])
 
     <!-- Main Body -->
     @if ($fullWidth ?? false)

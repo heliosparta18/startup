@@ -28,7 +28,7 @@
                     <span>{{ session('success') }}</span>
                 </div>
                 @if(session('struk_id'))
-                    <a href="{{ route('kasir.struk', ['id' => session('struk_id')]) }}" class="inline-flex min-h-[38px] items-center justify-center px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition shrink-0">
+                    <a href="{{ route('kasir.struk', ['id' => session('struk_id')]) }}" class="inline-flex min-h-[44px] items-center justify-center px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-xs transition shrink-0">
                         Cetak Struk Pembayaran
                     </a>
                 @endif
@@ -153,7 +153,7 @@
                             x-model="searchQuery"
                             @input="onSearchInput()"
                             placeholder="Ketik nama obat (mis. Paracetamol, Amoxicillin)..."
-                            class="mb-2 w-full min-h-[40px] rounded-xl border border-slate-300 bg-white px-3 text-xs text-slate-900 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600"
+                            class="mb-2 w-full min-h-[44px] rounded-xl border border-slate-300 bg-white px-3 text-xs text-slate-900 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600"
                         >
                         <select id="pos-obat" name="id_obat" x-model="selectedObat" x-effect="if (items.length && !items.some(i => i.id === selectedObat)) { selectedObat = items[0].id; } $nextTick(() => { $el.value = selectedObat; })" required class="w-full min-h-[44px] rounded-xl border border-slate-300 bg-white px-3 text-xs sm:text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600">
                             <template x-for="item in items" :key="item.id">
@@ -201,7 +201,7 @@
                     <button
                         type="submit"
                         @if($stokObat->isEmpty()) disabled @endif
-                        class="w-full min-h-[46px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold text-xs sm:text-sm shadow-xs transition cursor-pointer"
+                        class="w-full min-h-[46px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 text-white font-bold text-xs sm:text-sm shadow-xs transition cursor-pointer"
                     >
                         <span>Proses Pembayaran &amp; Buat Struk</span>
                     </button>
@@ -243,20 +243,20 @@
                             </div>
 
                             <div class="flex flex-wrap items-center gap-2 shrink-0">
-                                <form method="POST" action="{{ route('kasir.pesanan.lunasi', ['id' => $order->id_pesanan]) }}" class="flex items-center gap-2">
+                                <form method="POST" action="{{ route('kasir.pesanan.lunasi', ['id' => $order->id_pesanan]) }}" class="flex flex-wrap items-center gap-2">
                                     @csrf
-                                    <select name="metode_pembayaran" aria-label="Metode bayar" class="min-h-[40px] rounded-xl border border-slate-300 bg-white px-2.5 text-xs font-semibold text-slate-800">
+                                    <select name="metode_pembayaran" aria-label="Metode bayar" class="min-h-[44px] rounded-xl border border-slate-300 bg-white px-2.5 text-xs font-semibold text-slate-800">
                                         <option value="tunai">Tunai</option>
                                         <option value="qris">QRIS</option>
                                     </select>
-                                    <button type="submit" class="min-h-[40px] px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition cursor-pointer">
+                                    <button type="submit" class="min-h-[44px] px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shadow-xs transition cursor-pointer">
                                         Terima Bayar
                                     </button>
                                 </form>
 
                                 <form method="POST" action="{{ route('kasir.pesanan.batalkan', ['id' => $order->id_pesanan]) }}" onsubmit="return confirm('Batalkan pesanan ini dan kembalikan stok ke cabang?')">
                                     @csrf
-                                    <button type="submit" class="min-h-[40px] px-3 py-2 rounded-xl border border-rose-200 bg-white hover:bg-rose-50 text-rose-700 text-xs font-bold transition cursor-pointer">
+                                    <button type="submit" class="min-h-[44px] px-3 py-2 rounded-xl border border-rose-200 bg-white hover:bg-rose-50 text-rose-700 text-xs font-bold transition cursor-pointer">
                                         Batalkan
                                     </button>
                                 </form>
@@ -272,16 +272,50 @@
         </div>
 
         <!-- Riwayat Pembayaran Cabang -->
-        <div class="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-4">
+        <div class="rounded-3xl border border-slate-200/90 bg-white p-5 sm:p-6 shadow-xs space-y-4">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
                 <div>
                     <h2 class="text-base font-extrabold text-slate-900">Riwayat Pembayaran Terbaru</h2>
                     <p class="text-xs text-slate-500 mt-0.5">Rekam transaksi pembayaran terbaru pada cabang aktif.</p>
                 </div>
-                <a href="{{ route('kasir.ledger') }}" class="text-xs font-bold text-emerald-700 hover:underline">Lihat Buku Ledger Lengkap &rarr;</a>
+                <a href="{{ route('kasir.ledger') }}" class="inline-flex min-h-[44px] items-center text-xs font-bold text-emerald-700 hover:underline">Lihat Buku Ledger Lengkap &rarr;</a>
             </div>
 
-            <div class="overflow-x-auto rounded-2xl border border-slate-200">
+            {{-- Mobile Card List --}}
+            <div class="md:hidden space-y-3">
+                @forelse($recentPayments as $pay)
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 space-y-3 text-xs">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <div class="font-mono font-bold text-slate-900">{{ $pay->pesanan->nomor_pesanan ?? '-' }}</div>
+                                <div class="text-[11px] text-slate-500">{{ $pay->dibuat_pada ? $pay->dibuat_pada->format('d M Y H:i') : '-' }}</div>
+                            </div>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold shrink-0 {{ $pay->status === 'lunas' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-amber-50 text-amber-800 border border-amber-200' }}">
+                                {{ strtoupper($pay->status) }}
+                            </span>
+                        </div>
+                        <div class="space-y-0.5">
+                            <div class="font-bold text-slate-900">{{ $pay->pesanan->nama_pembeli ?? 'Pelanggan' }}</div>
+                            <div class="text-[11px] text-slate-600 line-clamp-2">{{ $pay->pesanan?->items?->map(fn ($i) => $i->nama_obat.' x'.$i->kuantitas)->implode(', ') ?: '-' }}</div>
+                        </div>
+                        <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-200/80">
+                            <div>
+                                <span class="text-[10px] font-bold uppercase text-slate-500 mr-1">{{ strtoupper($pay->metode_pembayaran) }}</span>
+                                <span class="font-black text-sm text-slate-900">Rp {{ number_format((float) $pay->jumlah, 0, ',', '.') }}</span>
+                            </div>
+                            <a href="{{ route('kasir.struk', ['id' => $pay->id_pembayaran]) }}" class="min-h-[44px] inline-flex items-center px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-emerald-50 text-slate-800 hover:text-emerald-800 font-bold transition">
+                                Struk
+                            </a>
+                        </div>
+                    </div>
+                @empty
+                    <div class="rounded-2xl border border-dashed border-slate-300 p-6 text-center text-xs text-slate-500">
+                        Belum ada riwayat pembayaran di cabang ini.
+                    </div>
+                @endforelse
+            </div>
+
+            <div class="hidden md:block overflow-x-auto rounded-2xl border border-slate-200">
                 <table class="w-full text-left text-xs min-w-[44rem]">
                     <thead class="bg-slate-100 text-slate-700 font-extrabold uppercase border-b border-slate-200">
                         <tr>
@@ -298,7 +332,7 @@
                             <tr class="hover:bg-slate-50/80 transition">
                                 <td class="p-3.5 font-mono font-bold text-slate-900">
                                     {{ $pay->pesanan->nomor_pesanan ?? '-' }}
-                                    <div class="text-[10px] font-normal text-slate-400">{{ $pay->dibuat_pada ? $pay->dibuat_pada->format('d M Y H:i') : '-' }}</div>
+                                    <div class="text-[10px] font-normal text-slate-500">{{ $pay->dibuat_pada ? $pay->dibuat_pada->format('d M Y H:i') : '-' }}</div>
                                 </td>
                                 <td class="p-3.5">
                                     <div class="font-bold text-slate-900">{{ $pay->pesanan->nama_pembeli ?? 'Pelanggan' }}</div>
@@ -312,14 +346,14 @@
                                     </span>
                                 </td>
                                 <td class="p-3.5 text-right">
-                                    <a href="{{ route('kasir.struk', ['id' => $pay->id_pembayaran]) }}" class="inline-flex items-center px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold transition">
+                                    <a href="{{ route('kasir.struk', ['id' => $pay->id_pembayaran]) }}" class="min-h-[44px] inline-flex items-center px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold transition">
                                         Struk
                                     </a>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="p-8 text-center text-slate-400">Belum ada riwayat pembayaran di cabang ini.</td>
+                                <td colspan="6" class="p-8 text-center text-slate-500">Belum ada riwayat pembayaran di cabang ini.</td>
                             </tr>
                         @endforelse
                     </tbody>

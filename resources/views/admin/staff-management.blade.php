@@ -8,7 +8,7 @@
                 <span class="text-slate-900 font-bold">Manajemen Staf &amp; Supervisi APJ</span>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-                <button type="button" @click="showCreateStaff = !showCreateStaff" class="min-h-[44px] inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition cursor-pointer">
+                <button type="button" @click="showCreateStaff = !showCreateStaff" class="min-h-[44px] inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shadow-xs transition cursor-pointer">
                     <span x-text="showCreateStaff ? 'Tutup Form Akun' : '+ Buat Akun Staf Baru'"></span>
                 </button>
                 <a href="{{ route('admin.dashboard') }}" class="min-h-[44px] inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-2xs transition">
@@ -42,7 +42,7 @@
                         @foreach($clients as $c)
                             @php $cSlug = $c->slug ?? $c->id_client; @endphp
                             <a href="{{ route('admin.cabang.staf', ['client' => $cSlug]) }}"
-                               class="px-3 py-1.5 rounded-xl text-xs font-bold transition {{ ($client === $cSlug || $clientModel->id_client === $c->id_client) ? 'bg-emerald-600 text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
+                               class="min-h-[44px] inline-flex items-center px-3.5 py-2 rounded-xl text-xs font-bold transition {{ ($client === $cSlug || $clientModel->id_client === $c->id_client) ? 'bg-emerald-700 text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
                                 {{ $c->nama_client }}
                             </a>
                         @endforeach
@@ -111,7 +111,7 @@
                     </select>
                 </div>
                 <div class="flex items-end gap-2">
-                    <button type="submit" class="w-full min-h-[44px] rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-xs cursor-pointer">
+                    <button type="submit" class="w-full min-h-[44px] rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold shadow-xs cursor-pointer">
                         Buat Akun &amp; Tugaskan
                     </button>
                 </div>
@@ -124,7 +124,7 @@
             <div class="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs flex flex-col justify-between">
                 <div>
                     <div class="flex items-center gap-3 pb-4 border-b border-slate-100">
-                        <div class="h-10 w-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-black text-sm shadow-xs shrink-0">
+                        <div class="h-10 w-10 rounded-2xl bg-emerald-700 text-white flex items-center justify-center font-black text-sm shadow-xs shrink-0">
                             1
                         </div>
                         <div>
@@ -158,7 +158,7 @@
                         </div>
 
                         <div class="pt-2">
-                            <button type="submit" class="w-full min-h-[46px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition cursor-pointer">
+                            <button type="submit" class="w-full min-h-[46px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-xs transition cursor-pointer">
                                 <span>Simpan Penugasan Peran</span>
                             </button>
                         </div>
@@ -226,11 +226,57 @@
                     <h3 class="text-base font-extrabold text-slate-900">Daftar Staf Aktif Cabang</h3>
                     <p class="text-xs text-slate-500 mt-0.5">Kelola status aktif/nonaktif akun maupun pencabutan peran pada cabang ini</p>
                 </div>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 self-start sm:self-auto">
                     Total: {{ count($staff) }} Staf
                 </span>
             </div>
-            <div class="overflow-x-auto">
+
+            <!-- Mobile Card View: Daftar Staf -->
+            <div class="md:hidden divide-y divide-slate-100 text-xs">
+                @forelse ($staff as $item)
+                    @php $isAktifMobile = (bool) ($item->pengguna->aktif ?? true); @endphp
+                    <article class="p-4 space-y-3">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <h4 class="font-bold text-sm text-slate-900">{{ $item->pengguna->nama_lengkap ?? '-' }}</h4>
+                                <p class="text-[11px] font-mono text-slate-500 break-all mt-0.5">{{ $item->pengguna->telepon_email ?? '-' }}</p>
+                            </div>
+                            <span class="shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold {{ $isAktifMobile ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-rose-50 text-rose-800 border border-rose-200' }}">
+                                {{ $isAktifMobile ? 'Aktif' : 'Nonaktif' }}
+                            </span>
+                        </div>
+                        <div class="flex flex-wrap items-center justify-between gap-2 text-[11px]">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-extrabold {{ $item->peran === 'apoteker' ? 'bg-emerald-700 text-white' : 'bg-emerald-50 text-emerald-900 border border-emerald-200' }}">
+                                {{ ucfirst(str_replace('_', ' ', $item->peran)) }}
+                            </span>
+                            <span class="text-slate-500">Sejak {{ $item->ditugaskan_dari ? \Carbon\Carbon::parse($item->ditugaskan_dari)->format('d M Y') : '-' }}</span>
+                        </div>
+                        <div class="grid grid-cols-{{ $item->pengguna ? '2' : '1' }} gap-2 pt-1">
+                            @if($item->pengguna)
+                                <form method="POST" action="{{ route('admin.cabang.staf.status', ['client' => $client, 'pengguna' => $item->id_pengguna]) }}">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="w-full min-h-[44px] px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs transition cursor-pointer">
+                                        {{ $isAktifMobile ? 'Nonaktifkan' : 'Aktifkan' }}
+                                    </button>
+                                </form>
+                            @endif
+                            <form method="POST" action="{{ route('admin.cabang.staf.role.destroy', ['client' => $client, 'roleId' => $item->id]) }}" onsubmit="return confirm('Cabut peran staf ini dari cabang?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="w-full min-h-[44px] px-3 py-2 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-800 font-bold text-xs transition cursor-pointer">
+                                    Hapus Peran
+                                </button>
+                            </form>
+                        </div>
+                    </article>
+                @empty
+                    <div class="p-8 text-center text-slate-500">Belum ada staf yang ditugaskan ke cabang ini.</div>
+                @endforelse
+            </div>
+
+            <!-- Desktop Table View: Daftar Staf -->
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left text-xs min-w-[48rem]">
                     <thead class="bg-slate-50 text-slate-700 font-extrabold uppercase border-b border-slate-200 whitespace-nowrap">
                         <tr>
@@ -249,7 +295,7 @@
                                 <td class="py-3.5 px-4 font-bold text-slate-900 whitespace-nowrap">{{ $item->pengguna->nama_lengkap ?? '-' }}</td>
                                 <td class="py-3.5 px-4 text-slate-500 font-mono whitespace-nowrap">{{ $item->pengguna->telepon_email ?? '-' }}</td>
                                 <td class="py-3.5 px-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-extrabold {{ $item->peran === 'apoteker' ? 'bg-emerald-600 text-white' : 'bg-emerald-50 text-emerald-900 border border-emerald-200' }}">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-extrabold {{ $item->peran === 'apoteker' ? 'bg-emerald-700 text-white' : 'bg-emerald-50 text-emerald-900 border border-emerald-200' }}">
                                         {{ ucfirst(str_replace('_', ' ', $item->peran)) }}
                                     </span>
                                 </td>
@@ -265,7 +311,7 @@
                                             <form method="POST" action="{{ route('admin.cabang.staf.status', ['client' => $client, 'pengguna' => $item->id_pengguna]) }}">
                                                 @csrf
                                                 @method('PATCH')
-                                                <button type="submit" class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-[11px] transition cursor-pointer">
+                                                <button type="submit" class="min-h-[44px] px-3 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition cursor-pointer">
                                                     {{ $isAktif ? 'Nonaktifkan' : 'Aktifkan' }}
                                                 </button>
                                             </form>
@@ -273,7 +319,7 @@
                                         <form method="POST" action="{{ route('admin.cabang.staf.role.destroy', ['client' => $client, 'roleId' => $item->id]) }}" onsubmit="return confirm('Cabut peran staf ini dari cabang?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="px-2.5 py-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-800 font-bold text-[11px] transition cursor-pointer">
+                                            <button type="submit" class="min-h-[44px] px-3 py-2 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-800 font-bold text-xs transition cursor-pointer">
                                                 Hapus Peran
                                             </button>
                                         </form>
@@ -282,7 +328,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="py-8 text-center text-slate-400">Belum ada staf yang ditugaskan ke cabang ini.</td>
+                                <td colspan="6" class="py-8 text-center text-slate-500">Belum ada staf yang ditugaskan ke cabang ini.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -297,11 +343,40 @@
                     <h3 class="text-base font-extrabold text-slate-900">Matriks Supervisi APJ &amp; Tenaga Teknis (5NF)</h3>
                     <p class="text-xs text-slate-500 mt-0.5">Struktur garis komando farmasi antara Apoteker Penanggung Jawab dan staf pelaksana</p>
                 </div>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 self-start sm:self-auto">
                     Total: {{ count($supervisions) }} Relasi 5NF
                 </span>
             </div>
-            <div class="overflow-x-auto">
+
+            <!-- Mobile Card View: Supervisi 5NF -->
+            <div class="md:hidden divide-y divide-slate-100 text-xs">
+                @forelse ($supervisions as $sup)
+                    <article class="p-4 space-y-2.5">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <h4 class="font-bold text-sm text-slate-900">{{ $sup->staf->nama_lengkap ?? '-' }}</h4>
+                                <p class="font-extrabold text-emerald-700 mt-0.5">APJ: apt. {{ $sup->pengawas->nama_lengkap ?? '-' }}</p>
+                                <p class="text-[11px] text-slate-500 mt-0.5">Berlaku sejak {{ $sup->berlaku_dari ? \Carbon\Carbon::parse($sup->berlaku_dari)->format('d M Y') : '-' }}</p>
+                            </div>
+                            <span class="shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-emerald-50 text-emerald-900 border border-emerald-200">
+                                5NF
+                            </span>
+                        </div>
+                        <form method="POST" action="{{ route('admin.cabang.staf.pengawas.destroy', ['client' => $client, 'supervisionId' => $sup->id]) }}" onsubmit="return confirm('Hapus relasi supervisi APJ ini?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="w-full min-h-[44px] px-3 py-2 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-800 font-bold text-xs transition cursor-pointer">
+                                Hapus Relasi
+                            </button>
+                        </form>
+                    </article>
+                @empty
+                    <div class="p-8 text-center text-slate-500">Belum ada relasi supervisi APJ yang dipetakan pada cabang ini.</div>
+                @endforelse
+            </div>
+
+            <!-- Desktop Table View: Supervisi 5NF -->
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left text-xs min-w-[40rem]">
                     <thead class="bg-slate-50 text-slate-700 font-extrabold uppercase border-b border-slate-200 whitespace-nowrap">
                         <tr>
@@ -329,7 +404,7 @@
                                     <form method="POST" action="{{ route('admin.cabang.staf.pengawas.destroy', ['client' => $client, 'supervisionId' => $sup->id]) }}" onsubmit="return confirm('Hapus relasi supervisi APJ ini?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="px-2.5 py-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-800 font-bold text-[11px] transition cursor-pointer">
+                                        <button type="submit" class="min-h-[44px] px-3 py-2 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-800 font-bold text-xs transition cursor-pointer">
                                             Hapus Relasi
                                         </button>
                                     </form>
@@ -337,7 +412,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="py-8 text-center text-slate-400">Belum ada relasi supervisi APJ yang dipetakan pada cabang ini.</td>
+                                <td colspan="5" class="py-8 text-center text-slate-500">Belum ada relasi supervisi APJ yang dipetakan pada cabang ini.</td>
                             </tr>
                         @endforelse
                     </tbody>

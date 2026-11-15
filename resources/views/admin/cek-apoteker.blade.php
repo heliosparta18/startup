@@ -16,7 +16,7 @@
                 </div>
 
                 <div class="flex flex-wrap gap-2.5 shrink-0">
-                    <a href="{{ route('admin.cabang.staf', ['client' => $branchSlug]) }}" class="min-h-[44px] inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition">
+                    <a href="{{ route('admin.cabang.staf', ['client' => $branchSlug]) }}" class="min-h-[44px] inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-xs transition">
                         <span>CRUD Staf &amp; Hak Akses</span>
                     </a>
                     <a href="{{ route('admin.obat.index') }}" class="min-h-[44px] inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-emerald-50 text-slate-800 hover:text-emerald-800 font-bold text-xs transition">
@@ -35,7 +35,7 @@
                     @php $cSlug = $c->slug ?? $c->id_client; @endphp
                     <a
                         href="{{ route('admin.apoteker.index', ['client' => $cSlug]) }}"
-                        class="min-h-[38px] inline-flex items-center px-3.5 py-1.5 rounded-xl font-bold transition {{ $activeBranch->id_client === $c->id_client ? 'bg-emerald-600 text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800' }}"
+                        class="min-h-[44px] inline-flex items-center px-3.5 py-2 rounded-xl font-bold transition {{ $activeBranch->id_client === $c->id_client ? 'bg-emerald-700 text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800' }}"
                     >
                         {{ $c->nama_client }}
                     </a>
@@ -82,7 +82,7 @@
                     <h2 class="text-base font-extrabold text-slate-900">Tim Apoteker &amp; Staf Terdaftar ({{ $activeBranch->nama_client }})</h2>
                     <p class="text-xs text-slate-500">Daftar operator cabang berikut status akun dan pengawasan APJ.</p>
                 </div>
-                <a href="{{ route('admin.cabang.staf', ['client' => $branchSlug]) }}" class="text-xs font-bold text-emerald-700 hover:underline">
+                <a href="{{ route('admin.cabang.staf', ['client' => $branchSlug]) }}" class="min-h-[44px] inline-flex items-center text-xs font-bold text-emerald-700 hover:underline shrink-0">
                     Atur Role &amp; Pengawasan Staf &rarr;
                 </a>
             </div>
@@ -116,7 +116,30 @@
                     <p class="text-xs text-slate-500">Pemantauan legalitas telaah resep dokter oleh Apoteker Cabang.</p>
                 </div>
 
-                <div class="overflow-x-auto rounded-2xl border border-slate-200">
+                <!-- Mobile Card View: Resep -->
+                <div class="md:hidden space-y-2.5 text-xs">
+                    @forelse($reseps as $r)
+                        <article class="rounded-2xl border border-slate-200 bg-slate-50/70 p-3.5 space-y-1.5">
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="min-w-0">
+                                    <div class="font-mono font-bold text-slate-900">{{ $r->pesanan->nomor_pesanan ?? '-' }}</div>
+                                    <div class="text-[11px] text-slate-600">{{ $r->pesanan->pengguna->nama_lengkap ?? 'Pasien' }}</div>
+                                </div>
+                                <span class="shrink-0 inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase {{ $r->status_verifikasi === 'disetujui' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : ($r->status_verifikasi === 'ditolak' ? 'bg-rose-50 text-rose-800 border border-rose-200' : 'bg-amber-50 text-amber-800 border border-amber-200') }}">
+                                    {{ $r->status_verifikasi }}
+                                </span>
+                            </div>
+                            <div class="text-[11px] text-slate-700 font-medium pt-1 border-t border-slate-200/70">
+                                Verifikator: <strong>{{ $r->verifikator->nama_lengkap ?? 'Belum ditelaah' }}</strong>
+                            </div>
+                        </article>
+                    @empty
+                        <div class="rounded-2xl border border-slate-200 p-6 text-center text-slate-500">Belum ada data resep pada cabang ini.</div>
+                    @endforelse
+                </div>
+
+                <!-- Desktop Table View: Resep -->
+                <div class="hidden md:block overflow-x-auto rounded-2xl border border-slate-200">
                     <table class="w-full text-left text-xs min-w-[30rem]">
                         <thead class="bg-slate-100 text-slate-700 font-extrabold uppercase border-b border-slate-200">
                             <tr>
@@ -143,7 +166,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="3" class="p-6 text-center text-slate-400">Belum ada data resep pada cabang ini.</td>
+                                    <td colspan="3" class="p-6 text-center text-slate-500">Belum ada data resep pada cabang ini.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -158,10 +181,33 @@
                         <h2 class="text-base font-extrabold text-slate-900">Pantauan Batch &amp; FEFO Cabang</h2>
                         <p class="text-xs text-slate-500">Diurutkan berdasarkan tanggal kadaluarsa terdekat.</p>
                     </div>
-                    <a href="{{ route('admin.obat.index') }}" class="text-xs font-bold text-emerald-700 hover:underline">Ubah Stok &rarr;</a>
+                    <a href="{{ route('admin.obat.index') }}" class="min-h-[44px] inline-flex items-center text-xs font-bold text-emerald-700 hover:underline shrink-0">Ubah Stok &rarr;</a>
                 </div>
 
-                <div class="overflow-x-auto rounded-2xl border border-slate-200">
+                <!-- Mobile Card View: Batch FEFO -->
+                <div class="md:hidden space-y-2.5 text-xs">
+                    @forelse($fefoBatches->take(15) as $batch)
+                        <article class="rounded-2xl border border-slate-200 bg-slate-50/70 p-3.5 space-y-1.5">
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="min-w-0">
+                                    <h3 class="font-bold text-slate-900">{{ $batch['nama_obat'] }}</h3>
+                                    <p class="text-[11px] font-mono text-slate-500">Batch: {{ $batch['batch_number'] }}</p>
+                                </div>
+                                <span class="shrink-0 font-extrabold {{ (int) $batch['stok'] <= 10 ? 'text-rose-700' : 'text-slate-900' }}">
+                                    {{ $batch['stok'] }} unit
+                                </span>
+                            </div>
+                            <div class="text-[11px] font-semibold {{ ($batch['urgency'] ?? '') !== 'normal' ? 'text-amber-700' : 'text-slate-600' }} pt-1 border-t border-slate-200/70">
+                                ED: {{ $batch['expired'] ?? '-' }}
+                            </div>
+                        </article>
+                    @empty
+                        <div class="rounded-2xl border border-slate-200 p-6 text-center text-slate-500">Belum ada batch obat di cabang ini.</div>
+                    @endforelse
+                </div>
+
+                <!-- Desktop Table View: Batch FEFO -->
+                <div class="hidden md:block overflow-x-auto rounded-2xl border border-slate-200">
                     <table class="w-full text-left text-xs min-w-[30rem]">
                         <thead class="bg-slate-100 text-slate-700 font-extrabold uppercase border-b border-slate-200">
                             <tr>
@@ -188,7 +234,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="3" class="p-6 text-center text-slate-400">Belum ada batch obat di cabang ini.</td>
+                                    <td colspan="3" class="p-6 text-center text-slate-500">Belum ada batch obat di cabang ini.</td>
                                 </tr>
                             @endforelse
                         </tbody>

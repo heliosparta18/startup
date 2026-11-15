@@ -14,7 +14,7 @@
                 </p>
             </div>
             <div class="shrink-0 flex flex-wrap items-center gap-2.5">
-                <button type="button" @click="showAddBranch = !showAddBranch" class="inline-flex min-h-[44px] items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition cursor-pointer">
+                <button type="button" @click="showAddBranch = !showAddBranch" class="inline-flex min-h-[44px] items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-xs transition cursor-pointer">
                     <span x-text="showAddBranch ? 'Tutup Form Tambah' : '+ Tambah Cabang Baru'"></span>
                 </button>
                 <a href="{{ route('admin.dashboard') }}" class="inline-flex min-h-[44px] items-center justify-center px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition">
@@ -67,9 +67,9 @@
                     <label class="block font-bold text-slate-700 mb-1">Jam Operasional</label>
                     <input type="text" name="jam_buka" value="07:00 - 22:00 WIB" class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3.5 text-slate-900">
                 </div>
-                <div class="md:col-span-2 flex items-center justify-end gap-3 pt-2">
+                <div class="md:col-span-2 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3 pt-2">
                     <button type="button" @click="showAddBranch = false" class="min-h-[44px] px-4 rounded-xl border border-slate-300 text-slate-700 font-bold cursor-pointer">Batal</button>
-                    <button type="submit" class="min-h-[44px] px-6 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-xs cursor-pointer">Simpan Cabang Baru</button>
+                    <button type="submit" class="min-h-[44px] px-6 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold shadow-xs cursor-pointer">Simpan Cabang Baru</button>
                 </div>
             </form>
         </div>
@@ -120,28 +120,28 @@
                                 </div>
                             </div>
 
-                            <div class="pt-2 flex flex-wrap items-center justify-between gap-2">
-                                <div class="flex items-center gap-2">
-                                    <a href="{{ route('admin.cabang.staf', ['client' => $branchSlug]) }}" class="min-h-[40px] inline-flex items-center px-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold text-[11px] transition">
+                            <div class="pt-2 flex flex-col sm:flex-row sm:flex-wrap sm:items-center justify-between gap-2.5">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <a href="{{ route('admin.cabang.staf', ['client' => $branchSlug]) }}" class="min-h-[44px] inline-flex items-center px-3.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold text-xs transition">
                                         Kelola Staf
                                     </a>
-                                    <a href="{{ route('tenant.laporan.index', ['client' => $branchSlug]) }}" class="min-h-[40px] inline-flex items-center px-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold text-[11px] transition">
+                                    <a href="{{ route('tenant.laporan.index', ['client' => $branchSlug]) }}" class="min-h-[44px] inline-flex items-center px-3.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold text-xs transition">
                                         Laporan Penjualan
                                     </a>
                                 </div>
-                                <button type="submit" class="min-h-[44px] inline-flex items-center justify-center rounded-xl bg-emerald-600 hover:bg-emerald-700 px-5 text-xs font-bold text-white shadow-xs transition cursor-pointer">
+                                <button type="submit" class="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center rounded-xl bg-emerald-700 hover:bg-emerald-800 px-5 text-xs font-bold text-white shadow-xs transition cursor-pointer">
                                     Simpan Konfigurasi
                                 </button>
                             </div>
                         </form>
                     </div>
 
-                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+                    <div class="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500">
                         <span>Terakhir diperbarui: {{ $c->updated_at ? $c->updated_at->format('d M Y H:i') : '-' }}</span>
                         <form method="POST" action="{{ route('admin.cabang.destroy', ['client' => $branchSlug]) }}" onsubmit="return confirm('Hapus cabang {{ addslashes($c->nama_client) }}? Cabang dengan riwayat transaksi akan tetap dilindungi.')">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="font-bold text-rose-700 hover:text-rose-900 underline cursor-pointer">
+                            <button type="submit" class="min-h-[44px] inline-flex items-center font-bold text-rose-700 hover:text-rose-900 underline cursor-pointer">
                                 Hapus Cabang
                             </button>
                         </form>

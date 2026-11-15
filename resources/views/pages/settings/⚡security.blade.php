@@ -212,7 +212,7 @@ new #[Title('Security settings')] class extends Component {
                 />
 
                 <div class="flex items-center justify-end pt-4 border-t border-slate-100">
-                    <flux:button variant="primary" type="submit" class="w-full sm:w-auto px-7 font-bold rounded-xl bg-[#059669] hover:bg-[#047857] text-white" data-test="update-password-button">
+                    <flux:button variant="primary" type="submit" class="w-full sm:w-auto px-7 font-bold rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white" data-test="update-password-button">
                         {{ __('Save') }}
                     </flux:button>
                 </div>
@@ -276,14 +276,14 @@ new #[Title('Security settings')] class extends Component {
                 <div class="mt-6 flex flex-col w-full mx-auto space-y-6 text-sm" wire:cloak>
                     <div class="border rounded-xl border-slate-200 dark:border-zinc-800 overflow-hidden">
                         @forelse ($passkeys as $passkey)
-                            <div class="flex items-center justify-between p-4 {{ ! $loop->last ? 'border-b border-slate-200 dark:border-zinc-800' : '' }}">
-                                <div class="flex items-center gap-4">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 {{ ! $loop->last ? 'border-b border-slate-200 dark:border-zinc-800' : '' }}">
+                                <div class="flex items-center gap-3 sm:gap-4 min-w-0">
                                     <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400">
                                         <flux:icon.key class="size-5 text-emerald-600 dark:text-emerald-400" />
                                     </div>
-                                    <div class="space-y-1">
-                                        <div class="flex items-center gap-2.5">
-                                            <p class="font-medium tracking-tight">{{ $passkey['name'] }}</p>
+                                    <div class="space-y-1 min-w-0">
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            <p class="font-medium tracking-tight truncate">{{ $passkey['name'] }}</p>
                                             @if ($passkey['authenticator'])
                                                 <flux:badge size="sm" class="bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300">{{ $passkey['authenticator'] }}</flux:badge>
                                             @endif
@@ -304,7 +304,7 @@ new #[Title('Security settings')] class extends Component {
                                     icon="trash"
                                     icon:variant="outline"
                                     wire:click="confirmDelete({{ $passkey['id'] }})"
-                                    class="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50"
+                                    class="min-h-[44px] min-w-[44px] self-end sm:self-center text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/50"
                                 />
                             </div>
                         @empty

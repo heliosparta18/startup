@@ -1,9 +1,9 @@
 <x-layouts.customer :title="'Riwayat Pesanan - OmniPharma'" :fullWidth="true">
-    <div class="max-w-5xl mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-8">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8">
         <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-1">
-                    <a href="{{ route('dashboard') }}" class="hover:text-emerald-700 transition">Katalog Apotek</a>
+                    <a href="{{ route('dashboard') }}" class="inline-flex items-center min-h-[44px] hover:text-emerald-700 transition">Katalog Apotek</a>
                     <span>/</span>
                     <span class="text-slate-900 font-bold">Riwayat Pesanan</span>
                 </div>
@@ -14,7 +14,7 @@
             </div>
             <a
                 href="{{ route('dashboard') }}"
-                class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#059669] hover:bg-[#047857] text-white text-xs font-bold transition shadow-xs self-start sm:self-auto"
+                class="min-h-[44px] inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition shadow-xs self-start sm:self-auto"
             >
                 <span>Belanja Obat Lagi</span>
             </a>
@@ -29,7 +29,7 @@
                 <p class="text-xs sm:text-sm text-slate-500 mt-1 max-w-md mx-auto">
                     Anda belum memiliki transaksi pesanan pada akun atau sesi ini. Silakan pilih obat atau suplemen di katalog utama.
                 </p>
-                <a href="{{ route('dashboard') }}" class="mt-5 inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs sm:text-sm hover:bg-emerald-700 transition">
+                <a href="{{ route('dashboard') }}" class="mt-5 min-h-[44px] inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-emerald-700 text-white font-bold text-xs sm:text-sm hover:bg-emerald-800 transition">
                     Buka Katalog Obat
                 </a>
             </div>
@@ -69,17 +69,17 @@
 
                         <div class="flex flex-col sm:flex-row sm:items-center gap-3 shrink-0 border-t md:border-t-0 pt-3 md:pt-0 border-slate-100">
                             <div class="text-left sm:text-right mr-1">
-                                <span class="block text-[10px] font-bold uppercase text-slate-400">Total Pembayaran</span>
+                                <span class="block text-[10px] font-bold uppercase text-slate-500">Total Pembayaran</span>
                                 <span class="text-base font-black text-emerald-700">Rp {{ number_format($order->total_harga, 0, ',', '.') }}</span>
                             </div>
 
-                            <div class="flex items-center gap-2">
+                            <div class="flex flex-wrap sm:flex-nowrap items-center gap-2">
                                 @if($isUnpaid)
-                                    <a href="{{ $payLink }}" class="inline-flex items-center justify-center px-3.5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold transition shadow-2xs">
+                                    <a href="{{ $payLink }}" class="min-h-[44px] inline-flex items-center justify-center px-3.5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition shadow-2xs">
                                         Bayar QRIS
                                     </a>
                                 @endif
-                                <a href="{{ $invoiceLink }}" class="inline-flex items-center justify-center px-3.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-2xs">
+                                <a href="{{ $invoiceLink }}" class="min-h-[44px] inline-flex items-center justify-center px-3.5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition shadow-2xs">
                                     Lihat Invoice &amp; Lacak
                                 </a>
                             </div>

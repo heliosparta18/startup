@@ -9,7 +9,7 @@
 @endphp
 
 <x-layouts.customer :title="'Keranjang Belanja - OmniPharma'" :fullWidth="true">
-    <div class="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-8" x-data="{
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8 pb-24 md:pb-8" x-data="{
         items: {{ \Illuminate\Support\Js::from($items) }},
         loading: false,
         obatUrlPrefix: {{ \Illuminate\Support\Js::from($obatUrlPrefix) }},
@@ -110,18 +110,18 @@
 
         {{-- 3-Step Order Progress Indicator --}}
         <div class="mb-6 bg-white border border-slate-200/90 rounded-2xl p-3 sm:p-4 shadow-2xs">
-            <ol class="grid grid-cols-3 gap-2 text-[11px] sm:text-xs font-bold">
-                <li class="flex items-center gap-2 text-emerald-900 bg-emerald-50 border border-emerald-200 rounded-xl px-2.5 py-2">
-                    <span class="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[11px] font-black shrink-0">1</span>
-                    <span class="truncate">Keranjang Belanja</span>
+            <ol class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-bold">
+                <li class="flex items-center gap-2 text-emerald-900 bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2">
+                    <span class="w-5 h-5 rounded-full bg-emerald-700 text-white flex items-center justify-center text-[11px] font-black shrink-0">1</span>
+                    <span>Keranjang Belanja</span>
                 </li>
-                <li class="flex items-center gap-2 text-slate-500 bg-slate-50 border border-slate-200/80 rounded-xl px-2.5 py-2">
-                    <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-[11px] font-black shrink-0">2</span>
-                    <span class="truncate">Konfirmasi Checkout</span>
+                <li class="flex items-center gap-2 text-slate-600 bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-2">
+                    <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[11px] font-black shrink-0">2</span>
+                    <span>Konfirmasi Checkout</span>
                 </li>
-                <li class="flex items-center gap-2 text-slate-500 bg-slate-50 border border-slate-200/80 rounded-xl px-2.5 py-2">
-                    <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-[11px] font-black shrink-0">3</span>
-                    <span class="truncate">Pembayaran QRIS</span>
+                <li class="flex items-center gap-2 text-slate-600 bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-2">
+                    <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[11px] font-black shrink-0">3</span>
+                    <span>Pembayaran QRIS</span>
                 </li>
             </ol>
         </div>
@@ -137,7 +137,7 @@
             <a
                 x-show="items.length > 0"
                 href="{{ route('dashboard') }}"
-                class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-900 min-h-[40px] px-3 py-2 rounded-xl bg-white border border-slate-200 hover:border-emerald-300 transition shadow-2xs"
+                class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-900 min-h-[44px] px-3.5 py-2 rounded-xl bg-white border border-slate-200 hover:border-emerald-300 transition shadow-2xs"
             >
                 <span>+ Tambah Obat Lain</span>
             </a>
@@ -217,7 +217,7 @@
                                 <button
                                     type="button"
                                     @click="updateQty(item.id_obat, item.jumlah - 1)"
-                                    class="min-w-[40px] min-h-[40px] w-10 h-10 flex items-center justify-center text-slate-700 hover:bg-slate-200 active:bg-slate-300 transition cursor-pointer"
+                                    class="min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center text-slate-700 hover:bg-slate-200 active:bg-slate-300 transition cursor-pointer"
                                     aria-label="Kurangi kuantitas"
                                 >
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"/></svg>
@@ -227,7 +227,7 @@
                                     type="button"
                                     @click="updateQty(item.id_obat, item.jumlah + 1)"
                                     :disabled="item.stok_tersedia && item.jumlah >= item.stok_tersedia"
-                                    class="min-w-[40px] min-h-[40px] w-10 h-10 flex items-center justify-center text-slate-700 hover:bg-slate-200 active:bg-slate-300 transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                                    class="min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center text-slate-700 hover:bg-slate-200 active:bg-slate-300 transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                                     aria-label="Tambah kuantitas"
                                 >
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
@@ -241,7 +241,7 @@
                                 <button
                                     type="button"
                                     @click="removeItem(item.id_obat)"
-                                    class="mt-1 text-xs font-bold text-rose-600 hover:text-rose-800 hover:bg-rose-50 px-2 py-1 rounded-lg transition min-h-[34px] inline-flex items-center justify-end gap-1 cursor-pointer"
+                                    class="mt-1 text-xs font-bold text-rose-700 hover:text-rose-900 hover:bg-rose-50 px-3 py-2 rounded-lg transition min-h-[44px] inline-flex items-center justify-end gap-1 cursor-pointer"
                                     aria-label="Hapus obat dari keranjang"
                                 >
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
@@ -280,7 +280,7 @@
                 <div class="space-y-2.5">
                     <a
                         href="{{ $checkoutUrl }}"
-                        class="w-full min-h-[46px] py-3 px-4 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold rounded-xl text-center text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+                        class="w-full min-h-[46px] py-3 px-4 bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white font-bold rounded-xl text-center text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-xs cursor-pointer"
                     >
                         <span>Lanjut ke Checkout</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
@@ -288,7 +288,7 @@
 
                     <a
                         href="{{ route('dashboard') }}"
-                        class="w-full min-h-[42px] py-2.5 px-4 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold rounded-xl text-center text-xs transition flex items-center justify-center border border-slate-200"
+                        class="w-full min-h-[44px] py-2.5 px-4 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold rounded-xl text-center text-xs transition flex items-center justify-center border border-slate-200"
                     >
                         + Tambah Obat Lain dari Katalog
                     </a>
@@ -299,6 +299,25 @@
                     <span>Stok di cabang aktif dikunci otomatis saat Anda menekan tombol bayar pada halaman checkout.</span>
                 </div>
             </aside>
+        </div>
+
+        {{-- Fixed Mobile Bottom Checkout Bar --}}
+        <div
+            x-show="items.length > 0"
+            x-cloak
+            class="md:hidden fixed bottom-0 inset-x-0 z-40 omni-mobile-bottom-bar px-4 py-2.5 flex items-center justify-between gap-3"
+        >
+            <div class="min-w-0">
+                <span class="block text-[10px] font-semibold uppercase tracking-wider text-slate-500">Total Belanja</span>
+                <span class="block text-sm font-black text-emerald-700 truncate" x-text="formatRp(total)"></span>
+            </div>
+            <a
+                href="{{ $checkoutUrl }}"
+                class="min-h-[44px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 px-5 py-2 text-xs font-extrabold text-white shadow-xs transition shrink-0"
+            >
+                <span>Checkout (<span x-text="totalQty"></span>)</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </a>
         </div>
     </div>
 </x-layouts.customer>

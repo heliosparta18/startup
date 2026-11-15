@@ -59,7 +59,7 @@
                 </p>
             </div>
             <div class="shrink-0 flex flex-wrap items-center gap-2.5">
-                <button type="button" @click="createModal = true" class="inline-flex min-h-[44px] items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition cursor-pointer">
+                <button type="button" @click="createModal = true" class="inline-flex min-h-[44px] items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-xs transition cursor-pointer">
                     <span>+ Tambah Master Obat</span>
                 </button>
                 <a href="{{ route('admin.dashboard') }}" class="inline-flex min-h-[44px] items-center justify-center px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition">
@@ -107,7 +107,7 @@
                 </select>
             </div>
             <div class="flex items-center gap-2">
-                <button type="submit" class="flex-1 min-h-[44px] rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition cursor-pointer">
+                <button type="submit" class="flex-1 min-h-[44px] rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-xs transition cursor-pointer">
                     Terapkan Filter
                 </button>
                 @if($search || $kategoriFilter || $golonganFilter)
@@ -127,7 +127,83 @@
                 </div>
             </div>
 
-            <div class="overflow-x-auto">
+            <!-- Mobile Card View: Master Obat -->
+            <div class="md:hidden divide-y divide-slate-100 text-xs">
+                @forelse($obats as $obat)
+                    @php
+                        $stokByClientMobile = $obat->allStokClient->mapWithKeys(fn ($s) => [$s->id_client => (int) $s->jumlah_stok])->all();
+                        $obatPayloadMobile = [
+                            'id_obat' => $obat->id_obat,
+                            'nama_obat' => $obat->nama_obat,
+                            'merek' => $obat->merek,
+                            'id_kategori' => $obat->id_kategori,
+                            'jenis_sediaan' => $obat->jenis_sediaan,
+                            'satuan_kemasan' => $obat->satuan_kemasan,
+                            'badge_status' => $obat->badge_status,
+                            'harga' => $obat->harga,
+                            'expired' => $obat->expired,
+                            'batch_number' => $obat->batch_number,
+                            'nomor_ijin_edar' => $obat->nomor_ijin_edar,
+                            'indikasi' => $obat->indikasi,
+                        ];
+                    @endphp
+                    <article class="p-4 space-y-3">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="min-w-0">
+                                <h3 class="font-bold text-sm text-slate-900">{{ $obat->nama_obat }}</h3>
+                                <p class="text-[11px] text-slate-500 mt-0.5">{{ $obat->merek ?? '-' }} | {{ $obat->kategori->nama_kategori ?? '-' }}</p>
+                                <p class="text-[11px] text-slate-500">{{ $obat->jenis_sediaan }} ({{ $obat->satuan_kemasan ?? '-' }}) | NIE: {{ $obat->nomor_ijin_edar ?? '-' }}</p>
+                            </div>
+                            <span class="shrink-0 font-extrabold text-sm text-emerald-700">
+                                Rp {{ number_format((float) $obat->harga, 0, ',', '.') }}
+                            </span>
+                        </div>
+
+                        <div class="flex flex-wrap items-center justify-between gap-2 text-[11px]">
+                            @if($obat->badge_status === 'Obat Keras')
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-bold bg-rose-50 text-rose-800 border border-rose-200">Obat Keras</span>
+                            @elseif($obat->badge_status === 'Obat Bebas Terbatas')
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-bold bg-sky-50 text-sky-800 border border-sky-200">Bebas Terbatas</span>
+                            @elseif($obat->badge_status === 'Alat Kesehatan')
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-bold bg-slate-100 text-slate-700 border border-slate-200">Alat Kesehatan</span>
+                            @else
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">Obat Bebas</span>
+                            @endif
+                            <span class="font-mono text-slate-600">Batch: {{ $obat->batch_number ?? '-' }} | ED: {{ $obat->expired ? \Carbon\Carbon::parse($obat->expired)->format('d M Y') : '-' }}</span>
+                        </div>
+
+                        <div class="flex flex-wrap gap-1.5">
+                            @foreach($clients as $branch)
+                                @php $qtyMobile = $stokByClientMobile[$branch->id_client] ?? 0; @endphp
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-semibold {{ $qtyMobile <= 5 ? 'bg-amber-50 text-amber-800 border border-amber-200' : 'bg-slate-100 text-slate-700 border border-slate-200' }}">
+                                    <span>{{ Str::limit(str_replace('Cabang ', '', $branch->nama_client), 12) }}:</span>
+                                    <strong>{{ $qtyMobile }}</strong>
+                                </span>
+                            @endforeach
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 pt-1">
+                            <button type="button"
+                                @click='openEdit(@json($obatPayloadMobile), @json($stokByClientMobile))'
+                                class="min-h-[44px] w-full px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-emerald-50 text-slate-800 hover:text-emerald-800 font-bold text-xs transition cursor-pointer">
+                                Edit &amp; Stok
+                            </button>
+                            <form method="POST" action="{{ route('admin.obat.destroy', ['id' => $obat->id_obat]) }}" onsubmit="return confirm('Hapus atau kosongkan stok obat {{ addslashes($obat->nama_obat) }}?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="min-h-[44px] w-full px-3 py-2 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-800 font-bold text-xs transition cursor-pointer">
+                                    Hapus
+                                </button>
+                            </form>
+                        </div>
+                    </article>
+                @empty
+                    <div class="p-8 text-center text-slate-500">Tidak ada data obat yang cocok dengan kriteria pencarian.</div>
+                @endforelse
+            </div>
+
+            <!-- Desktop Table View: Master Obat -->
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left text-xs min-w-[60rem]">
                     <thead class="bg-slate-50 text-slate-700 font-extrabold uppercase border-b border-slate-200">
                         <tr>
@@ -212,13 +288,13 @@
                                     <div class="inline-flex items-center gap-2">
                                         <button type="button"
                                             @click='openEdit(@json($obatPayload), @json($stokByClient))'
-                                            class="min-h-[38px] px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold text-[11px] transition cursor-pointer">
+                                            class="min-h-[44px] px-3.5 py-2 rounded-lg border border-slate-200 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold text-xs transition cursor-pointer">
                                             Edit &amp; Stok
                                         </button>
                                         <form method="POST" action="{{ route('admin.obat.destroy', ['id' => $obat->id_obat]) }}" onsubmit="return confirm('Hapus atau kosongkan stok obat {{ addslashes($obat->nama_obat) }}?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="min-h-[38px] px-3 py-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-800 font-bold text-[11px] transition cursor-pointer">
+                                            <button type="submit" class="min-h-[44px] px-3.5 py-2 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-800 font-bold text-xs transition cursor-pointer">
                                                 Hapus
                                             </button>
                                         </form>
@@ -241,9 +317,10 @@
             @endif
         </div>
 
-        <!-- Modal Tambah Obat -->
-        <div x-show="createModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-xs overflow-y-auto">
-            <div @click.away="createModal = false" class="w-full max-w-2xl rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-slate-200 my-auto space-y-5">
+        <!-- Modal Tambah Obat (Mobile Bottom Sheet / Desktop Dialog) -->
+        <div x-show="createModal" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-950/60 p-0 sm:p-4 backdrop-blur-xs">
+            <div @click.away="createModal = false" class="omni-bottom-sheet-panel w-full sm:max-w-2xl rounded-t-[20px] sm:rounded-3xl bg-white p-5 sm:p-8 shadow-2xl border border-slate-200 max-h-[90dvh] overflow-y-auto space-y-5">
+                <div class="mx-auto w-10 h-1 rounded-full bg-slate-300 sm:hidden" aria-hidden="true"></div>
                 <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                     <h3 class="text-lg font-black text-slate-900">Tambah Master Obat Baru</h3>
                     <button type="button" @click="createModal = false" class="min-h-[44px] min-w-[44px] inline-flex items-center justify-center text-slate-500 hover:text-slate-900 rounded-xl cursor-pointer">&times;</button>
@@ -254,15 +331,15 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block font-bold text-slate-700 mb-1">Nama Obat *</label>
-                            <input type="text" name="nama_obat" required placeholder="Paracetamol 500 mg" class="w-full min-h-[42px] rounded-xl border border-slate-300 px-3 text-slate-900 focus:border-emerald-600 focus:outline-none">
+                            <input type="text" name="nama_obat" required placeholder="Paracetamol 500 mg" class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3 text-slate-900 focus:border-emerald-600 focus:outline-none">
                         </div>
                         <div>
                             <label class="block font-bold text-slate-700 mb-1">Merek / Pabrikan</label>
-                            <input type="text" name="merek" placeholder="Sanbe Farma" class="w-full min-h-[42px] rounded-xl border border-slate-300 px-3 text-slate-900 focus:border-emerald-600 focus:outline-none">
+                            <input type="text" name="merek" placeholder="Sanbe Farma" class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3 text-slate-900 focus:border-emerald-600 focus:outline-none">
                         </div>
                         <div>
                             <label class="block font-bold text-slate-700 mb-1">Kategori *</label>
-                            <select name="id_kategori" required class="w-full min-h-[42px] rounded-xl border border-slate-300 px-3 text-slate-900 focus:border-emerald-600 focus:outline-none">
+                            <select name="id_kategori" required class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3 text-slate-900 focus:border-emerald-600 focus:outline-none">
                                 @foreach($kategoris as $kat)
                                     <option value="{{ $kat->id_kategori }}">{{ $kat->nama_kategori }}</option>
                                 @endforeach
@@ -270,7 +347,7 @@
                         </div>
                         <div>
                             <label class="block font-bold text-slate-700 mb-1">Golongan BPOM *</label>
-                            <select name="badge_status" required class="w-full min-h-[42px] rounded-xl border border-slate-300 px-3 text-slate-900 focus:border-emerald-600 focus:outline-none">
+                            <select name="badge_status" required class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3 text-slate-900 focus:border-emerald-600 focus:outline-none">
                                 <option value="Obat Bebas">Obat Bebas</option>
                                 <option value="Obat Bebas Terbatas">Obat Bebas Terbatas</option>
                                 <option value="Obat Keras">Obat Keras</option>
@@ -279,27 +356,27 @@
                         </div>
                         <div>
                             <label class="block font-bold text-slate-700 mb-1">Jenis Sediaan *</label>
-                            <input type="text" name="jenis_sediaan" required value="Tablet" class="w-full min-h-[42px] rounded-xl border border-slate-300 px-3 text-slate-900 focus:border-emerald-600 focus:outline-none">
+                            <input type="text" name="jenis_sediaan" required value="Tablet" class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3 text-slate-900 focus:border-emerald-600 focus:outline-none">
                         </div>
                         <div>
                             <label class="block font-bold text-slate-700 mb-1">Satuan Kemasan</label>
-                            <input type="text" name="satuan_kemasan" value="Strip @ 10 Tablet" class="w-full min-h-[42px] rounded-xl border border-slate-300 px-3 text-slate-900 focus:border-emerald-600 focus:outline-none">
+                            <input type="text" name="satuan_kemasan" value="Strip @ 10 Tablet" class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3 text-slate-900 focus:border-emerald-600 focus:outline-none">
                         </div>
                         <div>
                             <label class="block font-bold text-slate-700 mb-1">Harga Jual (Rp) *</label>
-                            <input type="number" name="harga" min="100" step="100" required value="12000" class="w-full min-h-[42px] rounded-xl border border-slate-300 px-3 text-slate-900 focus:border-emerald-600 focus:outline-none">
+                            <input type="number" name="harga" min="100" step="100" required value="12000" class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3 text-slate-900 focus:border-emerald-600 focus:outline-none">
                         </div>
                         <div>
                             <label class="block font-bold text-slate-700 mb-1">Tanggal Kedaluwarsa *</label>
-                            <input type="date" name="expired" required value="{{ now()->addMonths(18)->toDateString() }}" class="w-full min-h-[42px] rounded-xl border border-slate-300 px-3 text-slate-900 focus:border-emerald-600 focus:outline-none">
+                            <input type="date" name="expired" required value="{{ now()->addMonths(18)->toDateString() }}" class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3 text-slate-900 focus:border-emerald-600 focus:outline-none">
                         </div>
                         <div>
                             <label class="block font-bold text-slate-700 mb-1">Nomor Batch</label>
-                            <input type="text" name="batch_number" placeholder="BCH-2026-01" class="w-full min-h-[42px] rounded-xl border border-slate-300 px-3 text-slate-900 focus:border-emerald-600 focus:outline-none">
+                            <input type="text" name="batch_number" placeholder="BCH-2026-01" class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3 text-slate-900 focus:border-emerald-600 focus:outline-none">
                         </div>
                         <div>
                             <label class="block font-bold text-slate-700 mb-1">Nomor Izin Edar (BPOM)</label>
-                            <input type="text" name="nomor_ijin_edar" placeholder="DBL20260001A1" class="w-full min-h-[42px] rounded-xl border border-slate-300 px-3 text-slate-900 focus:border-emerald-600 focus:outline-none">
+                            <input type="text" name="nomor_ijin_edar" placeholder="DBL20260001A1" class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3 text-slate-900 focus:border-emerald-600 focus:outline-none">
                         </div>
                     </div>
 
@@ -314,23 +391,24 @@
                             @foreach($clients as $branch)
                                 <div>
                                     <label class="block text-[11px] font-semibold text-slate-600 mb-1">{{ $branch->nama_client }}</label>
-                                    <input type="number" min="0" value="25" name="stok[{{ $branch->id_client }}]" class="w-full min-h-[40px] rounded-xl border border-slate-300 bg-white px-3 text-xs text-slate-900">
+                                    <input type="number" min="0" value="25" name="stok[{{ $branch->id_client }}]" class="w-full min-h-[44px] rounded-xl border border-slate-300 bg-white px-3 text-xs text-slate-900">
                                 </div>
                             @endforeach
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                    <div class="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2 pt-2 border-t border-slate-100">
                         <button type="button" @click="createModal = false" class="min-h-[44px] px-4 rounded-xl border border-slate-300 text-slate-700 font-bold cursor-pointer">Batal</button>
-                        <button type="submit" class="min-h-[44px] px-5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-xs cursor-pointer">Simpan Master Obat</button>
+                        <button type="submit" class="min-h-[44px] px-5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold shadow-xs cursor-pointer">Simpan Master Obat</button>
                     </div>
                 </form>
             </div>
         </div>
 
-        <!-- Modal Edit Obat & Stok -->
-        <div x-show="editModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-xs overflow-y-auto">
-            <div @click.away="editModal = false" class="w-full max-w-2xl rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-slate-200 my-auto space-y-5">
+        <!-- Modal Edit Obat & Stok (Mobile Bottom Sheet / Desktop Dialog) -->
+        <div x-show="editModal" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-950/60 p-0 sm:p-4 backdrop-blur-xs">
+            <div @click.away="editModal = false" class="omni-bottom-sheet-panel w-full sm:max-w-2xl rounded-t-[20px] sm:rounded-3xl bg-white p-5 sm:p-8 shadow-2xl border border-slate-200 max-h-[90dvh] overflow-y-auto space-y-5">
+                <div class="mx-auto w-10 h-1 rounded-full bg-slate-300 sm:hidden" aria-hidden="true"></div>
                 <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                     <h3 class="text-lg font-black text-slate-900">Perbarui Obat &amp; Sebaran Stok</h3>
                     <button type="button" @click="editModal = false" class="min-h-[44px] min-w-[44px] inline-flex items-center justify-center text-slate-500 hover:text-slate-900 rounded-xl cursor-pointer">&times;</button>
@@ -342,15 +420,15 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block font-bold text-slate-700 mb-1">Nama Obat *</label>
-                            <input type="text" name="nama_obat" x-model="editForm.nama_obat" required class="w-full min-h-[42px] rounded-xl border border-slate-300 px-3 text-slate-900">
+                            <input type="text" name="nama_obat" x-model="editForm.nama_obat" required class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3 text-slate-900">
                         </div>
                         <div>
                             <label class="block font-bold text-slate-700 mb-1">Merek</label>
-                            <input type="text" name="merek" x-model="editForm.merek" class="w-full min-h-[42px] rounded-xl border border-slate-300 px-3 text-slate-900">
+                            <input type="text" name="merek" x-model="editForm.merek" class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3 text-slate-900">
                         </div>
                         <div>
                             <label class="block font-bold text-slate-700 mb-1">Kategori *</label>
-                            <select name="id_kategori" x-model="editForm.id_kategori" required class="w-full min-h-[42px] rounded-xl border border-slate-300 px-3 text-slate-900">
+                            <select name="id_kategori" x-model="editForm.id_kategori" required class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3 text-slate-900">
                                 @foreach($kategoris as $kat)
                                     <option value="{{ $kat->id_kategori }}">{{ $kat->nama_kategori }}</option>
                                 @endforeach
@@ -358,7 +436,7 @@
                         </div>
                         <div>
                             <label class="block font-bold text-slate-700 mb-1">Golongan BPOM *</label>
-                            <select name="badge_status" x-model="editForm.badge_status" required class="w-full min-h-[42px] rounded-xl border border-slate-300 px-3 text-slate-900">
+                            <select name="badge_status" x-model="editForm.badge_status" required class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3 text-slate-900">
                                 <option value="Obat Bebas">Obat Bebas</option>
                                 <option value="Obat Bebas Terbatas">Obat Bebas Terbatas</option>
                                 <option value="Obat Keras">Obat Keras</option>
@@ -367,23 +445,23 @@
                         </div>
                         <div>
                             <label class="block font-bold text-slate-700 mb-1">Jenis Sediaan *</label>
-                            <input type="text" name="jenis_sediaan" x-model="editForm.jenis_sediaan" required class="w-full min-h-[42px] rounded-xl border border-slate-300 px-3 text-slate-900">
+                            <input type="text" name="jenis_sediaan" x-model="editForm.jenis_sediaan" required class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3 text-slate-900">
                         </div>
                         <div>
                             <label class="block font-bold text-slate-700 mb-1">Satuan Kemasan</label>
-                            <input type="text" name="satuan_kemasan" x-model="editForm.satuan_kemasan" class="w-full min-h-[42px] rounded-xl border border-slate-300 px-3 text-slate-900">
+                            <input type="text" name="satuan_kemasan" x-model="editForm.satuan_kemasan" class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3 text-slate-900">
                         </div>
                         <div>
                             <label class="block font-bold text-slate-700 mb-1">Harga (Rp) *</label>
-                            <input type="number" name="harga" min="100" step="100" x-model="editForm.harga" required class="w-full min-h-[42px] rounded-xl border border-slate-300 px-3 text-slate-900">
+                            <input type="number" name="harga" min="100" step="100" x-model="editForm.harga" required class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3 text-slate-900">
                         </div>
                         <div>
                             <label class="block font-bold text-slate-700 mb-1">Tanggal Kedaluwarsa *</label>
-                            <input type="date" name="expired" x-model="editForm.expired" required class="w-full min-h-[42px] rounded-xl border border-slate-300 px-3 text-slate-900">
+                            <input type="date" name="expired" x-model="editForm.expired" required class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3 text-slate-900">
                         </div>
                         <div>
                             <label class="block font-bold text-slate-700 mb-1">Nomor Batch</label>
-                            <input type="text" name="batch_number" x-model="editForm.batch_number" class="w-full min-h-[42px] rounded-xl border border-slate-300 px-3 text-slate-900">
+                            <input type="text" name="batch_number" x-model="editForm.batch_number" class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3 text-slate-900">
                         </div>
                     </div>
 
@@ -396,15 +474,15 @@
                                     <input type="number" min="0"
                                         name="stok[{{ $branch->id_client }}]"
                                         x-model="editForm.stok['{{ $branch->id_client }}']"
-                                        class="w-full min-h-[40px] rounded-xl border border-slate-300 bg-white px-3 text-xs text-slate-900">
+                                        class="w-full min-h-[44px] rounded-xl border border-slate-300 bg-white px-3 text-xs text-slate-900">
                                 </div>
                             @endforeach
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                    <div class="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2 pt-2 border-t border-slate-100">
                         <button type="button" @click="editModal = false" class="min-h-[44px] px-4 rounded-xl border border-slate-300 text-slate-700 font-bold cursor-pointer">Batal</button>
-                        <button type="submit" class="min-h-[44px] px-5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-xs cursor-pointer">Simpan Perubahan</button>
+                        <button type="submit" class="min-h-[44px] px-5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold shadow-xs cursor-pointer">Simpan Perubahan</button>
                     </div>
                 </form>
             </div>

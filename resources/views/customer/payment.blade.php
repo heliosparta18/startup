@@ -247,13 +247,13 @@
                 </span>
                 <span class="text-slate-300 text-xs shrink-0">/</span>
                 <div class="flex items-center gap-1.5 text-xs font-extrabold text-slate-900 shrink-0 whitespace-nowrap">
-                    <span class="h-5 w-5 rounded-full bg-emerald-600 text-white inline-flex items-center justify-center text-[11px] font-black shrink-0">3</span>
+                    <span class="h-5 w-5 rounded-full bg-emerald-700 text-white inline-flex items-center justify-center text-[11px] font-black shrink-0">3</span>
                     <span>Bayar QRIS</span>
                 </div>
             </div>
         </div>
 
-        <div x-show="redirecting" x-cloak class="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-emerald-900 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 animate-pulse">
+        <div x-show="redirecting" x-cloak class="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-emerald-900 text-xs sm:text-sm font-bold flex items-center justify-center gap-2">
             <svg class="w-5 h-5 animate-spin shrink-0 text-emerald-600" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
             <span>Pembayaran berhasil. Mengalihkan ke halaman pesanan...</span>
         </div>
@@ -288,7 +288,7 @@
                     </div>
 
                     <div class="space-y-3">
-                        <a href="{{ $trackUrl }}" class="inline-flex items-center justify-center min-h-[46px] w-full py-3 px-4 bg-[#059669] hover:bg-[#047857] text-white font-bold rounded-xl text-sm shadow-xs transition">
+                        <a href="{{ $trackUrl }}" class="inline-flex items-center justify-center min-h-[46px] w-full py-3 px-4 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl text-sm shadow-xs transition">
                             Lihat Pesanan &amp; Invoice
                         </a>
                         <a href="{{ route('dashboard') }}" class="inline-flex items-center justify-center min-h-[44px] w-full py-2.5 px-4 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-xs sm:text-sm transition">
@@ -335,20 +335,20 @@
                         </div>
 
                         @if($isMidtransSandbox)
-                            <div class="mt-3 w-full flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5">
+                            <div class="mt-3 w-full flex flex-wrap items-center justify-center gap-2">
                                 <button
                                     type="button"
                                     @click="copyQrImageUrl()"
-                                    class="text-[11px] font-semibold text-slate-600 hover:text-slate-900 underline cursor-pointer"
+                                    class="min-h-[44px] inline-flex items-center px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-100 underline cursor-pointer"
                                 >
                                     <span x-text="copiedQrUrl ? 'Tersalin' : 'Salin URL QR'"></span>
                                 </button>
-                                <span class="text-slate-300 text-[10px]">&bull;</span>
+                                <span class="text-slate-400 text-xs" aria-hidden="true">&bull;</span>
                                 <a
                                     href="{{ $qris['simulator_url'] ?? 'https://simulator.sandbox.midtrans.com/v2/qris/index' }}"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    class="text-[11px] font-semibold text-emerald-700 hover:text-emerald-800 underline"
+                                    class="min-h-[44px] inline-flex items-center px-3 py-2 rounded-xl text-xs font-semibold text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50 underline"
                                 >
                                     Simulator Midtrans
                                 </a>
@@ -374,7 +374,7 @@
                             type="button"
                             @click="cekStatusPembayaran(false)"
                             :disabled="simulating || redirecting"
-                            class="min-h-[46px] w-full py-3 px-4 bg-[#059669] hover:bg-[#047857] text-white font-bold rounded-xl text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 cursor-pointer"
+                            class="min-h-[46px] w-full py-3 px-4 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 cursor-pointer"
                         >
                             <span x-show="!simulating && !redirecting">Cek Status</span>
                             <span x-show="simulating" x-cloak>Mengecek...</span>
@@ -383,7 +383,7 @@
 
                         <form method="POST" action="{{ request()->is('klien/*') || ! \Illuminate\Support\Facades\Route::has('pesanan.cancel') ? route('customer.order.cancel', ['client' => $client, 'id' => $pesanan->id_pesanan]) : route('pesanan.cancel', ['id' => $pesanan->id_pesanan]) }}" onsubmit="return confirm('Batalkan pesanan ini?');" class="w-full">
                             @csrf
-                            <button type="submit" class="min-h-[42px] w-full py-2.5 px-4 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold rounded-xl text-xs sm:text-sm transition flex items-center justify-center border border-rose-200 cursor-pointer">
+                            <button type="submit" class="min-h-[44px] w-full py-2.5 px-4 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold rounded-xl text-xs sm:text-sm transition flex items-center justify-center border border-rose-200 cursor-pointer">
                                 Batalkan Pesanan
                             </button>
                         </form>
@@ -468,7 +468,7 @@
                                 href="{{ $pesanan->maps_route_url }}"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#059669] hover:bg-[#047857] text-white text-xs font-bold transition shadow-xs"
+                                class="inline-flex min-h-[44px] items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition shadow-xs"
                             >
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
                                 <span>Buka Rute Kurir di Google Maps</span>

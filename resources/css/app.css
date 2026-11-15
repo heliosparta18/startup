@@ -251,3 +251,45 @@ html.dark:not([data-force-light="true"]) .hover\:bg-slate-100:hover {
 html.dark:not([data-force-light="true"]) .hover\:bg-emerald-50:hover {
     background-color: rgba(6, 78, 59, 0.35) !important;
 }
+
+/* Mobile Web Standards & Responsive Bottom-Bar / Bottom-Sheet Helpers */
+.omni-mobile-bottom-bar {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+
+.omni-bottom-sheet-panel {
+    padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
+}
+
+@media (max-width: 767px) {
+    body:has(.omni-mobile-bottom-bar) footer {
+        padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="search"],
+    input[type="number"],
+    input[type="tel"],
+    input[type="url"],
+    input[type="date"],
+    select,
+    textarea {
+        font-size: max(14px, 0.875rem);
+    }
+}
+
+html.dark:not([data-force-light="true"]) .omni-mobile-bottom-bar {
+    background-color: rgba(15, 23, 42, 0.96) !important;
+    border-color: #1e293b !important;
+}
+
+.scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+    display: none;
+}

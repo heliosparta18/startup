@@ -149,7 +149,7 @@
     </script>
 
     <div
-        class="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-8"
+        class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8 pb-24 md:pb-8"
         x-data="window.omniCheckoutPageData(@js($checkoutJsConfig))"
     >
         <!-- Breadcrumb & Cabang Aktif -->
@@ -188,7 +188,7 @@
                 </a>
                 <span class="text-slate-300 text-xs shrink-0">/</span>
                 <div class="flex items-center gap-1.5 text-xs font-extrabold text-slate-900 shrink-0 whitespace-nowrap">
-                    <span class="h-5 w-5 rounded-full bg-emerald-600 text-white inline-flex items-center justify-center text-[11px] font-black shrink-0">2</span>
+                    <span class="h-5 w-5 rounded-full bg-emerald-700 text-white inline-flex items-center justify-center text-[11px] font-black shrink-0">2</span>
                     <span>Checkout</span>
                 </div>
                 <span class="text-slate-300 text-xs shrink-0">/</span>
@@ -290,7 +290,7 @@
 
                         <!-- Opsi Delivery: Form Isian Alamat Lengkap + Paste Link Google Maps Saat Ini -->
                         <div x-show="metodeLayanan === 'delivery'" x-cloak class="mt-5 pt-5 border-t border-slate-100 space-y-4">
-                            <div class="rounded-2xl bg-gradient-to-br from-emerald-50 via-white to-sky-50 border border-emerald-200 p-4 space-y-4">
+                            <div class="rounded-2xl bg-emerald-50/70 border border-emerald-200 p-4 space-y-4">
                                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                                     <div>
                                         <span class="inline-flex items-center gap-1.5 text-xs font-black text-emerald-900">
@@ -330,7 +330,7 @@
                                             href="https://www.google.com/maps"
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-emerald-300 text-emerald-800 hover:bg-emerald-50 text-[11px] font-bold transition shadow-2xs"
+                                            class="inline-flex min-h-[44px] items-center gap-1.5 px-3 py-2 rounded-lg bg-white border border-emerald-300 text-emerald-800 hover:bg-emerald-50 text-xs font-bold transition shadow-2xs"
                                         >
                                             <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                                             <span>Buka Google Maps</span>
@@ -351,7 +351,7 @@
                                         <button
                                             type="button"
                                             @click="tempelLinkMaps()"
-                                            class="min-h-[44px] px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold transition cursor-pointer shrink-0 inline-flex items-center justify-center gap-1.5"
+                                            class="min-h-[44px] px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-extrabold transition cursor-pointer shrink-0 inline-flex items-center justify-center gap-1.5"
                                         >
                                             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                                             <span>Tempel Link</span>
@@ -403,7 +403,7 @@
                                             :href="mapsRouteUrl"
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#059669] hover:bg-[#047857] text-white text-[11px] font-bold transition shadow-2xs"
+                                            class="inline-flex min-h-[44px] items-center gap-1.5 px-3.5 py-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition shadow-2xs"
                                         >
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
                                             <span>Lihat Rute Pengiriman di Google Maps</span>
@@ -491,7 +491,7 @@
                     <button
                         type="submit"
                         :disabled="submitting"
-                        class="w-full min-h-[48px] py-3.5 px-4 bg-[#059669] hover:bg-[#047857] active:bg-emerald-800 text-white font-bold rounded-xl text-center text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 cursor-pointer"
+                        class="w-full min-h-[48px] py-3.5 px-4 bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white font-bold rounded-xl text-center text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 cursor-pointer"
                     >
                         <span x-show="!submitting" class="flex items-center gap-2">
                             <span>Lanjut Bayar via QRIS</span>
@@ -507,6 +507,22 @@
                         Stok di gerai {{ $branchDisplayName }} akan dikunci otomatis saat pembayaran QRIS diterbitkan.
                     </div>
                 </div>
+            </div>
+
+            {{-- Fixed Mobile Bottom Checkout Submit Bar --}}
+            <div class="md:hidden fixed bottom-0 inset-x-0 z-40 omni-mobile-bottom-bar px-4 py-2.5 flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                    <span class="block text-[10px] font-semibold uppercase tracking-wider text-slate-500">Total Bayar</span>
+                    <span class="block text-sm font-black text-emerald-700 truncate" x-text="formatRp(totalBayar)">Rp {{ number_format($total, 0, ',', '.') }}</span>
+                </div>
+                <button
+                    type="submit"
+                    :disabled="submitting"
+                    class="min-h-[44px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 px-5 py-2 text-xs font-extrabold text-white shadow-xs transition disabled:opacity-50 cursor-pointer shrink-0"
+                >
+                    <span x-show="!submitting">Bayar QRIS &rarr;</span>
+                    <span x-show="submitting" x-cloak>Memproses...</span>
+                </button>
             </div>
         </form>
     </div>

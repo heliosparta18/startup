@@ -31,7 +31,7 @@
     <div class="w-full max-w-5xl bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-slate-200/80 overflow-hidden flex flex-col lg:flex-row min-h-0 lg:min-h-[640px]">
 
         <!-- KOLOM KIRI: Visual Apotek Resmi & Jaminan Pendaftaran Pasien -->
-        <div class="lg:w-5/12 bg-slate-50 border-r border-slate-200/90 p-6 sm:p-8 lg:p-10 flex flex-col justify-between text-slate-800 relative">
+        <div class="order-2 lg:order-1 lg:w-5/12 bg-slate-50 border-t lg:border-t-0 lg:border-r border-slate-200/90 p-5 sm:p-8 lg:p-10 flex flex-col justify-between text-slate-800 relative">
             <div class="relative z-10">
                 <!-- Brand Header -->
                 <div class="flex items-center gap-3">
@@ -57,11 +57,9 @@
                 <!-- Kartu Keunggulan Layanan Pasien -->
                 <div class="my-6 space-y-3">
                     <div class="p-3.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                            </svg>
-                        </div>
+                        <svg class="w-5 h-5 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
                         <div>
                             <h4 class="font-bold text-xs text-slate-900">Verifikasi OTP Email Resmi</h4>
                             <p class="text-[11px] text-slate-500">Validasi identitas keamanan akun Anda</p>
@@ -69,11 +67,9 @@
                     </div>
 
                     <div class="p-3.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                            </svg>
-                        </div>
+                        <svg class="w-5 h-5 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
                         <div>
                             <h4 class="font-bold text-xs text-slate-900">Tebus Resep Terintegrasi SIPA</h4>
                             <p class="text-[11px] text-slate-500">Pemeriksaan langsung oleh apoteker resmi</p>
@@ -83,16 +79,16 @@
             </div>
 
             <!-- Footer Kolom Kiri -->
-            <div class="relative z-10 text-[11px] text-slate-400 flex items-center justify-between pt-4 border-t border-slate-200/80">
+            <div class="relative z-10 text-[11px] text-slate-500 flex items-center justify-between pt-4 border-t border-slate-200/80">
                 <span>&copy; 2026 Apotek OmniPharma</span>
-                <a href="{{ route('home') }}" class="font-semibold text-emerald-700 hover:text-emerald-800 hover:underline inline-flex items-center gap-1">
+                <a href="{{ route('home') }}" class="min-h-[44px] px-2 font-semibold text-emerald-700 hover:text-emerald-800 hover:underline inline-flex items-center gap-1">
                     &larr; Beranda
                 </a>
             </div>
         </div>
 
         <!-- KOLOM KANAN: Formulir Pendaftaran dengan Verifikasi OTP Email -->
-        <div class="lg:w-7/12 p-5 sm:p-8 lg:p-12 flex flex-col justify-between bg-white" x-data="registerPageData()">
+        <div class="order-1 lg:order-2 lg:w-7/12 p-5 sm:p-8 lg:p-12 flex flex-col justify-between bg-white" x-data="registerPageData()">
             <div>
                 <!-- Mobile Brand Header -->
                 <div class="flex items-center gap-2.5 mb-4 lg:hidden">
@@ -204,7 +200,7 @@
                             type="button"
                             @click="requestRegisterOtp()"
                             :disabled="loadingSendOtp || loadingGoogle"
-                            class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3.5 text-sm font-bold text-white shadow-sm hover:bg-emerald-700 active:bg-emerald-800 transition min-h-[46px] cursor-pointer disabled:opacity-50"
+                            class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-3.5 text-sm font-bold text-white shadow-sm hover:bg-emerald-800 active:bg-emerald-900 transition min-h-[46px] cursor-pointer disabled:opacity-50"
                         >
                             <svg x-show="!loadingSendOtp" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                             <svg x-show="loadingSendOtp" x-cloak class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
@@ -281,7 +277,7 @@
                         type="button"
                         @click="completeRegisterWithOtp()"
                         :disabled="loadingRegister || otp.length !== 6"
-                        class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3.5 text-sm font-bold text-white shadow-sm hover:bg-emerald-700 active:bg-emerald-800 transition min-h-[48px] cursor-pointer disabled:opacity-50"
+                        class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-3.5 text-sm font-bold text-white shadow-sm hover:bg-emerald-800 active:bg-emerald-900 transition min-h-[48px] cursor-pointer disabled:opacity-50"
                     >
                         <svg x-show="loadingRegister" class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
                         <span x-show="!loadingRegister">Validasi OTP & Buat Akun Sekarang</span>

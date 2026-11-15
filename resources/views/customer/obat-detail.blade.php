@@ -1,5 +1,38 @@
 <x-layouts.customer :title="'Detail Obat - '.($obat->nama_obat ?? 'Amodiaquine 200mg')">
-    <div class="space-y-6 max-w-5xl mx-auto pb-10">
+    <div class="space-y-6 max-w-5xl mx-auto pb-24 md:pb-10" x-data="{
+        qty: 1,
+        notif: '',
+        loading: false,
+        tambahKeranjang(idObat, namaObat) {
+            this.loading = true;
+            fetch('{{ \Illuminate\Support\Facades\Route::has('keranjang.add') ? route('keranjang.add') : route('customer.cart.add', ['client' => $client ?? 'banyuwangi-kota']) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    id_obat: idObat,
+                    jumlah: this.qty,
+                    client: '{{ $client ?? 'banyuwangi-kota' }}'
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                this.loading = false;
+                window.dispatchEvent(new CustomEvent('cart-updated', { detail: { count: data?.cart_count, added: this.qty, nama: namaObat } }));
+                this.notif = 'Berhasil ditambahkan ke keranjang (' + this.qty + ' item)!';
+                setTimeout(() => this.notif = '', 4000);
+            })
+            .catch(() => {
+                this.loading = false;
+                window.dispatchEvent(new CustomEvent('cart-updated', { detail: { added: this.qty, nama: namaObat } }));
+                this.notif = 'Obat ditambahkan ke keranjang.';
+                setTimeout(() => this.notif = '', 4000);
+            });
+        }
+    }">
         {{-- Breadcrumb Navigation --}}
         <nav aria-label="Breadcrumb" class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-200 text-xs">
             <div class="flex items-center gap-2 text-slate-500 overflow-x-auto no-scrollbar py-1">
@@ -60,7 +93,7 @@
                                 <span>Bebas Terbatas</span>
                             </div>
                         @elseif ($isBebas)
-                            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-600 text-white shadow-xs border border-emerald-700" title="Obat Bebas">
+                            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-700 text-white shadow-xs border border-emerald-800" title="Obat Bebas">
                                 <span class="w-3 h-3 rounded-full bg-emerald-300 border border-white"></span>
                                 <span>Obat Bebas</span>
                             </div>
@@ -164,7 +197,7 @@
                                 <div class="pt-1">
                                     <a
                                         href="{{ \Illuminate\Support\Facades\Route::has('obat.show') ? route('obat.show', ['id' => ($obat->slug ?: $obat->id_obat), 'client' => $altBranch->slug]) : route('customer.obat.detail', ['client' => $altBranch->slug, 'id' => $obat->id_obat]) }}"
-                                        class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition min-h-[44px] text-center"
+                                        class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-xs transition min-h-[44px] text-center"
                                     >
                                         <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
@@ -184,40 +217,7 @@
                 </div>
 
                 {{-- Action Area (Add to Cart / Prescription Flow) --}}
-                <div class="pt-4 border-t border-slate-200 space-y-3" x-data="{
-                    qty: 1,
-                    notif: '',
-                    loading: false,
-                    tambahKeranjang(idObat, namaObat) {
-                        this.loading = true;
-                        fetch('{{ \Illuminate\Support\Facades\Route::has('keranjang.add') ? route('keranjang.add') : route('customer.cart.add', ['client' => $client ?? 'banyuwangi-kota']) }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify({
-                                id_obat: idObat,
-                                jumlah: this.qty,
-                                client: '{{ $client ?? 'banyuwangi-kota' }}'
-                            })
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            this.loading = false;
-                            window.dispatchEvent(new CustomEvent('cart-updated', { detail: { count: data?.cart_count, added: this.qty, nama: namaObat } }));
-                            this.notif = 'Berhasil ditambahkan ke keranjang (' + this.qty + ' item)!';
-                            setTimeout(() => this.notif = '', 4000);
-                        })
-                        .catch(() => {
-                            this.loading = false;
-                            window.dispatchEvent(new CustomEvent('cart-updated', { detail: { added: this.qty, nama: namaObat } }));
-                            this.notif = 'Obat ditambahkan ke keranjang.';
-                            setTimeout(() => this.notif = '', 4000);
-                        });
-                    }
-                }">
+                <div class="pt-4 border-t border-slate-200 space-y-3">
                     {{-- Alert Notification --}}
                     <div x-show="notif" x-cloak class="p-3 rounded-xl bg-emerald-50 text-emerald-900 text-xs font-bold flex flex-wrap items-center justify-between gap-2 border border-emerald-200">
                         <span x-text="notif"></span>
@@ -239,7 +239,7 @@
                                 type="button"
                                 @click="tambahKeranjang('{{ $obat?->id_obat ?? $id ?? 'sample-id' }}', '{{ addslashes($namaObat) }}')"
                                 :disabled="loading"
-                                class="flex-1 min-h-[44px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 px-5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-xs transition cursor-pointer disabled:opacity-50"
+                                class="flex-1 min-h-[44px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 px-5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-xs transition cursor-pointer disabled:opacity-50"
                             >
                                 <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
@@ -251,7 +251,7 @@
                     @elseif (! $isAvailableHere && $altBranch)
                         <a
                             href="{{ \Illuminate\Support\Facades\Route::has('obat.show') ? route('obat.show', ['id' => ($obat?->slug ?: ($obat?->id_obat ?? $id)), 'client' => $altBranch->slug]) : route('customer.obat.detail', ['client' => $altBranch->slug, 'id' => $obat?->id_obat ?? $id]) }}"
-                            class="w-full min-h-[44px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 px-5 py-3 text-xs sm:text-sm font-bold text-white shadow-xs transition text-center"
+                            class="w-full min-h-[44px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 px-5 py-3 text-xs sm:text-sm font-bold text-white shadow-xs transition text-center"
                         >
                             <span>Beralih ke {{ preg_replace('/^Cabang\s+/i', '', $altBranch->nama_client) }} untuk Membeli</span>
                         </a>
@@ -320,5 +320,36 @@
                 @endif
             </div>
         </section>
+
+        {{-- Fixed Mobile Bottom Action Bar --}}
+        @if ($isAvailableHere)
+            <div class="md:hidden fixed bottom-0 inset-x-0 z-40 omni-mobile-bottom-bar px-4 py-2.5 flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                    <span class="block text-[10px] font-semibold uppercase tracking-wider text-slate-500">Harga Satuan</span>
+                    <span class="block text-sm font-black text-emerald-700 truncate">
+                        Rp {{ number_format((float) ($obat->harga ?? 0), 0, ',', '.') }}
+                    </span>
+                </div>
+                <button
+                    type="button"
+                    @click="tambahKeranjang('{{ $obat?->id_obat ?? $id ?? 'sample-id' }}', '{{ addslashes($namaObat) }}')"
+                    :disabled="loading"
+                    class="min-h-[44px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 px-4 py-2 text-xs font-bold text-white shadow-xs transition cursor-pointer disabled:opacity-50 shrink-0"
+                >
+                    <span x-show="!loading">+ Keranjang (<span x-text="qty"></span>)</span>
+                    <span x-show="loading" x-cloak>Menambahkan...</span>
+                </button>
+            </div>
+        @elseif (! $isAvailableHere && $altBranch)
+            <div class="md:hidden fixed bottom-0 inset-x-0 z-40 omni-mobile-bottom-bar px-4 py-2.5 flex items-center justify-between gap-3">
+                <span class="text-[11px] font-semibold text-slate-600 truncate">Tersedia di {{ preg_replace('/^Cabang\s+/i', '', $altBranch->nama_client) }}</span>
+                <a
+                    href="{{ \Illuminate\Support\Facades\Route::has('obat.show') ? route('obat.show', ['id' => ($obat?->slug ?: ($obat?->id_obat ?? $id)), 'client' => $altBranch->slug]) : route('customer.obat.detail', ['client' => $altBranch->slug, 'id' => $obat?->id_obat ?? $id]) }}"
+                    class="min-h-[44px] inline-flex items-center justify-center rounded-xl bg-emerald-700 hover:bg-emerald-800 px-4 py-2 text-xs font-bold text-white shadow-xs transition shrink-0"
+                >
+                    Beralih Cabang
+                </a>
+            </div>
+        @endif
     </div>
 </x-layouts.customer>

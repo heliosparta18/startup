@@ -41,13 +41,19 @@
             ->implode('') ?: 'OP';
     @endphp
 
-    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-2xs" x-data="{ mobileMenuOpen: false }">
-        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+    <header
+        class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-2xs"
+        x-data="{ mobileMenuOpen: false }"
+        @click.outside="mobileMenuOpen = false"
+        @keydown.escape.window="mobileMenuOpen = false"
+    >
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex h-16 items-center justify-between gap-3">
                 <div class="flex items-center gap-2 sm:gap-3 min-w-0">
                     <button
                         type="button"
                         @click="mobileMenuOpen = !mobileMenuOpen"
+                        :aria-expanded="mobileMenuOpen.toString()"
                         class="lg:hidden inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white p-2 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition min-h-[44px] min-w-[44px] cursor-pointer"
                         aria-label="Buka Menu Navigasi"
                     >
@@ -59,10 +65,10 @@
                     <a
                         href="{{ route('dashboard') }}"
                         aria-label="OmniPharma Dashboard Utama"
-                        class="flex items-center gap-2.5 group shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 rounded-xl"
+                        class="flex items-center gap-2.5 group shrink-0 min-h-[44px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 rounded-xl"
                     >
                         <span class="sr-only">Dashboard Utama</span>
-                        <div class="w-9 h-9 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform duration-200 shrink-0">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-700 flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform duration-200 shrink-0">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
                             </svg>
@@ -95,7 +101,7 @@
                                 @if($photoUrl)
                                     <img src="{{ $photoUrl }}" alt="Foto Profil {{ $userName }}" class="w-7 h-7 rounded-full object-cover shrink-0 border border-slate-300">
                                 @else
-                                    <div class="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center font-extrabold text-[11px] shadow-2xs shrink-0">
+                                    <div class="w-7 h-7 rounded-full bg-emerald-700 text-white flex items-center justify-center font-extrabold text-[11px] shadow-2xs shrink-0">
                                         {{ $initials }}
                                     </div>
                                 @endif
@@ -114,7 +120,7 @@
                                 x-transition:leave="transition ease-in duration-100"
                                 x-transition:leave-start="opacity-100 scale-100 translate-y-0"
                                 x-transition:leave-end="opacity-0 scale-95 translate-y-1"
-                                class="absolute right-0 mt-2 w-72 max-h-[78vh] overflow-y-auto rounded-2xl bg-white shadow-xl border border-slate-200 p-2 z-50 origin-top-right text-xs font-medium"
+                                class="absolute right-0 mt-2 w-72 max-w-[calc(100vw-2rem)] max-h-[78vh] overflow-y-auto rounded-2xl bg-white shadow-xl border border-slate-200 p-2 z-50 origin-top-right text-xs font-medium"
                                 role="menu"
                                 aria-orientation="vertical"
                                 aria-labelledby="internal-user-menu-button"
@@ -143,16 +149,16 @@
                                         <button
                                             type="button"
                                             @click="themeMode = window.omniSetTheme('light')"
-                                            :class="themeMode === 'light' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'"
-                                            class="inline-flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-lg border text-[11px] font-bold transition cursor-pointer min-h-[36px]"
+                                            :class="themeMode === 'light' ? 'bg-emerald-700 text-white border-emerald-700' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'"
+                                            class="inline-flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-lg border text-[11px] font-bold transition cursor-pointer min-h-[44px]"
                                         >
                                             <span>Putih</span>
                                         </button>
                                         <button
                                             type="button"
                                             @click="themeMode = window.omniSetTheme('dark')"
-                                            :class="themeMode === 'dark' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'"
-                                            class="inline-flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-lg border text-[11px] font-bold transition cursor-pointer min-h-[36px]"
+                                            :class="themeMode === 'dark' ? 'bg-emerald-700 text-white border-emerald-700' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'"
+                                            class="inline-flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-lg border text-[11px] font-bold transition cursor-pointer min-h-[44px]"
                                         >
                                             <span>Dark</span>
                                         </button>
@@ -179,7 +185,8 @@
                 @foreach($navItems as $item)
                     <a
                         href="{{ $item['href'] }}"
-                        class="flex items-center gap-2 min-h-[44px] px-3 py-2 rounded-xl transition {{ !empty($item['active']) ? 'bg-emerald-600 text-white font-bold shadow-xs' : 'text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 font-semibold' }}"
+                        @click="mobileMenuOpen = false"
+                        class="flex items-center gap-2 min-h-[44px] px-3 py-2 rounded-xl transition {{ !empty($item['active']) ? 'bg-emerald-700 text-white font-bold shadow-xs' : 'text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 font-semibold' }}"
                     >
                         <span>{{ $item['label'] }}</span>
                     </a>
@@ -191,7 +198,7 @@
                 @foreach($navItems as $item)
                     <a
                         href="{{ $item['href'] }}"
-                        class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl min-h-[40px] whitespace-nowrap transition {{ !empty($item['active']) ? 'bg-emerald-600 text-white shadow-xs font-bold' : 'text-slate-600 hover:text-emerald-800 hover:bg-emerald-50 font-semibold' }}"
+                        class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl min-h-[44px] whitespace-nowrap transition {{ !empty($item['active']) ? 'bg-emerald-700 text-white shadow-xs font-bold' : 'text-slate-600 hover:text-emerald-800 hover:bg-emerald-50 font-semibold' }}"
                     >
                         <span>{{ $item['label'] }}</span>
                     </a>
@@ -200,7 +207,7 @@
         </div>
     </header>
 
-    <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {{ $slot }}
     </main>
 

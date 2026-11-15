@@ -20,7 +20,7 @@
                 @if($settingsPhotoUrl)
                     <img src="{{ $settingsPhotoUrl }}" alt="{{ $settingsUserName }}" class="w-16 h-16 rounded-2xl object-cover border border-slate-200 shrink-0 shadow-xs">
                 @else
-                    <div class="w-16 h-16 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-black text-xl tracking-tight shrink-0 shadow-xs">
+                    <div class="w-16 h-16 rounded-2xl bg-emerald-700 text-white flex items-center justify-center font-black text-xl tracking-tight shrink-0 shadow-xs">
                         {{ $settingsUser && method_exists($settingsUser, 'initials') ? $settingsUser->initials() : strtoupper(substr($settingsUserName, 0, 2)) }}
                     </div>
                 @endif
@@ -34,13 +34,13 @@
             <div class="flex flex-wrap items-center gap-2 self-start sm:self-center">
                 <a
                     href="{{ \Illuminate\Support\Facades\Route::has('pesanan.riwayat') ? route('pesanan.riwayat') : route('dashboard') }}"
-                    class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-bold transition"
+                    class="min-h-[44px] inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-bold transition"
                 >
                     <span>Riwayat Pesanan</span>
                 </a>
                 <a
                     href="{{ route('dashboard') }}"
-                    class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold transition shadow-xs"
+                    class="min-h-[44px] inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-extrabold transition shadow-xs"
                 >
                     <span>Belanja Obat</span>
                 </a>

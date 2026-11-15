@@ -31,7 +31,7 @@
     <div class="w-full max-w-5xl bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-slate-200/80 overflow-hidden flex flex-col lg:flex-row min-h-0 lg:min-h-[640px]">
 
         <!-- KOLOM KIRI: Visual Showcase & Informasi Pasien -->
-        <div class="lg:w-5/12 bg-slate-50 border-r border-slate-200/90 p-6 sm:p-8 lg:p-10 flex flex-col justify-between text-slate-800 relative">
+        <div class="order-2 lg:order-1 lg:w-5/12 bg-slate-50 border-t lg:border-t-0 lg:border-r border-slate-200/90 p-6 sm:p-8 lg:p-10 flex flex-col justify-between text-slate-800 relative">
             <div class="relative z-10">
                 <div class="flex items-center gap-3">
                     <img src="/logo.png" alt="OmniPharma Logo" class="h-10 w-10 object-contain drop-shadow-[0_2px_6px_rgba(5,150,105,0.25)] shrink-0">
@@ -84,7 +84,7 @@
         </div>
 
         <!-- KOLOM KANAN: Formulir Kelengkapan Profil -->
-        <div class="lg:w-7/12 p-5 sm:p-8 lg:p-12 flex flex-col justify-between bg-white" x-data="{
+        <div class="order-1 lg:order-2 lg:w-7/12 p-5 sm:p-8 lg:p-12 flex flex-col justify-between bg-white" x-data="{
             showPassword: false,
             submitting: false,
         }">
@@ -228,7 +228,7 @@
                         <button
                             type="submit"
                             :disabled="submitting"
-                            class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3.5 text-sm font-bold text-white shadow-sm hover:bg-emerald-700 active:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 transition min-h-[48px] cursor-pointer disabled:opacity-50 text-center leading-snug"
+                            class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-3.5 text-sm font-bold text-white shadow-sm hover:bg-emerald-800 active:bg-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 transition min-h-[48px] cursor-pointer disabled:opacity-50 text-center leading-snug"
                         >
                             <span x-show="!submitting">Simpan Profil & Lanjutkan ke Dashboard</span>
                             <span x-show="submitting" x-cloak class="flex items-center gap-2">

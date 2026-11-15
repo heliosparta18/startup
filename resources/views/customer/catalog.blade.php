@@ -1,17 +1,17 @@
 {{-- Unified Catalog Component (GoApotik SVG Visual Style, Standalone & Embedded in Dashboard) --}}
-<div class="{{ ($inDashboard ?? false) ? 'space-y-4' : 'min-h-screen bg-[#F8FAFC] pb-12' }}">
+<div class="{{ ($inDashboard ?? false) ? 'space-y-4' : 'min-h-screen bg-[#F8FAFC] pb-24 md:pb-12' }}">
     {{-- Top Category Navigation Strip --}}
     @include('customer.partials.catalog-category-tabs')
 
-    <div class="{{ ($inDashboard ?? false) ? 'pt-1' : 'max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6' }}">
-        <div class="grid grid-cols-1 md:grid-cols-[16rem_minmax(0,1fr)] lg:grid-cols-12 gap-4 sm:gap-5 items-start">
+    <div class="{{ ($inDashboard ?? false) ? 'pt-1' : 'max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-6' }}">
+        <div class="grid grid-cols-1 md:grid-cols-[16rem_minmax(0,1fr)] lg:grid-cols-12 gap-3 sm:gap-5 items-start">
             {{-- Left Subcategory Filter Sidebar --}}
             <div class="w-full lg:col-span-3 min-w-0 [&>aside]:w-full!">
                 @include('customer.partials.catalog-subcategory-sidebar')
             </div>
 
             {{-- Main Product Catalog Area --}}
-            <section class="lg:col-span-9 min-w-0 w-full space-y-3.5 sm:space-y-4" id="main-catalog-content" aria-label="Daftar Sediaan Katalog">
+            <section class="lg:col-span-9 min-w-0 w-full space-y-2.5 sm:space-y-4" id="main-catalog-content" aria-label="Daftar Sediaan Katalog">
                 {{-- GoApotik-Style Search Bar (Clean Input + Right Magnifying Glass SVG) --}}
                 <div class="relative w-full">
                     <label for="catalog-search-input" class="sr-only">Cari produk obat dan suplemen</label>
@@ -19,8 +19,8 @@
                         id="catalog-search-input"
                         type="search"
                         wire:model.live.debounce.300ms="search"
-                        placeholder="Cari di Kategori {{ $kategoriAktif ?: 'Semua' }} (contoh: Paracetamol, Postinor, Promag)..."
-                        class="w-full min-h-[46px] pl-4 {{ $search ? 'pr-20' : 'pr-12' }} rounded-xl border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 text-xs sm:text-sm shadow-2xs focus:border-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 transition-colors"
+                        placeholder="Cari di Kategori {{ $kategoriAktif ?: 'Semua' }} (cth: Paracetamol)..."
+                        class="w-full min-h-[44px] pl-3.5 sm:pl-4 {{ $search ? 'pr-20' : 'pr-11' }} rounded-xl border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 text-xs sm:text-sm shadow-2xs focus:border-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 transition-colors"
                     />
                     @if ($search)
                         <button
@@ -49,21 +49,21 @@
                             <span>di <span class="text-slate-900 font-semibold">Semua Kategori</span></span>
                         @endif
                         @if ($subKategoriAktif)
-                            <span class="inline-flex items-center gap-1.5 pl-2.5 pr-1 py-0.5 rounded-lg text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 min-h-[36px]">
+                            <span class="inline-flex items-center gap-1 pl-3 pr-1 py-0.5 rounded-lg text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 min-h-[44px]">
                                 <span>{{ $subKategoriAktif }}</span>
-                                <button type="button" wire:click="selectSubCategory('')" class="inline-flex items-center justify-center w-7 h-7 rounded hover:bg-emerald-100 cursor-pointer font-bold" aria-label="Hapus filter subkategori">&times;</button>
+                                <button type="button" wire:click="selectSubCategory('')" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] -my-0.5 rounded-lg hover:bg-emerald-100 cursor-pointer font-bold" aria-label="Hapus filter subkategori">&times;</button>
                             </span>
                         @endif
                         @if ($sediaan)
-                            <span class="inline-flex items-center gap-1.5 pl-2.5 pr-1 py-0.5 rounded-lg text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 capitalize min-h-[36px]">
+                            <span class="inline-flex items-center gap-1 pl-3 pr-1 py-0.5 rounded-lg text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 capitalize min-h-[44px]">
                                 <span>Sediaan: {{ $sediaan }}</span>
-                                <button type="button" wire:click="filterSediaan('')" class="inline-flex items-center justify-center w-7 h-7 rounded hover:bg-emerald-100 cursor-pointer font-bold" aria-label="Hapus filter sediaan">&times;</button>
+                                <button type="button" wire:click="filterSediaan('')" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] -my-0.5 rounded-lg hover:bg-emerald-100 cursor-pointer font-bold" aria-label="Hapus filter sediaan">&times;</button>
                             </span>
                         @endif
                         @if ($search)
-                            <span class="inline-flex items-center gap-1.5 pl-2.5 pr-1 py-0.5 rounded-lg text-[11px] font-semibold bg-slate-100 text-slate-900 border border-slate-200 min-h-[36px]">
+                            <span class="inline-flex items-center gap-1 pl-3 pr-1 py-0.5 rounded-lg text-[11px] font-semibold bg-slate-100 text-slate-900 border border-slate-200 min-h-[44px]">
                                 <span>"{{ $search }}"</span>
-                                <button type="button" wire:click="$set('search', '')" class="inline-flex items-center justify-center w-7 h-7 rounded hover:bg-slate-200 cursor-pointer font-bold" aria-label="Hapus pencarian">&times;</button>
+                                <button type="button" wire:click="$set('search', '')" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] -my-0.5 rounded-lg hover:bg-slate-200 cursor-pointer font-bold" aria-label="Hapus pencarian">&times;</button>
                             </span>
                         @endif
                     </div>
@@ -82,7 +82,7 @@
                                 :aria-expanded="sediaanOpen.toString()"
                                 aria-haspopup="listbox"
                                 aria-label="Filter bentuk sediaan"
-                                class="w-full sm:w-auto min-w-[190px] inline-flex items-center justify-between gap-2.5 px-3.5 py-2 rounded-xl border text-xs font-semibold transition-colors cursor-pointer min-h-[44px] shadow-2xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 {{ $sediaan ? 'border-emerald-600 bg-emerald-600 text-white' : 'border-slate-300 bg-white text-slate-800 hover:border-emerald-600' }}"
+                                class="w-full sm:w-auto min-w-[190px] inline-flex items-center justify-between gap-2.5 px-3.5 py-2 rounded-xl border text-xs font-semibold transition-colors cursor-pointer min-h-[44px] shadow-2xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 {{ $sediaan ? 'border-emerald-700 bg-emerald-700 text-white' : 'border-slate-300 bg-white text-slate-800 hover:border-emerald-700' }}"
                             >
                                 <span class="flex items-center gap-2 min-w-0 truncate">
                                     {!! \App\Modules\Catalog\Support\GoApotikCatalogAssets::uiSvg('filter', 'w-3.5 h-3.5 shrink-0 ' . ($sediaan ? 'text-white' : 'text-emerald-700')) !!}
@@ -117,7 +117,7 @@
                                     aria-selected="{{ empty($sediaan) ? 'true' : 'false' }}"
                                     wire:click="filterSediaan('')"
                                     @click="sediaanOpen = false"
-                                    class="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs text-left transition-colors cursor-pointer min-h-[40px] {{ empty($sediaan) ? 'bg-emerald-600 text-white font-bold' : 'text-slate-700 hover:bg-slate-50 font-medium' }}"
+                                    class="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs text-left transition-colors cursor-pointer min-h-[44px] {{ empty($sediaan) ? 'bg-emerald-700 text-white font-bold' : 'text-slate-700 hover:bg-slate-50 font-medium' }}"
                                 >
                                     <span>Semua Sediaan</span>
                                     @if (empty($sediaan))
@@ -132,7 +132,7 @@
                                         aria-selected="{{ $sediaan === $jenis ? 'true' : 'false' }}"
                                         wire:click='filterSediaan(@json($jenis))'
                                         @click="sediaanOpen = false"
-                                        class="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs text-left capitalize transition-colors cursor-pointer min-h-[40px] {{ $sediaan === $jenis ? 'bg-emerald-600 text-white font-bold' : 'text-slate-700 hover:bg-slate-50 font-medium' }}"
+                                        class="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs text-left capitalize transition-colors cursor-pointer min-h-[44px] {{ $sediaan === $jenis ? 'bg-emerald-700 text-white font-bold' : 'text-slate-700 hover:bg-slate-50 font-medium' }}"
                                     >
                                         <span class="truncate">{{ $jenis }}</span>
                                         @if ($sediaan === $jenis)
@@ -178,4 +178,23 @@
             </section>
         </div>
     </div>
+
+    @if (! ($inDashboard ?? false))
+        {{-- Fixed Mobile Action Bar for Standalone Guest Katalog --}}
+        <div class="md:hidden fixed bottom-0 inset-x-0 z-40 omni-mobile-bottom-bar px-4 py-2.5 flex items-center justify-between gap-2.5">
+            <a
+                href="{{ route('keranjang') }}"
+                class="flex-1 min-h-[44px] inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-extrabold shadow-xs transition"
+            >
+                <span>Keranjang Belanja</span>
+                <span x-show="typeof cartCount !== 'undefined' && cartCount > 0" x-cloak x-text="cartCount > 99 ? '99+' : cartCount" class="px-1.5 py-0.5 rounded-full bg-white text-emerald-800 text-[10px] font-black leading-none"></span>
+            </a>
+            <a
+                href="{{ auth()->check() ? route('dashboard') . '#unggah-resep' : route('login') }}"
+                class="min-h-[44px] inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 text-xs font-bold shadow-2xs transition shrink-0"
+            >
+                Unggah Resep
+            </a>
+        </div>
+    @endif
 </div>

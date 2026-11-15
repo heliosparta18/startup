@@ -48,7 +48,48 @@
                 </div>
             </div>
 
-            <div class="overflow-x-auto">
+            {{-- Mobile Card List --}}
+            <div class="md:hidden divide-y divide-slate-100">
+                @forelse ($pasiens as $pasien)
+                    @php
+                        $ordersCollection = collect($pasien->pesanan_terbaru ?? []);
+                        $latestOrder = $ordersCollection->first();
+                        $ordersPayload = $ordersCollection->map(fn ($o) => [
+                            'nomor' => $o->nomor_pesanan,
+                            'tanggal' => $o->dibuat_pada ? \Carbon\Carbon::parse($o->dibuat_pada)->format('d M Y H:i') : '-',
+                            'status' => ucfirst(str_replace('_', ' ', (string) ($o->status ?? $o->status_pesanan ?? '-'))),
+                            'total' => number_format((float) ($o->total_harga ?? 0), 0, ',', '.'),
+                            'items' => $o->items->count(),
+                        ])->values();
+                    @endphp
+                    <div class="p-4 space-y-2.5 text-xs">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <div class="font-bold text-slate-900">{{ $pasien->nama_lengkap }}</div>
+                                <div class="text-[11px] font-mono text-slate-500 truncate">{{ $pasien->telepon_email ?? '-' }}</div>
+                            </div>
+                            <span class="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 shrink-0">
+                                {{ (int) ($pasien->pesanan_count ?? 0) }} order
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between gap-2 text-[11px] text-slate-600">
+                            <span>{{ (int) ($pasien->resep_count ?? 0) }} resep</span>
+                            @if ($latestOrder)
+                                <span class="font-semibold text-slate-800">{{ $latestOrder->nomor_pesanan }}</span>
+                            @endif
+                        </div>
+                        <button type="button"
+                            @click='openHistory(@json($pasien->nama_lengkap), @json($pasien->telepon_email ?? "-"), @json($ordersPayload))'
+                            class="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-emerald-50 text-slate-800 hover:text-emerald-800 font-bold text-xs transition cursor-pointer">
+                            Lihat Riwayat
+                        </button>
+                    </div>
+                @empty
+                    <div class="p-8 text-center text-xs text-slate-500">Belum ada pasien dengan riwayat transaksi di cabang apotek ini.</div>
+                @endforelse
+            </div>
+
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full min-w-[46rem] text-left text-xs">
                     <thead class="bg-slate-50 text-slate-700 font-extrabold uppercase border-b border-slate-200">
                         <tr>
@@ -101,14 +142,14 @@
                                 <td class="p-3.5 text-right">
                                     <button type="button"
                                         @click='openHistory(@json($pasien->nama_lengkap), @json($pasien->telepon_email ?? "-"), @json($ordersPayload))'
-                                        class="min-h-[38px] px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold text-[11px] transition cursor-pointer">
+                                        class="min-h-[44px] px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold text-[11px] transition cursor-pointer">
                                         Lihat Riwayat
                                     </button>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="p-8 text-center text-slate-400">Belum ada pasien dengan riwayat transaksi di cabang apotek ini.</td>
+                                <td colspan="6" class="p-8 text-center text-slate-500">Belum ada pasien dengan riwayat transaksi di cabang apotek ini.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -117,8 +158,9 @@
         </div>
 
         <!-- Modal Riwayat Order Pasien Cabang -->
-        <div x-show="historyModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-xs">
-            <div @click.away="historyModal = false" class="w-full max-w-lg rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-slate-200 space-y-4">
+        <div x-show="historyModal" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-950/60 p-0 sm:p-4 backdrop-blur-xs">
+            <div @click.away="historyModal = false" class="omni-bottom-sheet-panel w-full max-w-lg max-h-[88dvh] overflow-y-auto rounded-t-[20px] sm:rounded-3xl bg-white p-5 sm:p-8 shadow-2xl border border-slate-200 space-y-4">
+                <div class="sm:hidden mx-auto w-10 h-1 rounded-full bg-slate-300 -mt-1 mb-1" aria-hidden="true"></div>
                 <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                     <div>
                         <h3 class="text-base font-black text-slate-900" x-text="selectedPasien.nama"></h3>
@@ -143,7 +185,7 @@
                 </div>
 
                 <div class="flex justify-end pt-2 border-t border-slate-100">
-                    <button type="button" @click="historyModal = false" class="min-h-[44px] px-5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs cursor-pointer">
+                    <button type="button" @click="historyModal = false" class="w-full sm:w-auto min-h-[44px] px-5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs cursor-pointer">
                         Tutup
                     </button>
                 </div>

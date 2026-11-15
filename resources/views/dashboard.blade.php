@@ -397,9 +397,9 @@
 
     {{-- Top Navigation Header --}}
     <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-2xs">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2 sm:gap-4">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-1.5 sm:gap-4">
             {{-- Mobile Hamburger & Brand & Active Role --}}
-            <div class="flex items-center gap-2 sm:gap-2.5 min-w-0">
+            <div class="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
                 <button
                     type="button"
                     @click="mobileNav = !mobileNav"
@@ -414,16 +414,16 @@
 
                 <a
                     href="{{ route('dashboard') }}"
-                    class="flex items-center gap-2 sm:gap-2.5 min-h-[44px] py-1 min-w-0 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                    class="flex items-center gap-1.5 sm:gap-2.5 min-h-[44px] py-1 min-w-0 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
                     aria-label="OmniPharma Dashboard"
                 >
                     <span class="sr-only">Dashboard Utama</span>
-                    <img src="/logo.png" alt="OmniPharma Logo" class="h-8 w-8 sm:h-9 sm:w-9 object-contain shrink-0">
+                    <img src="/logo.png" alt="OmniPharma Logo" class="h-7 w-7 sm:h-9 sm:w-9 object-contain shrink-0">
                     <div class="min-w-0">
                         <div class="flex items-center gap-1.5 sm:gap-2 min-w-0">
-                            <span class="block text-sm sm:text-lg font-extrabold text-slate-900 tracking-tight leading-none truncate">OmniPharma</span>
+                            <span class="block text-sm sm:text-lg font-extrabold text-slate-900 tracking-tight leading-none whitespace-nowrap">OmniPharma</span>
                         </div>
-                        <span class="block text-[10px] sm:text-[11px] font-medium text-slate-600 leading-tight truncate mt-0.5 max-w-[140px] sm:max-w-[230px]">
+                        <span class="hidden sm:block text-[11px] font-medium text-slate-600 leading-tight truncate mt-0.5 max-w-[230px]">
                             @if($isSuperAdmin)
                                 Portal Pusat Multi-Cabang
                             @elseif($isApoteker)
@@ -505,7 +505,7 @@
                         <button
                             type="button"
                             @click="applySearchToCatalog()"
-                            class="inline-flex items-center justify-center px-3 py-2 min-h-[44px] rounded-lg bg-emerald-600 text-white text-xs font-bold cursor-pointer hover:bg-emerald-700 transition-colors"
+                            class="inline-flex items-center justify-center px-3 py-2 min-h-[44px] rounded-lg bg-emerald-700 text-white text-xs font-bold cursor-pointer hover:bg-emerald-800 transition-colors"
                         >
                             Tampilkan di Katalog Dashboard
                         </button>
@@ -514,7 +514,7 @@
                         <button
                             type="button"
                             @click="applySearchToCatalog()"
-                            class="w-full flex items-center justify-center px-3 py-2 min-h-[44px] rounded-lg bg-emerald-600 text-white text-xs font-bold cursor-pointer hover:bg-emerald-700 transition-colors"
+                            class="w-full flex items-center justify-center px-3 py-2 min-h-[44px] rounded-lg bg-emerald-700 text-white text-xs font-bold cursor-pointer hover:bg-emerald-800 transition-colors"
                         >
                             Tampilkan Semua Hasil di Katalog Dashboard
                         </button>
@@ -522,12 +522,12 @@
                 </div>
             </div>
 
-            {{-- Header Actions: Chat Konsultasi (Coming Soon), Cart & Account Menu --}}
+            {{-- Header Actions: Chat Konsultasi (Tablet/Desktop), Cart & Account Menu --}}
             <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
                 <button
                     type="button"
                     @click="triggerChatComingSoon()"
-                    class="relative inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white hover:bg-emerald-50 hover:border-emerald-300 text-slate-700 hover:text-emerald-900 transition shadow-2xs min-h-[44px] min-w-[44px] px-2.5 py-2 shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                    class="hidden md:inline-flex relative items-center justify-center rounded-xl border border-slate-200 bg-white hover:bg-emerald-50 hover:border-emerald-300 text-slate-700 hover:text-emerald-900 transition shadow-2xs min-h-[44px] min-w-[44px] px-2.5 py-2 shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
                     title="Konsultasi Apoteker (Coming Soon)"
                     aria-label="Konsultasi Apoteker (Coming Soon)"
                 >
@@ -552,7 +552,7 @@
                         x-cloak
                         x-text="cartCount > 99 ? '99+' : cartCount"
                         :class="cartBounce ? 'scale-125' : 'scale-100'"
-                        class="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 rounded-full bg-emerald-600 text-white text-[10px] font-black leading-none flex items-center justify-center border-2 border-white shadow-xs transition-transform duration-200"
+                        class="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 rounded-full bg-emerald-700 text-white text-[10px] font-black leading-none flex items-center justify-center border-2 border-white shadow-xs transition-transform duration-200"
                     >{{ $initialCartCount > 99 ? '99+' : $initialCartCount }}</span>
                 </a>
 
@@ -561,19 +561,17 @@
                     <button
                         type="button"
                         @click="open = !open"
-                        class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50/80 hover:bg-slate-100 shadow-2xs text-xs transition-colors cursor-pointer min-h-[44px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                        class="flex items-center gap-1.5 sm:gap-2 px-1.5 sm:px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50/80 hover:bg-slate-100 shadow-2xs text-xs transition-colors cursor-pointer min-h-[44px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
                         id="user-menu-button"
                         :aria-expanded="open"
                         aria-haspopup="true"
                         aria-label="Menu Pengguna"
                     >
-                        @if($photoUrl)
-                            <img src="{{ $photoUrl }}" alt="Foto Profil {{ $userName }}" class="w-7 h-7 rounded-full object-cover shrink-0 border border-slate-300">
-                        @else
-                            <div class="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0">
-                                {{ strtoupper(substr($userName, 0, 1)) }}
-                            </div>
-                        @endif
+                        @include('partials.user-avatar', [
+                            'photoUrl' => $photoUrl,
+                            'userName' => $userName,
+                            'sizeClass' => 'w-7 h-7 text-xs',
+                        ])
                         <div class="hidden sm:flex flex-col text-left leading-none">
                             <span class="font-bold text-slate-900 text-xs truncate max-w-[130px]">{{ $userName }}</span>
                         </div>
@@ -585,7 +583,7 @@
                     <div
                         x-show="open"
                         x-cloak
-                        class="absolute right-0 mt-2 w-72 max-h-[78vh] overflow-y-auto rounded-xl bg-white p-2 shadow-sm border border-slate-300 z-50 text-xs"
+                        class="absolute right-0 mt-2 w-72 max-w-[calc(100vw-2rem)] max-h-[78vh] overflow-y-auto rounded-xl bg-white p-2 shadow-sm border border-slate-300 z-50 text-xs"
                         role="menu"
                         aria-orientation="vertical"
                         aria-labelledby="user-menu-button"
@@ -611,8 +609,8 @@
                                     <button
                                         type="button"
                                         @click="themeMode = window.omniSetTheme('light')"
-                                        :class="themeMode === 'light' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'"
-                                        class="min-h-[34px] px-2.5 py-1.5 rounded-lg border text-[11px] font-bold flex items-center justify-center gap-1.5 transition cursor-pointer"
+                                        :class="themeMode === 'light' ? 'bg-emerald-700 text-white border-emerald-700' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'"
+                                        class="min-h-[44px] px-2.5 py-1.5 rounded-lg border text-[11px] font-bold flex items-center justify-center gap-1.5 transition cursor-pointer"
                                     >
                                         <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                                         <span>Putih</span>
@@ -620,8 +618,8 @@
                                     <button
                                         type="button"
                                         @click="themeMode = window.omniSetTheme('dark')"
-                                        :class="themeMode === 'dark' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'"
-                                        class="min-h-[34px] px-2.5 py-1.5 rounded-lg border text-[11px] font-bold flex items-center justify-center gap-1.5 transition cursor-pointer"
+                                        :class="themeMode === 'dark' ? 'bg-emerald-700 text-white border-emerald-700' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'"
+                                        class="min-h-[44px] px-2.5 py-1.5 rounded-lg border text-[11px] font-bold flex items-center justify-center gap-1.5 transition cursor-pointer"
                                     >
                                         <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
                                         <span>Dark</span>
@@ -651,7 +649,7 @@
 
         {{-- Mobile Search Row (< md viewports) --}}
         <div
-            class="md:hidden border-t border-slate-200 bg-white px-4 py-2.5 relative"
+            class="md:hidden border-t border-slate-100 bg-slate-50/50 px-3 py-2 relative"
             @click.outside="searchDropdownOpen = false"
             @keydown.escape.stop="searchDropdownOpen = false"
         >
@@ -707,116 +705,23 @@
                 </template>
                 <div x-show="!searchLoading && !searchError && searchResults.length === 0" class="p-3 text-center space-y-2">
                     <p class="text-xs text-slate-700">Tidak ada hasil cepat untuk kata kunci ini.</p>
-                    <button type="button" @click="applySearchToCatalog()" class="inline-flex items-center justify-center px-3 py-2 min-h-[44px] rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold cursor-pointer transition-colors">
+                    <button type="button" @click="applySearchToCatalog()" class="inline-flex items-center justify-center px-3 py-2 min-h-[44px] rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold cursor-pointer transition-colors">
                         Tampilkan di Katalog Dashboard
                     </button>
                 </div>
             </div>
         </div>
 
-        {{-- Mobile Drawer Menu (< md) --}}
-        <div
-            x-show="mobileNav"
-            x-cloak
-            @click.outside="mobileNav = false"
-            class="md:hidden border-t border-slate-200 bg-white px-4 py-3 space-y-2 text-xs font-medium"
-        >
-            <div class="px-3 py-2 bg-slate-50 rounded-xl border border-slate-200/80">
-                <p class="font-bold text-slate-900 truncate">{{ $userName }}</p>
-                <p class="text-[11px] text-slate-600 truncate">{{ $userEmail }}</p>
-            </div>
-
-            <button
-                type="button"
-                @click="triggerChatComingSoon(); mobileNav = false"
-                class="w-full flex items-center justify-between gap-2.5 min-h-[44px] px-3 py-2 rounded-xl bg-emerald-50 text-emerald-900 font-bold border border-emerald-200 cursor-pointer text-left"
-            >
-                <span class="flex items-center gap-2.5">
-                    <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
-                    <span>Chat Konsultasi Apoteker</span>
-                </span>
-                <span class="px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300 text-[10px] font-extrabold leading-none">Coming Soon</span>
-            </button>
-
-            <a href="{{ $keranjangNavUrl }}" class="flex items-center justify-between gap-2.5 min-h-[44px] px-3 py-2 rounded-xl text-slate-800 hover:bg-slate-50 font-bold">
-                <span class="flex items-center gap-2.5">
-                    <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
-                    <span>Keranjang Belanja</span>
-                </span>
-                <span x-show="cartCount > 0" x-cloak x-text="cartCount > 99 ? '99+' : cartCount" class="px-2 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-extrabold leading-none"></span>
-            </a>
-
-            @if(!$isInternalStaff)
-                <a href="#katalog-utama" @click="mobileNav = false" class="flex items-center gap-2.5 min-h-[44px] px-3 py-2 rounded-xl text-slate-800 hover:bg-slate-50 font-bold">
-                    <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
-                    <span>Katalog Obat Utama</span>
-                </a>
-                <a href="{{ $resepFormUrl }}" @click.prevent="openResepModal(''); mobileNav = false" class="flex items-center gap-2.5 min-h-[44px] px-3 py-2 rounded-xl text-slate-800 hover:bg-slate-50 font-bold">
-                    <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                    <span>Unggah Resep Dokter</span>
-                </a>
-            @endif
-
-            <a href="#portal-modul-heading" @click="mobileNav = false" class="flex items-center gap-2.5 min-h-[44px] px-3 py-2 rounded-xl text-slate-800 hover:bg-slate-50 font-bold">
-                <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
-                <span>Portal Cabang</span>
-            </a>
-
-            <div class="pt-2 border-t border-slate-100 space-y-1">
-                <p class="px-3 text-[11px] font-bold uppercase tracking-wide text-slate-500">Pilih Cabang Aktif</p>
-                <form method="POST" action="{{ route('branch.switch') }}">
-                    @csrf
-                    <input type="hidden" name="branch" value="banyuwangi-kota">
-                    <button type="submit" class="w-full flex items-center justify-between px-3 py-2 min-h-[44px] rounded-xl text-left cursor-pointer {{ $activeBranchSlug === 'banyuwangi-kota' ? 'bg-emerald-600 text-white font-bold' : 'text-slate-700 hover:bg-slate-50 font-semibold' }}">
-                        <span>Cabang Banyuwangi Kota</span>
-                        @if($activeBranchSlug === 'banyuwangi-kota')
-                            <span aria-hidden="true">&#10003;</span>
-                        @endif
-                    </button>
-                </form>
-                <form method="POST" action="{{ route('branch.switch') }}">
-                    @csrf
-                    <input type="hidden" name="branch" value="rogojampi">
-                    <button type="submit" class="w-full flex items-center justify-between px-3 py-2 min-h-[44px] rounded-xl text-left cursor-pointer {{ $activeBranchSlug === 'rogojampi' ? 'bg-emerald-600 text-white font-bold' : 'text-slate-700 hover:bg-slate-50 font-semibold' }}">
-                        <span>Cabang Rogojampi</span>
-                        @if($activeBranchSlug === 'rogojampi')
-                            <span aria-hidden="true">&#10003;</span>
-                        @endif
-                    </button>
-                </form>
-            </div>
-
-            <div class="pt-2 border-t border-slate-100 space-y-1">
-                @include('partials.profile-role-menu', ['branchSlug' => $activeBranchSlug])
-                <div
-                    class="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-2"
-                    x-data="{ themeMode: window.omniGetTheme ? window.omniGetTheme() : 'light' }"
-                    @omni-theme-changed.window="themeMode = $event.detail.theme"
-                >
-                    <span class="text-xs font-bold text-slate-700">Tema</span>
-                    <div class="flex items-center gap-1.5">
-                        <button type="button" @click="themeMode = window.omniSetTheme('light')" :class="themeMode === 'light' ? 'bg-emerald-600 text-white' : 'bg-white text-slate-700 border border-slate-200'" class="px-2.5 py-1 rounded-lg text-[11px] font-bold cursor-pointer">Putih</button>
-                        <button type="button" @click="themeMode = window.omniSetTheme('dark')" :class="themeMode === 'dark' ? 'bg-emerald-600 text-white' : 'bg-white text-slate-700 border border-slate-200'" class="px-2.5 py-1 rounded-lg text-[11px] font-bold cursor-pointer">Dark</button>
-                    </div>
-                </div>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="w-full flex items-center gap-2.5 min-h-[44px] px-3 py-2 rounded-xl text-rose-700 hover:bg-rose-50 font-bold text-left cursor-pointer">
-                        <span>Keluar dari Akun</span>
-                    </button>
-                </form>
-            </div>
-        </div>
-
         {{-- Operational Sub-bar: Regulatory Scope & Branch Switcher --}}
-        <div class="bg-slate-50 border-t border-slate-200 px-4 sm:px-6 lg:px-8 py-2 text-xs">
+        <div class="bg-slate-50 border-t border-slate-200 px-3 sm:px-6 lg:px-8 py-1.5 sm:py-2 text-xs">
             <div class="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-3">
                 <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-slate-700 min-w-0">
                     <span class="hidden sm:inline font-semibold text-slate-800 truncate">
                         Standar Permenkes RI No. 73/2016
                     </span>
-                    <span class="sm:hidden font-semibold text-slate-800 truncate">
-                        {{ number_format($totalProdukCount, 0, ',', '.') }} Produk BPOM
+                    <span class="sm:hidden inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-700 whitespace-nowrap shrink-0">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-700 shrink-0" aria-hidden="true"></span>
+                        <span>{{ number_format($totalProdukCount, 0, ',', '.') }} Produk</span>
                     </span>
                     <span class="text-slate-400 hidden sm:inline" aria-hidden="true">|</span>
                     <span class="hidden sm:inline font-medium text-slate-700">
@@ -841,7 +746,7 @@
                     <button
                         type="button"
                         @click="branchMenuOpen = !branchMenuOpen"
-                        class="flex items-center gap-1.5 sm:gap-2 bg-white border border-slate-300 shadow-2xs rounded-xl px-2.5 sm:px-3 py-1.5 font-bold text-slate-900 hover:border-emerald-700 transition-colors cursor-pointer min-h-[44px] max-w-[205px] sm:max-w-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                        class="flex items-center gap-1.5 sm:gap-2 bg-white border border-slate-300 shadow-2xs rounded-xl px-2.5 sm:px-3 py-1.5 font-bold text-slate-900 hover:border-emerald-700 transition-colors cursor-pointer min-h-[44px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
                         :aria-expanded="branchMenuOpen"
                         aria-haspopup="true"
                     >
@@ -849,7 +754,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
-                        <span class="text-xs truncate">{{ $activeBranchName }}</span>
+                        <span class="text-[11px] sm:text-xs whitespace-nowrap">{{ $activeBranchName }}</span>
                         <svg class="w-3.5 h-3.5 text-slate-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </button>
 
@@ -864,7 +769,7 @@
                             <input type="hidden" name="branch" value="banyuwangi-kota">
                             <button
                                 type="submit"
-                                class="w-full flex items-center justify-between px-3 py-2 min-h-[44px] rounded-lg text-left transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-emerald-700 {{ $activeBranchSlug === 'banyuwangi-kota' ? 'bg-emerald-600 text-white font-bold' : 'hover:bg-slate-100 text-slate-800 font-medium' }}"
+                                class="w-full flex items-center justify-between px-3 py-2 min-h-[44px] rounded-lg text-left transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-emerald-700 {{ $activeBranchSlug === 'banyuwangi-kota' ? 'bg-emerald-700 text-white font-bold' : 'hover:bg-slate-100 text-slate-800 font-medium' }}"
                             >
                                 <span>Cabang Banyuwangi Kota</span>
                                 @if($activeBranchSlug === 'banyuwangi-kota')
@@ -877,7 +782,7 @@
                             <input type="hidden" name="branch" value="rogojampi">
                             <button
                                 type="submit"
-                                class="w-full flex items-center justify-between px-3 py-2 min-h-[44px] rounded-lg text-left transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-emerald-700 {{ $activeBranchSlug === 'rogojampi' ? 'bg-emerald-600 text-white font-bold' : 'hover:bg-slate-100 text-slate-800 font-medium' }}"
+                                class="w-full flex items-center justify-between px-3 py-2 min-h-[44px] rounded-lg text-left transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-emerald-700 {{ $activeBranchSlug === 'rogojampi' ? 'bg-emerald-700 text-white font-bold' : 'hover:bg-slate-100 text-slate-800 font-medium' }}"
                             >
                                 <span>Cabang Rogojampi</span>
                                 @if($activeBranchSlug === 'rogojampi')
@@ -890,6 +795,12 @@
             </div>
         </div>
     </header>
+
+    @include('partials.mobile-nav-drawer', [
+        'keranjangUrl' => $keranjangNavUrl,
+        'isInternalStaff' => $isInternalStaff,
+        'inDashboard' => true,
+    ])
 
     {{-- Main Content --}}
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8">
@@ -992,7 +903,7 @@
                             type="button"
                             @click="prevSlide()"
                             aria-label="Banner sebelumnya"
-                            class="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-slate-900 shadow-md border border-slate-200 flex items-center justify-center transition-all opacity-90 lg:opacity-0 lg:group-hover:opacity-100 focus:opacity-100 cursor-pointer focus-visible:outline-2 focus-visible:outline-emerald-700"
+                            class="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-slate-900 shadow-md border border-slate-200 flex items-center justify-center transition-all opacity-90 lg:opacity-0 lg:group-hover:opacity-100 focus:opacity-100 cursor-pointer focus-visible:outline-2 focus-visible:outline-emerald-700"
                         >
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
@@ -1003,7 +914,7 @@
                             type="button"
                             @click="nextSlide()"
                             aria-label="Banner berikutnya"
-                            class="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-slate-900 shadow-md border border-slate-200 flex items-center justify-center transition-all opacity-90 lg:opacity-0 lg:group-hover:opacity-100 focus:opacity-100 cursor-pointer focus-visible:outline-2 focus-visible:outline-emerald-700"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-slate-900 shadow-md border border-slate-200 flex items-center justify-center transition-all opacity-90 lg:opacity-0 lg:group-hover:opacity-100 focus:opacity-100 cursor-pointer focus-visible:outline-2 focus-visible:outline-emerald-700"
                         >
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
@@ -1026,15 +937,13 @@
                 </div>
 
                 {{-- Secondary Interactive Prescription Dropzone Card (Tempat Unggah Resep Dokter) --}}
-                <div id="unggah-resep" class="lg:col-span-4 rounded-2xl bg-white border border-slate-200 p-5 sm:p-6 shadow-2xs flex flex-col justify-between gap-4">
-                    <div class="space-y-3.5">
-                        <div class="flex items-start gap-3">
-                            <div class="w-11 h-11 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0" aria-hidden="true">
-                                {!! \App\Modules\Catalog\Support\GoApotikCatalogAssets::uiSvg('checkout_resep', 'w-5 h-5') !!}
-                            </div>
+                <div id="unggah-resep" class="lg:col-span-4 rounded-2xl bg-white border border-slate-200 p-4 sm:p-6 shadow-2xs flex flex-col justify-between gap-3.5 sm:gap-4">
+                    <div class="space-y-3 sm:space-y-3.5">
+                        <div class="flex items-start gap-2.5 sm:gap-3">
+                            {!! \App\Modules\Catalog\Support\GoApotikCatalogAssets::uiSvg('checkout_resep', 'w-7 h-7 text-emerald-700 shrink-0 mt-0.5') !!}
                             <div class="min-w-0">
-                                <h2 class="text-base font-bold text-slate-900 leading-snug">Tempat Unggah Resep Dokter</h2>
-                                <p class="text-[11px] font-semibold text-emerald-800 mt-1 flex items-center gap-1">
+                                <h2 class="text-[15px] sm:text-base font-bold text-slate-900 leading-snug">Tempat Unggah Resep Dokter</h2>
+                                <p class="text-[11px] font-semibold text-emerald-800 mt-0.5 flex items-center gap-1">
                                     {!! \App\Modules\Catalog\Support\GoApotikCatalogAssets::uiSvg('ic_official_fill', 'w-3.5 h-3.5 text-emerald-700 shrink-0') !!}
                                     <span class="truncate">Telaah APJ {{ $activeBranchName }}</span>
                                 </p>
@@ -1051,13 +960,11 @@
                             tabindex="0"
                             @keydown.enter.prevent="$refs.quickResepInput.click()"
                             @keydown.space.prevent="$refs.quickResepInput.click()"
-                            class="border-2 border-dashed rounded-xl p-3.5 text-center cursor-pointer transition-colors flex flex-col items-center justify-center gap-2 min-h-[116px] focus-visible:outline-2 focus-visible:outline-emerald-700"
+                            class="border-2 border-dashed rounded-xl p-3 sm:p-3.5 text-center cursor-pointer transition-colors flex flex-col items-center justify-center gap-1.5 min-h-[100px] sm:min-h-[116px] focus-visible:outline-2 focus-visible:outline-emerald-700"
                             :class="isQuickDragging ? 'border-emerald-700 bg-emerald-50/90' : 'border-emerald-300 bg-emerald-50/40 hover:border-emerald-600 hover:bg-emerald-50/70'"
                             aria-label="Pilih atau tarik foto resep dokter untuk diunggah"
                         >
-                            <div class="w-10 h-10 rounded-full bg-white text-emerald-700 border border-emerald-200 flex items-center justify-center shadow-2xs" aria-hidden="true">
-                                {!! \App\Modules\Catalog\Support\GoApotikCatalogAssets::uiSvg('icon_camera', 'w-5 h-5') !!}
-                            </div>
+                            {!! \App\Modules\Catalog\Support\GoApotikCatalogAssets::uiSvg('icon_camera', 'w-7 h-7 text-emerald-700 shrink-0') !!}
                             <div>
                                 <p class="text-xs font-bold text-emerald-900">Pilih atau Tarik Foto Resep ke Sini</p>
                                 <p class="text-[11px] text-slate-600 mt-0.5">JPG, JPEG, atau PNG (maks. 5 MB)</p>
@@ -1115,11 +1022,11 @@
                 @livewire(\App\Modules\Catalog\Livewire\PublicCatalog::class, ['client' => $activeBranchSlug, 'inDashboard' => true])
             </section>
 
-            {{-- Inline Prescription Upload Modal (Revised GoApotik + Deep Spruce Design) --}}
+            {{-- Inline Prescription Upload Modal (Mobile Bottom Sheet + Desktop Centered Modal) --}}
             <div
                 x-show="modalUnggah"
                 x-cloak
-                class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto"
+                class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto"
                 @keydown.escape.window="modalUnggah = false"
                 role="dialog"
                 aria-modal="true"
@@ -1127,26 +1034,29 @@
             >
                 <div
                     @click.outside="modalUnggah = false"
-                    class="w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-2xl bg-white border border-slate-200 shadow-xl my-auto"
+                    class="w-full max-w-lg max-h-[90dvh] sm:max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-t-[20px] rounded-b-none sm:rounded-2xl bg-white border border-slate-200 shadow-xl sm:my-auto omni-bottom-sheet-panel"
                 >
-                    <div class="bg-emerald-600 text-white px-6 py-4 flex items-center justify-between gap-3 rounded-t-2xl">
-                        <div class="flex items-center gap-3 min-w-0">
-                            <div class="w-10 h-10 rounded-xl bg-white/15 text-white flex items-center justify-center shrink-0" aria-hidden="true">
-                                {!! \App\Modules\Catalog\Support\GoApotikCatalogAssets::uiSvg('checkout_resep', 'w-5 h-5') !!}
-                            </div>
-                            <div class="min-w-0">
-                                <h3 id="modal-resep-title" class="font-bold text-base text-white leading-tight">Unggah Foto Resep Dokter</h3>
-                                <p class="text-[11px] text-emerald-100 mt-0.5 truncate">Gerai aktif: {{ $activeBranchName }}</p>
-                            </div>
+                    <div class="bg-emerald-700 text-white px-5 sm:px-6 pt-2.5 pb-4 sm:py-4 rounded-t-[20px] sm:rounded-t-2xl">
+                        <div class="sm:hidden flex justify-center pb-2" aria-hidden="true">
+                            <span class="w-10 h-1 rounded-full bg-white/40"></span>
                         </div>
-                        <button
-                            type="button"
-                            @click="modalUnggah = false"
-                            aria-label="Tutup modal resep"
-                            class="text-emerald-100 hover:text-white hover:bg-emerald-700 min-h-[44px] min-w-[44px] rounded-xl flex items-center justify-center text-xl font-bold cursor-pointer focus-visible:outline-2 focus-visible:outline-white"
-                        >
-                            &times;
-                        </button>
+                        <div class="flex items-center justify-between gap-3">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                {!! \App\Modules\Catalog\Support\GoApotikCatalogAssets::uiSvg('checkout_resep', 'w-6 h-6 text-white shrink-0') !!}
+                                <div class="min-w-0">
+                                    <h3 id="modal-resep-title" class="font-bold text-base text-white leading-tight">Unggah Foto Resep Dokter</h3>
+                                    <p class="text-[11px] text-emerald-100 mt-0.5 truncate">Gerai aktif: {{ $activeBranchName }}</p>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                @click="modalUnggah = false"
+                                aria-label="Tutup modal resep"
+                                class="text-emerald-100 hover:text-white hover:bg-emerald-800 min-h-[44px] min-w-[44px] rounded-xl flex items-center justify-center text-xl font-bold cursor-pointer focus-visible:outline-2 focus-visible:outline-white shrink-0"
+                            >
+                                &times;
+                            </button>
+                        </div>
                     </div>
 
                     <div class="p-6 space-y-4">
@@ -1214,9 +1124,7 @@
                                     class="border-2 border-dashed rounded-xl p-5 text-center cursor-pointer transition-colors flex flex-col items-center justify-center gap-2 min-h-[120px]"
                                     :class="isDragging ? 'border-emerald-700 bg-emerald-50' : 'border-slate-300 bg-slate-50 hover:border-emerald-600 hover:bg-emerald-50/40'"
                                 >
-                                    <div class="w-11 h-11 rounded-full bg-white border border-slate-200 text-emerald-700 flex items-center justify-center shadow-2xs" aria-hidden="true">
-                                        {!! \App\Modules\Catalog\Support\GoApotikCatalogAssets::uiSvg('icon_camera', 'w-6 h-6') !!}
-                                    </div>
+                                    {!! \App\Modules\Catalog\Support\GoApotikCatalogAssets::uiSvg('icon_camera', 'w-7 h-7 text-emerald-700 shrink-0') !!}
                                     <span class="text-xs font-bold text-emerald-800">Pilih berkas foto resep atau seret ke area ini</span>
                                     <span class="text-[11px] text-slate-600">Format JPG, JPEG, atau PNG (maksimal 5 MB)</span>
                                 </div>
@@ -1291,124 +1199,112 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5">
                 @if($isSuperAdmin)
                     <a
                         href="{{ route('admin.dashboard') }}"
-                        class="group p-6 rounded-2xl bg-white border border-slate-200 border-l-4 border-l-emerald-600 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-[180px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                        class="group p-4 sm:p-6 rounded-2xl bg-white border border-slate-200 border-l-4 border-l-emerald-600 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-0 sm:min-h-[172px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
                     >
                         <div>
-                            <div class="flex items-center justify-between gap-2 mb-4">
-                                <div class="w-11 h-11 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                                    </svg>
-                                </div>
+                            <div class="flex items-center justify-between gap-2 mb-2.5 sm:mb-3.5">
+                                <svg class="w-6 h-6 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                </svg>
                                 <span class="text-xs font-semibold text-emerald-800">Pusat Eksekutif</span>
                             </div>
-                            <h3 class="font-bold text-slate-900 text-base group-hover:text-emerald-800 transition-colors">Super Admin Eksekutif &amp; KPI</h3>
+                            <h3 class="font-bold text-slate-900 text-[15px] sm:text-base group-hover:text-emerald-800 transition-colors">Super Admin Eksekutif &amp; KPI</h3>
                             <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Omzet agregat lintas cabang, penutupan periode akuntansi ADR-05, dan ekspor konsolidasi.</p>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
+                        <div class="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
                             Buka Overview Eksekutif
                         </div>
                     </a>
 
                     <a
                         href="{{ route('admin.apoteker.index', ['client' => $activeBranchSlug]) }}"
-                        class="group p-6 rounded-2xl bg-white border border-slate-200 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-[180px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                        class="group p-4 sm:p-6 rounded-2xl bg-white border border-slate-200 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-0 sm:min-h-[172px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
                     >
                         <div>
-                            <div class="flex items-center justify-between gap-2 mb-4">
-                                <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors shrink-0">
-                                    @include('partials.profile-role-icon', ['icon' => 'apoteker', 'class' => 'w-5 h-5'])
-                                </div>
+                            <div class="flex items-center justify-between gap-2 mb-2.5 sm:mb-3.5">
+                                @include('partials.profile-role-icon', ['icon' => 'apoteker', 'class' => 'w-6 h-6 text-emerald-700 shrink-0'])
                                 <span class="text-xs font-semibold text-slate-600">Audit Farmasi Cabang</span>
                             </div>
-                            <h3 class="font-bold text-slate-900 text-base group-hover:text-emerald-800 transition-colors">Cek Operasional Apoteker</h3>
+                            <h3 class="font-bold text-slate-900 text-[15px] sm:text-base group-hover:text-emerald-800 transition-colors">Cek Operasional Apoteker</h3>
                             <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Periksa kinerja APJ, antrean resep dokter, stok FEFO, serta antrean loket per cabang.</p>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
+                        <div class="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
                             Cek Apoteker Cabang
                         </div>
                     </a>
 
                     <a
                         href="{{ route('admin.progres.index') }}"
-                        class="group p-6 rounded-2xl bg-white border border-slate-200 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-[180px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                        class="group p-4 sm:p-6 rounded-2xl bg-white border border-slate-200 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-0 sm:min-h-[172px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
                     >
                         <div>
-                            <div class="flex items-center justify-between gap-2 mb-4">
-                                <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors shrink-0">
-                                    @include('partials.profile-role-icon', ['icon' => 'activity', 'class' => 'w-5 h-5'])
-                                </div>
+                            <div class="flex items-center justify-between gap-2 mb-2.5 sm:mb-3.5">
+                                @include('partials.profile-role-icon', ['icon' => 'activity', 'class' => 'w-6 h-6 text-emerald-700 shrink-0'])
                                 <span class="text-xs font-semibold text-slate-600">Monitor Lintas Cabang</span>
                             </div>
-                            <h3 class="font-bold text-slate-900 text-base group-hover:text-emerald-800 transition-colors">Live Monitoring Obat Lintas Cabang</h3>
+                            <h3 class="font-bold text-slate-900 text-[15px] sm:text-base group-hover:text-emerald-800 transition-colors">Live Monitoring Obat Lintas Cabang</h3>
                             <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Pantau aliran progres resep dokter, penyiapan obat, dan kendala layanan real-time seluruh cabang.</p>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
+                        <div class="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
                             Buka Monitoring Obat
                         </div>
                     </a>
 
                     <a
                         href="{{ route('admin.obat.index') }}"
-                        class="group p-6 rounded-2xl bg-white border border-slate-200 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-[180px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                        class="group p-4 sm:p-6 rounded-2xl bg-white border border-slate-200 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-0 sm:min-h-[172px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
                     >
                         <div>
-                            <div class="flex items-center justify-between gap-2 mb-4">
-                                <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors shrink-0">
-                                    @include('partials.profile-role-icon', ['icon' => 'medicine', 'class' => 'w-5 h-5'])
-                                </div>
+                            <div class="flex items-center justify-between gap-2 mb-2.5 sm:mb-3.5">
+                                @include('partials.profile-role-icon', ['icon' => 'medicine', 'class' => 'w-6 h-6 text-emerald-700 shrink-0'])
                                 <span class="text-xs font-semibold text-slate-600">CRUD Katalog &amp; Pengaturan</span>
                             </div>
-                            <h3 class="font-bold text-slate-900 text-base group-hover:text-emerald-800 transition-colors">CRUD Master Obat &amp; Cabang</h3>
+                            <h3 class="font-bold text-slate-900 text-[15px] sm:text-base group-hover:text-emerald-800 transition-colors">CRUD Master Obat &amp; Cabang</h3>
                             <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Tambah, ubah, dan hapus data obat master beserta distribusi stok dan cabang aktif.</p>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
+                        <div class="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
                             Kelola Obat &amp; Cabang
                         </div>
                     </a>
 
                     <a
                         href="{{ route('admin.cabang.staf', ['client' => $activeBranchSlug]) }}"
-                        class="group p-6 rounded-2xl bg-white border border-slate-200 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-[180px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                        class="group p-4 sm:p-6 rounded-2xl bg-white border border-slate-200 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-0 sm:min-h-[172px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
                     >
                         <div>
-                            <div class="flex items-center justify-between gap-2 mb-4">
-                                <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors shrink-0">
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                                    </svg>
-                                </div>
+                            <div class="flex items-center justify-between gap-2 mb-2.5 sm:mb-3.5">
+                                <svg class="w-6 h-6 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
                                 <span class="text-xs font-semibold text-slate-600">SDM &amp; Legalitas</span>
                             </div>
-                            <h3 class="font-bold text-slate-900 text-base group-hover:text-emerald-800 transition-colors">Supervisi Staf &amp; SIPA Apoteker</h3>
+                            <h3 class="font-bold text-slate-900 text-[15px] sm:text-base group-hover:text-emerald-800 transition-colors">Supervisi Staf &amp; SIPA Apoteker</h3>
                             <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Kelola data tenaga kefarmasian, validitas legalitas SIPA, dan penugasan cabang.</p>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
+                        <div class="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
                             Kelola Staf Farmasi
                         </div>
                     </a>
 
                     <a
                         href="{{ route('admin.kasir.ledger') }}"
-                        class="group p-6 rounded-2xl bg-white border border-slate-200 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-[180px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                        class="group p-4 sm:p-6 rounded-2xl bg-white border border-slate-200 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-0 sm:min-h-[172px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
                     >
                         <div>
-                            <div class="flex items-center justify-between gap-2 mb-4">
-                                <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors shrink-0">
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z" />
-                                    </svg>
-                                </div>
+                            <div class="flex items-center justify-between gap-2 mb-2.5 sm:mb-3.5">
+                                <svg class="w-6 h-6 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z" />
+                                </svg>
                                 <span class="text-xs font-semibold text-slate-600">Kasir &amp; Akuntansi</span>
                             </div>
-                            <h3 class="font-bold text-slate-900 text-base group-hover:text-emerald-800 transition-colors">Rekonsiliasi Kasir &amp; Ledger Pembayaran</h3>
+                            <h3 class="font-bold text-slate-900 text-[15px] sm:text-base group-hover:text-emerald-800 transition-colors">Rekonsiliasi Kasir &amp; Ledger Pembayaran</h3>
                             <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Verifikasi setoran QRIS, tunai kasir, dan pencocokan ledger pembayaran harian.</p>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
+                        <div class="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
                             Buka Ledger Kasir
                         </div>
                     </a>
@@ -1416,63 +1312,57 @@
                 @elseif($isApoteker)
                     <a
                         href="{{ route('tenant.dashboard', ['client' => $userClientSlug]) }}"
-                        class="group p-6 rounded-2xl bg-white border border-slate-200 border-l-4 border-l-emerald-600 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-[180px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                        class="group p-4 sm:p-6 rounded-2xl bg-white border border-slate-200 border-l-4 border-l-emerald-600 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-0 sm:min-h-[172px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
                     >
                         <div>
-                            <div class="flex items-center justify-between gap-2 mb-4">
-                                <div class="w-11 h-11 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                </div>
+                            <div class="flex items-center justify-between gap-2 mb-2.5 sm:mb-3.5">
+                                <svg class="w-6 h-6 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
                                 <span class="text-xs font-semibold text-emerald-800">{{ $userClientName }}</span>
                             </div>
-                            <h3 class="font-bold text-slate-900 text-base group-hover:text-emerald-800 transition-colors">Telaah Resep Dokter &amp; FEFO</h3>
+                            <h3 class="font-bold text-slate-900 text-[15px] sm:text-base group-hover:text-emerald-800 transition-colors">Telaah Resep Dokter &amp; FEFO</h3>
                             <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Verifikasi administratif dan klinis resep dokter, cek SIP dokter, dan alokasi obat batch FEFO terdekat ED.</p>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
+                        <div class="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
                             Buka Verifikasi Resep
                         </div>
                     </a>
 
                     <a
                         href="{{ route('tenant.antrean.index', ['client' => $userClientSlug]) }}"
-                        class="group p-6 rounded-2xl bg-white border border-slate-200 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-[180px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                        class="group p-4 sm:p-6 rounded-2xl bg-white border border-slate-200 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-0 sm:min-h-[172px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
                     >
                         <div>
-                            <div class="flex items-center justify-between gap-2 mb-4">
-                                <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors shrink-0">
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                </div>
+                            <div class="flex items-center justify-between gap-2 mb-2.5 sm:mb-3.5">
+                                <svg class="w-6 h-6 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
                                 <span class="text-xs font-semibold text-slate-600">Loket Farmasi</span>
                             </div>
-                            <h3 class="font-bold text-slate-900 text-base group-hover:text-emerald-800 transition-colors">Antrean &amp; Progres Status</h3>
+                            <h3 class="font-bold text-slate-900 text-[15px] sm:text-base group-hover:text-emerald-800 transition-colors">Antrean &amp; Progres Status</h3>
                             <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Panggil antrean berjalan, terbitkan tiket walk-in, dan majukan tahapan penyiapan obat.</p>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
+                        <div class="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
                             Kelola Antrean {{ $userClientName }}
                         </div>
                     </a>
 
                     <a
                         href="{{ route('tenant.stok.fefo', ['client' => $userClientSlug]) }}"
-                        class="group p-6 rounded-2xl bg-white border border-slate-200 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-[180px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                        class="group p-4 sm:p-6 rounded-2xl bg-white border border-slate-200 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-0 sm:min-h-[172px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
                     >
                         <div>
-                            <div class="flex items-center justify-between gap-2 mb-4">
-                                <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors shrink-0">
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                                    </svg>
-                                </div>
+                            <div class="flex items-center justify-between gap-2 mb-2.5 sm:mb-3.5">
+                                <svg class="w-6 h-6 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                </svg>
                                 <span class="text-xs font-semibold text-slate-600">Inventaris FEFO</span>
                             </div>
-                            <h3 class="font-bold text-slate-900 text-base group-hover:text-emerald-800 transition-colors">Manajemen Stok Batch FEFO</h3>
+                            <h3 class="font-bold text-slate-900 text-[15px] sm:text-base group-hover:text-emerald-800 transition-colors">Manajemen Stok Batch FEFO</h3>
                             <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Rotasi nomor batch, pantau tanggal kedaluwarsa (ED), dan karantina sediaan kedaluwarsa.</p>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
+                        <div class="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
                             Periksa Batch Obat
                         </div>
                     </a>
@@ -1480,48 +1370,48 @@
                 @elseif($isKasir)
                     <a
                         href="{{ route('kasir.dashboard') }}"
-                        class="group p-6 rounded-2xl bg-white border border-slate-200 border-l-4 border-l-emerald-600 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-[180px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                        class="group p-4 sm:p-6 rounded-2xl bg-white border border-slate-200 border-l-4 border-l-emerald-600 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-0 sm:min-h-[172px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
                     >
                         <div>
-                            <div class="flex items-center justify-between gap-2 mb-3">
+                            <div class="flex items-center justify-between gap-2 mb-2.5 sm:mb-3">
                                 <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Portal Kasir</span>
                             </div>
-                            <h3 class="text-base font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">Kasir &amp; POS Loket</h3>
+                            <h3 class="text-[15px] sm:text-base font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">Kasir &amp; POS Loket</h3>
                             <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Layani pembayaran pesanan online maupun penjualan langsung walk-in tunai atau QRIS di cabang.</p>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-semibold text-emerald-700">
+                        <div class="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-100 text-xs font-semibold text-emerald-700">
                             Buka Kasir &amp; POS
                         </div>
                     </a>
 
                     <a
                         href="{{ route('kasir.ledger') }}"
-                        class="group p-6 rounded-2xl bg-white border border-slate-200 border-l-4 border-l-slate-700 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-[180px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                        class="group p-4 sm:p-6 rounded-2xl bg-white border border-slate-200 border-l-4 border-l-slate-700 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-0 sm:min-h-[172px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
                     >
                         <div>
-                            <div class="flex items-center justify-between gap-2 mb-3">
+                            <div class="flex items-center justify-between gap-2 mb-2.5 sm:mb-3">
                                 <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Rekonsiliasi</span>
                             </div>
-                            <h3 class="text-base font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">Buku Ledger &amp; Struk</h3>
+                            <h3 class="text-[15px] sm:text-base font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">Buku Ledger &amp; Struk</h3>
                             <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Pantau riwayat transaksi pembayaran lunas, setoran tunai/QRIS, dan cetak struk pelanggan.</p>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-semibold text-slate-700 group-hover:text-emerald-700">
+                        <div class="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-100 text-xs font-semibold text-slate-700 group-hover:text-emerald-700">
                             Buka Buku Ledger
                         </div>
                     </a>
 
                     <a
                         href="{{ route('profile.edit') }}"
-                        class="group p-6 rounded-2xl bg-white border border-slate-200 border-l-4 border-l-sky-600 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-[180px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                        class="group p-4 sm:p-6 rounded-2xl bg-white border border-slate-200 border-l-4 border-l-sky-600 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-0 sm:min-h-[172px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
                     >
                         <div>
-                            <div class="flex items-center justify-between gap-2 mb-3">
+                            <div class="flex items-center justify-between gap-2 mb-2.5 sm:mb-3">
                                 <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Akun Staf</span>
                             </div>
-                            <h3 class="text-base font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">Profil &amp; Keamanan</h3>
+                            <h3 class="text-[15px] sm:text-base font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">Profil &amp; Keamanan</h3>
                             <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Kelola detail akun kasir, sandi masuk, dan preferensi tema tampilan portal Anda.</p>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-semibold text-sky-700 group-hover:text-emerald-700">
+                        <div class="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-100 text-xs font-semibold text-sky-700 group-hover:text-emerald-700">
                             Kelola Profil
                         </div>
                     </a>
@@ -1533,23 +1423,21 @@
                         <input type="hidden" name="branch" value="banyuwangi-kota">
                         <button
                             type="submit"
-                            class="w-full text-left group p-6 rounded-2xl bg-white border border-slate-200 border-l-4 border-l-emerald-600 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-[180px] cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                            class="w-full text-left group p-4 sm:p-6 rounded-2xl bg-white border border-slate-200 border-l-4 border-l-emerald-600 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-0 sm:min-h-[172px] cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
                         >
                             <div class="w-full">
-                                <div class="flex items-center justify-between gap-2 mb-4">
-                                    <div class="w-11 h-11 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
-                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                                        </svg>
-                                    </div>
+                                <div class="flex items-center justify-between gap-2 mb-2.5 sm:mb-3.5">
+                                    <svg class="w-6 h-6 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                    </svg>
                                     <span class="text-xs font-semibold text-emerald-800">
                                         {{ $activeBranchSlug === 'banyuwangi-kota' ? 'Cabang Aktif' : 'Cabang Utama' }}
                                     </span>
                                 </div>
-                                <h3 class="font-bold text-slate-900 text-base group-hover:text-emerald-800 transition-colors">Katalog Cabang Banyuwangi Kota</h3>
+                                <h3 class="font-bold text-slate-900 text-[15px] sm:text-base group-hover:text-emerald-800 transition-colors">Katalog Cabang Banyuwangi Kota</h3>
                                 <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Aktifkan stok Cabang Banyuwangi Kota langsung pada katalog dashboard tanpa pindah halaman.</p>
                             </div>
-                            <div class="w-full mt-4 pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
+                            <div class="w-full mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
                                 {{ $activeBranchSlug === 'banyuwangi-kota' ? 'Sedang Aktif di Dashboard' : 'Pilih Cabang Banyuwangi Kota' }}
                             </div>
                         </button>
@@ -1561,23 +1449,21 @@
                         <input type="hidden" name="branch" value="rogojampi">
                         <button
                             type="submit"
-                            class="w-full text-left group p-6 rounded-2xl bg-white border border-slate-200 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-[180px] cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                            class="w-full text-left group p-4 sm:p-6 rounded-2xl bg-white border border-slate-200 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-0 sm:min-h-[172px] cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
                         >
                             <div class="w-full">
-                                <div class="flex items-center justify-between gap-2 mb-4">
-                                    <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors shrink-0">
-                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                        </svg>
-                                    </div>
+                                <div class="flex items-center justify-between gap-2 mb-2.5 sm:mb-3.5">
+                                    <svg class="w-6 h-6 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                    </svg>
                                     <span class="text-xs font-semibold text-slate-600">
                                         {{ $activeBranchSlug === 'rogojampi' ? 'Cabang Aktif' : 'Cabang 2' }}
                                     </span>
                                 </div>
-                                <h3 class="font-bold text-slate-900 text-base group-hover:text-emerald-800 transition-colors">Katalog Cabang Rogojampi</h3>
+                                <h3 class="font-bold text-slate-900 text-[15px] sm:text-base group-hover:text-emerald-800 transition-colors">Katalog Cabang Rogojampi</h3>
                                 <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Aktifkan stok Cabang Rogojampi langsung pada katalog dashboard tanpa pindah halaman.</p>
                             </div>
-                            <div class="w-full mt-4 pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
+                            <div class="w-full mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
                                 {{ $activeBranchSlug === 'rogojampi' ? 'Sedang Aktif di Dashboard' : 'Pilih Cabang Rogojampi' }}
                             </div>
                         </button>
@@ -1586,21 +1472,19 @@
                     {{-- Customer Card 3: Cart & Pickup Slot --}}
                     <a
                         href="{{ route('customer.cart', ['client' => $activeBranchSlug]) }}"
-                        class="group p-6 rounded-2xl bg-white border border-slate-200 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-[180px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                        class="group p-4 sm:p-6 rounded-2xl bg-white border border-slate-200 hover:border-emerald-700 transition-colors flex flex-col justify-between min-h-0 sm:min-h-[172px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
                     >
                         <div>
-                            <div class="flex items-center justify-between gap-2 mb-4">
-                                <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors shrink-0">
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                                    </svg>
-                                </div>
+                            <div class="flex items-center justify-between gap-2 mb-2.5 sm:mb-3.5">
+                                <svg class="w-6 h-6 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                </svg>
                                 <span class="text-xs font-semibold text-slate-600">Loket Ambil Cepat</span>
                             </div>
-                            <h3 class="font-bold text-slate-900 text-base group-hover:text-emerald-800 transition-colors">Keranjang &amp; Slot Pengambilan</h3>
+                            <h3 class="font-bold text-slate-900 text-[15px] sm:text-base group-hover:text-emerald-800 transition-colors">Keranjang &amp; Slot Pengambilan</h3>
                             <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Pilih jadwal ambil obat di apotek sesuai ketersediaan slot loket cabang aktif.</p>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
+                        <div class="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-100 text-xs font-bold text-emerald-800">
                             Buka Keranjang Saya
                         </div>
                     </a>
@@ -1616,6 +1500,28 @@
             <span>&copy; 2026 Sistem Informasi Farmasi Terpadu (Praktikum PSI Pak Devit Suwardiyanto)</span>
         </div>
     </footer>
+
+    @if(!$isInternalStaff)
+        {{-- Fixed Mobile Bottom Action Bar (PRD Section 4.2) --}}
+        <div class="fixed bottom-0 inset-x-0 z-30 md:hidden bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-lg px-4 py-2.5 omni-mobile-bottom-bar">
+            <div class="flex items-center justify-between gap-2.5">
+                <button
+                    type="button"
+                    @click="openResepModal('')"
+                    class="min-h-[44px] px-3.5 py-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 text-xs font-bold inline-flex items-center justify-center gap-1.5 shrink-0 cursor-pointer"
+                >
+                    <span>Unggah Resep</span>
+                </button>
+                <a
+                    href="{{ $keranjangNavUrl }}"
+                    class="flex-1 min-h-[44px] px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold inline-flex items-center justify-between gap-2 shadow-xs"
+                >
+                    <span>Keranjang Belanja</span>
+                    <span class="px-2 py-0.5 rounded-full bg-white/20 text-white text-[11px] font-black" x-text="(cartCount || 0) + ' item'"></span>
+                </a>
+            </div>
+        </div>
+    @endif
 
     @fluxScripts
 </body>

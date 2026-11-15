@@ -75,7 +75,7 @@
             </div>
 
             <div class="shrink-0 flex flex-wrap items-center gap-2.5">
-                <a href="{{ route('admin.obat.index') }}" class="inline-flex min-h-[44px] items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition">
+                <a href="{{ route('admin.obat.index') }}" class="inline-flex min-h-[44px] items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-xs transition">
                     <span>Kelola Master Obat</span>
                 </a>
                 <a href="{{ route('admin.apoteker.index') }}" class="inline-flex min-h-[44px] items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-emerald-50 text-slate-800 hover:text-emerald-800 font-bold text-xs shadow-2xs transition">
@@ -148,7 +148,7 @@
                 </div>
             </div>
             <div class="flex flex-wrap gap-2.5 shrink-0">
-                <a href="{{ route('admin.progres.index') }}" class="inline-flex min-h-[44px] items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition">
+                <a href="{{ route('admin.progres.index') }}" class="inline-flex min-h-[44px] items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-xs transition">
                     <span>Buka Monitoring Progres &rarr;</span>
                 </a>
                 <a href="{{ route('admin.cabang.pengaturan', ['client' => $clients->first()?->slug ?? 'banyuwangi-kota']) }}" class="inline-flex min-h-[44px] items-center justify-center px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition">
@@ -223,13 +223,13 @@
                                 </td>
                                 <td class="p-4 text-right whitespace-nowrap">
                                     <div class="inline-flex items-center gap-1.5">
-                                        <a href="{{ route('admin.apoteker.index', ['client' => $branchSlug]) }}" class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold text-[11px] transition">
+                                        <a href="{{ route('admin.apoteker.index', ['client' => $branchSlug]) }}" class="inline-flex items-center justify-center min-h-[44px] px-3 py-2 rounded-lg border border-slate-200 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold text-xs transition">
                                             Apoteker
                                         </a>
-                                        <a href="{{ route('admin.cabang.staf', ['client' => $branchSlug]) }}" class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold text-[11px] transition">
+                                        <a href="{{ route('admin.cabang.staf', ['client' => $branchSlug]) }}" class="inline-flex items-center justify-center min-h-[44px] px-3 py-2 rounded-lg border border-slate-200 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold text-xs transition">
                                             Staf &amp; Akses
                                         </a>
-                                        <a href="{{ route('admin.cabang.pengaturan', ['client' => $branchSlug]) }}" class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold text-[11px] transition">
+                                        <a href="{{ route('admin.cabang.pengaturan', ['client' => $branchSlug]) }}" class="inline-flex items-center justify-center min-h-[44px] px-3 py-2 rounded-lg border border-slate-200 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold text-xs transition">
                                             Pengaturan
                                         </a>
                                     </div>
@@ -260,7 +260,7 @@
                     type="button"
                     @click="modalKonfirmasi = true"
                     :disabled="periodeTerkunci"
-                    class="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 px-6 text-xs font-bold text-white shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 disabled:opacity-50 transition cursor-pointer">
+                    class="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center rounded-xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 px-6 text-xs font-bold text-white shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 disabled:opacity-50 transition cursor-pointer">
                     <span x-text="periodeTerkunci ? 'PERIODE SUDAH TERKUNCI' : 'TUTUP PERIODE &amp; KUNCI SNAPSHOT'"></span>
                 </button>
             </div>
@@ -273,12 +273,38 @@
                     <h2 class="text-lg font-black text-slate-900">Pemantauan Stok Kritis &amp; Batch Near-ED</h2>
                     <p class="text-xs text-slate-500 mt-0.5">Obat dengan stok &le; 10 unit atau kedaluwarsa dalam 30 hari di seluruh cabang</p>
                 </div>
-                <a href="{{ route('admin.obat.index') }}" class="inline-flex min-h-[40px] items-center justify-center px-4 py-2 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100 text-xs font-bold transition">
+                <a href="{{ route('admin.obat.index') }}" class="inline-flex min-h-[44px] items-center justify-center px-4 py-2 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100 text-xs font-bold transition">
                     Kelola Katalog &amp; Tambah Stok &rarr;
                 </a>
             </div>
 
-            <div class="overflow-x-auto rounded-2xl border border-slate-200">
+            <!-- Mobile Card View: Stok Kritis -->
+            <div class="md:hidden space-y-3">
+                @forelse ($stokKritis as $item)
+                    <article class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 space-y-2 text-xs">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <h3 class="font-bold text-sm text-slate-900">{{ $item->obat->nama_obat ?? 'Obat' }}</h3>
+                                <p class="text-slate-600 mt-0.5">{{ $item->client->nama_client ?? '-' }}</p>
+                            </div>
+                            <span class="shrink-0 inline-flex px-2.5 py-0.5 rounded-lg text-[11px] font-bold {{ $item->jumlah_stok <= 5 ? 'bg-rose-50 text-rose-800 border border-rose-200' : 'bg-amber-50 text-amber-800 border border-amber-200' }}">
+                                {{ (int) $item->jumlah_stok }} unit
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-200/70 text-[11px] text-slate-600 font-mono">
+                            <span>Batch: {{ $item->batch_number ?? ($item->obat->batch_number ?? '-') }}</span>
+                            <span>ED: {{ $item->obat?->expired ? \Carbon\Carbon::parse($item->obat->expired)->format('d M Y') : '-' }}</span>
+                        </div>
+                    </article>
+                @empty
+                    <div class="rounded-2xl border border-slate-200 p-6 text-center text-xs text-slate-500">
+                        Seluruh stok cabang dalam kondisi aman.
+                    </div>
+                @endforelse
+            </div>
+
+            <!-- Desktop Table View: Stok Kritis -->
+            <div class="hidden md:block overflow-x-auto rounded-2xl border border-slate-200">
                 <table class="w-full text-left text-xs min-w-[40rem]">
                     <thead class="bg-slate-50 text-slate-700 font-extrabold uppercase border-b border-slate-200">
                         <tr>
@@ -314,9 +340,10 @@
             </div>
         </section>
 
-        <!-- Modal Konfirmasi Tutup Periode -->
-        <div x-show="modalKonfirmasi" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-xs">
-            <div @click.away="modalKonfirmasi = false" class="w-full max-w-md rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-slate-200 space-y-4">
+        <!-- Modal Konfirmasi Tutup Periode (Mobile Bottom Sheet / Desktop Dialog) -->
+        <div x-show="modalKonfirmasi" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-950/60 p-0 sm:p-4 backdrop-blur-xs">
+            <div @click.away="modalKonfirmasi = false" class="omni-bottom-sheet-panel w-full sm:max-w-md rounded-t-[20px] sm:rounded-3xl bg-white p-5 sm:p-8 shadow-2xl border border-slate-200 max-h-[90dvh] overflow-y-auto space-y-4">
+                <div class="mx-auto w-10 h-1 rounded-full bg-slate-300 sm:hidden" aria-hidden="true"></div>
                 <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                     <h3 class="text-base font-bold text-slate-900">Konfirmasi Tutup Periode Penjualan</h3>
                     <button type="button" @click="modalKonfirmasi = false" class="min-h-[44px] min-w-[44px] inline-flex items-center justify-center text-slate-500 hover:text-slate-900 rounded-xl cursor-pointer" aria-label="Tutup modal">&times;</button>
@@ -327,11 +354,11 @@
                         Sesuai aturan append-only, snapshot ringkasan periode akan dikunci di basis data untuk keperluan audit.
                     </p>
                 </div>
-                <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                <div class="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2 pt-2 border-t border-slate-100">
                     <button type="button" @click="modalKonfirmasi = false" class="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer">
                         Batal
                     </button>
-                    <button type="button" @click="tutupPeriode()" :disabled="sedangProses" class="min-h-[44px] inline-flex items-center justify-center rounded-xl bg-emerald-600 hover:bg-emerald-700 px-5 text-xs font-bold text-white shadow-xs disabled:opacity-50 cursor-pointer">
+                    <button type="button" @click="tutupPeriode()" :disabled="sedangProses" class="min-h-[44px] inline-flex items-center justify-center rounded-xl bg-emerald-700 hover:bg-emerald-800 px-5 text-xs font-bold text-white shadow-xs disabled:opacity-50 cursor-pointer">
                         <span x-text="sedangProses ? 'Memproses...' : 'Kunci Snapshot Sekarang'"></span>
                     </button>
                 </div>

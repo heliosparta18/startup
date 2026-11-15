@@ -87,9 +87,17 @@
                         <div class="lg:col-span-5 space-y-4">
                             <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                                 <div class="text-xs font-bold text-slate-700 mb-2">Foto Resep Fisik Dokter</div>
+                                @php
+                                    $resepImgPath = $item->url_gambar;
+                                    $hasValidResepImage = $resepImgPath && (
+                                        str_starts_with($resepImgPath, 'http://')
+                                        || str_starts_with($resepImgPath, 'https://')
+                                        || file_exists(public_path(ltrim($resepImgPath, '/')))
+                                    );
+                                @endphp
                                 <div class="aspect-4/3 rounded-xl overflow-hidden bg-slate-200 flex items-center justify-center border border-slate-300">
-                                    @if ($item->url_gambar)
-                                        <img src="{{ $item->url_gambar }}" alt="Foto Resep" class="w-full h-full object-cover" />
+                                    @if ($hasValidResepImage)
+                                        <img src="{{ $resepImgPath }}" alt="Foto Resep" class="w-full h-full object-cover" />
                                     @else
                                         <div class="text-center p-4">
                                             <svg class="h-12 w-12 mx-auto text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -158,7 +166,7 @@
                                         value="{{ old('nomor_sip', $item->sip_dokter ?? '503/SIP/2024') }}"
                                         placeholder="Format resmi: 503/SIP/2024"
                                         class="w-full min-h-[46px] rounded-xl border border-slate-300 bg-white px-3.5 text-xs sm:text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-600 transition" />
-                                    <span class="text-[11px] text-slate-400 mt-1 block">Format standar: <code>XXX/SIP/YYYY</code> (Contoh: 503/SIP/2024).</span>
+                                    <span class="text-[11px] text-slate-500 mt-1 block">Format standar: <code>XXX/SIP/YYYY</code> (Contoh: 503/SIP/2024).</span>
                                 </div>
 
                                 <div>
@@ -178,7 +186,7 @@
                                         type="submit"
                                         name="action"
                                         value="disetujui"
-                                        class="flex-1 min-h-[46px] inline-flex items-center justify-center gap-2 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs font-bold shadow-xs transition cursor-pointer">
+                                        class="flex-1 min-h-[46px] inline-flex items-center justify-center gap-2 px-5 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white text-xs font-bold shadow-xs transition cursor-pointer">
                                         <span>✓ Setujui Resep (SIP Sah)</span>
                                     </button>
                                     <button

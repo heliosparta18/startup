@@ -119,7 +119,7 @@ new #[Title('Profile settings')] class extends Component {
                     </div>
                     <a
                         href="{{ $profileUser->homeRoute() }}"
-                        class="min-h-[40px] inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition"
+                        class="min-h-[44px] inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shadow-xs transition"
                     >
                         <span>Buka Portal Utama &rarr;</span>
                     </a>
@@ -136,7 +136,7 @@ new #[Title('Profile settings')] class extends Component {
                                     href="{{ $action['href'] }}"
                                     class="group flex items-start gap-3 p-3.5 rounded-2xl border transition min-h-[56px] {{ !empty($action['primary']) ? 'border-emerald-300 bg-emerald-50/80 hover:bg-emerald-100' : 'border-slate-200 bg-slate-50/70 hover:bg-emerald-50/60 hover:border-emerald-200' }}"
                                 >
-                                    <div class="w-9 h-9 rounded-xl {{ !empty($action['primary']) ? 'bg-emerald-600 text-white' : 'bg-white border border-slate-200 text-emerald-700 group-hover:border-emerald-300' }} flex items-center justify-center shrink-0">
+                                    <div class="w-9 h-9 rounded-xl {{ !empty($action['primary']) ? 'bg-emerald-700 text-white' : 'bg-white border border-slate-200 text-emerald-700 group-hover:border-emerald-300' }} flex items-center justify-center shrink-0">
                                         @include('partials.profile-role-icon', ['icon' => $action['icon'], 'class' => 'w-4 h-4'])
                                     </div>
                                     <div class="min-w-0">
@@ -198,7 +198,7 @@ new #[Title('Profile settings')] class extends Component {
                 </div>
 
                 <div class="flex items-center justify-end pt-4 border-t border-slate-100">
-                    <flux:button variant="primary" type="submit" class="w-full sm:w-auto px-7 font-bold rounded-xl bg-[#059669] hover:bg-[#047857] text-white" data-test="update-profile-button">
+                    <flux:button variant="primary" type="submit" class="w-full sm:w-auto px-7 font-bold rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white" data-test="update-profile-button">
                         {{ __('Save') }}
                     </flux:button>
                 </div>
