@@ -7,14 +7,96 @@ use App\Models\KategoriObat;
 use App\Models\Obat;
 use App\Models\Scopes\TenantScope;
 use App\Models\SubkategoriObat;
+use Database\Seeders\GoApotikFullCatalogSeeder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Throwable;
 
 class CatalogService
 {
+    private static bool $catalogSyncedThisProcess = false;
+
+    /**
+     * Sinkronisasi lazy satu kali per versi file scraped_goapotik_lengkap.json
+     * agar server yang auto-update hanya via git pull tetap mendapat ribuan produk terbaru.
+     */
+    public function ensureCatalogSynchronized(): void
+    {
+        if (self::$catalogSyncedThisProcess || app()->runningUnitTests() || app()->environment('testing')) {
+            return;
+        }
+
+        $jsonPath = database_path('data/scraped_goapotik_lengkap.json');
+        if (! is_file($jsonPath)) {
+            self::$catalogSyncedThisProcess = true;
+
+            return;
+        }
+
+        $mtime = @filemtime($jsonPath) ?: 0;
+        $size = @filesize($jsonPath) ?: 0;
+        $cacheDir = storage_path('framework/cache');
+        if (! is_dir($cacheDir)) {
+            @mkdir($cacheDir, 0775, true);
+        }
+
+        $markerPath = "{$cacheDir}/goapotik_catalog_{$mtime}_{$size}.synced";
+
+        if (is_file($markerPath)) {
+            self::$catalogSyncedThisProcess = true;
+
+            return;
+        }
+
+        $lockPath = "{$cacheDir}/goapotik_catalog.lock";
+        $lockHandle = @fopen($lockPath, 'c+');
+        if ($lockHandle === false) {
+            return;
+        }
+
+        try {
+            if (! @flock($lockHandle, LOCK_EX | LOCK_NB)) {
+                return;
+            }
+
+            if (is_file($markerPath)) {
+                self::$catalogSyncedThisProcess = true;
+
+                return;
+            }
+
+            if (! Schema::hasTable('obat') || ! Schema::hasTable('subkategori_obat')) {
+                return;
+            }
+
+            $alreadySynced = Obat::where('slug', 'postinor-0-75-mg-2-tablet')->exists()
+                && Obat::count() >= 2400;
+
+            if (! $alreadySynced) {
+                Artisan::call('db:seed', [
+                    '--class' => GoApotikFullCatalogSeeder::class,
+                    '--force' => true,
+                ]);
+                $this->clearMetadataCache();
+            }
+
+            @file_put_contents($markerPath, now()->toIso8601String());
+            self::$catalogSyncedThisProcess = true;
+        } catch (Throwable $e) {
+            Log::warning('Sinkronisasi otomatis katalog GoApotik gagal sementara.', [
+                'error' => $e->getMessage(),
+            ]);
+        } finally {
+            @flock($lockHandle, LOCK_UN);
+            @fclose($lockHandle);
+        }
+    }
+
     /**
      * Versi cache metadata katalog agar invalidasi saat CRUD admin tetap O(1).
      */
@@ -75,6 +157,8 @@ class CatalogService
         int $perPage = 15,
         bool $unified = false
     ): LengthAwarePaginator {
+        $this->ensureCatalogSynchronized();
+
         $resolvedClient = Client::where('id_client', $clientId)
             ->orWhere('slug', $clientId)
             ->orWhere('nama_client', $clientId)
@@ -186,6 +270,8 @@ class CatalogService
      */
     public function getDaftarKategori(): Collection
     {
+        $this->ensureCatalogSynchronized();
+
         $ver = $this->metaCacheVersion();
 
         /** @var array<int, array<string, mixed>> $rows */

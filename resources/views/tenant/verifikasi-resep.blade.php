@@ -136,15 +136,15 @@
                                         <tbody class="divide-y divide-slate-100 font-medium text-slate-800">
                                             @forelse ($items as $it)
                                                 <tr>
-                                                    <td class="py-2.5 px-3.5 font-bold">{{ $it->obat->nama_obat ?? 'Obat Resep' }}</td>
-                                                    <td class="py-2.5 px-3.5 text-center font-bold">{{ $it->jumlah ?? 1 }}</td>
+                                                    <td class="py-2.5 px-3.5 font-bold">{{ $it->obat->nama_obat ?? $it->nama_obat ?? 'Obat Resep' }}</td>
+                                                    <td class="py-2.5 px-3.5 text-center font-bold">{{ $it->kuantitas ?? $it->jumlah ?? 1 }}</td>
                                                     <td class="py-2.5 px-3.5 text-slate-600">{{ $it->dosis_aturan ?? 'Sesuai petunjuk dokter' }}</td>
                                                 </tr>
                                             @empty
                                                 <tr>
-                                                    <td class="py-2.5 px-3.5 font-bold">Amodiaquine 200mg (Wajib Resep)</td>
-                                                    <td class="py-2.5 px-3.5 text-center font-bold">1 strip</td>
-                                                    <td class="py-2.5 px-3.5 text-slate-600">3 x 1 tablet sesudah makan</td>
+                                                    <td colspan="3" class="py-3.5 px-3.5 text-xs text-slate-600 italic">
+                                                        Daftar racikan &amp; item obat belum diinput ke keranjang; periksa nama obat dan aturan pakai langsung pada foto resep dokter terlampir.
+                                                    </td>
                                                 </tr>
                                             @endforelse
                                         </tbody>

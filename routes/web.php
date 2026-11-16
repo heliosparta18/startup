@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\FirebaseAuthSessionController;
 use App\Models\Obat;
 use App\Models\Scopes\TenantScope;
 use App\Models\User;
+use App\Modules\Catalog\Services\CatalogService;
 use App\Modules\Catalog\Services\CustomerSessionService;
 use App\Modules\Ordering\Http\Controllers\CartController;
 use App\Modules\Ordering\Http\Controllers\CheckoutController;
@@ -84,6 +85,8 @@ Route::get('/api/search-obat', function (Request $request) {
     if (strlen($q) < 2) {
         return response()->json([]);
     }
+
+    app(CatalogService::class)->ensureCatalogSynchronized();
 
     $tokens = array_values(array_filter(preg_split('/\s+/', $q) ?: []));
 

@@ -80,11 +80,12 @@ class CheckoutController extends Controller
                 if (! $pengguna) {
                     $pengguna = Pengguna::create([
                         'id_pengguna' => (string) Str::uuid(),
-                        'id_client' => $clientId,
                         'nama_lengkap' => $user->name,
                         'telepon_email' => $user->email,
-                        'kata_sandi_hash' => $user->password,
+                        'password' => $user->password,
                         'peran' => 'pelanggan',
+                        'terdaftar_pada' => now()->toDateString(),
+                        'aktif' => true,
                     ]);
                 }
 

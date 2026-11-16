@@ -55,6 +55,7 @@ class PaymentWebhookController extends Controller
 
         return DB::transaction(function () use ($orderNumber, $cleanOrderNumber, $data) {
             $pesanan = Pesanan::withoutTenancy()
+                ->with('resep')
                 ->whereIn('nomor_pesanan', [$orderNumber, '#'.$cleanOrderNumber, $cleanOrderNumber])
                 ->lockForUpdate()
                 ->first();
@@ -68,8 +69,11 @@ class PaymentWebhookController extends Controller
                 return response()->json(['message' => 'Pesanan sudah diproses sebelumnya (Idempotent)'], 200);
             }
 
+            $hasPendingResep = $pesanan->resep && $pesanan->resep->status_verifikasi === 'menunggu';
+            $nextStatus = $hasPendingResep ? 'menunggu_verifikasi' : 'diproses';
+
             $pesanan->update([
-                'status' => 'diproses',
+                'status' => $nextStatus,
             ]);
 
             Pembayaran::create([
@@ -84,13 +88,13 @@ class PaymentWebhookController extends Controller
 
             OrderStatusUpdated::dispatch($pesanan);
 
-            Log::info("Pesanan {$pesanan->nomor_pesanan} berhasil dilunasi via Webhook QRIS.");
+            Log::info("Pesanan {$pesanan->nomor_pesanan} berhasil dilunasi via Webhook QRIS (status: {$nextStatus}).");
 
             return response()->json([
                 'success' => true,
                 'message' => 'Settlement processed successfully',
                 'order_number' => $pesanan->nomor_pesanan,
-                'status' => 'diproses',
+                'status' => $nextStatus,
             ], 200);
         });
     }

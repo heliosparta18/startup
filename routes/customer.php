@@ -9,6 +9,7 @@ use App\Models\Pesanan;
 use App\Models\Resep;
 use App\Models\Scopes\TenantScope;
 use App\Modules\Catalog\Livewire\PublicCatalog;
+use App\Modules\Catalog\Services\CatalogService;
 use App\Modules\Ordering\Http\Controllers\CartController;
 use App\Modules\Ordering\Http\Controllers\CheckoutController;
 use App\Modules\Ordering\Http\Controllers\OrderTrackingController;
@@ -41,6 +42,8 @@ $resolveCustomerSession = function (Request $request): string {
  * serta keranjang belanja Redis, checkout atomik, dan pembayaran QRIS (Modul Guntur M08-M11).
  */
 Route::get('/', function (string $client, Request $request) {
+    app(CatalogService::class)->ensureCatalogSynchronized();
+
     $search = trim((string) $request->query('q', ''));
     $kategoriFilter = trim((string) $request->query('kategori', 'semua'));
 

@@ -7,6 +7,7 @@ use App\Models\KategoriObat;
 use App\Models\Obat;
 use App\Models\StokClient;
 use App\Models\SubkategoriObat;
+use App\Modules\Catalog\Services\CatalogService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -153,6 +154,8 @@ class GoApotikFullCatalogSeeder extends Seeder
                 }
             }
         });
+
+        app(CatalogService::class)->clearMetadataCache();
 
         optional($this->command)->info('Berhasil mengimpor '.count($items).' produk ke database!');
     }

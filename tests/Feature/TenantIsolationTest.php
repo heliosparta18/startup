@@ -6,6 +6,7 @@ use App\Models\Client;
 use App\Models\Pengguna;
 use App\Models\Pesanan;
 use App\Models\StokClient;
+use App\Models\User;
 use App\Support\Tenant\Contracts\TenantManagerInterface;
 use App\Support\Tenant\Exceptions\TenantAccessDeniedException;
 use App\Support\Tenant\TenantContext;
@@ -211,5 +212,32 @@ class TenantIsolationTest extends TestCase
         $this->artisan('tenant:audit')
             ->expectsOutputToContain('Audit SELESAI: Seluruh entitas domain terisolasi sempurna per cabang.')
             ->assertExitCode(0);
+    }
+
+    public function test_authenticated_user_branch_staff_cannot_access_other_branch_portal(): void
+    {
+        $apotekerBwi = User::where('email', 'bambang@omnipharma.test')->firstOrFail();
+        $apotekerRogojampi = User::where('email', 'dewi@omnipharma.test')->firstOrFail();
+        $superAdmin = User::where('email', 'daffa@omnipharma.test')->firstOrFail();
+
+        $this->actingAs($apotekerBwi)
+            ->get('/cabang/banyuwangi-kota/dashboard')
+            ->assertOk();
+
+        $this->actingAs($apotekerBwi)
+            ->get('/cabang/rogojampi/dashboard')
+            ->assertForbidden();
+
+        $this->actingAs($apotekerRogojampi)
+            ->get('/cabang/rogojampi/dashboard')
+            ->assertOk();
+
+        $this->actingAs($apotekerRogojampi)
+            ->get('/cabang/banyuwangi-kota/dashboard')
+            ->assertForbidden();
+
+        $this->actingAs($superAdmin)
+            ->get(route('admin.apoteker.index', ['client' => 'rogojampi']))
+            ->assertOk();
     }
 }

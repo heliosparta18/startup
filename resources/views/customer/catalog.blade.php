@@ -166,7 +166,7 @@
                 {{-- Pagination Links --}}
                 @if ($obats->hasPages())
                     <div class="pt-6 flex justify-center">
-                        {{ $obats->links('customer.partials.catalog-pagination') }}
+                        {{ $obats->onEachSide(1)->links('customer.partials.catalog-pagination') }}
                     </div>
                 @elseif ($obats->isNotEmpty())
                     <div class="pt-6 pb-2 text-center">

@@ -7,6 +7,7 @@ use App\Models\Obat;
 use App\Models\Pembayaran;
 use App\Models\Pengguna;
 use App\Models\Pesanan;
+use App\Models\Resep;
 use App\Models\StokClient;
 use App\Models\User;
 use App\Modules\Ordering\Actions\CancelOrderAction;
@@ -758,5 +759,154 @@ class CartCheckoutPaymentTest extends TestCase
             'midtrans_status' => 'pending',
         ]);
         $this->assertSame('menunggu_pembayaran', $pesanan->fresh()->status);
+    }
+
+    public function test_checkout_auto_creates_valid_pengguna_record_for_new_authenticated_user(): void
+    {
+        $client = Client::where('slug', 'banyuwangi-kota')->firstOrFail();
+        $obat = Obat::firstOrFail();
+        $newCustomer = User::factory()->create([
+            'name' => 'Pelanggan Baru Audit',
+            'email' => 'baru.pelanggan.audit@example.com',
+            'role' => 'pelanggan',
+            'status' => 'active',
+        ]);
+        $sessionId = 'new-user-session-'.Str::random(10);
+
+        StokClient::withoutTenancy()->updateOrCreate(
+            ['id_obat' => $obat->id_obat, 'id_client' => $client->id_client],
+            ['jumlah_stok' => 30]
+        );
+
+        $this->actingAs($newCustomer)
+            ->withCredentials()
+            ->withCookie('omnipharma_customer_session', $sessionId)
+            ->postJson(route('keranjang.add'), [
+                'id_obat' => $obat->id_obat,
+                'jumlah' => 1,
+            ])
+            ->assertOk();
+
+        $checkoutRes = $this->actingAs($newCustomer)
+            ->withCredentials()
+            ->withCookie('omnipharma_customer_session', $sessionId)
+            ->post(route('checkout.store'), [
+                'metode_layanan' => 'click_collect',
+                'nama_pemesan' => 'Pelanggan Baru Audit',
+                'telepon' => '081299988877',
+            ]);
+
+        $checkoutRes->assertRedirect();
+        $pengguna = Pengguna::where('telepon_email', 'baru.pelanggan.audit@example.com')->first();
+        $this->assertNotNull($pengguna);
+        $this->assertTrue((bool) $pengguna->aktif);
+        $this->assertSame('pelanggan', $pengguna->peran);
+
+        $orderId = basename((string) parse_url((string) $checkoutRes->headers->get('Location'), PHP_URL_PATH));
+        $pesanan = Pesanan::withoutTenancy()->findOrFail($orderId);
+        $this->assertSame($pengguna->id_pengguna, $pesanan->id_pengguna);
+    }
+
+    public function test_authenticated_customer_cannot_view_or_cancel_another_customers_order(): void
+    {
+        $client = Client::where('slug', 'banyuwangi-kota')->firstOrFail();
+        $obat = Obat::firstOrFail();
+        $ownerPengguna = Pengguna::where('telepon_email', 'gunturafandy5@gmail.com')->firstOrFail();
+        $otherCustomer = User::where('email', 'candi@gmail.com')->firstOrFail();
+
+        StokClient::withoutTenancy()->updateOrCreate(
+            ['id_obat' => $obat->id_obat, 'id_client' => $client->id_client],
+            ['jumlah_stok' => 40]
+        );
+
+        $pesanan = app(CreateOrderAction::class)->execute(
+            $client->id_client,
+            $ownerPengguna->id_pengguna,
+            [
+                ['id_obat' => $obat->id_obat, 'nama_obat' => $obat->nama_obat, 'harga' => (float) $obat->harga, 'jumlah' => 1],
+            ],
+            'click_collect',
+            'owner-only-session-123'
+        );
+
+        $this->actingAs($otherCustomer)
+            ->get(route('pembayaran.show', ['id' => $pesanan->id_pesanan]))
+            ->assertForbidden();
+
+        $this->actingAs($otherCustomer)
+            ->get(route('pesanan.track', ['id' => $pesanan->id_pesanan]))
+            ->assertForbidden();
+
+        $this->actingAs($otherCustomer)
+            ->post(route('pesanan.cancel', ['id' => $pesanan->id_pesanan]))
+            ->assertForbidden();
+    }
+
+    public function test_qris_settlement_preserves_menunggu_verifikasi_when_order_has_pending_prescription(): void
+    {
+        $client = Client::where('slug', 'banyuwangi-kota')->firstOrFail();
+        $obat = Obat::firstOrFail();
+        $pelanggan = Pengguna::where('peran', 'pelanggan')->firstOrFail();
+
+        StokClient::withoutTenancy()->updateOrCreate(
+            ['id_obat' => $obat->id_obat, 'id_client' => $client->id_client],
+            ['jumlah_stok' => 40]
+        );
+
+        $action = app(CreateOrderAction::class);
+        $pesananLocal = $action->execute($client->id_client, $pelanggan->id_pengguna, [
+            ['id_obat' => $obat->id_obat, 'nama_obat' => $obat->nama_obat, 'harga' => (float) $obat->harga, 'jumlah' => 1],
+        ]);
+        Resep::create([
+            'id_resep' => (string) Str::uuid(),
+            'id_pesanan' => $pesananLocal->id_pesanan,
+            'url_gambar' => 'resep/dummy-test.jpg',
+            'nama_dokter' => 'dr. Uji Resep',
+            'sip_dokter' => '503/SIP/2026',
+            'nama_pasien' => 'Pasien Uji QRIS',
+            'status_verifikasi' => 'menunggu',
+            'sip_valid' => false,
+            'dosis_valid' => false,
+            'dibuat_pada' => now(),
+        ]);
+
+        config(['services.midtrans.server_key' => '']);
+        $checkRes = $this->postJson(route('pesanan.cek-status', ['id' => $pesananLocal->id_pesanan]));
+        $checkRes->assertOk()->assertJson([
+            'paid' => true,
+            'status' => 'menunggu_verifikasi',
+        ]);
+        $this->assertSame('menunggu_verifikasi', $pesananLocal->fresh()->status);
+
+        $pesananWebhook = $action->execute($client->id_client, $pelanggan->id_pengguna, [
+            ['id_obat' => $obat->id_obat, 'nama_obat' => $obat->nama_obat, 'harga' => (float) $obat->harga, 'jumlah' => 1],
+        ]);
+        Resep::create([
+            'id_resep' => (string) Str::uuid(),
+            'id_pesanan' => $pesananWebhook->id_pesanan,
+            'url_gambar' => 'resep/dummy-test.jpg',
+            'nama_dokter' => 'dr. Uji Webhook',
+            'sip_dokter' => '503/SIP/2026',
+            'nama_pasien' => 'Pasien Uji Webhook',
+            'status_verifikasi' => 'menunggu',
+            'sip_valid' => false,
+            'dosis_valid' => false,
+            'dibuat_pada' => now(),
+        ]);
+
+        $payloadData = [
+            'order_number' => $pesananWebhook->nomor_pesanan,
+            'status' => 'PAID',
+            'amount' => (float) $pesananWebhook->total_harga,
+        ];
+        $secret = (string) config('services.qris.webhook_secret', 'omnipharma_secret_key');
+        $signature = hash_hmac('sha256', (string) json_encode($payloadData), $secret);
+
+        $webhookRes = $this->withHeaders(['X-Signature' => $signature])->postJson('/api/webhooks/qris', $payloadData);
+        $webhookRes->assertOk()->assertJson([
+            'success' => true,
+            'status' => 'menunggu_verifikasi',
+        ]);
+        $this->assertSame('menunggu_verifikasi', $pesananWebhook->fresh()->status);
     }
 }

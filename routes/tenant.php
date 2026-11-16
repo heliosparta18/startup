@@ -2,12 +2,15 @@
 
 use App\Http\Requests\Tenant\VerifikasiResepRequest;
 use App\Models\Client;
+use App\Models\ItemPesanan;
+use App\Models\LogAudit;
 use App\Models\Obat;
 use App\Models\Pengguna;
 use App\Models\Pesanan;
 use App\Models\Resep;
 use App\Models\RingkasanPeriodePenjualan;
 use App\Models\StokClient;
+use App\Modules\Catalog\Services\CatalogService;
 use App\Modules\Catalog\Services\StockFefoService;
 use App\Modules\Ordering\Actions\CreateOrderAction;
 use App\Modules\Ordering\Events\OrderStatusUpdated;
@@ -16,6 +19,7 @@ use App\Modules\Reporting\Services\SalesReportExportService;
 use App\Modules\Reporting\Services\SalesReportService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
@@ -296,6 +300,8 @@ Route::post('/stok/tambah', function (string $client, Request $request) {
         ]));
     }
 
+    app(CatalogService::class)->clearMetadataCache();
+
     return back()->with('success', "Stok {$obat->nama_obat} pada cabang {$clientModel->nama_client} diperbarui menjadi {$validated['jumlah_stok']} unit.");
 })->name('stok.store');
 
@@ -359,31 +365,82 @@ Route::post('/resep/{id}/verifikasi', function (string $client, string $id, Veri
             abort(404, "Resep {$id} tidak ditemukan pada cabang ini.");
         }
 
-        $verifikatorId = null;
-        if (auth()->check()) {
-            $user = auth()->user();
-            if (isset($user->id_pengguna) && ! empty($user->id_pengguna)) {
-                $verifikatorId = $user->id_pengguna;
-            } else {
-                $verifikatorId = Pengguna::where('telepon_email', $user->email)->value('id_pengguna');
+        $updatedPesanan = DB::transaction(function () use ($resep, $action, $catatan, $nomorSip, $clientId) {
+            $verifikatorId = null;
+            if (auth()->check()) {
+                $user = auth()->user();
+                if (isset($user->id_pengguna) && ! empty($user->id_pengguna)) {
+                    $verifikatorId = $user->id_pengguna;
+                } elseif (isset($user->email)) {
+                    $verifikatorId = Pengguna::where('telepon_email', $user->email)->value('id_pengguna');
+                }
             }
-        }
 
-        $resep->update([
-            'status_verifikasi' => $action,
-            'catatan_apoteker' => $catatan,
-            'sip_dokter' => $nomorSip ?: $resep->sip_dokter,
-            'sip_valid' => $action === 'disetujui',
-            'dosis_valid' => $action === 'disetujui',
-            'diverifikasi_oleh' => $verifikatorId,
-        ]);
-
-        if ($resep->pesanan) {
-            $resep->pesanan->update([
-                'status' => $action === 'disetujui' ? 'diproses' : 'dibatalkan',
+            $resep->update([
+                'status_verifikasi' => $action,
+                'catatan_apoteker' => $catatan,
+                'sip_dokter' => $nomorSip ?: $resep->sip_dokter,
+                'sip_valid' => $action === 'disetujui',
+                'dosis_valid' => $action === 'disetujui',
+                'diverifikasi_oleh' => $verifikatorId,
             ]);
 
-            event(new OrderStatusUpdated($resep->pesanan));
+            LogAudit::create([
+                'id_audit' => (string) Str::uuid(),
+                'id_aktor' => $verifikatorId,
+                'aksi' => 'TELAAH_RESEP',
+                'nama_entitas' => 'resep',
+                'id_entitas' => $resep->id_resep,
+                'payload' => [
+                    'keputusan' => $action,
+                    'sip_dokter' => $resep->sip_dokter,
+                    'catatan_apoteker' => $catatan,
+                    'id_pesanan' => $resep->id_pesanan,
+                ],
+                'dibuat_pada' => now(),
+            ]);
+
+            $pesanan = Pesanan::withoutGlobalScopes()
+                ->where('id_pesanan', $resep->id_pesanan)
+                ->lockForUpdate()
+                ->first();
+
+            if (! $pesanan) {
+                return null;
+            }
+
+            $previousStatus = $pesanan->status;
+            $nextStatus = $action === 'disetujui' ? 'diproses' : 'dibatalkan';
+
+            if ($nextStatus === 'dibatalkan' && $previousStatus !== 'dibatalkan') {
+                $items = ItemPesanan::where('id_pesanan', $pesanan->id_pesanan)->get();
+                $restoredAny = false;
+
+                foreach ($items as $item) {
+                    $stok = StokClient::withoutGlobalScopes()
+                        ->where('id_client', $clientId)
+                        ->where('id_obat', $item->id_obat)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if ($stok) {
+                        $stok->increment('jumlah_stok', (int) $item->kuantitas);
+                        $restoredAny = true;
+                    }
+                }
+
+                if ($restoredAny) {
+                    app(CatalogService::class)->clearMetadataCache();
+                }
+            }
+
+            $pesanan->update(['status' => $nextStatus]);
+
+            return $pesanan;
+        });
+
+        if ($updatedPesanan) {
+            event(new OrderStatusUpdated($updatedPesanan));
         }
     }
 
@@ -424,6 +481,8 @@ Route::post('/stok/{id}/penyesuaian', function (string $client, string $id, Requ
                 'expired' => $request->filled('expired') ? (string) $request->input('expired') : null,
             ]));
         }
+
+        app(CatalogService::class)->clearMetadataCache();
     }
 
     $branchName = $clientModel->nama_client ?? $client;

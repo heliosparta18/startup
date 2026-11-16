@@ -3,16 +3,20 @@
 namespace Tests\Feature;
 
 use App\Models\Client;
+use App\Models\Obat;
 use App\Models\Pengguna;
 use App\Models\Pesanan;
 use App\Models\Resep;
+use App\Models\StokClient;
 use App\Models\User;
+use App\Modules\Ordering\Actions\CreateOrderAction;
 use App\Modules\Ordering\Events\OrderStatusUpdated;
 use Database\Seeders\DemoApotekSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class CustomerPrescriptionUploadAndQueueTest extends TestCase
@@ -453,5 +457,75 @@ class CustomerPrescriptionUploadAndQueueTest extends TestCase
         ]);
 
         Event::assertDispatched(OrderStatusUpdated::class);
+    }
+
+    /**
+     * Penolakan resep mencatat audit trail TELAAH_RESEP dan mengembalikan stok item pesanan.
+     */
+    public function test_rejecting_prescription_writes_audit_log_and_restores_item_stock(): void
+    {
+        $client = Client::where('slug', 'banyuwangi-kota')->firstOrFail();
+        $obat = Obat::firstOrFail();
+        $pelanggan = Pengguna::where('peran', 'pelanggan')->firstOrFail();
+
+        StokClient::withoutTenancy()->updateOrCreate(
+            ['id_obat' => $obat->id_obat, 'id_client' => $client->id_client],
+            ['jumlah_stok' => 50]
+        );
+
+        $pesanan = app(CreateOrderAction::class)->execute(
+            $client->id_client,
+            $pelanggan->id_pengguna,
+            [
+                ['id_obat' => $obat->id_obat, 'nama_obat' => $obat->nama_obat, 'harga' => (float) $obat->harga, 'jumlah' => 3],
+            ],
+            'click_collect',
+            'rx-reject-session-'.Str::random(6)
+        );
+        $pesanan->update(['status' => 'menunggu_verifikasi']);
+
+        $resep = Resep::create([
+            'id_resep' => (string) Str::uuid(),
+            'id_pesanan' => $pesanan->id_pesanan,
+            'url_gambar' => 'resep/dummy-test.jpg',
+            'nama_dokter' => 'dr. Penolakan',
+            'sip_dokter' => '503/SIP/2026',
+            'nama_pasien' => 'Pasien Tolak',
+            'status_verifikasi' => 'menunggu',
+            'sip_valid' => false,
+            'dosis_valid' => false,
+            'dibuat_pada' => now(),
+        ]);
+
+        $this->assertSame(47, (int) StokClient::withoutTenancy()
+            ->where('id_obat', $obat->id_obat)
+            ->where('id_client', $client->id_client)
+            ->value('jumlah_stok'));
+
+        $apoteker = User::where('email', 'bambang@omnipharma.test')->firstOrFail();
+        $apotekerPengguna = Pengguna::where('telepon_email', 'bambang@omnipharma.test')->firstOrFail();
+
+        $res = $this->actingAs($apoteker)->post(route('tenant.resep.verifikasi', [
+            'client' => 'banyuwangi-kota',
+            'id' => $resep->id_resep,
+        ]), [
+            'action' => 'ditolak',
+            'alasan' => 'Dosis melebihi batas aman harian.',
+        ]);
+
+        $res->assertOk();
+        $this->assertSame('dibatalkan', $pesanan->fresh()->status);
+        $this->assertSame('ditolak', $resep->fresh()->status_verifikasi);
+        $this->assertSame(50, (int) StokClient::withoutTenancy()
+            ->where('id_obat', $obat->id_obat)
+            ->where('id_client', $client->id_client)
+            ->value('jumlah_stok'));
+
+        $this->assertDatabaseHas('log_audit', [
+            'id_aktor' => $apotekerPengguna->id_pengguna,
+            'aksi' => 'TELAAH_RESEP',
+            'nama_entitas' => 'resep',
+            'id_entitas' => $resep->id_resep,
+        ]);
     }
 }

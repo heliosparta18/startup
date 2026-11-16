@@ -25,13 +25,15 @@ class OrderTrackingController extends Controller
     /**
      * Tampilkan halaman pembayaran QRIS dinamis (Midtrans Sandbox / EMVCo fallback).
      */
-    public function payment(string $client, string $id, PaymentGatewayInterface $gateway, TenantContext $tenantContext): View
+    public function payment(string $client, string $id, Request $request, PaymentGatewayInterface $gateway, TenantContext $tenantContext): View
     {
         $pesanan = Pesanan::withoutTenancy()->with(['items.obat.kategori', 'pembayaran', 'client'])->find($id);
 
         if (! $pesanan || $pesanan->id_client !== $tenantContext->id()) {
             abort(404, 'Pesanan tidak ditemukan pada cabang apotek ini.');
         }
+
+        $this->ensureCustomerOrderAccess($pesanan, $request, false);
 
         $qris = $gateway->generateQris($pesanan);
 
@@ -58,11 +60,13 @@ class OrderTrackingController extends Controller
             return response()->json(['message' => 'Pesanan tidak ditemukan.'], 404);
         }
 
+        $this->ensureCustomerOrderAccess($pesanan, $request, false);
+
         $trackUrl = $request->is('klien/*') || ! Route::has('pesanan.track')
             ? route('customer.order.track', ['client' => $client, 'id' => $pesanan->id_pesanan])
             : route('pesanan.track', ['id' => $pesanan->id_pesanan]);
 
-        if (in_array($pesanan->status, ['diproses', 'siap_diambil', 'dikirim', 'selesai'], true)) {
+        if (in_array($pesanan->status, ['menunggu_verifikasi', 'diproses', 'siap_diambil', 'dikirim', 'selesai'], true)) {
             return response()->json([
                 'paid' => true,
                 'status' => $pesanan->status,
@@ -88,13 +92,13 @@ class OrderTrackingController extends Controller
             $txStatus = strtolower((string) ($midtransStatus['transaction_status'] ?? 'pending'));
 
             if (in_array($txStatus, ['settlement', 'capture'], true)) {
-                $this->settlePesananAtomically($pesanan->id_pesanan, $midtransStatus);
+                $settledStatus = $this->settlePesananAtomically($pesanan->id_pesanan, $midtransStatus);
 
                 return response()->json([
                     'paid' => true,
                     'source' => 'midtrans_sandbox',
                     'midtrans_status' => $txStatus,
-                    'status' => 'diproses',
+                    'status' => $settledStatus,
                     'message' => 'Pembayaran berhasil.',
                     'track_url' => $trackUrl,
                 ]);
@@ -127,7 +131,7 @@ class OrderTrackingController extends Controller
         }
 
         // Fallback mode lokal / tanpa server key Midtrans
-        $this->settlePesananAtomically($pesanan->id_pesanan, [
+        $settledStatus = $this->settlePesananAtomically($pesanan->id_pesanan, [
             'order_number' => $pesanan->nomor_pesanan,
             'status' => 'PAID',
             'source' => 'local_qris_check',
@@ -136,7 +140,7 @@ class OrderTrackingController extends Controller
         return response()->json([
             'paid' => true,
             'source' => 'local_qris_check',
-            'status' => 'diproses',
+            'status' => $settledStatus,
             'message' => 'Status pembayaran terkonfirmasi lunas.',
             'track_url' => $trackUrl,
         ]);
@@ -197,6 +201,8 @@ class OrderTrackingController extends Controller
             abort(404, 'Pesanan tidak ditemukan pada cabang apotek ini.');
         }
 
+        $this->ensureCustomerOrderAccess($pesanan, $request, true);
+
         $cancelOrderAction->execute($pesanan, 'Dibatalkan oleh pelanggan');
 
         $redirect = $request->is('klien/*')
@@ -209,13 +215,15 @@ class OrderTrackingController extends Controller
     /**
      * Pelacakan stepper status pesanan dan invoice resmi secara real-time via WebSocket Reverb.
      */
-    public function track(string $client, string $id, TenantContext $tenantContext): View
+    public function track(string $client, string $id, Request $request, TenantContext $tenantContext): View
     {
         $pesanan = Pesanan::withoutTenancy()->with(['items.obat.kategori', 'pembayaran', 'client', 'pengguna'])->find($id);
 
         if (! $pesanan || $pesanan->id_client !== $tenantContext->id()) {
             abort(404, 'Pesanan tidak ditemukan pada cabang apotek ini.');
         }
+
+        $this->ensureCustomerOrderAccess($pesanan, $request, false);
 
         $antreanBerjalan = Cache::get("antrean_berjalan:{$pesanan->id_client}", 'A-001');
 
@@ -232,17 +240,65 @@ class OrderTrackingController extends Controller
     }
 
     /**
-     * @param  array<string, mixed>  $rawPayload
+     * Pastikan pelanggan terautentikasi tidak mengakses/membatalkan pesanan akun lain
+     * dan mutasi pembatalan tamu harus memiliki token sesi atau akun pemilik.
      */
-    private function settlePesananAtomically(string $pesananId, array $rawPayload): void
+    private function ensureCustomerOrderAccess(Pesanan $pesanan, Request $request, bool $requireSessionOnGuestMutation): void
     {
-        DB::transaction(function () use ($pesananId, $rawPayload) {
-            $locked = Pesanan::withoutTenancy()->where('id_pesanan', $pesananId)->lockForUpdate()->first();
-            if (! $locked || $locked->status !== 'menunggu_pembayaran') {
+        $user = $request->user();
+        $sessionTokens = array_values(array_filter([
+            $request->cookie('omnipharma_customer_session'),
+            $request->cookie('omni_session'),
+            $request->hasSession() ? $request->session()->getId() : null,
+        ], fn ($token) => is_string($token) && $token !== ''));
+
+        $ownsBySession = ! empty($pesanan->token_sesi) && in_array($pesanan->token_sesi, $sessionTokens, true);
+
+        if ($user) {
+            if (! $user->hasRole('pelanggan')) {
                 return;
             }
 
-            $locked->update(['status' => 'diproses']);
+            $loggedPenggunaId = Pengguna::where('telepon_email', $user->email)->value('id_pengguna');
+            $ownsByAccount = $loggedPenggunaId !== null && $pesanan->id_pengguna === $loggedPenggunaId;
+
+            if (! $ownsByAccount && ! $ownsBySession) {
+                abort(403, 'Anda tidak memiliki akses ke pesanan milik pelanggan lain.');
+            }
+
+            return;
+        }
+
+        if ($requireSessionOnGuestMutation && ! empty($pesanan->token_sesi) && ! $ownsBySession) {
+            abort(403, 'Sesi pemesanan tidak valid untuk membatalkan pesanan ini.');
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $rawPayload
+     */
+    private function settlePesananAtomically(string $pesananId, array $rawPayload): string
+    {
+        return DB::transaction(function () use ($pesananId, $rawPayload): string {
+            $locked = Pesanan::withoutTenancy()
+                ->with('resep')
+                ->where('id_pesanan', $pesananId)
+                ->lockForUpdate()
+                ->first();
+
+            if (! $locked) {
+                return 'menunggu_pembayaran';
+            }
+
+            if ($locked->status !== 'menunggu_pembayaran') {
+                return (string) $locked->status;
+            }
+
+            // Pesanan dengan resep dokter yang belum ditelaah wajib ditahan pada antrean apoteker
+            $hasPendingResep = $locked->resep && $locked->resep->status_verifikasi === 'menunggu';
+            $nextStatus = $hasPendingResep ? 'menunggu_verifikasi' : 'diproses';
+
+            $locked->update(['status' => $nextStatus]);
 
             Pembayaran::create([
                 'id_pembayaran' => (string) Str::uuid(),
@@ -255,6 +311,8 @@ class OrderTrackingController extends Controller
             ]);
 
             OrderStatusUpdated::dispatch($locked);
+
+            return $nextStatus;
         });
     }
 }
