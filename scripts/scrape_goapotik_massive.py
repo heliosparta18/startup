@@ -34,42 +34,42 @@ SEO_TO_WEB_CAT = {
 # Daftar kata kunci produk & obat populer yang wajib ter-cover di katalog
 POPULAR_TERMS = [
     # Kontrasepsi & Hormon (termasuk Postinor!)
-    'postinor', 'andalan', 'microgynon', 'yasmin', 'diane', 'sutra', 'durex', 'fiesta', 'sensitif',
+    'postinor', 'postinor 2', 'levonorgestrel', 'andalan', 'microgynon', 'yasmin', 'diane', 'trinordiol', 'cyclogynon', 'sutra', 'durex', 'fiesta', 'sensitif',
     # Demam, Nyeri & Sakit Kepala
     'paracetamol', 'panadol', 'sanmol', 'bodrex', 'paramex', 'sumagesic', 'dumin', 'tempra', 'proris',
-    'biogesic', 'oskadon', 'poldan mig', 'saridon', 'praxion',
+    'biogesic', 'oskadon', 'poldan mig', 'saridon', 'praxion', 'panadol extra', 'panadol cold',
     # Lambung & Pencernaan
     'promag', 'mylanta', 'polysilane', 'antimo', 'diapet', 'oralit', 'entrostop', 'new diatabs',
-    'omeprazole', 'lansoprazole', 'ranitidine', 'sucralfate', 'domperidone', 'ondansetron', 'dulcolax', 'vegeta', 'microlax', 'loperamide',
+    'omeprazole', 'lansoprazole', 'ranitidine', 'sucralfate', 'domperidone', 'ondansetron', 'dulcolax', 'vegeta', 'microlax', 'loperamide', 'gaviscon', 'nexium', 'pantoprazole',
     # Antibiotik, Antivirus & Antijamur
     'amoxicillin', 'cefixime', 'azithromycin', 'ciprofloxacin', 'cefadroxil', 'metronidazole', 'clindamycin',
-    'acyclovir', 'ketoconazole', 'hydrocortisone', 'betamethasone', 'chloramphenicol', 'gentamicin', 'miconazole',
+    'acyclovir', 'ketoconazole', 'hydrocortisone', 'betamethasone', 'chloramphenicol', 'gentamicin', 'miconazole', 'levofloxacin', 'cotrimoxazole',
     # Anti-inflamasi, Otot & Nyeri Gigi
-    'mefinal', 'ponstan', 'cataflam', 'asam mefenamat', 'ibuprofen', 'meloxicam', 'piroxicam', 'kalium diklofenak', 'natrium diklofenak',
+    'mefinal', 'ponstan', 'cataflam', 'asam mefenamat', 'ibuprofen', 'meloxicam', 'piroxicam', 'kalium diklofenak', 'natrium diklofenak', 'ketoprofen', 'eperisone',
     # Alergi & Kortikosteroid
-    'cetirizine', 'loratadine', 'ctm', 'incidal', 'dexamethasone', 'methylprednisolone', 'lameson',
+    'cetirizine', 'loratadine', 'ctm', 'incidal', 'dexamethasone', 'methylprednisolone', 'lameson', 'desloratadine', 'fexofenadine',
     # Batuk, Flu, Pilek & Asma
     'obh', 'komix', 'siladex', 'actifed', 'bisolvon', 'woods', 'vicks', 'hufagrip', 'alco', 'rhinos',
-    'tremenza', 'salbutamol', 'ventolin', 'ambroxol', 'acetylcysteine', 'decolgen', 'neozep', 'mixagrip', 'procold', 'ultraflu',
+    'tremenza', 'salbutamol', 'ventolin', 'ambroxol', 'acetylcysteine', 'decolgen', 'neozep', 'mixagrip', 'procold', 'ultraflu', 'nalgestan', 'triaminic',
     # Kronis (Hipertensi, Kolesterol, Diabetes, Asam Urat)
-    'amlodipine', 'captopril', 'candesartan', 'valsartan', 'simvastatin', 'atorvastatin', 'metformin', 'glimepiride', 'allopurinol',
+    'amlodipine', 'captopril', 'candesartan', 'valsartan', 'simvastatin', 'atorvastatin', 'metformin', 'glimepiride', 'allopurinol', 'bisoprolol', 'furosemide', 'rosuvastatin',
     # Vitamin & Suplemen Populer
     'imboost', 'enervon', 'stimuno', 'cdr', 'redoxon', 'holisticare', 'blackmores', 'vitacimin', 'ever e',
-    'natur e', 'curcuma', 'becom', 'neurobion', 'sangobion', 'folavit', 'osteocare', 'caviplex', 'pharmaton', 'hemaviton',
+    'natur e', 'curcuma', 'becom', 'neurobion', 'sangobion', 'folavit', 'osteocare', 'caviplex', 'pharmaton', 'hemaviton', 'youvit', 'wellmove',
     # Herbal Populer
     'tolak angin', 'antangin', 'kiranti', 'kejibeling', 'batugin', 'minyak kayu putih', 'minyak telon',
-    'freshcare', 'safe care', 'lelaki', 'obat batuk ibu dan anak', 'ob herbal', 'diabetadex', 'psidii',
+    'freshcare', 'safe care', 'lelaki', 'obat batuk ibu dan anak', 'ob herbal', 'diabetadex', 'psidii', 'kapten', 'laxing',
     # Mata & Telinga
-    'insto', 'rohto', 'cendo', 'braito', 'erlamycetin', 'vital ear', 'forumen',
+    'insto', 'rohto', 'cendo', 'braito', 'erlamycetin', 'vital ear', 'forumen', 'otopain', 'cendo xitrol',
     # Luka, Kulit & Topikal
     'betadine', 'hansaplast', 'salonpas', 'counterpain', 'voltaren', 'hotin', 'koolfever', 'bye bye fever',
-    'daktarin', 'kalpanax', 'canesten', 'salep 88', 'scabimite', 'bioplacenton', 'thrombophob', 'mederma', 'dermatix',
+    'daktarin', 'kalpanax', 'canesten', 'salep 88', 'scabimite', 'bioplacenton', 'thrombophob', 'mederma', 'dermatix', 'gentian violet', 'rivanol',
     # Perawatan Diri & Ibu Anak
-    'sensodyne', 'listerine', 'cetaphil', 'sebamed', 'lactacyd', 'zwitsal', 'my baby', 'cussons', 'transpulmin', 'caladine',
+    'sensodyne', 'listerine', 'cetaphil', 'sebamed', 'lactacyd', 'zwitsal', 'my baby', 'cussons', 'transpulmin', 'caladine', 'pure baby', 'bioderma',
     # Nutrisi & Susu
-    'sgm', 'bebelac', 'entrasol', 'ensure', 'diabetasol', 'prenagen', 'pediasure', 's26', 'morinaga', 'bear brand', 'madurasa', 'appeton',
+    'sgm', 'bebelac', 'entrasol', 'ensure', 'diabetasol', 'prenagen', 'pediasure', 's26', 'morinaga', 'bear brand', 'madurasa', 'appeton', 'peptisol', 'lactogen',
     # Alat Kesehatan
-    'omron', 'onemed', 'accu-chek', 'easy touch', 'nesco', 'nebulizer', 'tensimeter', 'termometer', 'kursi roda', 'masker', 'kasa steril'
+    'omron', 'onemed', 'accu-chek', 'easy touch', 'nesco', 'nebulizer', 'tensimeter', 'termometer', 'kursi roda', 'masker', 'kasa steril', 'oximeter', 'strip gula'
 ]
 
 
@@ -273,18 +273,19 @@ def collect_candidates():
     with open('scripts/categories_hierarchy.json', 'r', encoding='utf-8') as f:
         hierarchy = json.load(f)
 
-    # Build list of category/subcategory tasks
+    # Build list of category/subcategory tasks (lebih dalam agar ribuan produk GoApotik terambil)
     cat_tasks = []
     for cat_seo, cat_info in hierarchy.items():
         if cat_seo not in SEO_TO_WEB_CAT:
             continue
         web_cat = SEO_TO_WEB_CAT[cat_seo]
-        # Main category pages 1..3
-        for page in [1, 2, 3]:
+        # Main category pages 1..15
+        for page in range(1, 16):
             cat_tasks.append(('cat', cat_seo, 'all', page, web_cat, ''))
-        # All subcategories page 1
+        # All subcategories pages 1..3
         for sub in cat_info.get('subcategories', []):
-            cat_tasks.append(('sub', sub['seo_title'], sub['id'], 1, web_cat, sub['name']))
+            for sub_page in [1, 2, 3]:
+                cat_tasks.append(('sub', sub['seo_title'], sub['id'], sub_page, web_cat, sub['name']))
 
     print(f"[1/3] Mengambil kandidat dari {len(cat_tasks)} halaman kategori & subkategori GoApotik...")
 
@@ -422,6 +423,21 @@ def fetch_details_and_build(candidates):
             res = fut.result()
             if res:
                 results.append(res)
+
+    # Pertahankan item valid sebelumnya jika slug-nya tidak muncul karena timeout sementara
+    existing_path = os.path.join('database', 'data', 'scraped_goapotik_lengkap.json')
+    if os.path.exists(existing_path):
+        try:
+            with open(existing_path, 'r', encoding='utf-8') as ef:
+                old_items = json.load(ef)
+            fetched_slugs = {r['slug'] for r in results}
+            for old in old_items:
+                slug_val = old.get('slug')
+                if slug_val and slug_val not in fetched_slugs and old.get('gambar_url'):
+                    results.append(old)
+                    fetched_slugs.add(slug_val)
+        except Exception:
+            pass
 
     # Sort konsisten by kategori then nama_produk
     results.sort(key=lambda x: (x['kategori'], x['nama_produk']))

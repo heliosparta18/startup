@@ -348,8 +348,38 @@
                 loadingGoogle: false,
                 isRedirecting: false,
 
-                init() {
+                async init() {
                     this.$el.dataset.alpineReady = '1';
+                    await this.handleGoogleCallbackOrAutostart();
+                },
+
+                async handleGoogleCallbackOrAutostart() {
+                    try {
+                        const fb = await this.ensureFirebaseAuth();
+                        if (typeof fb.consumeGoogleRedirectResult === 'function') {
+                            const redirectResult = await fb.consumeGoogleRedirectResult();
+                            if (redirectResult && redirectResult.user) {
+                                this.isRedirecting = true;
+                                window.location.href = redirectResult.session?.redirect || '{{ route('dashboard') }}';
+                                return;
+                            }
+                        }
+
+                        const params = new URLSearchParams(window.location.search);
+                        if (params.get('google_signin') === '1' && !fb.isLoopbackIp?.()) {
+                            params.delete('google_signin');
+                            const cleanQs = params.toString();
+                            const cleanUrl = window.location.pathname + (cleanQs ? `?${cleanQs}` : '') + window.location.hash;
+                            window.history.replaceState({}, '', cleanUrl);
+                            this.handleGoogleLogin();
+                        }
+                    } catch (err) {
+                        console.error('Google Redirect Init Error:', err);
+                        const msg = window.OmniFirebaseAuth?.formatFirebaseError
+                            ? window.OmniFirebaseAuth.formatFirebaseError(err)
+                            : (err?.message || 'Gagal menyelesaikan autentikasi Google.');
+                        window.OmniFirebaseAuth?.showToast?.(msg, 'error');
+                    }
                 },
 
                 selectDemo(roleKey, userEmail, userPass) {
@@ -374,7 +404,7 @@
                     if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.loginWithGoogle === 'function') {
                         return window.OmniFirebaseAuth;
                     }
-                    const scriptEl = document.querySelector("script[src*='app-']");
+                    const scriptEl = document.querySelector("script[src*='app-'], script[src*='resources/js/app.js']");
                     if (scriptEl && scriptEl.src) {
                         try {
                             await import(scriptEl.src);
@@ -391,27 +421,36 @@
                     throw new Error('Modul autentikasi Firebase belum siap. Silakan refresh halaman.');
                 },
 
-                async handleGoogleLogin() {
+                handleGoogleLogin() {
                     if (this.loadingGoogle || this.loadingSubmit) return;
                     this.loadingGoogle = true;
-                    try {
-                        const fb = await this.ensureFirebaseAuth();
-                        const result = await fb.loginWithGoogle();
-                        this.isRedirecting = true;
-                        window.location.href = result.session?.redirect || '{{ route('dashboard') }}';
-                    } catch (err) {
-                        console.error('Google Auth Error:', err);
-                        const errorMsg = window.OmniFirebaseAuth?.formatFirebaseError
-                            ? window.OmniFirebaseAuth.formatFirebaseError(err)
-                            : (err?.message || 'Gagal masuk dengan akun Google.');
-                        if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.showToast === 'function') {
-                            window.OmniFirebaseAuth.showToast(errorMsg, 'error');
-                        } else {
-                            alert(errorMsg);
-                        }
-                    } finally {
-                        this.loadingGoogle = false;
-                    }
+
+                    // Jaga transient user activation browser dengan memanggil popup secara sinkron saat modul siap
+                    const startPromise = (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.loginWithGoogle === 'function')
+                        ? window.OmniFirebaseAuth.loginWithGoogle()
+                        : this.ensureFirebaseAuth().then(fb => fb.loginWithGoogle());
+
+                    startPromise
+                        .then((result) => {
+                            if (result?.redirected) {
+                                this.isRedirecting = true;
+                                return;
+                            }
+                            this.isRedirecting = true;
+                            window.location.href = result.session?.redirect || '{{ route('dashboard') }}';
+                        })
+                        .catch((err) => {
+                            console.error('Google Auth Error:', err);
+                            const errorMsg = window.OmniFirebaseAuth?.formatFirebaseError
+                                ? window.OmniFirebaseAuth.formatFirebaseError(err)
+                                : (err?.message || 'Gagal masuk dengan akun Google.');
+                            if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.showToast === 'function') {
+                                window.OmniFirebaseAuth.showToast(errorMsg, 'error');
+                            } else {
+                                alert(errorMsg);
+                            }
+                            this.loadingGoogle = false;
+                        });
                 },
 
                 handleLoginSubmit(e) {

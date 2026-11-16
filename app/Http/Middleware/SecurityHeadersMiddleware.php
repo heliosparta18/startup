@@ -30,8 +30,14 @@ class SecurityHeadersMiddleware
         // Nonaktifkan fitur perangkat keras berlebih
         $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
 
+        // Izinkan popup OAuth Google/Firebase tetap bisa berkomunikasi dengan window pembuka
+        $response->headers->set('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+
         // Content Security Policy (CSP) aman yang mengizinkan WebSocket Reverb lokal, Vite dev server, dan Firebase/Google Auth
         $isLocal = app()->isLocal() || config('app.debug');
+        $port = $request->getPort();
+        $portSuffix = ($port && ! in_array((int) $port, [80, 443], true)) ? ":{$port}" : '';
+        $localLoopbackConnect = $isLocal ? " http://localhost{$portSuffix} http://127.0.0.1{$portSuffix}" : '';
         $viteScript = $isLocal ? ' http://localhost:5173 http://127.0.0.1:5173' : '';
         $viteStyle = $isLocal ? ' http://localhost:5173 http://127.0.0.1:5173' : '';
         $viteConnect = $isLocal ? ' http://localhost:5173 http://127.0.0.1:5173 ws://localhost:5173 ws://127.0.0.1:5173' : '';
@@ -40,8 +46,8 @@ class SecurityHeadersMiddleware
                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://apis.google.com https://www.gstatic.com{$viteScript}; ".
                "style-src 'self' 'unsafe-inline' https://fonts.bunny.net https://fonts.googleapis.com{$viteStyle}; ".
                "font-src 'self' https://fonts.bunny.net https://fonts.gstatic.com data:; ".
-               "img-src 'self' data: https:; ".
-               "connect-src 'self' ws://127.0.0.1:8080 wss://127.0.0.1:8080 ws://localhost:8080 wss://localhost:8080 https://*.googleapis.com https://*.firebaseio.com https://*.google.com https://accounts.google.com{$viteConnect}; ".
+               "img-src 'self' data: https:{$localLoopbackConnect}; ".
+               "connect-src 'self' ws://127.0.0.1:8080 wss://127.0.0.1:8080 ws://localhost:8080 wss://localhost:8080 https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://*.firebase.google.com https://*.google.com https://accounts.google.com{$localLoopbackConnect}{$viteConnect}; ".
                "frame-src 'self' https://*.firebaseapp.com https://accounts.google.com;";
         $response->headers->set('Content-Security-Policy', $csp);
 

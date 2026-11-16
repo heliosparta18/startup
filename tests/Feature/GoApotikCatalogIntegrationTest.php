@@ -214,4 +214,37 @@ class GoApotikCatalogIntegrationTest extends TestCase
             'Filter sediaan gabungan Salep/Krim harus mencocokkan produk dengan jenis_sediaan Krim.'
         );
     }
+
+    public function test_search_resets_subcategory_supports_multi_word_tokens_and_q_query_param(): void
+    {
+        $client = Client::query()->where('slug', 'banyuwangi-kota')->firstOrFail();
+
+        $obat = Obat::factory()->create([
+            'nama_obat' => 'POSTINOR 0,75 MG 2 TABLET',
+            'slug' => 'postinor-0-75-mg-2-tablet-test',
+            'jenis_sediaan' => 'Tablet',
+        ]);
+
+        StokClient::create([
+            'id_obat' => $obat->id_obat,
+            'id_client' => $client->id_client,
+            'jumlah_stok' => 10,
+            'diperbarui_pada' => now(),
+        ]);
+
+        Livewire::test(PublicCatalog::class, ['client' => $client->slug])
+            ->set('subKategori', 'Darah')
+            ->set('search', 'postinor tablet')
+            ->assertSet('subKategori', '')
+            ->assertSee('POSTINOR 0,75 MG 2 TABLET');
+
+        $apiRes = $this->getJson('/api/search-obat?q=postinor+tablet&client='.$client->slug);
+        $apiRes->assertOk()
+            ->assertJsonFragment(['nama' => 'POSTINOR 0,75 MG 2 TABLET']);
+
+        $this->withSession(['_token' => 'test'])
+            ->get(route('customer.catalog', ['client' => $client->slug, 'q' => 'postinor']))
+            ->assertOk()
+            ->assertSee('POSTINOR 0,75 MG 2 TABLET');
+    }
 }

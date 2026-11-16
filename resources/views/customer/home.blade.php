@@ -68,39 +68,66 @@
 
         <!-- Search & Filter Controls -->
         <section class="space-y-3">
-            <!-- Search Bar: Bersih, Putih Sesuai Form Login (mendukung pencarian server & filter cepat) -->
-            <form method="GET" action="{{ route('customer.home', ['client' => $client ?? 'banyuwangi-kota']) }}" class="flex flex-col sm:flex-row gap-2 w-full">
-                @if(($kategoriAktif ?? 'semua') !== 'semua')
-                    <input type="hidden" name="kategori" value="{{ $kategoriAktif }}">
-                @endif
-                <div class="relative flex-1">
-                    <label for="search-input" class="sr-only">Cari obat, keluhan, atau suplemen</label>
-                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
+            <!-- Search Bar: Mendukung autocomplete cepat seluruh produk via /api/search-obat & filter server -->
+            <div class="relative w-full" @click.outside="searchDropdownOpen = false" @keydown.escape.stop="searchDropdownOpen = false">
+                <form method="GET" action="{{ route('customer.home', ['client' => $client ?? 'banyuwangi-kota']) }}" class="flex flex-col sm:flex-row gap-2 w-full">
+                    @if(($kategoriAktif ?? 'semua') !== 'semua')
+                        <input type="hidden" name="kategori" value="{{ $kategoriAktif }}">
+                    @endif
+                    <div class="relative flex-1">
+                        <label for="search-input" class="sr-only">Cari obat, keluhan, atau suplemen</label>
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        <input
+                            id="search-input"
+                            name="q"
+                            value="{{ $searchQuery ?? request('q', '') }}"
+                            x-model="searchQuery"
+                            @input.debounce.250ms="liveSearchHome()"
+                            @focus="if(searchQuery.trim().length >= 2) searchDropdownOpen = true"
+                            type="text"
+                            placeholder="Cari obat, merk, atau suplemen (cth: Postinor, Paracetamol)..."
+                            class="w-full min-h-[46px] rounded-2xl border border-slate-300 bg-white pl-10 pr-4 text-base sm:text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 shadow-2xs"
+                        />
                     </div>
-                    <input
-                        id="search-input"
-                        name="q"
-                        value="{{ $searchQuery ?? request('q', '') }}"
-                        x-model="searchQuery"
-                        type="text"
-                        placeholder="Cari obat, merk, atau suplemen lalu tekan Enter..."
-                        class="w-full min-h-[46px] rounded-2xl border border-slate-300 bg-white pl-10 pr-4 text-base sm:text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 shadow-2xs"
-                    />
+                    <button
+                        type="submit"
+                        class="inline-flex min-h-[46px] items-center justify-center rounded-2xl bg-emerald-700 hover:bg-emerald-800 px-5 text-xs font-bold text-white shadow-xs transition cursor-pointer shrink-0">
+                        Cari Produk
+                    </button>
+                    <a
+                        href="{{ route('customer.catalog', ['client' => $client ?? 'banyuwangi-kota']) }}"
+                        class="inline-flex min-h-[46px] items-center justify-center rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 px-4 text-xs font-bold text-emerald-700 shadow-2xs transition shrink-0">
+                        Katalog Filter Lengkap &rarr;
+                    </a>
+                </form>
+
+                <div
+                    x-show="searchDropdownOpen"
+                    x-cloak
+                    class="absolute left-0 right-0 sm:max-w-2xl mt-2 bg-white rounded-2xl shadow-lg border border-slate-200 p-2 z-40 max-h-96 overflow-y-auto"
+                    role="region"
+                    aria-label="Saran pencarian cepat"
+                >
+                    <div x-show="searchLoading" class="p-3 text-center text-xs font-medium text-slate-600">Mencari produk di seluruh katalog...</div>
+                    <template x-for="item in searchResults" :key="item.id">
+                        <a :href="item.url" class="flex items-center gap-3 p-2.5 min-h-[44px] rounded-xl hover:bg-emerald-50 border-b border-slate-100 last:border-0 transition">
+                            <img :src="item.gambar" :alt="item.nama" class="w-10 h-10 object-contain rounded-lg bg-slate-50 p-1 border border-slate-200 shrink-0" onerror="this.onerror=null;this.src='/images/placeholder-product.svg';">
+                            <div class="flex-1 min-w-0">
+                                <span class="block text-xs font-bold text-slate-900 truncate" x-text="item.nama"></span>
+                                <span class="block text-[11px] text-slate-500 truncate" x-text="(item.kategori || 'Kesehatan') + ' · ' + (item.sediaan || 'Sediaan Resmi')"></span>
+                            </div>
+                            <span class="text-xs font-bold text-emerald-800 shrink-0" x-text="item.harga_formatted"></span>
+                        </a>
+                    </template>
+                    <div x-show="!searchLoading && searchResults.length === 0" class="p-3 text-center text-xs text-slate-600">
+                        Tekan <strong>Cari Produk</strong> untuk mencari kata kunci ini di seluruh katalog cabang.
+                    </div>
                 </div>
-                <button
-                    type="submit"
-                    class="inline-flex min-h-[46px] items-center justify-center rounded-2xl bg-emerald-700 hover:bg-emerald-800 px-5 text-xs font-bold text-white shadow-xs transition cursor-pointer shrink-0">
-                    Cari Produk
-                </button>
-                <a
-                    href="{{ route('customer.catalog', ['client' => $client ?? 'banyuwangi-kota']) }}"
-                    class="inline-flex min-h-[46px] items-center justify-center rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 px-4 text-xs font-bold text-emerald-700 shadow-2xs transition shrink-0">
-                    Katalog Filter Lengkap &rarr;
-                </a>
-            </form>
+            </div>
 
             <!-- Category Pills: Bersih & Terang -->
             @php
@@ -158,15 +185,11 @@
                     $isResep = ($item->kategori->wajib_resep ?? false) || str_contains(strtolower($item->badge_status ?? ''), 'keras');
                     $katSlug = \Illuminate\Support\Str::slug($item->kategori->nama_kategori ?? '');
                     $stokTotal = $item->stokClient->sum('jumlah_stok') ?: ($item->jumlah_obat ?? 10);
-                    $namaLowerJs = \Illuminate\Support\Js::from(strtolower($item->nama_obat));
-                    $merekLowerJs = \Illuminate\Support\Js::from(strtolower($item->merek ?? ''));
                     $namaJs = \Illuminate\Support\Js::from($item->nama_obat);
                     $resepNoteJs = \Illuminate\Support\Js::from('Resep untuk '.$item->nama_obat);
                     $idJs = \Illuminate\Support\Js::from($item->id_obat);
                 @endphp
-                <article
-                    x-show="searchQuery.trim() === '' || {{ $namaLowerJs }}.includes(searchQuery.toLowerCase()) || {{ $merekLowerJs }}.includes(searchQuery.toLowerCase())"
-                    class="flex flex-col justify-between rounded-3xl border border-slate-200/90 bg-white p-5 sm:p-6 shadow-xs hover:border-emerald-500/40 hover:shadow-md transition">
+                <article class="flex flex-col justify-between rounded-3xl border border-slate-200/90 bg-white p-5 sm:p-6 shadow-xs hover:border-emerald-500/40 hover:shadow-md transition">
                     
                     <div class="space-y-3">
                         <!-- Header Card: Badge Resep & Stok -->
@@ -388,6 +411,9 @@
         Alpine.data('customerCatalog', () => ({
             kategoriAktif: @js($kategoriAktif ?? request('kategori', 'semua')),
             searchQuery: @js($searchQuery ?? request('q', '')),
+            searchResults: [],
+            searchLoading: false,
+            searchDropdownOpen: false,
             modalUnggah: false,
             notifSukses: '',
             selectedFile: null,
@@ -395,6 +421,27 @@
             fileName: '',
             fileSize: '',
             isDragging: false,
+            liveSearchHome() {
+                const q = (this.searchQuery || '').trim();
+                if (q.length < 2) {
+                    this.searchResults = [];
+                    this.searchLoading = false;
+                    this.searchDropdownOpen = false;
+                    return;
+                }
+                this.searchLoading = true;
+                this.searchDropdownOpen = true;
+                fetch('/api/search-obat?q=' + encodeURIComponent(q) + '&client=' + encodeURIComponent(@js($client ?? 'banyuwangi-kota')))
+                    .then(r => r.ok ? r.json() : [])
+                    .then(data => {
+                        this.searchResults = Array.isArray(data) ? data : [];
+                        this.searchLoading = false;
+                    })
+                    .catch(() => {
+                        this.searchResults = [];
+                        this.searchLoading = false;
+                    });
+            },
             unggahForm: {
                 namaDokter: 'dr. Budi, Sp.PD',
                 sipDokter: '503/SIP/2024',

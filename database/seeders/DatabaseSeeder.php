@@ -11,9 +11,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([
+        $seeders = [
             DemoApotekSeeder::class,
             GoApotikCatalogSeeder::class,
-        ]);
+        ];
+
+        // Muat dataset katalog lengkap GoApotik (ribuan produk + Postinor) di lingkungan lokal/produksi
+        if (! app()->runningUnitTests()) {
+            $seeders[] = GoApotikFullCatalogSeeder::class;
+        }
+
+        $this->call($seeders);
     }
 }

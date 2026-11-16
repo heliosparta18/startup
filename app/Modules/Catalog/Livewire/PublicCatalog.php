@@ -53,12 +53,22 @@ class PublicCatalog extends Component
 
         $this->clientId = $client;
         $this->inDashboard = $inDashboard;
+
+        if ($this->search === '') {
+            $querySearch = trim((string) (request()->query('search') ?: request()->query('q', '')));
+            if ($querySearch !== '') {
+                $this->search = $querySearch;
+            }
+        }
     }
 
     #[On('dashboard-search')]
     public function updateSearchFromDashboard(string $search = ''): void
     {
         $this->search = $search;
+        if (trim($search) !== '') {
+            $this->subKategori = '';
+        }
         $this->resetPage();
     }
 
@@ -68,8 +78,11 @@ class PublicCatalog extends Component
         $this->selectCategory($kategori);
     }
 
-    public function updatingSearch(): void
+    public function updatingSearch(string $value = ''): void
     {
+        if (trim($value) !== '') {
+            $this->subKategori = '';
+        }
         $this->resetPage();
     }
 

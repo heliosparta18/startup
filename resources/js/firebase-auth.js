@@ -4,6 +4,8 @@ import {
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
     signInWithPopup,
+    signInWithRedirect,
+    getRedirectResult,
     GoogleAuthProvider,
     updateProfile,
     signOut,
@@ -81,9 +83,48 @@ export function showToast(message, type = 'info') {
     }, 4500);
 }
 
+// Deteksi host loopback IP (127.0.0.1 / ::1) yang belum terdaftar di Firebase Authorized Domains
+export function isLoopbackIp(hostname = typeof window !== 'undefined' ? window.location.hostname : '') {
+    return hostname === '127.0.0.1' || hostname === '[::1]' || hostname === '::1';
+}
+
+function buildLocalhostOrigin() {
+    if (typeof window === 'undefined') return '';
+    const port = window.location.port ? `:${window.location.port}` : '';
+    return `${window.location.protocol}//localhost${port}`;
+}
+
+async function isOriginReachable(origin) {
+    try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 1200);
+        await fetch(`${origin}/favicon.ico`, { mode: 'no-cors', cache: 'no-store', signal: controller.signal });
+        clearTimeout(timer);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+export async function switchToAuthorizedLocalhostForGoogle() {
+    if (typeof window === 'undefined' || !isLoopbackIp()) {
+        return false;
+    }
+    const targetOrigin = buildLocalhostOrigin();
+    const reachable = await isOriginReachable(targetOrigin);
+    if (!reachable) {
+        return false;
+    }
+    const url = new URL(window.location.href);
+    url.hostname = 'localhost';
+    url.searchParams.set('google_signin', '1');
+    window.location.replace(url.toString());
+    return true;
+}
+
 // Error translator bahasa Indonesia
 export function formatFirebaseError(error) {
-    const code = error.code || '';
+    const code = error?.code || '';
     switch (code) {
         case 'auth/invalid-credential':
         case 'auth/wrong-password':
@@ -98,9 +139,11 @@ export function formatFirebaseError(error) {
         case 'auth/popup-closed-by-user':
             return 'Jendela masuk Google ditutup sebelum proses selesai.';
         case 'auth/popup-blocked':
-            return 'Pop-up browser diblokir. Izinkan pop-up untuk login Google.';
-        case 'auth/unauthorized-domain':
-            return 'Domain/host ini belum diotorisasi di Firebase Auth. Buka aplikasi via http://localhost:8088 atau daftarkan domain di Firebase Console.';
+            return 'Pop-up diblokir browser; mencoba pengalihan langsung ke halaman masuk Google...';
+        case 'auth/unauthorized-domain': {
+            const port = typeof window !== 'undefined' && window.location.port ? `:${window.location.port}` : '';
+            return `Domain "${typeof window !== 'undefined' ? window.location.host : 'ini'}" belum diotorisasi di Firebase Console. Gunakan http://localhost${port}/login atau daftarkan domain di Authentication -> Settings -> Authorized domains.`;
+        }
         case 'auth/cancelled-popup-request':
             return 'Proses masuk Google dibatalkan karena ada jendela baru yang dibuka.';
         case 'auth/internal-error':
@@ -112,7 +155,7 @@ export function formatFirebaseError(error) {
         case 'auth/too-many-requests':
             return 'Terlalu banyak percobaan gagal. Silakan coba lagi beberapa saat lagi.';
         default:
-            return error.message || 'Terjadi kesalahan pada proses autentikasi.';
+            return error?.message || 'Terjadi kesalahan pada proses autentikasi.';
     }
 }
 
@@ -124,27 +167,50 @@ function getCsrfToken() {
     return input ? input.value : '';
 }
 
+async function refreshCsrfToken() {
+    try {
+        const res = await fetch(window.location.pathname, { credentials: 'same-origin' });
+        if (!res.ok) return getCsrfToken();
+        const html = await res.text();
+        const match = html.match(/name="csrf-token"\s+content="([^"]+)"/);
+        if (match && match[1]) {
+            const meta = document.querySelector('meta[name="csrf-token"]');
+            if (meta) meta.setAttribute('content', match[1]);
+            return match[1];
+        }
+    } catch {
+        // abaikan jika refresh CSRF gagal
+    }
+    return getCsrfToken();
+}
+
 // Sinkronisasi sesi Firebase ke backend Laravel
 export async function syncSessionWithBackend(firebaseUser, provider = 'password') {
-    const csrfToken = getCsrfToken();
-    const idToken = await firebaseUser.getIdToken();
+    const payload = JSON.stringify({
+        uid: firebaseUser.uid,
+        email: firebaseUser.email,
+        name: firebaseUser.displayName || firebaseUser.email.split('@')[0],
+        photo_url: firebaseUser.photoURL || null,
+        provider: provider,
+        id_token: await firebaseUser.getIdToken()
+    });
 
-    const response = await fetch('/auth/firebase-session', {
+    const postSync = (token) => fetch('/auth/firebase-session', {
         method: 'POST',
+        credentials: 'same-origin',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'X-CSRF-TOKEN': csrfToken
+            'X-CSRF-TOKEN': token
         },
-        body: JSON.stringify({
-            uid: firebaseUser.uid,
-            email: firebaseUser.email,
-            name: firebaseUser.displayName || firebaseUser.email.split('@')[0],
-            photo_url: firebaseUser.photoURL || null,
-            provider: provider,
-            id_token: idToken
-        })
+        body: payload
     });
+
+    let response = await postSync(getCsrfToken());
+    if (response.status === 419) {
+        const freshToken = await refreshCsrfToken();
+        response = await postSync(freshToken);
+    }
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -172,14 +238,53 @@ export async function loginWithEmailOrUsername(identifier, password) {
     return { user, session: sessionResult };
 }
 
-// Handler: Login Cepat dengan Akun Google
-export async function loginWithGoogle() {
-    const result = await signInWithPopup(auth, googleProvider);
-    const user = result.user;
+// Selesaikan hasil redirect OAuth Google jika kembali dari signInWithRedirect
+export async function consumeGoogleRedirectResult() {
+    try {
+        const result = await getRedirectResult(auth);
+        if (!result || !result.user) {
+            return null;
+        }
+        const sessionResult = await syncSessionWithBackend(result.user, 'google');
+        return { user: result.user, session: sessionResult };
+    } catch (error) {
+        if (error?.code === 'auth/no-auth-event') {
+            return null;
+        }
+        throw error;
+    }
+}
 
-    // Sinkronkan ke Laravel Session
-    const sessionResult = await syncSessionWithBackend(user, 'google');
-    return { user, session: sessionResult };
+// Handler: Login Cepat dengan Akun Google (popup utama + fallback redirect bila popup diblokir + loopback localhost auto-switch)
+export async function loginWithGoogle() {
+    if (isLoopbackIp()) {
+        const switched = await switchToAuthorizedLocalhostForGoogle();
+        if (switched) {
+            return { redirected: true };
+        }
+    }
+
+    try {
+        const result = await signInWithPopup(auth, googleProvider);
+        const user = result.user;
+
+        // Sinkronkan ke Laravel Session
+        const sessionResult = await syncSessionWithBackend(user, 'google');
+        return { user, session: sessionResult };
+    } catch (error) {
+        const code = error?.code || '';
+        if (code === 'auth/unauthorized-domain' && isLoopbackIp()) {
+            const switched = await switchToAuthorizedLocalhostForGoogle();
+            if (switched) {
+                return { redirected: true };
+            }
+        }
+        if (code === 'auth/popup-blocked' || code === 'auth/operation-not-supported-in-this-environment') {
+            await signInWithRedirect(auth, googleProvider);
+            return { redirected: true };
+        }
+        throw error;
+    }
 }
 
 // Handler: Registrasi Akun Baru dengan Firebase
@@ -233,6 +338,9 @@ if (typeof window !== 'undefined') {
         app,
         showToast,
         formatFirebaseError,
+        isLoopbackIp,
+        switchToAuthorizedLocalhostForGoogle,
+        consumeGoogleRedirectResult,
         loginWithEmailOrUsername,
         loginWithGoogle,
         registerWithEmail,

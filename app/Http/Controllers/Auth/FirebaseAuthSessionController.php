@@ -25,7 +25,7 @@ class FirebaseAuthSessionController extends Controller
             'name' => ['nullable', 'string', 'max:150'],
             'uid' => ['nullable', 'string', 'max:128'],
             'provider' => ['nullable', 'string', 'max:50'],
-            'photo_url' => ['nullable', 'string', 'max:500'],
+            'photo_url' => ['nullable', 'string', 'max:1000'],
         ]);
 
         $email = strtolower(trim($validated['email']));
@@ -46,6 +46,12 @@ class FirebaseAuthSessionController extends Controller
                 'email_verified_at' => now(),
             ]);
         } else {
+            if (! $user->isActive()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Akun Anda sedang dinonaktifkan oleh administrator.',
+                ], 403);
+            }
             if (! $user->email_verified_at) {
                 $user->email_verified_at = Carbon::now();
             }
@@ -61,6 +67,7 @@ class FirebaseAuthSessionController extends Controller
                 'nama_lengkap' => $user->name,
                 'peran' => $user->role ?: 'pelanggan',
                 'telepon_email' => $email,
+                'password' => $user->password,
                 'aktif' => true,
             ]);
         }

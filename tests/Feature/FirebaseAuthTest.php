@@ -113,4 +113,30 @@ class FirebaseAuthTest extends TestCase
         $response->assertRedirect(route('login'));
         $this->assertGuest();
     }
+
+    public function test_login_page_allows_oauth_popups_and_blocks_inactive_firebase_user(): void
+    {
+        $loginResponse = $this->get(route('login'));
+        $loginResponse->assertOk();
+        $loginResponse->assertHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+        $csp = (string) $loginResponse->headers->get('Content-Security-Policy');
+        $this->assertStringContainsString('firebaseapp.com', $csp);
+        $this->assertStringContainsString('accounts.google.com', $csp);
+
+        User::factory()->create([
+            'email' => 'nonaktif.google@gmail.com',
+            'status' => 'nonaktif',
+            'role' => 'pelanggan',
+        ]);
+
+        $denied = $this->postJson(route('auth.firebase.session'), [
+            'email' => 'nonaktif.google@gmail.com',
+            'name' => 'Nonaktif User',
+            'uid' => 'uid-inactive-1',
+            'provider' => 'google',
+        ]);
+
+        $denied->assertStatus(403);
+        $this->assertGuest();
+    }
 }

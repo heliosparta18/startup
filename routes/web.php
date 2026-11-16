@@ -85,16 +85,34 @@ Route::get('/api/search-obat', function (Request $request) {
         return response()->json([]);
     }
 
+    $tokens = array_values(array_filter(preg_split('/\s+/', $q) ?: []));
+
     $obats = Obat::query()
         ->with(['kategori', 'subkategori', 'stokClient' => fn ($sq) => $sq->withoutGlobalScopes()])
-        ->where(function ($sub) use ($q) {
+        ->where(function ($sub) use ($q, $tokens) {
             $sub->where('nama_obat', 'like', "%{$q}%")
                 ->orWhere('merek', 'like', "%{$q}%")
                 ->orWhere('indikasi', 'like', "%{$q}%")
                 ->orWhere('komposisi', 'like', "%{$q}%");
+
+            if (count($tokens) > 1) {
+                $sub->orWhere(function ($tokenGroup) use ($tokens): void {
+                    foreach ($tokens as $token) {
+                        $tokenGroup->where(function ($tSub) use ($token): void {
+                            $tSub->where('nama_obat', 'like', "%{$token}%")
+                                ->orWhere('merek', 'like', "%{$token}%")
+                                ->orWhere('indikasi', 'like', "%{$token}%")
+                                ->orWhere('komposisi', 'like', "%{$token}%");
+                        });
+                    }
+                });
+            }
         })
-        ->take(8)
+        ->take(24)
         ->get()
+        ->sortByDesc(fn ($obat) => $obat->isAvailableInBranch($clientSlug) ? 1 : 0)
+        ->take(8)
+        ->values()
         ->map(function ($obat) use ($clientSlug) {
             return [
                 'id' => $obat->id_obat,

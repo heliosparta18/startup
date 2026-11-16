@@ -103,11 +103,27 @@ class CatalogService
                 });
             })
             ->when($search, function (Builder $q, $search) {
-                $q->where(function (Builder $sub) use ($search) {
-                    $sub->where('nama_obat', 'like', "%{$search}%")
-                        ->orWhere('merek', 'like', "%{$search}%")
-                        ->orWhere('komposisi', 'like', "%{$search}%")
-                        ->orWhere('indikasi', 'like', "%{$search}%");
+                $trimmed = trim((string) $search);
+                $tokens = array_values(array_filter(preg_split('/\s+/', $trimmed) ?: []));
+
+                $q->where(function (Builder $outer) use ($trimmed, $tokens): void {
+                    $outer->where('nama_obat', 'like', "%{$trimmed}%")
+                        ->orWhere('merek', 'like', "%{$trimmed}%")
+                        ->orWhere('komposisi', 'like', "%{$trimmed}%")
+                        ->orWhere('indikasi', 'like', "%{$trimmed}%");
+
+                    if (count($tokens) > 1) {
+                        $outer->orWhere(function (Builder $tokenGroup) use ($tokens): void {
+                            foreach ($tokens as $token) {
+                                $tokenGroup->where(function (Builder $sub) use ($token): void {
+                                    $sub->where('nama_obat', 'like', "%{$token}%")
+                                        ->orWhere('merek', 'like', "%{$token}%")
+                                        ->orWhere('komposisi', 'like', "%{$token}%")
+                                        ->orWhere('indikasi', 'like', "%{$token}%");
+                                });
+                            }
+                        });
+                    }
                 });
             })
             ->when($bentukSediaan, function (Builder $q, string $sediaan): void {
