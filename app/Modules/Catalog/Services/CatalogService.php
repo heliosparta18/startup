@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
+use Throwable;
 
 class CatalogService
 {
@@ -19,13 +20,45 @@ class CatalogService
      */
     private function metaCacheVersion(): int
     {
-        return (int) Cache::rememberForever('catalog:meta_version', static fn () => 1);
+        try {
+            $cached = Cache::get('catalog:meta_version');
+            if (is_int($cached) || is_numeric($cached)) {
+                return max(1, (int) $cached);
+            }
+
+            Cache::forever('catalog:meta_version', 1);
+
+            return 1;
+        } catch (Throwable) {
+            return 1;
+        }
     }
 
     public function clearMetadataCache(): void
     {
-        $next = $this->metaCacheVersion() + 1;
-        Cache::forever('catalog:meta_version', $next);
+        try {
+            $next = $this->metaCacheVersion() + 1;
+            Cache::forever('catalog:meta_version', $next);
+        } catch (Throwable) {
+            // Biarkan katalog tetap berjalan tanpa gangguan meski cache store sementara offline.
+        }
+    }
+
+    /**
+     * Bungkus pembacaan cache metadata agar gangguan Redis tidak menyebabkan HTTP 500.
+     *
+     * @template TCacheValue
+     *
+     * @param  \Closure(): TCacheValue  $resolver
+     * @return TCacheValue
+     */
+    private function rememberMetadata(string $key, \Closure $resolver): mixed
+    {
+        try {
+            return Cache::remember($key, now()->addMinutes(5), $resolver);
+        } catch (Throwable) {
+            return $resolver();
+        }
     }
 
     /**
@@ -77,10 +110,22 @@ class CatalogService
                         ->orWhere('indikasi', 'like', "%{$search}%");
                 });
             })
-            ->when($bentukSediaan, function (Builder $q, $sediaan) {
-                $q->where(function (Builder $sq) use ($sediaan) {
-                    $sq->where('jenis_sediaan', $sediaan)
-                        ->orWhere('jenis_sediaan', 'like', "%{$sediaan}%");
+            ->when($bentukSediaan, function (Builder $q, string $sediaan): void {
+                $keywords = match ($sediaan) {
+                    'Tetes (Drops)' => ['Tetes (Drops)', 'tetes', 'drop'],
+                    'Salep/Krim' => ['Salep/Krim', 'salep', 'krim', 'cream', 'gel', 'ointment'],
+                    'Serbuk/Sachet' => ['Serbuk/Sachet', 'serbuk', 'sachet', 'powder'],
+                    'Larutan/Cairan' => ['Larutan/Cairan', 'larutan', 'cairan', 'solution'],
+                    'Alat Medis' => ['Alat Medis', 'alat'],
+                    'Plester/Strip' => ['Plester/Strip', 'plester', 'patch'],
+                    default => [$sediaan],
+                };
+
+                $q->where(function (Builder $sq) use ($sediaan, $keywords): void {
+                    $sq->where('jenis_sediaan', $sediaan);
+                    foreach ($keywords as $kw) {
+                        $sq->orWhere('jenis_sediaan', 'like', "%{$kw}%");
+                    }
                 });
             })
             ->when($kategori, function (Builder $q, $kat) {
@@ -128,20 +173,25 @@ class CatalogService
         $ver = $this->metaCacheVersion();
 
         /** @var array<int, array<string, mixed>> $rows */
-        $rows = Cache::remember("catalog:v{$ver}:kategori:arr", now()->addMinutes(5), function (): array {
+        $rows = $this->rememberMetadata("catalog:v{$ver}:kategori:arr", function (): array {
             return KategoriObat::query()
-                ->withCount('obat')
-                ->whereIn('nama_kategori', [
-                    'Obat',
-                    'Suplemen',
-                    'Nutrisi',
-                    'Herbal',
-                    'Ibu & Anak',
-                    'Alat Kesehatan',
-                    'Perawatan Diri',
-                    'Mata',
-                ])
-                ->orWhereNotNull('slug')
+                ->withCount(['obat' => function (Builder $oq): void {
+                    $oq->whereHas('stokClient', function (Builder $sq): void {
+                        $sq->withoutGlobalScope(TenantScope::class)->where('jumlah_stok', '>', 0);
+                    });
+                }])
+                ->where(function (Builder $q): void {
+                    $q->whereIn('nama_kategori', [
+                        'Obat',
+                        'Suplemen',
+                        'Nutrisi',
+                        'Herbal',
+                        'Ibu & Anak',
+                        'Alat Kesehatan',
+                        'Perawatan Diri',
+                        'Mata',
+                    ])->orWhereNotNull('slug');
+                })
                 ->orderByRaw("CASE 
                     WHEN nama_kategori = 'Obat' THEN 1 
                     WHEN nama_kategori = 'Suplemen' THEN 2 
@@ -172,7 +222,7 @@ class CatalogService
         $katKey = md5((string) ($kategori ?? 'all').'|'.(string) ($clientId ?? 'global'));
 
         /** @var array<int, array{attributes: array<string, mixed>, kategori: array<string, mixed>|null}> $rows */
-        $rows = Cache::remember("catalog:v{$ver}:subkategori:{$katKey}:arr", now()->addMinutes(5), function () use ($kategori, $clientId): array {
+        $rows = $this->rememberMetadata("catalog:v{$ver}:subkategori:{$katKey}:arr", function () use ($kategori, $clientId): array {
             $resolvedClientId = null;
             if ($clientId) {
                 $client = Client::where('id_client', $clientId)
@@ -256,7 +306,7 @@ class CatalogService
     {
         $ver = $this->metaCacheVersion();
 
-        return Cache::remember("catalog:v{$ver}:sediaan", now()->addMinutes(5), function (): array {
+        return $this->rememberMetadata("catalog:v{$ver}:sediaan", function (): array {
             $rawList = Obat::query()
                 ->distinct()
                 ->whereNotNull('jenis_sediaan')

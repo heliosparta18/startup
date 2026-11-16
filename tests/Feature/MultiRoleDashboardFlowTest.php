@@ -221,6 +221,42 @@ class MultiRoleDashboardFlowTest extends TestCase
     }
 
     /**
+     * 10. Login peran non-admin harus membersihkan intended URL admin/cabang/kasir
+     * yang tidak menjadi hak aksesnya, dan halaman login memuat 5 tombol demo role.
+     */
+    public function test_login_ignores_unauthorized_cross_role_intended_portal_urls(): void
+    {
+        $loginPage = $this->get(route('login'));
+        $loginPage->assertOk()
+            ->assertSee('data-demo-role="pelanggan"', false)
+            ->assertSee('data-demo-role="super_admin"', false)
+            ->assertSee('data-demo-role="apt_bwi"', false)
+            ->assertSee('data-demo-role="apt_rogo"', false)
+            ->assertSee('data-demo-role="kasir_bwi"', false);
+
+        $adminDashboardUrl = route('admin.dashboard');
+
+        $customerResponse = $this->withSession(['url.intended' => $adminDashboardUrl])
+            ->post(route('login.store'), [
+                'email' => 'gunturafandy5@gmail.com',
+                'password' => 'password',
+            ]);
+
+        $customerResponse->assertSessionHasNoErrors();
+        $customerResponse->assertRedirect(route('dashboard'));
+        $this->post(route('logout'));
+
+        $pharmacistResponse = $this->withSession(['url.intended' => $adminDashboardUrl])
+            ->post(route('login.store'), [
+                'email' => 'bambang@omnipharma.test',
+                'password' => 'password',
+            ]);
+
+        $pharmacistResponse->assertSessionHasNoErrors();
+        $pharmacistResponse->assertRedirect(route('tenant.dashboard', ['client' => 'banyuwangi-kota']));
+    }
+
+    /**
      * 10. Verifikasi hasil audit alur Sambutan -> Login (Email/Username) -> Register/Profil -> Dashboard:
      *     - Login bisa menggunakan username maupun handle pendek (@omnipharma.test)
      *     - Halaman sambutan hanya menampilkan 2 cabang aktif resmi tanpa tautan 404 /klien/genteng

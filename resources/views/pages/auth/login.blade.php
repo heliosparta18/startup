@@ -88,7 +88,7 @@
         </div>
 
         <!-- KOLOM KANAN: Formulir Masuk Sederhana (Input 1: Email/Username, Input 2: Password) -->
-        <div class="order-1 lg:order-2 lg:w-7/12 p-5 sm:p-8 lg:p-12 flex flex-col justify-between bg-white" x-data="loginPageData()">
+        <div id="login-card-panel" class="order-1 lg:order-2 lg:w-7/12 p-5 sm:p-8 lg:p-12 flex flex-col justify-between bg-white" x-data="loginPageData()">
             <div>
                 <!-- Mobile Brand Header -->
                 <div class="flex items-center gap-2.5 mb-4 lg:hidden">
@@ -121,7 +121,7 @@
                 @endif
 
                 <!-- Formulir Masuk: 1 Input Email/Username + 1 Input Password -->
-                <form x-ref="loginForm" method="POST" action="{{ route('login.store') }}" @submit="handleLoginSubmit($event)" class="space-y-4">
+                <form id="login-form" x-ref="loginForm" method="POST" action="{{ route('login.store') }}" @submit="handleLoginSubmit($event)" class="space-y-4">
                     @csrf
 
                     <!-- Input 1: Email atau Username -->
@@ -131,6 +131,7 @@
                         </label>
                         <input
                             id="login_identifier"
+                            x-ref="emailInput"
                             name="email"
                             type="text"
                             x-model="identifier"
@@ -157,6 +158,7 @@
                         <div class="relative">
                             <input
                                 id="login_password"
+                                x-ref="passwordInput"
                                 name="password"
                                 :type="showPassword ? 'text' : 'password'"
                                 x-model="password"
@@ -251,71 +253,33 @@
                     <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Pilih Akun Demo Praktikum:</span>
                     <span class="text-[10px] text-slate-400">Klik untuk isi otomatis</span>
                 </div>
+                @php
+                    $demoRoles = [
+                        ['key' => 'pelanggan', 'label' => 'Pasien Demo', 'email' => 'gunturafandy5@gmail.com'],
+                        ['key' => 'super_admin', 'label' => 'Super Admin', 'email' => 'daffa@omnipharma.test'],
+                        ['key' => 'apt_bwi', 'label' => 'Apoteker BWI', 'email' => 'bambang@omnipharma.test'],
+                        ['key' => 'apt_rogo', 'label' => 'Apoteker RGO', 'email' => 'dinda@omnipharma.test'],
+                        ['key' => 'kasir_bwi', 'label' => 'Kasir BWI', 'email' => 'kasir.bwi@omnipharma.test'],
+                    ];
+                @endphp
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    <button
-                        type="button"
-                        @click="selectDemo('pelanggan', 'gunturafandy5@gmail.com', 'password')"
-                        :disabled="loadingSubmit || loadingGoogle"
-                        :class="selectedRole === 'pelanggan' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
-                        class="p-2 sm:p-2.5 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer disabled:opacity-50"
-                    >
-                        <div class="flex items-center justify-between gap-1">
-                            <span class="text-[11px] font-bold truncate">Pasien Demo</span>
-                        </div>
-                        <span class="text-[11px] text-slate-500 truncate">gunturafandy5@gmail.com</span>
-                    </button>
-
-                    <button
-                        type="button"
-                        @click="selectDemo('super_admin', 'daffa@omnipharma.test', 'password')"
-                        :disabled="loadingSubmit || loadingGoogle"
-                        :class="selectedRole === 'super_admin' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
-                        class="p-2 sm:p-2.5 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer disabled:opacity-50"
-                    >
-                        <div class="flex items-center justify-between gap-1">
-                            <span class="text-[11px] font-bold truncate">Super Admin</span>
-                        </div>
-                        <span class="text-[11px] text-slate-500 truncate">daffa@omnipharma.test</span>
-                    </button>
-
-                    <button
-                        type="button"
-                        @click="selectDemo('apt_bwi', 'bambang@omnipharma.test', 'password')"
-                        :disabled="loadingSubmit || loadingGoogle"
-                        :class="selectedRole === 'apt_bwi' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
-                        class="p-2 sm:p-2.5 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer disabled:opacity-50"
-                    >
-                        <div class="flex items-center justify-between gap-1">
-                            <span class="text-[11px] font-bold truncate">Apoteker BWI</span>
-                        </div>
-                        <span class="text-[11px] text-slate-500 truncate">bambang@omnipharma.test</span>
-                    </button>
-
-                    <button
-                        type="button"
-                        @click="selectDemo('apt_rogo', 'dinda@omnipharma.test', 'password')"
-                        :disabled="loadingSubmit || loadingGoogle"
-                        :class="selectedRole === 'apt_rogo' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
-                        class="p-2 sm:p-2.5 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer disabled:opacity-50"
-                    >
-                        <div class="flex items-center justify-between gap-1">
-                            <span class="text-[11px] font-bold truncate">Apoteker RGO</span>
-                        </div>
-                        <span class="text-[11px] text-slate-500 truncate">dinda@omnipharma.test</span>
-                    </button>
-
-                    <button
-                        type="button"
-                        @click="selectDemo('kasir_bwi', 'kasir.bwi@omnipharma.test', 'password')"
-                        :disabled="loadingSubmit || loadingGoogle"
-                        :class="selectedRole === 'kasir_bwi' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
-                        class="p-2 sm:p-2.5 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer disabled:opacity-50"
-                    >
-                        <div class="flex items-center justify-between gap-1">
-                            <span class="text-[11px] font-bold truncate">Kasir BWI</span>
-                        </div>
-                        <span class="text-[11px] text-slate-500 truncate">kasir.bwi@omnipharma.test</span>
-                    </button>
+                    @foreach ($demoRoles as $demo)
+                        <button
+                            type="button"
+                            data-demo-role="{{ $demo['key'] }}"
+                            data-demo-email="{{ $demo['email'] }}"
+                            data-demo-password="password"
+                            @click="selectDemo('{{ $demo['key'] }}', '{{ $demo['email'] }}', 'password')"
+                            :disabled="loadingSubmit || loadingGoogle"
+                            :class="selectedRole === '{{ $demo['key'] }}' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'"
+                            class="p-2 sm:p-2.5 rounded-lg border text-left transition min-h-[44px] flex flex-col justify-center cursor-pointer disabled:opacity-50"
+                        >
+                            <div class="flex items-center justify-between gap-1">
+                                <span class="text-[11px] font-bold truncate">{{ $demo['label'] }}</span>
+                            </div>
+                            <span class="text-[11px] text-slate-500 truncate">{{ $demo['email'] }}</span>
+                        </button>
+                    @endforeach
                 </div>
             </div>
         </div>
@@ -351,6 +315,29 @@
     @endpersist
 
     <script>
+        function submitDemoCredentialsDirectly(email, password) {
+            const form = document.getElementById('login-form');
+            const emailEl = document.getElementById('login_identifier');
+            const passEl = document.getElementById('login_password');
+            if (!form || !emailEl || !passEl) return;
+            emailEl.value = email;
+            passEl.value = password;
+            form.submit();
+        }
+
+        document.addEventListener('click', function (event) {
+            const btn = event.target?.closest?.('[data-demo-role]');
+            if (!btn) return;
+            const panel = document.getElementById('login-card-panel');
+            if (panel && panel.dataset.alpineReady === '1') {
+                return;
+            }
+            submitDemoCredentialsDirectly(
+                btn.dataset.demoEmail || '',
+                btn.dataset.demoPassword || 'password'
+            );
+        });
+
         function loginPageData() {
             return {
                 identifier: '{{ old('email', '') }}',
@@ -361,13 +348,26 @@
                 loadingGoogle: false,
                 isRedirecting: false,
 
+                init() {
+                    this.$el.dataset.alpineReady = '1';
+                },
+
                 selectDemo(roleKey, userEmail, userPass) {
+                    if (this.loadingSubmit || this.loadingGoogle) return;
                     this.selectedRole = roleKey;
                     this.identifier = userEmail;
                     this.password = userPass;
+                    if (this.$refs.emailInput) {
+                        this.$refs.emailInput.value = userEmail;
+                    }
+                    if (this.$refs.passwordInput) {
+                        this.$refs.passwordInput.value = userPass;
+                    }
                     this.loadingSubmit = true;
                     this.isRedirecting = true;
-                    this.$refs.loginForm.submit();
+                    this.$nextTick(() => {
+                        this.$refs.loginForm.submit();
+                    });
                 },
 
                 async ensureFirebaseAuth() {
@@ -415,6 +415,15 @@
                 },
 
                 handleLoginSubmit(e) {
+                    const domIdentifier = (this.$refs.emailInput?.value || '').trim();
+                    const domPassword = this.$refs.passwordInput?.value || '';
+                    if (!this.identifier && domIdentifier) {
+                        this.identifier = domIdentifier;
+                    }
+                    if (!this.password && domPassword) {
+                        this.password = domPassword;
+                    }
+
                     if (!this.identifier || !this.password) {
                         e.preventDefault();
                         if (window.OmniFirebaseAuth && typeof window.OmniFirebaseAuth.showToast === 'function') {

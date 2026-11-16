@@ -22,9 +22,9 @@
             title="{{ $drugBadge['title'] }}"
             class="w-5 h-5 sm:w-6 sm:h-6 rounded-full object-contain shadow-2xs bg-white"
             loading="lazy"
-            onerror="this.style.display='none';this.nextElementSibling.classList.remove('hidden');"
+            onerror="this.style.display='none';this.nextElementSibling.classList.remove('hidden');this.nextElementSibling.classList.add('flex');"
         />
-        <span class="hidden w-5 h-5 sm:w-6 sm:h-6 rounded-full {{ $isKeras ? 'bg-rose-700 text-white' : 'bg-emerald-700 text-white' }} border border-slate-900 flex items-center justify-center font-extrabold text-[10px] sm:text-[11px]" title="{{ $drugBadge['title'] }}">
+        <span class="hidden w-5 h-5 sm:w-6 sm:h-6 rounded-full {{ $isKeras ? 'bg-rose-700 text-white' : 'bg-emerald-700 text-white' }} border border-slate-900 items-center justify-center font-extrabold text-[10px] sm:text-[11px]" title="{{ $drugBadge['title'] }}">
             {{ $drugBadge['label'] }}
         </span>
     </div>

@@ -8,6 +8,7 @@ use App\Models\Obat;
 use App\Models\StokClient;
 use App\Models\SubkategoriObat;
 use App\Modules\Catalog\Livewire\PublicCatalog;
+use App\Modules\Catalog\Services\CatalogService;
 use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\GoApotikCatalogSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -177,5 +178,40 @@ class GoApotikCatalogIntegrationTest extends TestCase
             ->set('search', 'Obat Eksklusif')
             ->assertSee('Obat Eksklusif Banyuwangi Kota')
             ->assertSee('Beralih ke Banyuwangi Kota');
+    }
+
+    public function test_catalog_matches_composite_sediaan_keywords_and_encodes_image_url_spaces(): void
+    {
+        $client = Client::query()->where('slug', 'banyuwangi-kota')->firstOrFail();
+
+        $obat = Obat::factory()->create([
+            'nama_obat' => 'Krim Antiseptik Uji Composite',
+            'jenis_sediaan' => 'Krim',
+            'gambar_url' => 'https://example.com/images/My Product.jpg',
+        ]);
+
+        StokClient::create([
+            'id_obat' => $obat->id_obat,
+            'id_client' => $client->id_client,
+            'jumlah_stok' => 12,
+            'diperbarui_pada' => now(),
+        ]);
+
+        $this->assertSame('https://example.com/images/My%20Product.jpg', $obat->url_gambar);
+
+        $results = app(CatalogService::class)->getCatalog(
+            clientId: $client->slug,
+            search: 'Krim Antiseptik Uji Composite',
+            bentukSediaan: 'Salep/Krim',
+            kategori: null,
+            subKategori: null,
+            perPage: 15,
+            unified: true,
+        );
+
+        $this->assertTrue(
+            $results->getCollection()->contains('id_obat', $obat->id_obat),
+            'Filter sediaan gabungan Salep/Krim harus mencocokkan produk dengan jenis_sediaan Krim.'
+        );
     }
 }

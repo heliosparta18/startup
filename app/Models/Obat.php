@@ -64,7 +64,12 @@ class Obat extends Model
 
     public function getUrlGambarAttribute(): string
     {
-        return $this->gambar_url ?: asset('images/placeholder-product.svg');
+        $raw = trim((string) ($this->gambar_url ?? ''));
+        if ($raw === '') {
+            return asset('images/placeholder-product.svg');
+        }
+
+        return str_contains($raw, ' ') ? str_replace(' ', '%20', $raw) : $raw;
     }
 
     /**

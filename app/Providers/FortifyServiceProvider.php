@@ -31,15 +31,11 @@ class FortifyServiceProvider extends ServiceProvider
                     $redirectUrl = $user?->homeRoute() ?? route('dashboard');
 
                     $intended = session()->get('url.intended');
-                    if ($intended && (
-                        url($intended) === url('/')
-                        || $intended === '/'
-                        || str_contains($intended, '/klien/')
-                    )) {
+                    if (FortifyServiceProvider::shouldForgetIntendedUrl($user, $intended)) {
                         session()->forget('url.intended');
                     }
 
-                    session()->flash('welcome_user', $user->name);
+                    session()->flash('welcome_user', $user->name ?? 'Pengguna');
 
                     return $request->wantsJson()
                         ? response()->json(['two_factor' => false, 'redirect' => $redirectUrl])
@@ -72,6 +68,40 @@ class FortifyServiceProvider extends ServiceProvider
         $this->configureActions();
         $this->configureViews();
         $this->configureRateLimiting();
+    }
+
+    /**
+     * Abaikan intended URL jika mengarah ke beranda, etalase publik, atau portal role yang tidak dimiliki user.
+     */
+    public static function shouldForgetIntendedUrl(?User $user, mixed $intended): bool
+    {
+        if (! is_string($intended) || trim($intended) === '') {
+            return false;
+        }
+
+        if (url($intended) === url('/') || $intended === '/' || str_contains($intended, '/klien/')) {
+            return true;
+        }
+
+        $path = strtolower((string) (parse_url($intended, PHP_URL_PATH) ?: ''));
+
+        if ($path === '') {
+            return false;
+        }
+
+        if (str_starts_with($path, '/admin') && ! ($user?->hasRole('super_admin') ?? false)) {
+            return true;
+        }
+
+        if (str_starts_with($path, '/cabang') && ! (($user?->hasRole('apoteker') ?? false) || ($user?->hasRole('super_admin') ?? false))) {
+            return true;
+        }
+
+        if (str_starts_with($path, '/kasir') && ! ($user?->hasRole('kasir') ?? false)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
