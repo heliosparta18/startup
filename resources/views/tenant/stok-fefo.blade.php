@@ -47,12 +47,9 @@
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
                     Standar Permenkes RI No. 73/2016 | Rotasi Mutu FEFO
                 </span>
-                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-3 leading-tight">
+                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-2 leading-tight">
                     Kartu Stok FEFO &amp; Manajemen Batch Cabang
                 </h1>
-                <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl leading-relaxed">
-                    Kelola jumlah stok fisik, perbarui nomor batch dan tanggal kedaluwarsa, atau lakukan karantina batch mendekati masa kadaluarsa.
-                </p>
             </div>
             <div class="shrink-0">
                 <span class="inline-flex items-center px-4 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold text-xs">

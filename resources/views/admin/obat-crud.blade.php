@@ -51,12 +51,9 @@
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold">
                     <span>Manajemen Katalog Nasional &amp; Distribusi Stok</span>
                 </div>
-                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-3">
+                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-2">
                     Master Obat &amp; Stok Lintas Cabang
                 </h1>
-                <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl">
-                    Tambah obat baru, perbarui harga dan izin BPOM, serta atur alokasi stok awal ke setiap cabang apotek.
-                </p>
             </div>
             <div class="shrink-0 flex flex-wrap items-center gap-2.5">
                 <button type="button" @click="createModal = true" class="inline-flex min-h-[44px] items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-xs transition cursor-pointer">

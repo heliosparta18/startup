@@ -1,5 +1,41 @@
+@php
+    $adminOrderDetailMap = $pesanans->mapWithKeys(function ($o) use ($antreanMap) {
+        $branchQueue = $antreanMap[$o->id_client] ?? 'A-001';
+        return [
+            $o->id_pesanan => [
+                'id' => $o->id_pesanan,
+                'nomor_pesanan' => $o->nomor_pesanan,
+                'nomor_antrean' => $o->nomor_antrean ?? 'A-'.substr($o->nomor_pesanan, -3),
+                'cabang' => $o->client->nama_client ?? 'Cabang Apotek',
+                'antrean_berjalan' => $branchQueue,
+                'status' => $o->status ?? ($o->status_pesanan ?? 'diproses'),
+                'metode_layanan' => $o->metode_layanan === 'delivery' ? 'Pengantaran Kurir' : 'Ambil di Apotek (Click & Collect)',
+                'slot_waktu' => $o->slot_waktu ?? 'Segera (15 Menit Lagi)',
+                'catatan_pesanan' => $o->catatan_pesanan ?: null,
+                'waktu' => $o->created_at ? $o->created_at->format('d M Y, H:i') . ' WIB' : ($o->dibuat_pada ? \Carbon\Carbon::parse($o->dibuat_pada)->format('d M Y, H:i') . ' WIB' : '-'),
+                'pasien_nama' => $o->pengguna->nama_lengkap ?? 'Pasien Umum',
+                'pasien_kontak' => $o->pengguna->telepon_email ?? '-',
+                'items' => $o->items->map(fn ($it) => [
+                    'nama' => $it->nama_obat ?? ($it->obat?->nama_obat ?? 'Obat'),
+                    'qty' => $it->kuantitas,
+                    'harga' => 'Rp ' . number_format((float) $it->harga_satuan, 0, ',', '.'),
+                    'subtotal' => 'Rp ' . number_format((float) $it->subtotal, 0, ',', '.'),
+                ])->values(),
+                'total' => 'Rp ' . number_format((float) $o->items->sum('subtotal'), 0, ',', '.'),
+            ]
+        ];
+    });
+@endphp
 <x-layouts.admin :title="'Monitoring Progres Obat & Antrean - Super Admin'">
-    <div class="space-y-6 sm:space-y-8">
+    <div x-data="{
+        modalDetailPesanan: false,
+        activeDetail: null,
+        orderDetailMap: @js($adminOrderDetailMap),
+        bukaDetail(id) {
+            this.activeDetail = this.orderDetailMap[id] || null;
+            this.modalDetailPesanan = true;
+        }
+    }" class="space-y-6 sm:space-y-8">
         <!-- Breadcrumb & Navigasi -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div class="flex items-center gap-2 text-xs text-slate-500">
@@ -18,12 +54,9 @@
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
                     Standar Permenkes RI No. 73/2016 | Pengawasan Eksekutif
                 </span>
-                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-3 leading-tight">
+                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-2 leading-tight">
                     Monitoring Progres Obat &amp; Antrean Cabang
                 </h1>
-                <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl leading-relaxed">
-                    Pengawasan eksekutif terhadap obat yang sedang diracik dan diproses di seluruh cabang apotek secara langsung.
-                </p>
             </div>
             <div class="shrink-0">
                 <span class="inline-flex items-center px-4 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold text-xs">
@@ -147,6 +180,25 @@
                             @endforelse
                         </div>
 
+                        @if (!empty($order->catatan_pesanan))
+                            <div class="p-2.5 rounded-xl bg-amber-50/90 border border-amber-200/90 text-amber-950 text-xs">
+                                <div class="flex items-center gap-1.5 font-bold text-[11px] text-amber-900 mb-0.5">
+                                    <svg class="w-3.5 h-3.5 text-amber-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                                    <span>Catatan Pelanggan:</span>
+                                </div>
+                                <p class="leading-relaxed font-medium break-words">{{ $order->catatan_pesanan }}</p>
+                            </div>
+                        @endif
+
+                        <button
+                            type="button"
+                            @click="bukaDetail('{{ $order->id_pesanan }}')"
+                            class="min-h-[44px] w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 text-xs font-bold transition shadow-2xs cursor-pointer"
+                        >
+                            <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            <span>Lihat Detail Pemesanan</span>
+                        </button>
+
                         <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-200/70">
                             <div class="text-[11px] text-slate-600">
                                 <span class="font-semibold">{{ $order->slot_waktu ?? 'Segera' }}</span>
@@ -215,7 +267,7 @@
                                     <div class="text-[11px] text-slate-500 mt-0.5">{{ $waktuOrder ? \Carbon\Carbon::parse($waktuOrder)->format('d M Y, H:i') : '-' }} WIB</div>
                                 </td>
                                 <td class="p-3.5 max-w-[280px]">
-                                    <div class="space-y-1">
+                                    <div class="space-y-1.5">
                                         @forelse($order->items as $item)
                                             <div class="flex items-center justify-between text-xs font-semibold text-slate-800 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">
                                                 <span class="truncate">{{ $item->nama_obat ?? $item->obat?->nama_obat ?? 'Obat' }}</span>
@@ -224,6 +276,25 @@
                                         @empty
                                             <div class="text-xs text-slate-500">Tidak ada rincian item.</div>
                                         @endforelse
+
+                                        @if(!empty($order->catatan_pesanan))
+                                            <div class="p-1.5 rounded-lg bg-amber-50/90 border border-amber-200/90 text-amber-950 text-[11px] leading-tight">
+                                                <span class="font-bold text-amber-900 flex items-center gap-1">
+                                                    <svg class="w-3 h-3 text-amber-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                                                    Catatan:
+                                                </span>
+                                                <span class="block truncate font-medium mt-0.5" title="{{ $order->catatan_pesanan }}">{{ $order->catatan_pesanan }}</span>
+                                            </div>
+                                        @endif
+
+                                        <button
+                                            type="button"
+                                            @click="bukaDetail('{{ $order->id_pesanan }}')"
+                                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-emerald-800 font-bold text-[11px] shadow-2xs transition cursor-pointer"
+                                        >
+                                            <svg class="w-3.5 h-3.5 text-emerald-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                            <span>Detail Pemesanan</span>
+                                        </button>
                                     </div>
                                 </td>
                                 <td class="p-3.5">
@@ -265,6 +336,77 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+        </div>
+        <!-- MODAL DETAIL PEMESANAN & CATATAN PELANGGAN (SUPER ADMIN) -->
+        <div x-show="modalDetailPesanan" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-xs">
+            <div @click.outside="modalDetailPesanan = false" class="omni-bottom-sheet-panel w-full max-w-lg max-h-[90dvh] overflow-y-auto rounded-t-[20px] sm:rounded-3xl bg-white border border-slate-200 p-5 sm:p-7 shadow-2xl space-y-4">
+                <div class="sm:hidden mx-auto w-10 h-1 rounded-full bg-slate-300 -mt-1 mb-1" aria-hidden="true"></div>
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div class="flex items-center gap-2.5">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-xl bg-emerald-700 text-white font-black text-xs" x-text="activeDetail?.nomor_antrean"></span>
+                        <div>
+                            <h3 class="text-base font-black text-slate-900" x-text="'Pesanan ' + (activeDetail?.nomor_pesanan || '')"></h3>
+                            <p class="text-[11px] text-slate-500" x-text="(activeDetail?.cabang || '') + ' • ' + (activeDetail?.waktu || '')"></p>
+                        </div>
+                    </div>
+                    <button @click="modalDetailPesanan = false" class="text-slate-400 hover:text-slate-700 text-2xl font-bold min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl cursor-pointer">&times;</button>
+                </div>
+
+                <template x-if="activeDetail">
+                    <div class="space-y-4 text-xs">
+                        <!-- Info Pasien, Cabang & Layanan -->
+                        <div class="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-2xl border border-slate-200/80">
+                            <div>
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Pasien</span>
+                                <span class="font-bold text-slate-900 block" x-text="activeDetail.pasien_nama"></span>
+                                <span class="text-[11px] text-slate-500 truncate block" x-text="activeDetail.pasien_kontak"></span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Cabang &amp; Layanan</span>
+                                <span class="font-bold text-slate-900 block" x-text="activeDetail.cabang"></span>
+                                <span class="text-[11px] text-emerald-800 font-semibold block" x-text="activeDetail.metode_layanan + ' (' + activeDetail.slot_waktu + ')'"></span>
+                            </div>
+                        </div>
+
+                        <!-- CATATAN PELANGGAN (PROMINENT HIGHLIGHT) -->
+                        <div class="p-3.5 rounded-2xl border transition-colors" :class="activeDetail.catatan_pesanan ? 'bg-amber-50/90 border-amber-200 text-amber-950 shadow-2xs' : 'bg-slate-50 border-slate-200 text-slate-500'">
+                            <div class="flex items-center gap-1.5 font-bold text-xs mb-1" :class="activeDetail.catatan_pesanan ? 'text-amber-900' : 'text-slate-600'">
+                                <svg class="w-4 h-4 shrink-0" :class="activeDetail.catatan_pesanan ? 'text-amber-700' : 'text-slate-400'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                                <span>Catatan Pelanggan:</span>
+                            </div>
+                            <p class="leading-relaxed font-medium" :class="activeDetail.catatan_pesanan ? 'text-slate-900' : 'italic text-slate-400'" x-text="activeDetail.catatan_pesanan || 'Pelanggan tidak meninggalkan catatan khusus pada pesanan ini.'"></p>
+                        </div>
+
+                        <!-- DAFTAR ITEM OBAT -->
+                        <div class="space-y-2">
+                            <span class="font-bold text-slate-800 block">Rincian Obat yang Dipesan:</span>
+                            <div class="divide-y divide-slate-100 border border-slate-200 rounded-2xl overflow-hidden bg-white">
+                                <template x-for="(item, idx) in activeDetail.items" :key="idx">
+                                    <div class="flex items-center justify-between p-3 gap-2">
+                                        <div class="min-w-0">
+                                            <div class="font-bold text-slate-900 truncate" x-text="item.nama"></div>
+                                            <div class="text-[11px] text-slate-500" x-text="item.qty + 'x @ ' + item.harga"></div>
+                                        </div>
+                                        <div class="font-extrabold text-slate-900 shrink-0" x-text="item.subtotal"></div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Total Biaya -->
+                        <div class="flex items-center justify-between p-3 bg-emerald-50 rounded-2xl border border-emerald-200">
+                            <span class="font-bold text-emerald-950">Total Transaksi</span>
+                            <span class="text-base font-black text-emerald-800" x-text="activeDetail.total"></span>
+                        </div>
+
+                        <div class="pt-2 flex justify-end">
+                            <button type="button" @click="modalDetailPesanan = false" class="min-h-[44px] px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition cursor-pointer">
+                                Tutup Detail
+                            </button>
+                        </div>
+                    </div>
+                </template>
             </div>
         </div>
     </div>

@@ -181,7 +181,7 @@
 
     @if (! ($inDashboard ?? false))
         {{-- Fixed Mobile Action Bar for Standalone Guest Katalog --}}
-        <div class="md:hidden fixed bottom-0 inset-x-0 z-40 omni-mobile-bottom-bar px-4 py-2.5 flex items-center justify-between gap-2.5">
+        <div class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/98 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] omni-mobile-bottom-bar px-4 py-2.5 flex items-center justify-between gap-2.5">
             <a
                 href="{{ route('keranjang') }}"
                 class="flex-1 min-h-[44px] inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-extrabold shadow-xs transition"

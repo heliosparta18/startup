@@ -25,12 +25,9 @@
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
                     Kepatuhan Privasi Cabang | Standar Permenkes RI No. 73/2016
                 </span>
-                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-3 leading-tight">
+                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-2 leading-tight">
                     Rekam Pasien &amp; Riwayat Transaksi Cabang
                 </h1>
-                <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl leading-relaxed">
-                    Daftar pasien yang pernah bertransaksi di <strong>{{ $clientModel->nama_client ?? ucwords(str_replace('-', ' ', $client)) }}</strong> (terisolasi per cabang apotek).
-                </p>
             </div>
             <div class="shrink-0">
                 <span class="inline-flex items-center px-4 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold text-xs">

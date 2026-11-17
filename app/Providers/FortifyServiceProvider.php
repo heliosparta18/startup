@@ -131,6 +131,15 @@ class FortifyServiceProvider extends ServiceProvider
                 $user = User::whereRaw('LOWER(name) = ?', [$normalized])->first();
             }
 
+            if (! $user && in_array($normalized, ['pelanggan', 'pasien', 'customer'], true)) {
+                $user = User::where('email', 'gunturafandy5@gmail.com')->first()
+                    ?: User::where('role', 'pelanggan')->first();
+            }
+
+            if (! $user && ! str_contains($normalized, '@')) {
+                $user = User::where('email', 'like', $normalized.'@%')->first();
+            }
+
             if ($user && $user->isActive() && Hash::check($password, $user->password)) {
                 return $user;
             }

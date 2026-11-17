@@ -254,6 +254,9 @@ html.dark:not([data-force-light="true"]) .hover\:bg-emerald-50:hover {
 
 /* Mobile Web Standards & Responsive Bottom-Bar / Bottom-Sheet Helpers */
 .omni-mobile-bottom-bar {
+    background-color: #ffffff !important;
+    border-top: 1px solid #e2e8f0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
     padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
 }
 

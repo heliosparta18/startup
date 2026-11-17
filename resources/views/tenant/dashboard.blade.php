@@ -60,12 +60,9 @@
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
                     Portal Apoteker Cabang | Standar Permenkes RI No. 73/2016
                 </span>
-                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-3 leading-tight">
+                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-2 leading-tight">
                     Dashboard Apoteker Penanggung Jawab (APJ)
                 </h1>
-                <p class="text-xs sm:text-sm text-slate-600 mt-1.5 max-w-2xl leading-relaxed">
-                    Telaah resep dokter, rotasi stok FEFO berbasis kedaluwarsa, dan pengelolaan antrean pasien pada <strong>{{ $clientModel->nama_client ?? ucwords(str_replace('-', ' ', $client)) }}</strong>.
-                </p>
             </div>
 
             <div class="shrink-0 flex flex-wrap items-center gap-2.5">

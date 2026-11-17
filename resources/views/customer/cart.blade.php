@@ -11,19 +11,53 @@
 <x-layouts.customer :title="'Keranjang Belanja - OmniPharma'" :fullWidth="true">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8 pb-24 md:pb-8" x-data="{
         items: {{ \Illuminate\Support\Js::from($items) }},
+        selectedIds: {{ \Illuminate\Support\Js::from(array_column($items, 'id_obat')) }},
         loading: false,
         obatUrlPrefix: {{ \Illuminate\Support\Js::from($obatUrlPrefix) }},
+        get isAllSelected() {
+            return this.items.length > 0 && this.selectedIds.length === this.items.length;
+        },
+        toggleSelectAll() {
+            if (this.isAllSelected) {
+                this.selectedIds = [];
+            } else {
+                this.selectedIds = this.items.map(i => i.id_obat);
+            }
+        },
+        isItemSelected(obatId) {
+            return this.selectedIds.includes(obatId);
+        },
+        toggleItem(obatId) {
+            const idx = this.selectedIds.indexOf(obatId);
+            if (idx > -1) {
+                this.selectedIds.splice(idx, 1);
+            } else {
+                this.selectedIds.push(obatId);
+            }
+        },
+        get selectedItems() {
+            return this.items.filter(i => this.selectedIds.includes(i.id_obat));
+        },
         get total() {
-            return this.items.reduce((sum, item) => sum + (Number(item.subtotal) || 0), 0);
+            return this.selectedItems.reduce((sum, item) => sum + (Number(item.subtotal) || 0), 0);
         },
         get totalQty() {
+            return this.selectedItems.reduce((sum, item) => sum + (Number(item.jumlah) || 0), 0);
+        },
+        get allItemsQty() {
             return this.items.reduce((sum, item) => sum + (Number(item.jumlah) || 0), 0);
+        },
+        get checkoutUrlWithItems() {
+            const base = '{{ $checkoutUrl }}';
+            if (this.selectedIds.length === 0) return '#';
+            const separator = base.includes('?') ? '&' : '?';
+            return base + separator + 'items=' + encodeURIComponent(this.selectedIds.join(','));
         },
         formatRp(val) {
             return 'Rp ' + Number(val || 0).toLocaleString('id-ID');
         },
         syncNavbarCart(countOverride = null) {
-            const count = typeof countOverride === 'number' ? countOverride : this.totalQty;
+            const count = typeof countOverride === 'number' ? countOverride : this.allItemsQty;
             window.dispatchEvent(new CustomEvent('cart-updated', {
                 detail: { count: count, silent: true }
             }));
@@ -58,7 +92,7 @@
                 });
                 const data = await res.json().catch(() => ({}));
                 if (!res.ok) throw new Error('Update failed');
-                this.syncNavbarCart(typeof data.cart_count === 'number' ? data.cart_count : this.totalQty);
+                this.syncNavbarCart(typeof data.cart_count === 'number' ? data.cart_count : this.allItemsQty);
             } catch (e) {
                 item.jumlah = oldQty;
                 item.subtotal = oldSubtotal;
@@ -69,6 +103,7 @@
             const index = this.items.findIndex(i => i.id_obat === obatId);
             if (index === -1) return;
             const removed = this.items.splice(index, 1)[0];
+            this.selectedIds = this.selectedIds.filter(id => id !== obatId);
 
             try {
                 const res = await fetch('{{ \Illuminate\Support\Facades\Route::has('keranjang.remove') ? route('keranjang.remove') : route('customer.cart.remove', ['client' => $client]) }}', {
@@ -83,9 +118,10 @@
                 });
                 const data = await res.json().catch(() => ({}));
                 if (!res.ok) throw new Error('Remove failed');
-                this.syncNavbarCart(typeof data.cart_count === 'number' ? data.cart_count : this.totalQty);
+                this.syncNavbarCart(typeof data.cart_count === 'number' ? data.cart_count : this.allItemsQty);
             } catch (e) {
                 this.items.splice(index, 0, removed);
+                this.selectedIds.push(obatId);
                 console.warn('Gagal menghapus obat dari keranjang:', e);
             }
         }
@@ -168,9 +204,62 @@
         <div x-show="items.length > 0" class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-7 items-start">
             {{-- Item Cards List --}}
             <div class="lg:col-span-8 space-y-3 sm:space-y-4 min-w-0">
+                {{-- Select All Checkbox Header --}}
+                <div class="bg-white rounded-2xl p-3.5 sm:p-4 border border-slate-200/90 shadow-2xs flex items-center justify-between gap-3">
+                    <label class="flex items-center gap-3 cursor-pointer select-none group min-h-[44px]">
+                        <div class="relative flex items-center justify-center shrink-0">
+                            <input
+                                type="checkbox"
+                                :checked="isAllSelected"
+                                @change="toggleSelectAll()"
+                                class="sr-only"
+                                aria-label="Pilih Semua Obat"
+                            >
+                            <div
+                                class="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center transition-all duration-150 cursor-pointer"
+                                :class="isAllSelected ? 'bg-emerald-700 border-emerald-700 text-white shadow-2xs' : 'border-slate-300 bg-white group-hover:border-emerald-600'"
+                            >
+                                <svg x-show="isAllSelected" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white stroke-[3.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+                        </div>
+                        <span class="text-xs sm:text-sm font-bold text-slate-800">
+                            Pilih Semua Obat (<span x-text="selectedIds.length"></span>/<span x-text="items.length"></span>)
+                        </span>
+                    </label>
+                    <span x-show="selectedIds.length > 0" class="text-xs text-emerald-700 font-bold hidden sm:inline">
+                        <span x-text="totalQty"></span> item siap checkout
+                    </span>
+                </div>
+
                 <template x-for="item in items" :key="item.id_obat">
-                    <article class="bg-white rounded-3xl p-3.5 sm:p-5 border border-slate-200/90 shadow-xs hover:border-emerald-200 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div class="flex items-start gap-3.5 sm:gap-4 min-w-0 flex-1">
+                    <article
+                        class="bg-white rounded-3xl p-3.5 sm:p-5 border shadow-xs transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                        :class="isItemSelected(item.id_obat) ? 'border-emerald-300/90 ring-1 ring-emerald-500/20' : 'border-slate-200/90 opacity-75'"
+                    >
+                        <div class="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+                            {{-- Checkbox Pemilihan Obat (Bulat & Hijau Tema OmniPharma) --}}
+                            <label class="flex items-center cursor-pointer p-1 rounded-xl hover:bg-emerald-50/50 transition shrink-0 min-h-[44px] min-w-[40px] justify-center group" :aria-label="'Pilih ' + item.nama_obat">
+                                <div class="relative flex items-center justify-center">
+                                    <input
+                                        type="checkbox"
+                                        :checked="isItemSelected(item.id_obat)"
+                                        @change="toggleItem(item.id_obat)"
+                                        class="sr-only"
+                                        :aria-label="'Pilih ' + item.nama_obat"
+                                    >
+                                    <div
+                                        class="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center transition-all duration-150"
+                                        :class="isItemSelected(item.id_obat) ? 'bg-emerald-700 border-emerald-700 text-white shadow-2xs' : 'border-slate-300 bg-white group-hover:border-emerald-600'"
+                                    >
+                                        <svg x-show="isItemSelected(item.id_obat)" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white stroke-[3.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </label>
+
                             {{-- Product Cover Image --}}
                             <a
                                 :href="obatUrlPrefix + encodeURIComponent(item.slug || item.id_obat)"
@@ -259,8 +348,8 @@
 
                 <div class="space-y-3 text-xs sm:text-sm border-b border-slate-100 pb-4">
                     <div class="flex justify-between text-slate-600">
-                        <span>Total Item</span>
-                        <span class="font-bold text-slate-900" x-text="totalQty + ' item (' + items.length + ' jenis)'"></span>
+                        <span>Obat Terpilih</span>
+                        <span class="font-bold text-slate-900" x-text="totalQty + ' item (' + selectedIds.length + ' dari ' + items.length + ' jenis)'"></span>
                     </div>
                     <div class="flex justify-between text-slate-600">
                         <span>Subtotal Obat</span>
@@ -279,12 +368,17 @@
 
                 <div class="space-y-2.5">
                     <a
-                        href="{{ $checkoutUrl }}"
-                        class="w-full min-h-[46px] py-3 px-4 bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white font-bold rounded-xl text-center text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+                        :href="checkoutUrlWithItems"
+                        :class="selectedIds.length === 0 ? 'opacity-50 pointer-events-none bg-slate-300' : 'bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 cursor-pointer'"
+                        class="w-full min-h-[46px] py-3 px-4 text-white font-bold rounded-xl text-center text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-xs"
                     >
-                        <span>Lanjut ke Checkout</span>
+                        <span>Lanjut ke Checkout (<span x-text="selectedIds.length"></span> Jenis)</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </a>
+
+                    <p x-show="selectedIds.length === 0" class="text-[11px] font-semibold text-rose-600 text-center">
+                        Pilih minimal 1 obat dengan mencentang kotak untuk melanjutkan checkout.
+                    </p>
 
                     <a
                         href="{{ route('dashboard') }}"
@@ -305,17 +399,18 @@
         <div
             x-show="items.length > 0"
             x-cloak
-            class="md:hidden fixed bottom-0 inset-x-0 z-40 omni-mobile-bottom-bar px-4 py-2.5 flex items-center justify-between gap-3"
+            class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/98 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] omni-mobile-bottom-bar px-4 py-2.5 flex items-center justify-between gap-3"
         >
-            <div class="min-w-0">
-                <span class="block text-[10px] font-semibold uppercase tracking-wider text-slate-500">Total Belanja</span>
-                <span class="block text-sm font-black text-emerald-700 truncate" x-text="formatRp(total)"></span>
+            <div class="min-w-0 bg-white px-3 py-1.5 rounded-xl border border-slate-200/90 shadow-2xs">
+                <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-500">Total Dipilih</span>
+                <span class="block text-sm sm:text-base font-black text-emerald-700 truncate" x-text="formatRp(total)"></span>
             </div>
             <a
-                href="{{ $checkoutUrl }}"
-                class="min-h-[44px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 px-5 py-2 text-xs font-extrabold text-white shadow-xs transition shrink-0"
+                :href="checkoutUrlWithItems"
+                :class="selectedIds.length === 0 ? 'opacity-50 pointer-events-none bg-slate-300' : 'bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900'"
+                class="min-h-[44px] inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2 text-xs font-extrabold text-white shadow-xs transition shrink-0"
             >
-                <span>Checkout (<span x-text="totalQty"></span>)</span>
+                <span>Checkout (<span x-text="selectedIds.length"></span>)</span>
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
             </a>
         </div>

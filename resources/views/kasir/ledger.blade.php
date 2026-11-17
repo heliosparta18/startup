@@ -17,12 +17,9 @@
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
                     Rekonsiliasi &amp; Audit Pembayaran Cabang
                 </span>
-                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-3">
+                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-2">
                     Rekonsiliasi Kasir &amp; Ledger Pembayaran
                 </h1>
-                <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl">
-                    Pencatatan mutasi transaksi kasir harian, verifikasi QRIS dinamis, dan saldo kas {{ $client->nama_client ?? 'Cabang' }}.
-                </p>
             </div>
             <div class="shrink-0">
                 <span class="inline-flex items-center px-4 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold text-xs">

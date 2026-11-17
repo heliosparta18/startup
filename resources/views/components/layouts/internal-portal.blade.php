@@ -43,25 +43,10 @@
 
     <header
         class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-2xs"
-        x-data="{ mobileMenuOpen: false }"
-        @click.outside="mobileMenuOpen = false"
-        @keydown.escape.window="mobileMenuOpen = false"
     >
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex h-16 items-center justify-between gap-3">
                 <div class="flex items-center gap-2 sm:gap-3 min-w-0">
-                    <button
-                        type="button"
-                        @click="mobileMenuOpen = !mobileMenuOpen"
-                        :aria-expanded="mobileMenuOpen.toString()"
-                        class="lg:hidden inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white p-2 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition min-h-[44px] min-w-[44px] cursor-pointer"
-                        aria-label="Buka Menu Navigasi"
-                    >
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                    </button>
-
                     <a
                         href="{{ route('dashboard') }}"
                         aria-label="OmniPharma Dashboard Utama"
@@ -178,19 +163,6 @@
                         </div>
                     @endauth
                 </div>
-            </div>
-
-            <!-- Mobile Nav Drawer -->
-            <div x-show="mobileMenuOpen" x-cloak class="lg:hidden border-t border-slate-200 py-3 space-y-1 text-xs">
-                @foreach($navItems as $item)
-                    <a
-                        href="{{ $item['href'] }}"
-                        @click="mobileMenuOpen = false"
-                        class="flex items-center gap-2 min-h-[44px] px-3 py-2 rounded-xl transition {{ !empty($item['active']) ? 'bg-emerald-700 text-white font-bold shadow-xs' : 'text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 font-semibold' }}"
-                    >
-                        <span>{{ $item['label'] }}</span>
-                    </a>
-                @endforeach
             </div>
 
             <!-- Desktop Navigation Rail -->

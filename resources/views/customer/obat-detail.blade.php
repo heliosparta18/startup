@@ -323,10 +323,10 @@
 
         {{-- Fixed Mobile Bottom Action Bar --}}
         @if ($isAvailableHere)
-            <div class="md:hidden fixed bottom-0 inset-x-0 z-40 omni-mobile-bottom-bar px-4 py-2.5 flex items-center justify-between gap-3">
-                <div class="min-w-0">
-                    <span class="block text-[10px] font-semibold uppercase tracking-wider text-slate-500">Harga Satuan</span>
-                    <span class="block text-sm font-black text-emerald-700 truncate">
+            <div class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/98 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] omni-mobile-bottom-bar px-4 py-2.5 flex items-center justify-between gap-3">
+                <div class="min-w-0 bg-white px-3 py-1.5 rounded-xl border border-slate-200/90 shadow-2xs">
+                    <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-500">Harga Satuan</span>
+                    <span class="block text-sm sm:text-base font-black text-emerald-700 truncate">
                         Rp {{ number_format((float) ($obat->harga ?? 0), 0, ',', '.') }}
                     </span>
                 </div>
@@ -341,8 +341,10 @@
                 </button>
             </div>
         @elseif (! $isAvailableHere && $altBranch)
-            <div class="md:hidden fixed bottom-0 inset-x-0 z-40 omni-mobile-bottom-bar px-4 py-2.5 flex items-center justify-between gap-3">
-                <span class="text-[11px] font-semibold text-slate-600 truncate">Tersedia di {{ preg_replace('/^Cabang\s+/i', '', $altBranch->nama_client) }}</span>
+            <div class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/98 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] omni-mobile-bottom-bar px-4 py-2.5 flex items-center justify-between gap-3">
+                <div class="min-w-0 bg-white px-3 py-1.5 rounded-xl border border-slate-200/90 shadow-2xs">
+                    <span class="text-[11px] font-bold text-slate-700 truncate block">Tersedia di {{ preg_replace('/^Cabang\s+/i', '', $altBranch->nama_client) }}</span>
+                </div>
                 <a
                     href="{{ \Illuminate\Support\Facades\Route::has('obat.show') ? route('obat.show', ['id' => ($obat?->slug ?: ($obat?->id_obat ?? $id)), 'client' => $altBranch->slug]) : route('customer.obat.detail', ['client' => $altBranch->slug, 'id' => $obat?->id_obat ?? $id]) }}"
                     class="min-h-[44px] inline-flex items-center justify-center rounded-xl bg-emerald-700 hover:bg-emerald-800 px-4 py-2 text-xs font-bold text-white shadow-xs transition shrink-0"

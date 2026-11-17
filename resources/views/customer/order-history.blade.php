@@ -7,10 +7,7 @@
                     <span>/</span>
                     <span class="text-slate-900 font-bold">Riwayat Pesanan</span>
                 </div>
-                <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Riwayat Pesanan &amp; Invoice</h1>
-                <p class="text-xs sm:text-sm text-slate-500 mt-1">
-                    Pantau status transaksi, akses halaman pembayaran QRIS, atau cetak invoice pesanan Anda.
-                </p>
+                <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-1">Riwayat Pesanan &amp; Invoice</h1>
             </div>
             <a
                 href="{{ route('dashboard') }}"
