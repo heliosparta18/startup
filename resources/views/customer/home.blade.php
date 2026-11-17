@@ -50,12 +50,9 @@
                         Standar Permenkes RI No. 73/2016 • SIA &amp; SIP Terverifikasi
                     </span>
 
-                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mt-3 leading-tight">
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mt-2 leading-tight">
                         Pelayanan Farmasi Terpercaya &amp; Cepat
                     </h1>
-                    <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl leading-relaxed">
-                        Sedia obat bebas, suplemen, serta penebusan resep dokter resmi dari gerai <strong>Cabang {{ ucwords(str_replace('-', ' ', $client ?? 'Banyuwangi Kota')) }}</strong>.
-                    </p>
                 </div>
 
                 <div class="shrink-0 flex items-center gap-2">

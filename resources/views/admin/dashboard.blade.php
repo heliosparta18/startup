@@ -66,12 +66,9 @@
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold">
                     <span>Standar Permenkes RI No. 73/2016 | Konsolidasi Multi-Cabang</span>
                 </div>
-                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-3 leading-tight">
+                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-2 leading-tight">
                     Executive Dashboard &amp; Audit Finansial
                 </h1>
-                <p class="text-xs sm:text-sm text-slate-600 mt-1.5 max-w-2xl leading-relaxed">
-                    Konsolidasi omzet basis data langsung, audit rekonsiliasi kasir, pengawasan APJ, serta manajemen katalog obat dan multi-cabang OmniPharma.
-                </p>
             </div>
 
             <div class="shrink-0 flex flex-wrap items-center gap-2.5">

@@ -208,6 +208,7 @@
 
         <form action="{{ \Illuminate\Support\Facades\Route::has('checkout.store') ? route('checkout.store') : route('customer.checkout.process', ['client' => $client]) }}" method="POST" @submit="submitting = true">
             @csrf
+            <input type="hidden" name="selected_items" value="{{ implode(',', array_column($items, 'id_obat')) }}">
             <input type="hidden" name="jarak_km" :value="metodeLayanan === 'delivery' ? jarakKm : 0">
             <input type="hidden" name="koordinat_tujuan" :value="metodeLayanan === 'delivery' ? koordinatTujuan : ''">
             <input type="hidden" name="ongkos_kirim" :value="metodeLayanan === 'delivery' ? ongkir : 0">
@@ -510,10 +511,10 @@
             </div>
 
             {{-- Fixed Mobile Bottom Checkout Submit Bar --}}
-            <div class="md:hidden fixed bottom-0 inset-x-0 z-40 omni-mobile-bottom-bar px-4 py-2.5 flex items-center justify-between gap-3">
-                <div class="min-w-0">
-                    <span class="block text-[10px] font-semibold uppercase tracking-wider text-slate-500">Total Bayar</span>
-                    <span class="block text-sm font-black text-emerald-700 truncate" x-text="formatRp(totalBayar)">Rp {{ number_format($total, 0, ',', '.') }}</span>
+            <div class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/98 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] omni-mobile-bottom-bar px-4 py-2.5 flex items-center justify-between gap-3">
+                <div class="min-w-0 bg-white px-3 py-1.5 rounded-xl border border-slate-200/90 shadow-2xs">
+                    <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-500">Total Bayar</span>
+                    <span class="block text-sm sm:text-base font-black text-emerald-700 truncate" x-text="formatRp(totalBayar)">Rp {{ number_format($total, 0, ',', '.') }}</span>
                 </div>
                 <button
                     type="submit"

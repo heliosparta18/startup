@@ -30,7 +30,29 @@ class CheckoutController extends Controller
                 ->with('error', 'Keranjang belanja Anda masih kosong.');
         }
 
-        $total = $cartService->getTotal($sessionId, $clientId);
+        $selectedParam = $request->query('items') ?? $request->query('selected_items');
+        if ($selectedParam) {
+            $selectedIds = array_filter(explode(',', (string) $selectedParam));
+            if (! empty($selectedIds)) {
+                $items = array_values(array_filter($items, fn ($i) => in_array($i['id_obat'], $selectedIds, true)));
+                session(['checkout_selected_items' => $selectedIds]);
+            }
+        } elseif (session()->has('checkout_selected_items')) {
+            $selectedIds = session('checkout_selected_items');
+            if (! empty($selectedIds) && is_array($selectedIds)) {
+                $filtered = array_values(array_filter($items, fn ($i) => in_array($i['id_obat'], $selectedIds, true)));
+                if (! empty($filtered)) {
+                    $items = $filtered;
+                }
+            }
+        }
+
+        if (empty($items)) {
+            return $this->redirectToCart($request, $client)
+                ->with('error', 'Silakan pilih minimal 1 obat di keranjang untuk checkout.');
+        }
+
+        $total = array_reduce($items, fn ($carry, $i) => $carry + (float) $i['subtotal'], 0.0);
         $clientModel = $tenantContext->get();
 
         return view('customer.checkout', [
@@ -64,11 +86,23 @@ class CheckoutController extends Controller
         try {
             $items = $cartService->getItems($sessionId, $clientId);
 
+            $selectedParam = $request->input('selected_items') ?? ($request->input('items') ?? session('checkout_selected_items'));
+            $selectedIds = [];
+            if (is_string($selectedParam)) {
+                $selectedIds = array_filter(explode(',', $selectedParam));
+            } elseif (is_array($selectedParam)) {
+                $selectedIds = array_filter($selectedParam);
+            }
+
+            if (! empty($selectedIds)) {
+                $items = array_values(array_filter($items, fn ($i) => in_array($i['id_obat'], $selectedIds, true)));
+            }
+
             if (empty($items)) {
                 Cache::forget($lockKey);
 
                 return $this->redirectToCart($request, $client)
-                    ->with('error', 'Keranjang belanja Anda kosong.');
+                    ->with('error', 'Keranjang belanja atau obat yang dipilih kosong.');
             }
 
             $user = $request->user();
@@ -165,7 +199,15 @@ class CheckoutController extends Controller
                 null,
                 $catatan !== '' ? $catatan : null
             );
-            $cartService->clear($sessionId, $clientId);
+
+            if (! empty($selectedIds)) {
+                foreach ($selectedIds as $obatId) {
+                    $cartService->removeItem($sessionId, $clientId, (string) $obatId);
+                }
+                session()->forget('checkout_selected_items');
+            } else {
+                $cartService->clear($sessionId, $clientId);
+            }
 
             Cache::forget($lockKey);
 

@@ -289,6 +289,15 @@ class User extends Authenticatable implements PasskeyUser
                     'icon' => 'report',
                 ],
                 [
+                    'key' => 'apoteker-sop',
+                    'label' => 'SOP & Bantuan Regulasi',
+                    'description' => 'Panduan SOP operasional apotek dan kepatuhan permenkes.',
+                    'href' => route('tenant.bantuan.index', ['client' => $assignedBranch]),
+                    'section' => 'portal',
+                    'primary' => false,
+                    'icon' => 'help',
+                ],
+                [
                     'key' => 'katalog-belanja',
                     'label' => 'Katalog & Belanja',
                     'description' => 'Buka halaman etalase katalog obat utama.',

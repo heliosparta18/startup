@@ -28,12 +28,9 @@
                         5NF Hierarki Pengawasan
                     </span>
                 </div>
-                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-3 leading-tight">
+                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-2 leading-tight">
                     Supervisi Staf &amp; Apoteker Penanggung Jawab
                 </h1>
-                <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-3xl leading-relaxed">
-                    Pengelolaan akun staf, penugasan peran resmi, dan pengawasan APJ pada <strong>{{ $clientModel->nama_client }}</strong>.
-                </p>
 
                 <!-- Switcher Cabang -->
                 @if(isset($clients) && $clients->count() > 0)

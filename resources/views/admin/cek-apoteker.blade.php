@@ -7,12 +7,9 @@
                     <span class="inline-flex items-center px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold">
                         Supervisi Eksekutif | Audit Apoteker &amp; Farmasi Cabang
                     </span>
-                    <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-3 leading-tight">
+                    <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-2 leading-tight">
                         Cek Operasional Apoteker: {{ $activeBranch->nama_client }}
                     </h1>
-                    <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl">
-                        Pantau langsung kinerja Apoteker Penanggung Jawab (APJ), antrean resep dokter, batch FEFO kadaluarsa, serta antrean pesanan pada cabang ini.
-                    </p>
                 </div>
 
                 <div class="flex flex-wrap gap-2.5 shrink-0">

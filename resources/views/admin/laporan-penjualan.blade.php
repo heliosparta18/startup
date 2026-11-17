@@ -6,12 +6,9 @@
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold">
                     <span>Audit Finansial &amp; Pelaporan Cabang {{ ucwords(str_replace('-', ' ', $client)) }}</span>
                 </div>
-                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-3">
+                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-2">
                     Analitik Penjualan &amp; Rekonsiliasi Cabang
                 </h1>
-                <p class="text-xs sm:text-sm text-slate-600 mt-1">
-                    Laporan transaksi lunas dan periode penjualan berdasarkan data basis data riil.
-                </p>
             </div>
 
             <form method="GET" action="{{ url()->current() }}" class="grid grid-cols-1 sm:flex sm:flex-wrap items-center gap-2 text-xs w-full lg:w-auto">

@@ -18,12 +18,9 @@
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
                     Standar Permenkes RI No. 73/2016 | Audit Finansial Lintas Cabang
                 </span>
-                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-3 leading-tight">
+                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-2 leading-tight">
                     Rekonsiliasi Kasir &amp; Ledger Pembayaran
                 </h1>
-                <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl leading-relaxed">
-                    Konsolidasi mutasi transaksi kasir harian, penyelesaian pembayaran QRIS dinamis, dan verifikasi pembayaran tunai di seluruh cabang apotek.
-                </p>
             </div>
             <div class="shrink-0">
                 <span class="inline-flex items-center px-4 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold text-xs">
