@@ -33,15 +33,15 @@ class CheckoutController extends Controller
         $selectedParam = $request->query('items') ?? $request->query('selected_items');
         if ($selectedParam) {
             $selectedIds = array_filter(explode(',', (string) $selectedParam));
-            if (!empty($selectedIds)) {
+            if (! empty($selectedIds)) {
                 $items = array_values(array_filter($items, fn ($i) => in_array($i['id_obat'], $selectedIds, true)));
                 session(['checkout_selected_items' => $selectedIds]);
             }
         } elseif (session()->has('checkout_selected_items')) {
             $selectedIds = session('checkout_selected_items');
-            if (!empty($selectedIds) && is_array($selectedIds)) {
+            if (! empty($selectedIds) && is_array($selectedIds)) {
                 $filtered = array_values(array_filter($items, fn ($i) => in_array($i['id_obat'], $selectedIds, true)));
-                if (!empty($filtered)) {
+                if (! empty($filtered)) {
                     $items = $filtered;
                 }
             }
@@ -94,7 +94,7 @@ class CheckoutController extends Controller
                 $selectedIds = array_filter($selectedParam);
             }
 
-            if (!empty($selectedIds)) {
+            if (! empty($selectedIds)) {
                 $items = array_values(array_filter($items, fn ($i) => in_array($i['id_obat'], $selectedIds, true)));
             }
 
@@ -200,7 +200,7 @@ class CheckoutController extends Controller
                 $catatan !== '' ? $catatan : null
             );
 
-            if (!empty($selectedIds)) {
+            if (! empty($selectedIds)) {
                 foreach ($selectedIds as $obatId) {
                     $cartService->removeItem($sessionId, $clientId, (string) $obatId);
                 }
