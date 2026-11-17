@@ -52,7 +52,7 @@ class CheckoutController extends Controller
                 ->with('error', 'Silakan pilih minimal 1 obat di keranjang untuk checkout.');
         }
 
-        $total = array_reduce($items, fn ($carry, $i) => $carry + (float) ($i['subtotal'] ?? 0), 0.0);
+        $total = array_reduce($items, fn ($carry, $i) => $carry + (float) $i['subtotal'], 0.0);
         $clientModel = $tenantContext->get();
 
         return view('customer.checkout', [
