@@ -703,6 +703,43 @@ class CartCheckoutPaymentTest extends TestCase
         $historyRes->assertDontSee('Halaman Sambutan Utama');
     }
 
+    public function test_order_history_scopes_to_active_branch_and_track_resolves_cross_session_branch(): void
+    {
+        $clientA = Client::where('slug', 'banyuwangi-kota')->firstOrFail();
+        $clientB = Client::where('slug', 'rogojampi')->firstOrFail();
+        $customer = User::where('email', 'gunturafandy5@gmail.com')->firstOrFail();
+        $obat = Obat::firstOrFail();
+        $pelanggan = Pengguna::where('telepon_email', $customer->email)->firstOrFail();
+
+        // Buat pesanan di Banyuwangi Kota
+        $action = app(\App\Modules\Ordering\Actions\CreateOrderAction::class);
+        $pesananA = $action->execute($clientA->id_client, $pelanggan->id_pengguna, [
+            ['id_obat' => $obat->id_obat, 'nama_obat' => $obat->nama_obat, 'harga' => (float) $obat->harga, 'jumlah' => 1],
+        ]);
+
+        // 1. Pada sesi cabang Rogojampi, riwayat pesanan Rogojampi kosong realtime (tidak tercampur pesanan Banyuwangi)
+        $historyRogojampi = $this->actingAs($customer)
+            ->withSession(['active_branch' => 'rogojampi'])
+            ->get(route('pesanan.riwayat'));
+        $historyRogojampi->assertOk();
+        $historyRogojampi->assertSee('Belum Ada Riwayat Pesanan di Cabang Rogojampi');
+        $historyRogojampi->assertDontSee('#'.ltrim((string) $pesananA->nomor_pesanan, '#'));
+
+        // 2. Pada sesi cabang Banyuwangi Kota, pesanan tampil
+        $historyBanyuwangi = $this->actingAs($customer)
+            ->withSession(['active_branch' => 'banyuwangi-kota'])
+            ->get(route('pesanan.riwayat'));
+        $historyBanyuwangi->assertOk();
+        $historyBanyuwangi->assertSee(ltrim((string) $pesananA->nomor_pesanan, '#'));
+
+        // 3. Saat membuka lacak invoice dari pesanan Banyuwangi meski session aktif sedang di Rogojampi, TIDAK 404
+        $trackRes = $this->actingAs($customer)
+            ->withSession(['active_branch' => 'rogojampi'])
+            ->get(route('pesanan.track', ['id' => $pesananA->id_pesanan]));
+        $trackRes->assertOk();
+        $trackRes->assertSee(ltrim((string) $pesananA->nomor_pesanan, '#'));
+    }
+
     public function test_qris_expiry_persists_across_refresh_and_auto_poll_does_not_auto_settle_pending_order(): void
     {
         $client = Client::where('slug', 'banyuwangi-kota')->firstOrFail();

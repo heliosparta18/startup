@@ -39,15 +39,62 @@
                 <div class="mx-auto w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center mb-4">
                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                 </div>
-                <h2 class="text-lg font-extrabold text-slate-900">Belum Ada Riwayat Pesanan</h2>
+                <h2 class="text-lg font-extrabold text-slate-900">
+                    Belum Ada Riwayat Pesanan di {{ $clientModel?->nama_client ?? 'Cabang Ini' }}
+                </h2>
                 <p class="text-xs sm:text-sm text-slate-500 mt-1 max-w-md mx-auto">
-                    Anda belum memiliki transaksi pesanan pada akun atau sesi ini. Silakan pilih obat atau suplemen di katalog utama.
+                    @if(!empty($otherBranchesCount) && $otherBranchesCount > 0)
+                        Anda belum memiliki transaksi pesanan pada {{ $clientModel?->nama_client ?? 'cabang ini' }}, namun Anda memiliki <strong>{{ $otherBranchesCount }} pesanan</strong> pada cabang apotek lainnya.
+                    @else
+                        Anda belum memiliki transaksi pesanan pada akun atau sesi ini. Silakan pilih obat atau suplemen di katalog utama.
+                    @endif
                 </p>
-                <a href="{{ route('dashboard') }}" class="mt-5 min-h-[44px] inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-emerald-700 text-white font-bold text-xs sm:text-sm hover:bg-emerald-800 transition">
-                    Buka Katalog Obat
-                </a>
+                <div class="mt-5 flex flex-wrap items-center justify-center gap-3">
+                    @if(!empty($otherBranchesCount) && $otherBranchesCount > 0)
+                        <form method="POST" action="{{ route('branch.switch') }}">
+                            @csrf
+                            <input type="hidden" name="branch" value="{{ ($clientModel?->slug ?? '') === 'rogojampi' ? 'banyuwangi-kota' : 'rogojampi' }}">
+                            <button type="submit" class="min-h-[44px] inline-flex items-center justify-center px-4 py-2 rounded-xl bg-emerald-700 text-white font-bold text-xs sm:text-sm hover:bg-emerald-800 transition shadow-xs cursor-pointer">
+                                Beralih ke {{ ($clientModel?->slug ?? '') === 'rogojampi' ? 'Cabang Banyuwangi Kota' : 'Cabang Lain' }} ({{ $otherBranchesCount }} Pesanan)
+                            </button>
+                        </form>
+                        <a href="{{ request()->fullUrlWithQuery(['cabang' => 'semua']) }}" class="min-h-[44px] inline-flex items-center justify-center px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs sm:text-sm hover:bg-slate-200 transition border border-slate-200 cursor-pointer">
+                            Tampilkan Riwayat Semua Cabang
+                        </a>
+                    @else
+                        <a href="{{ route('dashboard') }}" class="min-h-[44px] inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-emerald-700 text-white font-bold text-xs sm:text-sm hover:bg-emerald-800 transition shadow-xs">
+                            Buka Katalog Obat
+                        </a>
+                    @endif
+                </div>
             </div>
         @else
+            {{-- Status Bar Filter Cabang --}}
+            <div class="mb-3.5 flex flex-wrap items-center justify-between gap-2 bg-white border border-slate-200/90 rounded-2xl px-4 py-2.5 shadow-2xs text-xs">
+                <div class="flex items-center gap-2 text-slate-700 font-medium min-w-0">
+                    <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    <span class="truncate">
+                        Menampilkan: <strong class="text-slate-900">{{ ($branchScope ?? 'aktif') === 'semua' ? 'Semua Cabang' : ($clientModel?->nama_client ?? 'Cabang Aktif') }}</strong>
+                        @if(($branchScope ?? 'aktif') !== 'semua' && !empty($otherBranchesCount) && $otherBranchesCount > 0)
+                            <span class="text-slate-500 font-normal">({{ $otherBranchesCount }} pesanan di cabang lain)</span>
+                        @endif
+                    </span>
+                </div>
+                <div class="shrink-0">
+                    @if(($branchScope ?? 'aktif') === 'semua')
+                        <a href="{{ request()->url() }}" class="font-bold text-emerald-700 hover:text-emerald-800 hover:underline">
+                            Filter Cabang Ini Saja
+                        </a>
+                    @elseif(!empty($otherBranchesCount) && $otherBranchesCount > 0)
+                        <a href="{{ request()->fullUrlWithQuery(['cabang' => 'semua']) }}" class="font-bold text-emerald-700 hover:text-emerald-800 hover:underline">
+                            Lihat Semua Cabang ({{ $orders->count() + $otherBranchesCount }})
+                        </a>
+                    @endif
+                </div>
+            </div>
             {{-- Filter Status Cepat Tab (Tokopedia Style) --}}
             @php
                 $statusCounts = [
@@ -125,11 +172,12 @@
                         $tanggal = $order->dibuat_pada ? \Carbon\Carbon::parse($order->dibuat_pada)->format('d M Y, H:i') : '-';
                         $branchName = $order->client?->nama_client ?? 'Cabang Apotek';
                         $isUnpaid = $order->status === 'menunggu_pembayaran';
+                        $orderClientSlug = $order->client?->slug ?? $client;
                         $payLink = request()->is('klien/*') || ! \Illuminate\Support\Facades\Route::has('pembayaran.show')
-                            ? route('customer.order.payment', ['client' => $client, 'id' => $order->id_pesanan])
+                            ? route('customer.order.payment', ['client' => $orderClientSlug, 'id' => $order->id_pesanan])
                             : route('pembayaran.show', ['id' => $order->id_pesanan]);
                         $invoiceLink = request()->is('klien/*') || ! \Illuminate\Support\Facades\Route::has('pesanan.track')
-                            ? route('customer.order.track', ['client' => $client, 'id' => $order->id_pesanan])
+                            ? route('customer.order.track', ['client' => $orderClientSlug, 'id' => $order->id_pesanan])
                             : route('pesanan.track', ['id' => $order->id_pesanan]);
 
                         $statusBadgeClass = match($order->status) {

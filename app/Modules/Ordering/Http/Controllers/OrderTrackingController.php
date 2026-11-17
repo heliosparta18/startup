@@ -29,11 +29,21 @@ class OrderTrackingController extends Controller
     {
         $pesanan = Pesanan::withoutTenancy()->with(['items.obat.kategori', 'pembayaran', 'client'])->find($id);
 
-        if (! $pesanan || $pesanan->id_client !== $tenantContext->id()) {
+        if (! $pesanan) {
+            abort(404, 'Pesanan tidak ditemukan.');
+        }
+
+        // Jika rute secara eksplisit mencantumkan /klien/{client}/, tolak akses IDOR lintas-cabang
+        if ($request->is('klien/*') && $pesanan->id_client !== $tenantContext->id()) {
             abort(404, 'Pesanan tidak ditemukan pada cabang apotek ini.');
         }
 
         $this->ensureCustomerOrderAccess($pesanan, $request, false);
+
+        if ($pesanan->id_client !== $tenantContext->id() && $pesanan->client) {
+            $tenantContext->set($pesanan->client);
+            $client = $pesanan->client->slug ?? $client;
+        }
 
         $qris = $gateway->generateQris($pesanan);
 
@@ -54,13 +64,22 @@ class OrderTrackingController extends Controller
         PaymentGatewayInterface $gateway,
         TenantContext $tenantContext
     ): JsonResponse {
-        $pesanan = Pesanan::withoutTenancy()->find($id);
+        $pesanan = Pesanan::withoutTenancy()->with('client')->find($id);
 
-        if (! $pesanan || $pesanan->id_client !== $tenantContext->id()) {
+        if (! $pesanan) {
             return response()->json(['message' => 'Pesanan tidak ditemukan.'], 404);
         }
 
+        if ($request->is('klien/*') && $pesanan->id_client !== $tenantContext->id()) {
+            return response()->json(['message' => 'Pesanan tidak ditemukan pada cabang apotek ini.'], 404);
+        }
+
         $this->ensureCustomerOrderAccess($pesanan, $request, false);
+
+        if ($pesanan->id_client !== $tenantContext->id() && $pesanan->client) {
+            $tenantContext->set($pesanan->client);
+            $client = $pesanan->client->slug ?? $client;
+        }
 
         $trackUrl = $request->is('klien/*') || ! Route::has('pesanan.track')
             ? route('customer.order.track', ['client' => $client, 'id' => $pesanan->id_pesanan])
@@ -149,7 +168,7 @@ class OrderTrackingController extends Controller
     /**
      * Tampilkan riwayat pesanan pelanggan saat ini (termasuk akses ke invoice dan pembayaran).
      */
-    public function history(string $client, Request $request): View
+    public function history(string $client, Request $request, TenantContext $tenantContext): View
     {
         $sessionToken = $request->cookie('omnipharma_customer_session')
             ?? $request->cookie('omni_session')
@@ -162,10 +181,15 @@ class OrderTrackingController extends Controller
             $penggunaId = Pengguna::where('telepon_email', $user->email)->value('id_pengguna');
         }
 
+        $activeClientId = $tenantContext->id();
+        $clientModel = $tenantContext->get();
+        $branchScope = $request->query('cabang', 'aktif');
+
         $orders = collect();
+        $otherBranchesCount = 0;
 
         if ($penggunaId || (is_string($sessionToken) && $sessionToken !== '')) {
-            $orders = Pesanan::withoutTenancy()
+            $baseQuery = Pesanan::withoutTenancy()
                 ->with(['items.obat', 'pembayaran', 'client'])
                 ->where(function ($query) use ($penggunaId, $sessionToken) {
                     if ($penggunaId) {
@@ -178,15 +202,27 @@ class OrderTrackingController extends Controller
                             $query->where('token_sesi', $sessionToken);
                         }
                     }
-                })
-                ->orderByDesc('dibuat_pada')
+                });
+
+            if ($activeClientId) {
+                $otherBranchesCount = (clone $baseQuery)->where('id_client', '!=', $activeClientId)->count();
+            }
+
+            if ($branchScope !== 'semua' && $activeClientId) {
+                $baseQuery->where('id_client', $activeClientId);
+            }
+
+            $orders = $baseQuery->orderByDesc('dibuat_pada')
                 ->limit(30)
                 ->get();
         }
 
         return view('customer.order-history', [
             'client' => $client,
+            'clientModel' => $clientModel,
             'orders' => $orders,
+            'branchScope' => $branchScope,
+            'otherBranchesCount' => $otherBranchesCount,
         ]);
     }
 
@@ -195,13 +231,22 @@ class OrderTrackingController extends Controller
      */
     public function cancel(string $client, string $id, Request $request, CancelOrderAction $cancelOrderAction, TenantContext $tenantContext): RedirectResponse
     {
-        $pesanan = Pesanan::withoutTenancy()->with('items')->find($id);
+        $pesanan = Pesanan::withoutTenancy()->with('items', 'client')->find($id);
 
-        if (! $pesanan || $pesanan->id_client !== $tenantContext->id()) {
+        if (! $pesanan) {
+            abort(404, 'Pesanan tidak ditemukan.');
+        }
+
+        if ($request->is('klien/*') && $pesanan->id_client !== $tenantContext->id()) {
             abort(404, 'Pesanan tidak ditemukan pada cabang apotek ini.');
         }
 
         $this->ensureCustomerOrderAccess($pesanan, $request, true);
+
+        if ($pesanan->id_client !== $tenantContext->id() && $pesanan->client) {
+            $tenantContext->set($pesanan->client);
+            $client = $pesanan->client->slug ?? $client;
+        }
 
         $cancelOrderAction->execute($pesanan, 'Dibatalkan oleh pelanggan');
 
@@ -219,11 +264,20 @@ class OrderTrackingController extends Controller
     {
         $pesanan = Pesanan::withoutTenancy()->with(['items.obat.kategori', 'pembayaran', 'client', 'pengguna'])->find($id);
 
-        if (! $pesanan || $pesanan->id_client !== $tenantContext->id()) {
+        if (! $pesanan) {
+            abort(404, 'Pesanan tidak ditemukan.');
+        }
+
+        if ($request->is('klien/*') && $pesanan->id_client !== $tenantContext->id()) {
             abort(404, 'Pesanan tidak ditemukan pada cabang apotek ini.');
         }
 
         $this->ensureCustomerOrderAccess($pesanan, $request, false);
+
+        if ($pesanan->id_client !== $tenantContext->id() && $pesanan->client) {
+            $tenantContext->set($pesanan->client);
+            $client = $pesanan->client->slug ?? $client;
+        }
 
         $antreanBerjalan = Cache::get("antrean_berjalan:{$pesanan->id_client}", 'A-001');
 
