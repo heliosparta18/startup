@@ -712,7 +712,7 @@ class CartCheckoutPaymentTest extends TestCase
         $pelanggan = Pengguna::where('telepon_email', $customer->email)->firstOrFail();
 
         // Buat pesanan di Banyuwangi Kota
-        $action = app(\App\Modules\Ordering\Actions\CreateOrderAction::class);
+        $action = app(CreateOrderAction::class);
         $pesananA = $action->execute($clientA->id_client, $pelanggan->id_pengguna, [
             ['id_obat' => $obat->id_obat, 'nama_obat' => $obat->nama_obat, 'harga' => (float) $obat->harga, 'jumlah' => 1],
         ]);
