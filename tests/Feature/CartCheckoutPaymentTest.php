@@ -711,6 +711,12 @@ class CartCheckoutPaymentTest extends TestCase
         $obat = Obat::firstOrFail();
         $pelanggan = Pengguna::where('telepon_email', $customer->email)->firstOrFail();
 
+        // Pastikan stok fisik tersedia di cabang Banyuwangi Kota
+        StokClient::withoutTenancy()->updateOrCreate(
+            ['id_obat' => $obat->id_obat, 'id_client' => $clientA->id_client],
+            ['jumlah_stok' => 50]
+        );
+
         // Buat pesanan di Banyuwangi Kota
         $action = app(CreateOrderAction::class);
         $pesananA = $action->execute($clientA->id_client, $pelanggan->id_pengguna, [
