@@ -98,6 +98,65 @@ class ProfileUpdateTest extends TestCase
         $response->assertDontSee('delete-user-form');
     }
 
+    public function test_portal_access_section_is_removed_from_profile_page(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get(route('profile.edit'));
+
+        $response->assertOk();
+        $response->assertDontSee('Akses Portal &amp; Fitur Akun', false);
+        $response->assertDontSee('Akses Portal & Fitur Akun');
+        $response->assertDontSee('Buka Portal Utama');
+        $response->assertSee('hidden md:block');
+    }
+
+    public function test_profile_phone_and_address_can_be_updated(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user);
+
+        $response = Livewire::test('pages::settings.profile')
+            ->set('name', 'Budi Santoso')
+            ->set('email', 'budi@example.com')
+            ->set('phone', '081234567890')
+            ->set('address', 'Jl. Merdeka No. 45, Banyuwangi')
+            ->call('updateProfileInformation');
+
+        $response->assertHasNoErrors();
+
+        $user->refresh();
+
+        $this->assertEquals('Budi Santoso', $user->name);
+        $this->assertEquals('budi@example.com', $user->email);
+        $this->assertEquals('081234567890', $user->phone);
+        $this->assertEquals('081234567890', $user->telepon);
+        $this->assertEquals('Jl. Merdeka No. 45, Banyuwangi', $user->address);
+        $this->assertEquals('Jl. Merdeka No. 45, Banyuwangi', $user->alamat);
+    }
+
+    public function test_profile_phone_and_address_are_trimmed_and_sanitized(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user);
+
+        $response = Livewire::test('pages::settings.profile')
+            ->set('name', 'Budi Santoso')
+            ->set('email', 'budi@example.com')
+            ->set('phone', '  081234567890  ')
+            ->set('address', '   <b>Jl. Diponegoro</b> No. 10   ')
+            ->call('updateProfileInformation');
+
+        $response->assertHasNoErrors();
+
+        $user->refresh();
+
+        $this->assertEquals('081234567890', $user->phone);
+        $this->assertEquals('Jl. Diponegoro No. 10', $user->address);
+    }
+
     public function test_user_can_delete_their_account(): void
     {
         $user = User::factory()->create();

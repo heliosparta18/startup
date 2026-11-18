@@ -182,27 +182,37 @@
                     $isResep = ($item->kategori->wajib_resep ?? false) || str_contains(strtolower($item->badge_status ?? ''), 'keras');
                     $katSlug = \Illuminate\Support\Str::slug($item->kategori->nama_kategori ?? '');
                     $stokTotal = $item->stokClient->sum('jumlah_stok') ?: ($item->jumlah_obat ?? 10);
+                    $isOutOfStock = $stokTotal <= 0;
                     $namaJs = \Illuminate\Support\Js::from($item->nama_obat);
                     $resepNoteJs = \Illuminate\Support\Js::from('Resep untuk '.$item->nama_obat);
                     $idJs = \Illuminate\Support\Js::from($item->id_obat);
                 @endphp
-                <article class="flex flex-col justify-between rounded-3xl border border-slate-200/90 bg-white p-5 sm:p-6 shadow-xs hover:border-emerald-500/40 hover:shadow-md transition">
+                <article class="flex flex-col justify-between rounded-3xl p-5 sm:p-6 transition {{ $isOutOfStock ? 'bg-emerald-50/35 border-2 border-emerald-400/80 shadow-2xs ring-1 ring-emerald-500/10' : 'bg-white border border-slate-200/90 shadow-xs hover:border-emerald-500/40 hover:shadow-md' }}">
                     
                     <div class="space-y-3">
                         <!-- Header Card: Badge Resep & Stok -->
-                        <div class="flex items-center justify-between gap-2">
-                            @if($isResep)
-                                <span class="inline-flex items-center rounded-full bg-rose-50 px-2.5 py-1 text-[11px] font-bold text-rose-700 border border-rose-200">
-                                    Wajib Resep Dokter
-                                </span>
-                            @else
-                                <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-800 border border-emerald-200">
-                                    Obat Bebas
-                                </span>
-                            @endif
+                        <div class="flex items-center justify-between gap-2 flex-wrap">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                @if($isResep)
+                                    <span class="inline-flex items-center rounded-full bg-rose-50 px-2.5 py-1 text-[11px] font-bold text-rose-700 border border-rose-200">
+                                        Wajib Resep Dokter
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-800 border border-emerald-200">
+                                        Obat Bebas
+                                    </span>
+                                @endif
 
-                            <span class="text-[11px] font-semibold text-slate-500">
-                                Stok: <strong class="text-slate-800">{{ $stokTotal }}</strong>
+                                @if($isOutOfStock)
+                                    <span class="inline-flex items-center gap-1 rounded-full bg-emerald-800 px-2.5 py-1 text-[11px] font-extrabold text-white shadow-2xs">
+                                        <svg class="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                                        <span>Stok Habis</span>
+                                    </span>
+                                @endif
+                            </div>
+
+                            <span class="text-[11px] font-semibold {{ $isOutOfStock ? 'text-emerald-800 font-bold' : 'text-slate-500' }}">
+                                Stok: <strong class="{{ $isOutOfStock ? 'text-emerald-800' : 'text-slate-800' }}">{{ $stokTotal }}</strong>
                             </span>
                         </div>
 
@@ -218,23 +228,44 @@
                             </p>
                         </div>
 
+                        @if($isOutOfStock)
+                            <div class="flex items-center gap-1.5 p-2 rounded-xl bg-emerald-100/80 border border-emerald-300 text-[11px] text-emerald-950 font-bold leading-tight">
+                                <svg class="w-3.5 h-3.5 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                </svg>
+                                <span>Stok obat ini sedang habis (Terkunci)</span>
+                            </div>
+                        @endif
+
                         <!-- Harga -->
                         <div class="text-lg font-black text-slate-900 pt-1">
                             Rp {{ number_format((float) ($item->harga ?? 0), 0, ',', '.') }}
                         </div>
                     </div>
 
-                    <!-- Action Button: Beli Langsung dengan Ikon Keranjang (Semua Golongan Obat) -->
+                    <!-- Action Button -->
                     <div class="mt-4 pt-3 border-t border-slate-100">
-                        <button
-                            type="button"
-                            @click="beliLangsung({{ $idJs }}, {{ $namaJs }})"
-                            class="w-full min-h-[44px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 px-4 py-2.5 text-xs font-bold text-white shadow-xs transition cursor-pointer">
-                            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                            <span>Masukkan Keranjang</span>
-                        </button>
+                        @if($isOutOfStock)
+                            <button
+                                type="button"
+                                disabled
+                                class="w-full min-h-[44px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-100/80 border border-emerald-300 px-4 py-2.5 text-xs font-bold text-emerald-800/80 cursor-not-allowed">
+                                <svg class="w-4 h-4 shrink-0 text-emerald-700/80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                </svg>
+                                <span>Stok Habis (Terkunci)</span>
+                            </button>
+                        @else
+                            <button
+                                type="button"
+                                @click="beliLangsung({{ $idJs }}, {{ $namaJs }})"
+                                class="w-full min-h-[44px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 px-4 py-2.5 text-xs font-bold text-white shadow-xs transition cursor-pointer">
+                                <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                                <span>Masukkan Keranjang</span>
+                            </button>
+                        @endif
                     </div>
                 </article>
             @empty

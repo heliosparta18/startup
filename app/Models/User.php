@@ -29,10 +29,15 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property string|null $remember_token
  * @property string|null $role
  * @property string $status
+ * @property string|null $phone
+ * @property string|null $address
+ * @property string|null $telepon
+ * @property string|null $no_telp
+ * @property string|null $alamat
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'password', 'role', 'status'])]
+#[Fillable(['name', 'email', 'password', 'role', 'status', 'phone', 'address', 'telepon', 'no_telp', 'alamat'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 /**
  * @property string $id_pengguna
@@ -58,6 +63,42 @@ class User extends Authenticatable implements PasskeyUser
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Aksesor & mutator untuk kompatibilitas field telepon / no_telp / phone.
+     */
+    public function getTeleponAttribute(): ?string
+    {
+        return $this->attributes['phone'] ?? null;
+    }
+
+    public function setTeleponAttribute(?string $value): void
+    {
+        $this->attributes['phone'] = $value;
+    }
+
+    public function getNoTelpAttribute(): ?string
+    {
+        return $this->attributes['phone'] ?? null;
+    }
+
+    public function setNoTelpAttribute(?string $value): void
+    {
+        $this->attributes['phone'] = $value;
+    }
+
+    /**
+     * Aksesor & mutator untuk kompatibilitas field alamat / address.
+     */
+    public function getAlamatAttribute(): ?string
+    {
+        return $this->attributes['address'] ?? null;
+    }
+
+    public function setAlamatAttribute(?string $value): void
+    {
+        $this->attributes['address'] = $value;
     }
 
     /**

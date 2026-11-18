@@ -247,4 +247,34 @@ class GoApotikCatalogIntegrationTest extends TestCase
             ->assertOk()
             ->assertSee('POSTINOR 0,75 MG 2 TABLET');
     }
+
+    public function test_out_of_stock_medicine_displays_with_locked_green_appearance_and_notice(): void
+    {
+        $client = Client::query()->where('slug', 'banyuwangi-kota')->firstOrFail();
+
+        $obatHabis = Obat::factory()->create([
+            'nama_obat' => 'Obat Habis Stok Uji Visual',
+            'slug' => 'obat-habis-stok-uji-visual',
+            'harga' => 35000,
+        ]);
+
+        StokClient::create([
+            'id_obat' => $obatHabis->id_obat,
+            'id_client' => $client->id_client,
+            'jumlah_stok' => 0,
+            'diperbarui_pada' => now(),
+        ]);
+
+        Livewire::test(PublicCatalog::class, ['client' => $client->slug])
+            ->set('search', 'Obat Habis Stok Uji')
+            ->assertSee('Obat Habis Stok Uji Visual')
+            ->assertSee('Stok Habis')
+            ->assertSee('Stok habis saat ini (Terkunci)');
+
+        $response = $this->get(route('customer.catalog', ['client' => $client->slug, 'search' => 'Obat Habis Stok Uji']));
+        $response->assertOk();
+        $response->assertSee('Obat Habis Stok Uji Visual');
+        $response->assertSee('Stok Habis');
+        $response->assertSee('Stok habis saat ini (Terkunci)');
+    }
 }
