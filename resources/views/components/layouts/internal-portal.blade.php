@@ -47,13 +47,13 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex h-16 items-center justify-between gap-3">
                 <div class="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
-                    <!-- Mobile Hamburger Menu Button -->
+                    <!-- Hamburger Menu Button (Mobile & Desktop) -->
                     <button
                         type="button"
                         @click="mobileNav = !mobileNav"
-                        class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-slate-200 lg:hidden text-slate-700 hover:bg-slate-50 hover:text-emerald-800 transition shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                        class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-emerald-800 transition shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
                         :aria-expanded="mobileNav"
-                        aria-label="Menu Navigasi Mobile"
+                        aria-label="Menu Navigasi Portal"
                     >
                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
@@ -126,12 +126,19 @@
                                     @endif
                                 </div>
 
-                                <div class="pb-1">
-                                    @include('partials.profile-role-menu', ['branchSlug' => request()->route('client'), 'hideActionsOnMobile' => true])
+                                <div class="py-1">
+                                    <a
+                                        href="{{ route('profile.edit') }}"
+                                        class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-800 hover:text-slate-900 hover:bg-slate-100 font-semibold transition-colors min-h-[44px]"
+                                        role="menuitem"
+                                    >
+                                        <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                        <span>Profile &amp; Akses Akun</span>
+                                    </a>
                                 </div>
 
                                 <div
-                                    class="border-t border-slate-100 px-4 py-2.5"
+                                    class="border-t border-slate-100 px-3 py-2.5"
                                     x-data="{ themeMode: window.omniGetTheme ? window.omniGetTheme() : 'light' }"
                                     @omni-theme-changed.window="themeMode = $event.detail.theme"
                                 >
@@ -143,7 +150,7 @@
                                         <button
                                             type="button"
                                             @click="themeMode = window.omniSetTheme('light')"
-                                            :class="themeMode === 'light' ? 'bg-emerald-700 text-white border-emerald-700' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'"
+                                            :class="themeMode === 'light' ? 'bg-emerald-700 text-white border-emerald-700 shadow-2xs' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'"
                                             class="inline-flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-lg border text-[11px] font-bold transition cursor-pointer min-h-[44px]"
                                         >
                                             <span>Putih</span>
@@ -151,7 +158,7 @@
                                         <button
                                             type="button"
                                             @click="themeMode = window.omniSetTheme('dark')"
-                                            :class="themeMode === 'dark' ? 'bg-emerald-700 text-white border-emerald-700' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'"
+                                            :class="themeMode === 'dark' ? 'bg-emerald-700 text-white border-emerald-700 shadow-2xs' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'"
                                             class="inline-flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-lg border text-[11px] font-bold transition cursor-pointer min-h-[44px]"
                                         >
                                             <span>Dark</span>
@@ -162,8 +169,8 @@
                                 <div class="border-t border-slate-100 pt-1">
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
-                                        <button type="submit" class="w-full text-left flex items-center gap-2.5 px-4 py-2.5 min-h-[44px] text-rose-700 hover:bg-rose-50 transition-colors font-bold cursor-pointer" role="menuitem">
-                                            <svg class="w-4 h-4 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                                        <button type="submit" class="w-full text-left flex items-center gap-2.5 px-4 py-2.5 min-h-[44px] text-rose-700 hover:bg-rose-50 rounded-xl transition-colors font-bold cursor-pointer" role="menuitem">
+                                            <svg class="w-4 h-4 text-rose-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
                                             <span>Keluar dari Akun</span>
                                         </button>
                                     </form>
@@ -188,15 +195,15 @@
         </div>
     </header>
 
-    <!-- Mobile Navigation Drawer (< lg) -->
+    <!-- Slide-Over Navigation Drawer (Mobile & Desktop) -->
     <div
         x-show="mobileNav"
         x-cloak
         @keydown.escape.window="mobileNav = false"
-        class="fixed inset-0 z-50 lg:hidden flex"
+        class="fixed inset-0 z-50 flex"
         role="dialog"
         aria-modal="true"
-        aria-label="Menu Navigasi Mobile Internal"
+        aria-label="Menu Navigasi Portal Internal"
     >
         <!-- Translucent Backdrop Scrim -->
         <div
@@ -246,7 +253,7 @@
             </div>
 
             <!-- Scrollable Drawer Body -->
-            <div class="flex-1 overflow-y-auto px-4 py-4 space-y-5 text-xs">
+            <div class="flex-1 overflow-y-auto px-4 py-4 space-y-4 text-xs">
                 @if(!empty($navItems))
                     <div class="space-y-1.5">
                         <p class="px-1 text-[11px] font-bold uppercase tracking-wider text-slate-500">Menu Portal Cabang</p>
@@ -271,49 +278,27 @@
                     </div>
                 @endif
 
-                @php
-                    $drawerActions = $loggedUser && method_exists($loggedUser, 'profileActions')
-                        ? $loggedUser->profileActions(request()->route('client'))
-                        : [];
-                    $drawerGroupedActions = collect($drawerActions)->groupBy('section');
-                    $drawerSectionHeadings = [
-                        'portal' => 'Portal Terkait',
-                        'crud' => 'CRUD & Pengaturan',
-                        'audit' => 'Cek & Pengawasan',
-                        'pelanggan' => 'Etalase Publik',
-                    ];
-                @endphp
-
-                @if(!empty($drawerActions))
-                    <div class="space-y-4">
-                        @foreach($drawerGroupedActions as $secKey => $items)
-                            <div class="space-y-1.5">
-                                @if(!empty($drawerSectionHeadings[$secKey]))
-                                    <p class="px-1 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                                        {{ $drawerSectionHeadings[$secKey] }}
-                                    </p>
-                                @endif
-                                <nav class="rounded-2xl border border-slate-200/80 bg-white divide-y divide-slate-100 overflow-hidden">
-                                    @foreach($items as $act)
-                                        <a
-                                            href="{{ $act['href'] }}"
-                                            @click="mobileNav = false"
-                                            class="flex items-center justify-between gap-3 px-3.5 min-h-[44px] transition {{ !empty($act['primary']) ? 'bg-emerald-50 text-emerald-800 font-bold' : 'text-slate-800 hover:bg-slate-50 font-semibold' }}"
-                                        >
-                                            <span class="flex items-center gap-2.5 min-w-0">
-                                                @include('partials.profile-role-icon', ['icon' => $act['icon'], 'class' => 'w-4 h-4 text-emerald-700 shrink-0'])
-                                                <span class="truncate">{{ $act['label'] }}</span>
-                                            </span>
-                                            <svg class="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                                            </svg>
-                                        </a>
-                                    @endforeach
-                                </nav>
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
+                {{-- Akses Cepat Navigasi Tambahan --}}
+                <div class="space-y-1.5 pt-1">
+                    <p class="px-1 text-[11px] font-bold uppercase tracking-wider text-slate-500">Akses Cepat</p>
+                    <nav class="rounded-2xl border border-slate-200/80 bg-white divide-y divide-slate-100 overflow-hidden">
+                        <a
+                            href="{{ route('dashboard') }}"
+                            @click="mobileNav = false"
+                            class="flex items-center justify-between gap-3 px-3.5 min-h-[44px] text-slate-800 hover:bg-slate-50 font-semibold transition"
+                        >
+                            <span class="flex items-center gap-2.5 min-w-0">
+                                <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                </svg>
+                                <span class="truncate">Katalog Apotek Publik</span>
+                            </span>
+                            <svg class="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </a>
+                    </nav>
+                </div>
             </div>
 
             <!-- Drawer Footer: Quick Profile Info -->

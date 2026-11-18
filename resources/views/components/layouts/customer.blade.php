@@ -41,7 +41,7 @@
             : route('customer.cart.add', ['client' => $activeBranchSlug]));
 @endphp
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="antialiased">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="antialiased overflow-x-hidden max-w-full">
 <head>
     @include('partials.head')
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -50,7 +50,7 @@
     </style>
 </head>
 <body
-    class="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans flex flex-col overflow-x-hidden"
+    class="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans flex flex-col overflow-x-hidden max-w-full"
     @add-to-cart.window="addToCart($event.detail)"
     @cart-updated.window="handleCartUpdated($event.detail)"
     x-data="{
@@ -422,8 +422,15 @@
                                 <p class="text-[11px] text-slate-500 truncate mt-0.5">{{ $userEmail }}</p>
                             </div>
 
-                            <div class="space-y-1.5">
-                                @include('partials.profile-role-menu', ['branchSlug' => $activeBranchSlug, 'hideActionsOnMobile' => true])
+                            <div class="space-y-1">
+                                <a
+                                    href="{{ route('profile.edit') }}"
+                                    class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-slate-800 hover:text-slate-900 hover:bg-slate-100 font-semibold transition-colors min-h-[44px]"
+                                    role="menuitem"
+                                >
+                                    <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                    <span>Profile &amp; Akses Akun</span>
+                                </a>
 
                                 <div
                                     class="px-3 py-2 rounded-lg bg-slate-50 border border-slate-200/80"
@@ -636,11 +643,11 @@
 
     <!-- Main Body -->
     @if ($fullWidth ?? false)
-        <main class="flex-1 w-full flex flex-col">
+        <main class="flex-1 w-full flex flex-col min-w-0 max-w-full overflow-x-hidden">
             {{ $slot }}
         </main>
     @else
-        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8">
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8 min-w-0 max-w-full overflow-x-hidden">
             {{ $slot }}
         </main>
     @endif
