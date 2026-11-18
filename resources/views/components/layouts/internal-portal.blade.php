@@ -24,7 +24,7 @@
         [x-cloak] { display: none !important; }
     </style>
 </head>
-<body class="min-h-screen bg-[#F8FAFC] text-slate-900 antialiased flex flex-col font-sans overflow-x-hidden transition-colors duration-200">
+<body class="min-h-screen bg-[#F8FAFC] text-slate-900 antialiased flex flex-col font-sans overflow-x-hidden transition-colors duration-200" x-data="{ mobileNav: false }">
     @if($showSplash)
         <x-welcome-splash />
     @endif
@@ -46,18 +46,27 @@
     >
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex h-16 items-center justify-between gap-3">
-                <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+                <div class="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
+                    <!-- Mobile Hamburger Menu Button -->
+                    <button
+                        type="button"
+                        @click="mobileNav = !mobileNav"
+                        class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-slate-200 lg:hidden text-slate-700 hover:bg-slate-50 hover:text-emerald-800 transition shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                        :aria-expanded="mobileNav"
+                        aria-label="Menu Navigasi Mobile"
+                    >
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+
                     <a
-                        href="{{ route('dashboard') }}"
+                        href="{{ $portalHomeRoute }}"
                         aria-label="OmniPharma Dashboard Utama"
-                        class="flex items-center gap-2.5 group shrink-0 min-h-[44px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 rounded-xl"
+                        class="flex items-center gap-2 sm:gap-2.5 group shrink-0 min-h-[44px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 rounded-xl py-1 min-w-0"
                     >
                         <span class="sr-only">Dashboard Utama</span>
-                        <div class="w-9 h-9 rounded-xl bg-emerald-700 flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform duration-200 shrink-0">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
-                            </svg>
-                        </div>
+                        <img src="/logo.png" alt="OmniPharma Logo" class="h-8 w-8 sm:h-9 sm:w-9 object-contain shrink-0 group-hover:scale-105 transition-transform duration-200">
                         <div class="flex flex-col leading-tight min-w-0">
                             <span class="text-sm sm:text-base font-black tracking-tight text-slate-900 truncate">OmniPharma</span>
                             <span class="text-[11px] font-semibold text-emerald-700 truncate">{{ $portalSubtitle }}</span>
@@ -118,7 +127,7 @@
                                 </div>
 
                                 <div class="pb-1">
-                                    @include('partials.profile-role-menu', ['branchSlug' => request()->route('client')])
+                                    @include('partials.profile-role-menu', ['branchSlug' => request()->route('client'), 'hideActionsOnMobile' => true])
                                 </div>
 
                                 <div
@@ -178,6 +187,153 @@
             </nav>
         </div>
     </header>
+
+    <!-- Mobile Navigation Drawer (< lg) -->
+    <div
+        x-show="mobileNav"
+        x-cloak
+        @keydown.escape.window="mobileNav = false"
+        class="fixed inset-0 z-50 lg:hidden flex"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Menu Navigasi Mobile Internal"
+    >
+        <!-- Translucent Backdrop Scrim -->
+        <div
+            x-show="mobileNav"
+            x-transition:enter="transition-opacity ease-linear duration-200"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition-opacity ease-linear duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 bg-slate-950/50 backdrop-blur-[2px]"
+            @click="mobileNav = false"
+            aria-hidden="true"
+        ></div>
+
+        <!-- Left Slide-Over Panel -->
+        <div
+            x-show="mobileNav"
+            x-transition:enter="transition ease-out duration-250 transform"
+            x-transition:enter-start="-translate-x-full"
+            x-transition:enter-end="translate-x-0"
+            x-transition:leave="transition ease-in duration-200 transform"
+            x-transition:leave-start="translate-x-0"
+            x-transition:leave-end="-translate-x-full"
+            @click.stop
+            class="relative z-10 w-[86vw] max-w-[320px] h-full bg-white shadow-2xl flex flex-col border-r border-slate-200 overflow-hidden"
+        >
+            <!-- Drawer Header -->
+            <div class="flex items-center justify-between px-4 h-16 border-b border-slate-200 shrink-0 bg-white">
+                <a href="{{ $portalHomeRoute }}" @click="mobileNav = false" class="flex items-center gap-2.5 min-w-0">
+                    <img src="/logo.png" alt="OmniPharma Logo" class="w-7 h-7 object-contain shrink-0">
+                    <div class="flex flex-col leading-tight min-w-0">
+                        <span class="text-sm font-extrabold text-slate-900 tracking-tight whitespace-nowrap">OmniPharma</span>
+                        <span class="text-[11px] font-semibold text-emerald-700 truncate">{{ $portalSubtitle }}</span>
+                    </div>
+                </a>
+                <button
+                    type="button"
+                    @click="mobileNav = false"
+                    class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] -mr-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer"
+                    aria-label="Tutup menu navigasi"
+                >
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Scrollable Drawer Body -->
+            <div class="flex-1 overflow-y-auto px-4 py-4 space-y-5 text-xs">
+                @if(!empty($navItems))
+                    <div class="space-y-1.5">
+                        <p class="px-1 text-[11px] font-bold uppercase tracking-wider text-slate-500">Menu Portal Cabang</p>
+                        <nav class="rounded-2xl border border-slate-200/80 bg-white divide-y divide-slate-100 overflow-hidden" aria-label="Navigasi Portal Mobile">
+                            @foreach($navItems as $item)
+                                <a
+                                    href="{{ $item['href'] }}"
+                                    @click="mobileNav = false"
+                                    class="flex items-center justify-between gap-3 px-3.5 min-h-[44px] transition {{ !empty($item['active']) ? 'bg-emerald-50 text-emerald-800 font-bold' : 'text-slate-800 hover:bg-slate-50 font-semibold' }}"
+                                >
+                                    <span class="truncate">{{ $item['label'] }}</span>
+                                    @if(!empty($item['active']))
+                                        <span class="w-2 h-2 rounded-full bg-emerald-700 shrink-0" aria-hidden="true"></span>
+                                    @else
+                                        <svg class="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    @endif
+                                </a>
+                            @endforeach
+                        </nav>
+                    </div>
+                @endif
+
+                @php
+                    $drawerActions = $loggedUser && method_exists($loggedUser, 'profileActions')
+                        ? $loggedUser->profileActions(request()->route('client'))
+                        : [];
+                    $drawerGroupedActions = collect($drawerActions)->groupBy('section');
+                    $drawerSectionHeadings = [
+                        'portal' => 'Portal Terkait',
+                        'crud' => 'CRUD & Pengaturan',
+                        'audit' => 'Cek & Pengawasan',
+                        'pelanggan' => 'Etalase Publik',
+                    ];
+                @endphp
+
+                @if(!empty($drawerActions))
+                    <div class="space-y-4">
+                        @foreach($drawerGroupedActions as $secKey => $items)
+                            <div class="space-y-1.5">
+                                @if(!empty($drawerSectionHeadings[$secKey]))
+                                    <p class="px-1 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                        {{ $drawerSectionHeadings[$secKey] }}
+                                    </p>
+                                @endif
+                                <nav class="rounded-2xl border border-slate-200/80 bg-white divide-y divide-slate-100 overflow-hidden">
+                                    @foreach($items as $act)
+                                        <a
+                                            href="{{ $act['href'] }}"
+                                            @click="mobileNav = false"
+                                            class="flex items-center justify-between gap-3 px-3.5 min-h-[44px] transition {{ !empty($act['primary']) ? 'bg-emerald-50 text-emerald-800 font-bold' : 'text-slate-800 hover:bg-slate-50 font-semibold' }}"
+                                        >
+                                            <span class="flex items-center gap-2.5 min-w-0">
+                                                @include('partials.profile-role-icon', ['icon' => $act['icon'], 'class' => 'w-4 h-4 text-emerald-700 shrink-0'])
+                                                <span class="truncate">{{ $act['label'] }}</span>
+                                            </span>
+                                            <svg class="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                            </svg>
+                                        </a>
+                                    @endforeach
+                                </nav>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+
+            <!-- Drawer Footer: Quick Profile Info -->
+            <div class="border-t border-slate-200 bg-slate-50/80 px-4 py-3 shrink-0 flex items-center justify-between gap-2 text-xs">
+                <div class="flex items-center gap-2 min-w-0">
+                    @if($photoUrl)
+                        <img src="{{ $photoUrl }}" alt="Foto {{ $userName }}" class="w-7 h-7 rounded-full object-cover shrink-0 border border-slate-300">
+                    @else
+                        <div class="w-7 h-7 rounded-full bg-emerald-700 text-white flex items-center justify-center font-extrabold text-[10px] shadow-2xs shrink-0">
+                            {{ $initials }}
+                        </div>
+                    @endif
+                    <span class="font-bold text-slate-900 truncate">{{ $userName }}</span>
+                </div>
+                <a href="{{ route('profile.edit') }}" @click="mobileNav = false" class="text-emerald-700 font-bold hover:underline shrink-0 min-h-[44px] inline-flex items-center">
+                    Profil &rarr;
+                </a>
+            </div>
+        </div>
+    </div>
 
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {{ $slot }}
