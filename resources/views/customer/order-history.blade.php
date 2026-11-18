@@ -1,6 +1,6 @@
 <x-layouts.customer :title="'Riwayat Pesanan - OmniPharma'" :fullWidth="true">
     <div
-        class="max-w-5xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 pb-20 md:pb-8 w-full"
+        class="max-w-5xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 pb-20 md:pb-8 w-full min-w-0 max-w-full overflow-x-hidden"
         x-data="{
             activeStatus: 'semua',
             matchesFilter(status) {
@@ -17,19 +17,18 @@
                 <span class="text-slate-800 font-bold">Riwayat Pesanan</span>
             </nav>
 
-            <div class="flex items-center justify-between gap-2.5 sm:gap-3">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div class="min-w-0 flex-1">
-                    <h1 class="text-base sm:text-xl md:text-2xl lg:text-3xl font-black text-slate-900 tracking-tight leading-snug">Riwayat Pesanan &amp; Invoice</h1>
-                    <p class="text-xs text-slate-500 mt-0.5 hidden sm:block">Pantau status pemesanan obat, antrean apotek, dan cetak invoice resmi.</p>
+                    <h1 class="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 tracking-tight leading-tight">Riwayat Pesanan &amp; Invoice</h1>
+                    <p class="text-xs text-slate-500 mt-0.5">Pantau status pemesanan obat, antrean apotek, dan cetak invoice resmi.</p>
                 </div>
 
                 <a
                     href="{{ route('dashboard') }}"
-                    class="min-h-[40px] sm:min-h-[44px] inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white text-xs font-bold transition shadow-xs shrink-0 cursor-pointer"
+                    class="self-start sm:self-auto min-h-[42px] sm:min-h-[44px] inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white text-xs font-bold transition shadow-xs shrink-0 cursor-pointer"
                 >
                     <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-                    <span class="hidden sm:inline">Belanja Obat Lagi</span>
-                    <span class="sm:hidden">Belanja Lagi</span>
+                    <span>Belanja Obat Lagi</span>
                 </a>
             </div>
         </div>
@@ -70,20 +69,20 @@
             </div>
         @else
             {{-- Status Bar Filter Cabang --}}
-            <div class="mb-3.5 flex flex-wrap items-center justify-between gap-2 bg-white border border-slate-200/90 rounded-2xl px-4 py-2.5 shadow-2xs text-xs">
-                <div class="flex items-center gap-2 text-slate-700 font-medium min-w-0">
-                    <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <div class="mb-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-white border border-slate-200/90 rounded-2xl p-3 sm:px-4 sm:py-2.5 shadow-2xs text-xs min-w-0 max-w-full">
+                <div class="flex items-start sm:items-center gap-2 text-slate-700 font-medium min-w-0 flex-1">
+                    <svg class="w-4 h-4 text-emerald-700 shrink-0 mt-0.5 sm:mt-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                     </svg>
-                    <span class="truncate">
+                    <span class="min-w-0 break-words leading-snug">
                         Menampilkan: <strong class="text-slate-900">{{ ($branchScope ?? 'aktif') === 'semua' ? 'Semua Cabang' : ($clientModel?->nama_client ?? 'Cabang Aktif') }}</strong>
                         @if(($branchScope ?? 'aktif') !== 'semua' && !empty($otherBranchesCount) && $otherBranchesCount > 0)
-                            <span class="text-slate-500 font-normal">({{ $otherBranchesCount }} pesanan di cabang lain)</span>
+                            <span class="text-slate-500 font-normal block sm:inline">({{ $otherBranchesCount }} pesanan di cabang lain)</span>
                         @endif
                     </span>
                 </div>
-                <div class="shrink-0">
+                <div class="shrink-0 pt-1.5 sm:pt-0 border-t sm:border-t-0 border-slate-100 flex justify-end">
                     @if(($branchScope ?? 'aktif') === 'semua')
                         <a href="{{ request()->url() }}" class="font-bold text-emerald-700 hover:text-emerald-800 hover:underline">
                             Filter Cabang Ini Saja
@@ -105,64 +104,66 @@
                     'dibatalkan' => $orders->where('status', 'dibatalkan')->count(),
                 ];
             @endphp
-            <div class="flex items-center gap-2 overflow-x-auto pb-2 mb-4 text-xs no-scrollbar">
-                <button
-                    type="button"
-                    @click="activeStatus = 'semua'"
-                    :class="activeStatus === 'semua' ? 'bg-emerald-700 text-white border-emerald-700 shadow-2xs font-extrabold' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 font-semibold'"
-                    class="min-h-[36px] px-3.5 py-1.5 rounded-full border transition shrink-0 cursor-pointer flex items-center gap-1.5"
-                >
-                    <span>Semua</span>
-                    <span class="text-[11px] opacity-85">({{ $statusCounts['semua'] }})</span>
-                </button>
-
-                @if($statusCounts['menunggu_pembayaran'] > 0)
+            <div class="w-full max-w-full overflow-hidden mb-4">
+                <div class="flex items-center gap-2 overflow-x-auto pb-2 text-xs no-scrollbar w-full min-w-0">
                     <button
                         type="button"
-                        @click="activeStatus = 'menunggu_pembayaran'"
-                        :class="activeStatus === 'menunggu_pembayaran' ? 'bg-amber-600 text-white border-amber-600 shadow-2xs font-extrabold' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 font-semibold'"
-                        class="min-h-[36px] px-3.5 py-1.5 rounded-full border transition shrink-0 cursor-pointer flex items-center gap-1.5"
+                        @click="activeStatus = 'semua'"
+                        :class="activeStatus === 'semua' ? 'bg-emerald-700 text-white border-emerald-700 shadow-2xs font-extrabold' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 font-semibold'"
+                        class="min-h-[36px] px-3.5 py-1.5 rounded-full border transition shrink-0 cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
                     >
-                        <span>Menunggu Pembayaran</span>
-                        <span class="text-[11px] opacity-85">({{ $statusCounts['menunggu_pembayaran'] }})</span>
+                        <span>Semua</span>
+                        <span class="text-[11px] opacity-85">({{ $statusCounts['semua'] }})</span>
                     </button>
-                @endif
 
-                @if($statusCounts['diproses'] > 0)
-                    <button
-                        type="button"
-                        @click="activeStatus = 'diproses'"
-                        :class="activeStatus === 'diproses' ? 'bg-sky-600 text-white border-sky-600 shadow-2xs font-extrabold' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 font-semibold'"
-                        class="min-h-[36px] px-3.5 py-1.5 rounded-full border transition shrink-0 cursor-pointer flex items-center gap-1.5"
-                    >
-                        <span>Diproses</span>
-                        <span class="text-[11px] opacity-85">({{ $statusCounts['diproses'] }})</span>
-                    </button>
-                @endif
+                    @if($statusCounts['menunggu_pembayaran'] > 0)
+                        <button
+                            type="button"
+                            @click="activeStatus = 'menunggu_pembayaran'"
+                            :class="activeStatus === 'menunggu_pembayaran' ? 'bg-amber-600 text-white border-amber-600 shadow-2xs font-extrabold' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 font-semibold'"
+                            class="min-h-[36px] px-3.5 py-1.5 rounded-full border transition shrink-0 cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
+                        >
+                            <span>Menunggu Pembayaran</span>
+                            <span class="text-[11px] opacity-85">({{ $statusCounts['menunggu_pembayaran'] }})</span>
+                        </button>
+                    @endif
 
-                @if($statusCounts['selesai'] > 0)
-                    <button
-                        type="button"
-                        @click="activeStatus = 'selesai'"
-                        :class="activeStatus === 'selesai' ? 'bg-emerald-700 text-white border-emerald-700 shadow-2xs font-extrabold' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 font-semibold'"
-                        class="min-h-[36px] px-3.5 py-1.5 rounded-full border transition shrink-0 cursor-pointer flex items-center gap-1.5"
-                    >
-                        <span>Selesai</span>
-                        <span class="text-[11px] opacity-85">({{ $statusCounts['selesai'] }})</span>
-                    </button>
-                @endif
+                    @if($statusCounts['diproses'] > 0)
+                        <button
+                            type="button"
+                            @click="activeStatus = 'diproses'"
+                            :class="activeStatus === 'diproses' ? 'bg-sky-600 text-white border-sky-600 shadow-2xs font-extrabold' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 font-semibold'"
+                            class="min-h-[36px] px-3.5 py-1.5 rounded-full border transition shrink-0 cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
+                        >
+                            <span>Diproses</span>
+                            <span class="text-[11px] opacity-85">({{ $statusCounts['diproses'] }})</span>
+                        </button>
+                    @endif
 
-                @if($statusCounts['dibatalkan'] > 0)
-                    <button
-                        type="button"
-                        @click="activeStatus = 'dibatalkan'"
-                        :class="activeStatus === 'dibatalkan' ? 'bg-rose-600 text-white border-rose-600 shadow-2xs font-extrabold' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 font-semibold'"
-                        class="min-h-[36px] px-3.5 py-1.5 rounded-full border transition shrink-0 cursor-pointer flex items-center gap-1.5"
-                    >
-                        <span>Dibatalkan</span>
-                        <span class="text-[11px] opacity-85">({{ $statusCounts['dibatalkan'] }})</span>
-                    </button>
-                @endif
+                    @if($statusCounts['selesai'] > 0)
+                        <button
+                            type="button"
+                            @click="activeStatus = 'selesai'"
+                            :class="activeStatus === 'selesai' ? 'bg-emerald-700 text-white border-emerald-700 shadow-2xs font-extrabold' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 font-semibold'"
+                            class="min-h-[36px] px-3.5 py-1.5 rounded-full border transition shrink-0 cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
+                        >
+                            <span>Selesai</span>
+                            <span class="text-[11px] opacity-85">({{ $statusCounts['selesai'] }})</span>
+                        </button>
+                    @endif
+
+                    @if($statusCounts['dibatalkan'] > 0)
+                        <button
+                            type="button"
+                            @click="activeStatus = 'dibatalkan'"
+                            :class="activeStatus === 'dibatalkan' ? 'bg-rose-600 text-white border-rose-600 shadow-2xs font-extrabold' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 font-semibold'"
+                            class="min-h-[36px] px-3.5 py-1.5 rounded-full border transition shrink-0 cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
+                        >
+                            <span>Dibatalkan</span>
+                            <span class="text-[11px] opacity-85">({{ $statusCounts['dibatalkan'] }})</span>
+                        </button>
+                    @endif
+                </div>
             </div>
 
             <div class="space-y-3.5 sm:space-y-4">
@@ -203,7 +204,7 @@
                     <article
                         x-show="matchesFilter('{{ $order->status }}')"
                         x-transition.opacity.duration.150ms
-                        class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200/90 shadow-2xs sm:shadow-xs transition hover:border-slate-300 space-y-3 sm:space-y-3.5"
+                        class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200/90 shadow-2xs sm:shadow-xs transition hover:border-slate-300 space-y-3 sm:space-y-3.5 min-w-0 max-w-full overflow-hidden"
                     >
                         {{-- Baris 1: Kode Pesanan, Antrean & Badge Status --}}
                         <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 flex-wrap">
