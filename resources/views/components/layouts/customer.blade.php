@@ -231,7 +231,7 @@
     </div>
 
     <!-- Top Navigation Header -->
-    <header class="sticky top-0 z-30 bg-white border-b border-slate-200 shadow-2xs">
+    <header class="sticky top-0 z-30 bg-white border-b border-slate-200 shadow-2xs w-full">
         <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-1.5 sm:gap-4">
             <!-- Mobile Hamburger & Brand Logo -->
             <div class="flex items-center gap-1.5 sm:gap-2.5 min-w-0">

@@ -1,6 +1,6 @@
 <x-layouts.customer :title="'Riwayat Pesanan - OmniPharma'" :fullWidth="true">
     <div
-        class="max-w-5xl mx-auto px-3.5 sm:px-6 lg:px-8 py-4 sm:py-8 pb-20 md:pb-8"
+        class="max-w-5xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 pb-20 md:pb-8 w-full"
         x-data="{
             activeStatus: 'semua',
             matchesFilter(status) {
@@ -17,15 +17,15 @@
                 <span class="text-slate-800 font-bold">Riwayat Pesanan</span>
             </nav>
 
-            <div class="flex items-center justify-between gap-3">
-                <div class="min-w-0">
-                    <h1 class="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 tracking-tight">Riwayat Pesanan &amp; Invoice</h1>
+            <div class="flex items-center justify-between gap-2.5 sm:gap-3">
+                <div class="min-w-0 flex-1">
+                    <h1 class="text-base sm:text-xl md:text-2xl lg:text-3xl font-black text-slate-900 tracking-tight leading-snug">Riwayat Pesanan &amp; Invoice</h1>
                     <p class="text-xs text-slate-500 mt-0.5 hidden sm:block">Pantau status pemesanan obat, antrean apotek, dan cetak invoice resmi.</p>
                 </div>
 
                 <a
                     href="{{ route('dashboard') }}"
-                    class="min-h-[40px] sm:min-h-[44px] inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white text-xs font-bold transition shadow-xs shrink-0 cursor-pointer"
+                    class="min-h-[40px] sm:min-h-[44px] inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white text-xs font-bold transition shadow-xs shrink-0 cursor-pointer"
                 >
                     <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                     <span class="hidden sm:inline">Belanja Obat Lagi</span>
@@ -206,9 +206,9 @@
                         class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200/90 shadow-2xs sm:shadow-xs transition hover:border-slate-300 space-y-3 sm:space-y-3.5"
                     >
                         {{-- Baris 1: Kode Pesanan, Antrean & Badge Status --}}
-                        <div class="flex items-center justify-between gap-2.5 pb-2.5 border-b border-slate-100">
-                            <div class="flex items-center gap-2 min-w-0 flex-wrap">
-                                <span class="font-mono text-xs sm:text-sm font-black text-slate-900 tracking-tight">#{{ $cleanNo }}</span>
+                        <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 flex-wrap">
+                            <div class="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-wrap">
+                                <span class="font-mono text-xs sm:text-sm font-black text-slate-900 tracking-tight break-all">#{{ $cleanNo }}</span>
                                 @if($order->nomor_antrean)
                                     <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-bold bg-slate-100 text-slate-700 border border-slate-200/60 shrink-0">
                                         Antrean {{ $order->nomor_antrean }}
