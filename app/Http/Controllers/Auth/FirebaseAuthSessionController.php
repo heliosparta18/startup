@@ -160,6 +160,8 @@ class FirebaseAuthSessionController extends Controller
 
         $user->update([
             'name' => $validated['name'],
+            'phone' => $validated['telepon'],
+            'address' => $validated['alamat'],
             'password' => bcrypt($validated['password']),
         ]);
 

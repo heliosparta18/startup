@@ -26,7 +26,8 @@
                 </a>
 
                 @if(count($sidebarActions) > 0)
-                    <div class="pt-2 mt-2 border-t border-slate-100 space-y-1">
+                    <!-- Akses Portal Akun: Tampil di Desktop (md:block), Tersembunyi di Handphone (hidden) karena sudah ada di drawer menu -->
+                    <div class="hidden md:block pt-2 mt-2 border-t border-slate-100 space-y-1">
                         <p class="px-3.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
                             Akses Portal Akun
                         </p>

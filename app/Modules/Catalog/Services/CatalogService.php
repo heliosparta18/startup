@@ -180,11 +180,6 @@ class CatalogService
                         ->where('id_client', $actualClientId)
                         ->where('jumlah_stok', '>', 0);
                 });
-            }, function (Builder $q) {
-                $q->whereHas('stokClient', function (Builder $sq) {
-                    $sq->withoutGlobalScope(TenantScope::class)
-                        ->where('jumlah_stok', '>', 0);
-                });
             })
             ->when($search, function (Builder $q, $search) {
                 $trimmed = trim((string) $search);

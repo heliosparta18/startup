@@ -73,7 +73,9 @@
         <div>
             <flux:button
                 variant="primary"
+                size="sm"
                 icon="plus"
+                class="px-4 py-2 text-xs font-bold rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white"
                 x-on:click="showForm = true"
             >
                 {{ __('Add passkey') }}

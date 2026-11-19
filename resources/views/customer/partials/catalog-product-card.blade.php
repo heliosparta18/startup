@@ -9,11 +9,12 @@
     );
     $urlGambar = $obat->url_gambar ?: asset('images/placeholder-product.svg');
     $namaObat = $obat->nama_obat;
-    $isAvailableHere = $obat->isAvailableInBranch($client);
-    $altBranch = ! $isAvailableHere ? $obat->getAlternativeAvailableBranch($client) : null;
+    $activeBranch = $client ?: (session('active_branch') ?: 'banyuwangi-kota');
+    $isAvailableHere = $obat->isAvailableInBranch($activeBranch);
+    $altBranch = ! $isAvailableHere ? $obat->getAlternativeAvailableBranch($activeBranch) : null;
 @endphp
 
-<div class="bg-white rounded-2xl border border-slate-200/90 p-2.5 sm:p-3.5 flex flex-col justify-between hover:border-emerald-700/60 hover:shadow-sm transition-all relative min-w-0">
+<div class="rounded-2xl p-2.5 sm:p-3.5 flex flex-col justify-between transition-all relative min-w-0 {{ $isAvailableHere ? 'bg-white border border-slate-200/90 hover:border-emerald-700/60 hover:shadow-sm' : 'bg-emerald-50/35 border-2 border-emerald-400/80 shadow-2xs ring-1 ring-emerald-500/10' }}">
     {{-- Official GoApotik Drug Class SVG Badge (Top Right) --}}
     <div class="absolute top-2 right-2 sm:top-3 sm:right-3 z-10" title="{{ $drugBadge['title'] }}">
         <img
@@ -29,6 +30,18 @@
         </span>
     </div>
 
+    {{-- Lock Indicator Badge for Out of Stock (Top Left) --}}
+    @if (! $isAvailableHere)
+        <div class="absolute top-2 left-2 sm:top-3 sm:left-3 z-10">
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-800 text-white font-extrabold text-[10px] sm:text-[11px] shadow-sm tracking-wide">
+                <svg class="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+                <span>Stok Habis</span>
+            </span>
+        </div>
+    @endif
+
     <div>
         {{-- Product Packshot Image Container --}}
         <a
@@ -38,10 +51,21 @@
             <img
                 src="{{ $urlGambar }}"
                 alt="{{ $namaObat }}"
-                class="w-full h-full object-contain transition-transform duration-200 hover:scale-105"
+                class="w-full h-full object-contain transition-transform duration-200 {{ $isAvailableHere ? 'hover:scale-105' : 'opacity-75 grayscale-[20%]' }}"
                 loading="lazy"
                 onerror="this.onerror=null;this.src='{{ asset('images/placeholder-product.svg') }}';"
             />
+
+            @if (! $isAvailableHere)
+                {{-- Locked Emerald Overlay with Lock Icon --}}
+                <div class="absolute inset-0 bg-emerald-950/20 backdrop-blur-[0.5px] flex items-center justify-center rounded-xl" aria-hidden="true">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-emerald-800/90 text-white shadow-md border border-emerald-400/50">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                    </div>
+                </div>
+            @endif
         </a>
 
         {{-- Category / Subcategory Metadata --}}
@@ -64,11 +88,18 @@
             {{ $obat->satuan_kemasan ?: $obat->jenis_sediaan }}
         </p>
 
-        @if (! $isAvailableHere && ! $altBranch)
-            <div class="mt-2 flex flex-wrap items-center gap-1.5 text-[11px]">
-                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-semibold bg-slate-100 text-slate-700 border border-slate-200">
-                    <span class="w-1.5 h-1.5 rounded-full bg-slate-500" aria-hidden="true"></span>
-                    <span>Stok Habis</span>
+        {{-- Out of Stock Notice Banner --}}
+        @if (! $isAvailableHere)
+            <div class="mt-2 flex items-center gap-1.5 p-1.5 sm:p-2 rounded-xl bg-emerald-100/80 border border-emerald-300 text-[10px] sm:text-[11px] text-emerald-950 font-bold leading-tight">
+                <svg class="w-3.5 h-3.5 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+                <span>
+                    @if ($altBranch)
+                        Stok habis di cabang ini (Terkunci)
+                    @else
+                        Stok habis saat ini (Terkunci)
+                    @endif
                 </span>
             </div>
         @endif
@@ -84,15 +115,15 @@
         </div>
 
         <div class="flex items-center gap-1.5 sm:gap-2">
-            <a
-                href="{{ \Illuminate\Support\Facades\Route::has('obat.show') ? route('obat.show', ['id' => $obat->slug ?: $obat->id_obat]) : route('customer.obat.detail', ['client' => $client, 'id' => $obat->id_obat]) }}"
-                class="flex-1 inline-flex items-center justify-center px-3 py-2 min-h-[44px] rounded-xl bg-emerald-50 hover:bg-emerald-700 text-emerald-800 hover:text-white border border-emerald-200 font-bold text-xs transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 cursor-pointer"
-                aria-label="Lihat detail {{ $namaObat }}"
-            >
-                Detail
-            </a>
-
             @if ($isAvailableHere)
+                <a
+                    href="{{ \Illuminate\Support\Facades\Route::has('obat.show') ? route('obat.show', ['id' => $obat->slug ?: $obat->id_obat]) : route('customer.obat.detail', ['client' => $client, 'id' => $obat->id_obat]) }}"
+                    class="flex-1 inline-flex items-center justify-center px-3 py-2 min-h-[44px] rounded-xl bg-emerald-50 hover:bg-emerald-700 text-emerald-800 hover:text-white border border-emerald-200 font-bold text-xs transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 cursor-pointer"
+                    aria-label="Lihat detail {{ $namaObat }}"
+                >
+                    Detail
+                </a>
+
                 <button
                     type="button"
                     @click.prevent="$dispatch('add-to-cart', { id: @js($obat->id_obat), nama: @js($namaObat), client: @js($client), qty: 1 })"
@@ -105,6 +136,27 @@
                     </svg>
                     <span class="font-extrabold">+</span>
                 </button>
+            @else
+                <button
+                    type="button"
+                    disabled
+                    class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 min-h-[44px] rounded-xl bg-emerald-100/80 text-emerald-800/80 border border-emerald-300 font-extrabold text-xs cursor-not-allowed shadow-none"
+                    aria-disabled="true"
+                    title="Stok obat ini sedang habis (Terkunci)"
+                >
+                    <svg class="w-3.5 h-3.5 text-emerald-700/80 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                    <span>Stok Habis</span>
+                </button>
+
+                <a
+                    href="{{ \Illuminate\Support\Facades\Route::has('obat.show') ? route('obat.show', ['id' => $obat->slug ?: $obat->id_obat]) : route('customer.obat.detail', ['client' => $client, 'id' => $obat->id_obat]) }}"
+                    class="inline-flex items-center justify-center px-3 py-2 min-h-[44px] rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-bold text-xs transition-colors shrink-0"
+                    aria-label="Lihat detail {{ $namaObat }}"
+                >
+                    Detail
+                </a>
             @endif
         </div>
 
