@@ -177,9 +177,9 @@ Bila dosen bertanya: *"Rencana pengembangan ke depannya bagaimana?"*, berikut ja
 ┌────────────────────────────────────────────────────────────────────────┐
 │                   ROADMAP PENGEMBANGAN OMNIPHARMA                      │
 ├────────────────────┬───────────────────────────────────────────────────┤
-│ Jangka Pendek      │ • Floating Widget Bantuan (Konsul WA & Lapor Bug) │
-│ (1 - 2 Bulan)      │ • Refactor Route Closure ke Controller Terpisah   │
-│                    │ • Notifikasi WhatsApp Gateway (Fonnte / Wablas)   │
+│ Jangka Pendek      │ • Refactor Route Closure ke Controller Terpisah   │
+│ (1 - 2 Bulan)      │ • Notifikasi WhatsApp Gateway Transaksi (Fonnte)  │
+│                    │ • Optimasi Indeks Kueri Multi-Cabang              │
 ├────────────────────┼───────────────────────────────────────────────────┤
 │ Jangka Menengah    │ • Integrasi Payment Gateway Real (Midtrans/Xendit)│
 │ (3 - 6 Bulan)      │ • Integrasi Platform SATUSEHAT Kemenkes RI        │
@@ -193,15 +193,13 @@ Bila dosen bertanya: *"Rencana pengembangan ke depannya bagaimana?"*, berikut ja
 
 ### Rincian Tiap Fase:
 
-#### 1. Jangka Pendek (Penyempurnaan Platform & Komunikasi)
-- **Floating Help Center Widget (Sesuai masukan Guntur):**
-  - Menghadirkan widget mengambang di pojok kanan bawah khusus pelanggan dengan 2 kanal:
-    1. *Tanya Apoteker*: Sambungan cepat ke WhatsApp apoteker jaga cabang aktif.
-    2. *Pusat Laporan & Komplain*: Form tiket kendala pesanan atau pelaporan efek samping obat (ISO/Pharmacovigilance report).
+#### 1. Jangka Pendek (Penyempurnaan Platform & Stabilitas)
+- **Refactoring Arsitektur Controller:**
+  - Memindahkan seluruh route closure di `routes/admin.php` dan `routes/tenant.php` ke dalam Dedicated Controller Classes untuk mempermudah pemeliharaan dan pengujian unit terisolasi.
 - **Notifikasi Transaksi via WhatsApp Gateway:**
   - Mengintegrasikan API WhatsApp agar nomor antrean dan link struk QRIS langsung terkirim ke nomor WA pasien saat transaksi berhasil.
-- **Refactoring Arsitektur Controller:**
-  - Memindahkan route closure di `routes/admin.php` dan `routes/tenant.php` ke dalam Dedicated Controller Classes untuk mempermudah unit testing modular.
+- **Optimasi Indeks Kueri Multi-Cabang:**
+  - Menambahkan indeks komposit basis data pada pencarian sediaan obat dan pemfilteran stok multi-cabang.
 
 #### 2. Jangka Menengah (Integrasi Ekosistem Kesehatan Nasional)
 - **Integrasi SATUSEHAT Kemenkes RI:**
