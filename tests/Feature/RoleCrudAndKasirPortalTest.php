@@ -376,7 +376,7 @@ class RoleCrudAndKasirPortalTest extends TestCase
 
         $this->actingAs($superAdmin)->get(route('profile.edit'))
             ->assertOk()
-            ->assertSee('CRUD Pengaturan Lengkap &amp; Hak Akses', false)
+            ->assertSee('CRUD Staf, Role &amp; Hak Akses', false)
             ->assertSee('Cek Operasional Apoteker')
             ->assertSee('Audit Kasir &amp; Ledger Cabang', false);
 
