@@ -27,7 +27,7 @@ use Illuminate\Support\Str;
  * Melayani Executive KPI Dashboard, Tutup Periode & Kunci Snapshot, Ekspor Laporan, CRUD Cabang, Staf, & Obat.
  */
 Route::get('/dashboard', function (Request $request) {
-    $clients = Client::query()->with('stok.obat')->orderBy('nama_client')->get();
+    $clients = Client::query()->orderBy('nama_client')->get();
     $summaries = RingkasanPeriodePenjualan::query()->orderBy('periode_mulai', 'desc')->get();
 
     $nonCancelledOrders = Pesanan::withoutTenancy()

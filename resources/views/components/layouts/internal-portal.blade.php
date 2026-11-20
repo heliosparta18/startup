@@ -20,6 +20,7 @@
     @include('partials.omni-theme-script')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
+    @livewireStyles
     <style>
         [x-cloak] { display: none !important; }
     </style>
@@ -182,16 +183,20 @@
             </div>
 
             <!-- Desktop Navigation Rail -->
-            <nav aria-label="Navigasi Portal" class="hidden lg:flex border-t border-slate-100 py-1.5 items-center gap-1 overflow-x-auto text-xs">
-                @foreach($navItems as $item)
-                    <a
-                        href="{{ $item['href'] }}"
-                        class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl min-h-[44px] whitespace-nowrap transition {{ !empty($item['active']) ? 'bg-emerald-700 text-white shadow-xs font-bold' : 'text-slate-600 hover:text-emerald-800 hover:bg-emerald-50 font-semibold' }}"
-                    >
-                        <span>{{ $item['label'] }}</span>
-                    </a>
-                @endforeach
-            </nav>
+            @isset($customNav)
+                {{ $customNav }}
+            @else
+                <nav aria-label="Navigasi Portal" class="hidden lg:flex border-t border-slate-100 py-1.5 items-center gap-1 overflow-x-auto text-xs">
+                    @foreach($navItems as $item)
+                        <a
+                            href="{{ $item['href'] }}"
+                            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl min-h-[44px] whitespace-nowrap transition {{ !empty($item['active']) ? 'bg-emerald-700 text-white shadow-xs font-bold' : 'text-slate-600 hover:text-emerald-800 hover:bg-emerald-50 font-semibold' }}"
+                        >
+                            <span>{{ $item['label'] }}</span>
+                        </a>
+                    @endforeach
+                </nav>
+            @endisset
         </div>
     </header>
 
@@ -331,6 +336,7 @@
         </div>
     </footer>
 
+    @livewireScripts
     @fluxScripts
     @stack('scripts')
 </body>
