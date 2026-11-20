@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Client;
+use App\Models\Obat;
 use App\Modules\Catalog\Livewire\PublicCatalog;
 use App\Modules\Catalog\Services\CatalogService;
 use App\Modules\Ordering\Services\CartService;
@@ -35,8 +36,8 @@ class ServiceAndCatalogAnimationVerificationTest extends TestCase
         );
 
         // 2. Verifikasi operasi read/write/delete dasar
-        $testKey = 'omnidata:verification:test_' . uniqid();
-        $testValue = 'omnivalue_' . time();
+        $testKey = 'omnidata:verification:test_'.uniqid();
+        $testValue = 'omnivalue_'.time();
 
         Redis::set($testKey, $testValue);
         $retrieved = Redis::get($testKey);
@@ -52,12 +53,12 @@ class ServiceAndCatalogAnimationVerificationTest extends TestCase
     public function test_cart_service_operates_cleanly_with_redis(): void
     {
         $cartService = app(CartService::class);
-        $obat = \App\Models\Obat::first();
+        $obat = Obat::first();
         $this->assertNotNull($obat, 'Membutuhkan minimal 1 obat di database untuk verifikasi keranjang.');
         $client = Client::first();
         $this->assertNotNull($client, 'Membutuhkan minimal 1 client di database.');
 
-        $testSession = 'session_verify_' . uniqid();
+        $testSession = 'session_verify_'.uniqid();
         $testClientId = $client->id_client;
 
         $cartService->addItem($testSession, $testClientId, (string) $obat->id_obat, 3);
