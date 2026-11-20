@@ -11,7 +11,12 @@
             </div>
 
             {{-- Main Product Catalog Area --}}
-            <section class="lg:col-span-9 min-w-0 w-full space-y-2.5 sm:space-y-4" id="main-catalog-content" aria-label="Daftar Sediaan Katalog">
+            <section class="lg:col-span-9 min-w-0 w-full space-y-2.5 sm:space-y-4 relative" id="main-catalog-content" aria-label="Daftar Sediaan Katalog">
+                {{-- Non-intrusive Top Indeterminate Loading Bar --}}
+                <div wire:loading class="absolute -top-1.5 inset-x-0 h-1 overflow-hidden z-20 pointer-events-none rounded-full bg-emerald-50">
+                    <div class="w-full h-full bg-emerald-600 animate-pulse"></div>
+                </div>
+
                 {{-- GoApotik-Style Search Bar (Clean Input + Right Magnifying Glass SVG) --}}
                 <div class="relative w-full">
                     <label for="catalog-search-input" class="sr-only">Cari produk obat dan suplemen</label>
@@ -145,19 +150,19 @@
                     @endif
                 </div>
 
-                {{-- Loading Skeleton --}}
-                <div wire:loading.delay.class.remove="hidden" class="hidden w-full" role="status" aria-label="Memuat produk katalog">
-                    @include('customer.partials.catalog-skeleton')
-                </div>
-
-                {{-- 5-Column Responsive Product Card Grid --}}
-                <div wire:loading.delay.class="hidden" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5 sm:gap-4">
+                {{-- 5-Column Responsive Product Card Grid (Seamless Retention & Crossfade) --}}
+                <div
+                    wire:loading.class="opacity-60 pointer-events-none"
+                    class="min-h-[460px] grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5 sm:gap-4 transition-opacity duration-200"
+                >
                     @forelse ($obats as $obat)
-                        @include('customer.partials.catalog-product-card', [
-                            'obat' => $obat,
-                            'client' => $client,
-                            'inDashboard' => $inDashboard ?? false,
-                        ])
+                        <div wire:key="catalog-obat-{{ $obat->id_obat }}" class="contents">
+                            @include('customer.partials.catalog-product-card', [
+                                'obat' => $obat,
+                                'client' => $client,
+                                'inDashboard' => $inDashboard ?? false,
+                            ])
+                        </div>
                     @empty
                         @include('customer.partials.catalog-empty-state')
                     @endforelse
