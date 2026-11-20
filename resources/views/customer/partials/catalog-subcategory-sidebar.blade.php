@@ -1,4 +1,4 @@
-{{-- Left Sidebar Subcategory Filter (GoApotik Icon List & Pill Active Style) --}}
+{{-- Left Sidebar Subcategory Filter (GoApotik Icon List & Pill Active Style with Smooth Sliding Indicator) --}}
 <aside class="w-full md:w-64 lg:w-72 shrink-0 space-y-3" aria-label="Navigasi Subkategori">
     {{-- Mobile Collapse Toggle Header --}}
     <div class="md:hidden">
@@ -24,10 +24,61 @@
         </button>
     </div>
 
-    {{-- Subcategory Card Container --}}
+    {{-- Subcategory Card Container with Alpine Glide Indicator --}}
     <div
-        x-data="{ mobileOpen: false }"
+        x-data="{
+            mobileOpen: false,
+            activeSub: @js($subKategoriAktif ?: ''),
+            indicatorTop: 0,
+            indicatorHeight: 0,
+            indicatorVisible: false,
+            init() {
+                this.$nextTick(() => this.repositionIndicator());
+                this.$watch('activeSub', (newVal) => {
+                    this.$nextTick(() => this.repositionIndicator());
+                });
+                this.$watch('$wire.subKategori', (newVal) => {
+                    if (newVal !== undefined && newVal !== this.activeSub) {
+                        this.activeSub = newVal || '';
+                        this.$nextTick(() => this.repositionIndicator());
+                    }
+                });
+                this.$watch('$wire.kategori', () => {
+                    this.activeSub = '';
+                    this.$nextTick(() => this.repositionIndicator());
+                });
+                this.$watch('mobileOpen', (val) => {
+                    if (val) this.$nextTick(() => this.repositionIndicator());
+                });
+            },
+            setActiveSub(name, event) {
+                const isDeselecting = (this.activeSub === name) || !name;
+                this.activeSub = (this.activeSub === name || !name) ? '' : name;
+                this.$nextTick(() => {
+                    this.repositionIndicator(isDeselecting ? this.resolveTargetEl() : (event?.currentTarget || this.resolveTargetEl()));
+                });
+            },
+            resolveTargetEl() {
+                const nav = this.$refs.subcatNav;
+                if (!nav) return null;
+                const safeVal = typeof CSS !== 'undefined' && CSS.escape ? CSS.escape(this.activeSub || '') : (this.activeSub || '');
+                return nav.querySelector(`button[data-subcat='${safeVal}']`) || nav.querySelector(`[data-subcat='${safeVal}']`);
+            },
+            repositionIndicator(targetEl = null) {
+                const nav = this.$refs.subcatNav;
+                if (!nav) return;
+                const target = targetEl || this.resolveTargetEl();
+                if (target) {
+                    this.indicatorTop = target.offsetTop;
+                    this.indicatorHeight = target.offsetHeight;
+                    this.indicatorVisible = true;
+                } else {
+                    this.indicatorVisible = false;
+                }
+            }
+        }"
         @toggle-mobile-sidebar.window="mobileOpen = !mobileOpen"
+        @resize.window.debounce.100ms="repositionIndicator()"
         :class="{ 'block': mobileOpen, 'hidden': !mobileOpen }"
         class="hidden md:block bg-white rounded-2xl border border-slate-200/90 p-3 shadow-2xs space-y-2.5"
     >
@@ -44,6 +95,7 @@
                 <button
                     type="button"
                     wire:click="selectSubCategory('')"
+                    @click="setActiveSub('', $event)"
                     class="text-xs text-emerald-800 hover:underline font-bold cursor-pointer min-h-[44px] px-2 focus-visible:outline-2 focus-visible:outline-emerald-700 rounded"
                 >
                     Reset
@@ -51,23 +103,50 @@
             @endif
         </div>
 
-        <nav class="space-y-1 max-h-[660px] overflow-y-auto no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden" aria-label="Daftar Subkategori">
-            {{-- Tombol "Semua" Pill ala GoApotik --}}
+        <nav
+            x-ref="subcatNav"
+            class="relative space-y-1 max-h-[660px] overflow-y-auto no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            aria-label="Daftar Subkategori"
+        >
+            {{-- Sliding Active Indicator Pill --}}
+            <div
+                wire:ignore
+                x-ref="activeSubcatIndicator"
+                class="absolute left-0 right-0 rounded-xl bg-emerald-700 shadow-xs pointer-events-none transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)]"
+                :style="{
+                    top: indicatorTop + 'px',
+                    height: indicatorHeight + 'px',
+                    opacity: indicatorVisible ? 1 : 0
+                }"
+                aria-hidden="true"
+            ></div>
+
+            {{-- Tombol 'Semua' Pill ala GoApotik --}}
             <button
                 type="button"
+                data-subcat=""
                 wire:click="selectSubCategory('')"
-                class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs transition-colors cursor-pointer min-h-[44px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 {{ empty($subKategoriAktif) ? 'bg-emerald-700 text-white font-bold shadow-xs' : 'text-slate-800 font-semibold hover:bg-slate-50' }}"
-                aria-pressed="{{ empty($subKategoriAktif) ? 'true' : 'false' }}"
+                @click="setActiveSub('', $event)"
+                class="relative z-10 w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs transition-colors duration-200 cursor-pointer min-h-[44px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                :class="activeSub === '' ? 'text-white font-bold' : 'text-slate-800 font-semibold hover:bg-slate-50/80'"
+                :aria-pressed="activeSub === '' ? 'true' : 'false'"
             >
                 <span class="flex items-center gap-2.5 min-w-0">
-                    <span class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 {{ empty($subKategoriAktif) ? 'bg-white text-emerald-700' : 'bg-[#F0F7FF] text-emerald-800' }}" aria-hidden="true">
+                    <span
+                        class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all duration-200"
+                        :class="activeSub === '' ? 'bg-white text-emerald-700 shadow-2xs' : 'bg-[#F0F7FF] text-emerald-800'"
+                        aria-hidden="true"
+                    >
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                         </svg>
                     </span>
                     <span class="truncate">Semua {{ $kategoriAktif ?: 'Produk' }}</span>
                 </span>
-                <span class="text-[11px] px-2 py-0.5 rounded-full font-bold shrink-0 {{ empty($subKategoriAktif) ? 'bg-emerald-700 text-white' : 'bg-slate-100 text-slate-700' }}">
+                <span
+                    class="text-[11px] px-2 py-0.5 rounded-full font-bold shrink-0 transition-colors duration-200"
+                    :class="activeSub === '' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700'"
+                >
                     {{ $obats->total() }}
                 </span>
             </button>
@@ -80,12 +159,19 @@
                 @endphp
                 <button
                     type="button"
+                    data-subcat="{{ $subkat->nama_subkategori }}"
                     wire:click='selectSubCategory(@json($subkat->nama_subkategori))'
-                    class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs transition-colors cursor-pointer min-h-[44px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 {{ $isSubActive ? 'bg-emerald-700 text-white font-bold shadow-xs' : 'text-slate-800 font-medium hover:bg-slate-50 hover:text-emerald-900' }}"
-                    aria-pressed="{{ $isSubActive ? 'true' : 'false' }}"
+                    @click="setActiveSub(@js($subkat->nama_subkategori), $event)"
+                    class="relative z-10 w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs transition-colors duration-200 cursor-pointer min-h-[44px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                    :class="activeSub === @js($subkat->nama_subkategori) ? 'text-white font-bold' : 'text-slate-800 font-medium hover:bg-slate-50/80 hover:text-emerald-900'"
+                    :aria-pressed="activeSub === @js($subkat->nama_subkategori) ? 'true' : 'false'"
                 >
                     <span class="flex items-center gap-2.5 min-w-0">
-                        <span class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 overflow-hidden p-1 {{ $isSubActive ? 'bg-white' : 'bg-[#F0F7FF]' }}" aria-hidden="true">
+                        <span
+                            class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 overflow-hidden p-1 transition-all duration-200"
+                            :class="activeSub === @js($subkat->nama_subkategori) ? 'bg-white shadow-2xs' : 'bg-[#F0F7FF]'"
+                            aria-hidden="true"
+                        >
                             <img
                                 src="{{ $subIcon['svg_url'] }}"
                                 alt=""
@@ -98,7 +184,10 @@
                         <span class="truncate text-left">{{ $subkat->nama_subkategori }}</span>
                     </span>
                     @if (isset($subkat->obat_count))
-                        <span class="text-[11px] px-2 py-0.5 rounded-full font-bold shrink-0 {{ $isSubActive ? 'bg-emerald-700 text-white' : 'bg-slate-100 text-slate-600' }}">
+                        <span
+                            class="text-[11px] px-2 py-0.5 rounded-full font-bold shrink-0 transition-colors duration-200"
+                            :class="activeSub === @js($subkat->nama_subkategori) ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'"
+                        >
                             {{ $subkat->obat_count }}
                         </span>
                     @endif

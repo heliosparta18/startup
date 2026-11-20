@@ -14,7 +14,7 @@
     $altBranch = ! $isAvailableHere ? $obat->getAlternativeAvailableBranch($activeBranch) : null;
 @endphp
 
-<div class="rounded-2xl p-2.5 sm:p-3.5 flex flex-col justify-between transition-all relative min-w-0 {{ $isAvailableHere ? 'bg-white border border-slate-200/90 hover:border-emerald-700/60 hover:shadow-sm' : 'bg-emerald-50/35 border-2 border-emerald-400/80 shadow-2xs ring-1 ring-emerald-500/10' }}">
+<div wire:key="card-obat-{{ $obat->id_obat }}" class="rounded-2xl p-2.5 sm:p-3.5 flex flex-col justify-between transition-all relative min-w-0 {{ $isAvailableHere ? 'bg-white border border-slate-200/90 hover:border-emerald-700/60 hover:shadow-sm' : 'bg-emerald-50/35 border-2 border-emerald-400/80 shadow-2xs ring-1 ring-emerald-500/10' }}">
     {{-- Official GoApotik Drug Class SVG Badge (Top Right) --}}
     <div class="absolute top-2 right-2 sm:top-3 sm:right-3 z-10" title="{{ $drugBadge['title'] }}">
         <img

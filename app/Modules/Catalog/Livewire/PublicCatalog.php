@@ -14,6 +14,17 @@ class PublicCatalog extends Component
 {
     use WithPagination;
 
+    public const CATEGORY_CHECKPOINTS = [
+        'Obat',
+        'Suplemen',
+        'Nutrisi',
+        'Herbal',
+        'Ibu & Anak',
+        'Alat Kesehatan',
+        'Perawatan Diri',
+        'Mata',
+    ];
+
     public string $clientId = '';
 
     public string $search = '';
@@ -107,6 +118,23 @@ class PublicCatalog extends Component
         $this->kategori = $kategori;
         $this->subKategori = '';
         $this->resetPage();
+    }
+
+    public function nextCategory(): void
+    {
+        $currentIndex = array_search($this->kategori, self::CATEGORY_CHECKPOINTS, true);
+        // Boundary rule: Cannot advance past 'Mata' (index 7, terminal checkpoint)
+        if ($currentIndex !== false && $currentIndex < count(self::CATEGORY_CHECKPOINTS) - 1) {
+            $this->selectCategory(self::CATEGORY_CHECKPOINTS[$currentIndex + 1]);
+        }
+    }
+
+    public function prevCategory(): void
+    {
+        $currentIndex = array_search($this->kategori, self::CATEGORY_CHECKPOINTS, true);
+        if ($currentIndex !== false && $currentIndex > 0) {
+            $this->selectCategory(self::CATEGORY_CHECKPOINTS[$currentIndex - 1]);
+        }
     }
 
     public function selectSubCategory(string $subKategori): void
