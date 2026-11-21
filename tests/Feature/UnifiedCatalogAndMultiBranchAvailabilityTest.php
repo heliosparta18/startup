@@ -459,7 +459,7 @@ class UnifiedCatalogAndMultiBranchAvailabilityTest extends TestCase
         $detailResponse->assertSee('Obat Keras (Wajib Resep)');
         $detailResponse->assertSee('Tambah ke Keranjang');
         $detailResponse->assertDontSee('Unggah Foto Resep Dokter di Cabang Ini');
-        $detailResponse->assertSee('Konsultasi Apoteker (Coming Soon)');
+        $detailResponse->assertSee('Tanya Apoteker');
         $detailResponse->assertSee('<span class="sr-only">Keranjang</span>', false);
         $detailResponse->assertDontSee('aria-label="Kembali ke Dashboard Utama"', false);
 
@@ -492,12 +492,12 @@ class UnifiedCatalogAndMultiBranchAvailabilityTest extends TestCase
             'cart_count' => 3,
         ]);
 
-        // 4. Dashboard menampilkan ikon keranjang dengan count=3, Chat icon (Coming Soon), dan tanpa tombol Dashboard Utama di navbar
+        // 4. Dashboard menampilkan ikon keranjang dengan count=3, Chat Tanya Apoteker, dan tanpa tombol Dashboard Utama di navbar
         $dashboardResponse = $this->actingAs($customer)
             ->withCookie('omnipharma_customer_session', $sessionToken)
             ->get(route('dashboard'));
         $dashboardResponse->assertOk();
-        $dashboardResponse->assertSee('Konsultasi Apoteker (Coming Soon)');
+        $dashboardResponse->assertSee('Tanya Apoteker');
         $dashboardResponse->assertSee('<span class="sr-only">Keranjang</span>', false);
         $dashboardResponse->assertDontSee('aria-label="Dashboard Utama"', false);
         $dashboardResponse->assertSeeHtml('cartCount: 3');

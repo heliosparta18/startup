@@ -83,6 +83,22 @@
 
                 <div class="flex items-center gap-2 shrink-0">
                     @auth
+                        @if($loggedUser && ($loggedUser->hasRole('apoteker') || in_array($loggedUser->role, ['apoteker', 'tenant', 'super_admin'], true)))
+                            <button
+                                type="button"
+                                x-data
+                                @click="$dispatch('open-apoteker-chat')"
+                                class="relative inline-flex items-center justify-center p-2 rounded-xl text-slate-700 hover:text-emerald-900 hover:bg-emerald-50 border border-slate-200 bg-white shadow-2xs transition-colors min-h-[44px] min-w-[44px] shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                                title="Tanya Apoteker - Percakapan Pasien"
+                                aria-label="Tanya Apoteker - Percakapan Pasien"
+                                id="btn-apoteker-chat"
+                            >
+                                <svg class="w-5 h-5 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                </svg>
+                            </button>
+                        @endif
+
                         <div class="relative" x-data="{ open: false }" @keydown.escape.stop="open = false" @click.outside="open = false">
                             <button
                                 type="button"
@@ -337,6 +353,11 @@
     </footer>
 
     @livewireScripts
+    @auth
+        @if($loggedUser && ($loggedUser->hasRole('apoteker') || in_array($loggedUser->role, ['apoteker', 'tenant', 'super_admin'], true)))
+            <livewire:tenant.apoteker-chat-portal />
+        @endif
+    @endauth
     @fluxScripts
     @stack('scripts')
 </body>
