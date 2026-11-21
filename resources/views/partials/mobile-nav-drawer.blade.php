@@ -184,16 +184,16 @@
 
                     <button
                         type="button"
-                        @click="triggerChatComingSoon(); mobileNav = false"
+                        @click="$dispatch('open-tanya-apoteker'); mobileNav = false"
                         class="w-full flex items-center justify-between gap-3 px-3.5 min-h-[46px] text-slate-800 hover:bg-slate-50 font-semibold text-left transition cursor-pointer"
                     >
                         <span class="flex items-center gap-3 min-w-0">
                             <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                             </svg>
-                            <span class="truncate">Konsultasi Apoteker</span>
+                            <span class="truncate">Tanya Apoteker</span>
                         </span>
-                        <span class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-[10px] font-bold shrink-0">Segera</span>
+                        <svg class="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
                     </button>
                 </nav>
             </div>

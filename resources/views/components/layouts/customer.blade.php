@@ -59,8 +59,6 @@
         cartBounce: false,
         cartToast: '',
         cartToastTimer: null,
-        chatComingSoon: false,
-        chatComingSoonTimer: null,
         searchQuery: '',
         searchResults: [],
         searchLoading: false,
@@ -122,11 +120,6 @@
             this.cartToast = nama + ' ditambahkan ke keranjang (' + this.cartCount + ' item).';
             clearTimeout(this.cartToastTimer);
             this.cartToastTimer = setTimeout(() => { this.cartToast = ''; }, 3500);
-        },
-        triggerChatComingSoon() {
-            this.chatComingSoon = true;
-            clearTimeout(this.chatComingSoonTimer);
-            this.chatComingSoonTimer = setTimeout(() => { this.chatComingSoon = false; }, 3500);
         },
         liveSearch() {
             this.searchError = '';
@@ -199,32 +192,6 @@
                 </a>
             </div>
             <button type="button" @click="cartToast = ''" class="text-slate-300 hover:text-white p-1 shrink-0 cursor-pointer" aria-label="Tutup notifikasi keranjang">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-            </button>
-        </div>
-
-        <div
-            x-show="chatComingSoon"
-            x-cloak
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 translate-y-2 scale-95"
-            x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-            x-transition:leave-end="opacity-0 translate-y-1 scale-95"
-            class="pointer-events-auto flex items-center gap-3 rounded-2xl bg-slate-900 text-white px-4 py-3 shadow-lg border border-emerald-400/40 text-xs"
-            role="status"
-        >
-            <span class="w-7 h-7 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 flex items-center justify-center shrink-0">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
-            </span>
-            <div class="min-w-0 flex-1">
-                <p class="font-bold text-white leading-snug">Konsultasi Apoteker (Coming Soon)</p>
-                <p class="text-[11px] text-slate-300 mt-0.5">Fitur Chat Konsultasi Apoteker segera hadir!</p>
-            </div>
-            <button type="button" @click="chatComingSoon = false" class="text-slate-300 hover:text-white p-1 shrink-0 cursor-pointer" aria-label="Tutup informasi fitur konsultasi">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
         </div>
@@ -355,15 +322,14 @@
             <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
                 <button
                     type="button"
-                    @click="triggerChatComingSoon()"
+                    @click="$dispatch('open-tanya-apoteker')"
                     class="hidden md:inline-flex relative items-center justify-center rounded-xl border border-slate-200 bg-white hover:bg-emerald-50 hover:border-emerald-300 text-slate-700 hover:text-emerald-900 transition shadow-2xs min-h-[44px] min-w-[44px] px-2.5 py-2 shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
-                    title="Konsultasi Apoteker (Coming Soon)"
-                    aria-label="Konsultasi Apoteker (Coming Soon)"
+                    title="Tanya Apoteker"
+                    aria-label="Tanya Apoteker"
                 >
                     <svg class="w-5 h-5 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                     </svg>
-                    <span class="absolute -top-1 -right-1 px-1 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300 text-[8px] font-extrabold leading-none tracking-tight">Soon</span>
                 </button>
 
                 <a
@@ -659,6 +625,9 @@
             <span class="text-[11px] text-slate-500">Standar Permenkes RI No. 73/2016 &bull; SIA &amp; SIP Terverifikasi</span>
         </div>
     </footer>
+
+    <!-- Modal Tanya Apoteker -->
+    <livewire:customer.tanya-apoteker-modal :client-id="$activeBranchSlug ?? null" />
 
     @fluxScripts
 </body>
