@@ -61,11 +61,17 @@ class PesanKonsultasi extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Konsultasi, $this>
+     */
     public function konsultasi(): BelongsTo
     {
         return $this->belongsTo(Konsultasi::class, 'id_konsultasi', 'id_konsultasi');
     }
 
+    /**
+     * @return BelongsTo<Pengguna, $this>
+     */
     public function pengguna(): BelongsTo
     {
         return $this->belongsTo(Pengguna::class, 'id_pengguna', 'id_pengguna');

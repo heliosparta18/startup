@@ -44,6 +44,7 @@ class ApotekerChatPortal extends Component
         $this->isOpen = true;
 
         if (! $this->activeKonsultasiId) {
+            /** @var Konsultasi|null $latest */
             $latest = $this->getConsultationsQuery()->first();
             if ($latest) {
                 $this->selectKonsultasi($latest->id_konsultasi);
@@ -59,6 +60,7 @@ class ApotekerChatPortal extends Component
 
     public function selectKonsultasi(string $id): void
     {
+        /** @var Konsultasi|null $konsultasi */
         $konsultasi = $this->getConsultationsQuery()->where('id_konsultasi', $id)->first();
         if (! $konsultasi) {
             return;
@@ -196,6 +198,7 @@ class ApotekerChatPortal extends Component
         $messages = collect();
 
         if ($this->activeKonsultasiId) {
+            /** @var Konsultasi|null $activeKonsultasi */
             $activeKonsultasi = $this->getConsultationsQuery()->with(['client', 'pesan'])->find($this->activeKonsultasiId);
             if ($activeKonsultasi) {
                 $messages = $activeKonsultasi->pesan;
@@ -219,6 +222,9 @@ class ApotekerChatPortal extends Component
         ]);
     }
 
+    /**
+     * @return Builder<Konsultasi>
+     */
     private function getConsultationsQuery(): Builder
     {
         $query = Konsultasi::with(['client', 'pengguna']);

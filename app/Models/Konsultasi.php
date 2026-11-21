@@ -67,27 +67,44 @@ class Konsultasi extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Client, $this>
+     */
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class, 'id_client', 'id_client');
     }
 
+    /**
+     * @return BelongsTo<Pengguna, $this>
+     */
     public function pengguna(): BelongsTo
     {
         return $this->belongsTo(Pengguna::class, 'id_pengguna', 'id_pengguna');
     }
 
+    /**
+     * @return HasMany<PesanKonsultasi, $this>
+     */
     public function pesan(): HasMany
     {
         return $this->hasMany(PesanKonsultasi::class, 'id_konsultasi', 'id_konsultasi')
             ->orderBy('dibuat_pada', 'asc');
     }
 
+    /**
+     * @param  Builder<Konsultasi>  $query
+     * @return Builder<Konsultasi>
+     */
     public function scopeAktif(Builder $query): Builder
     {
         return $query->where('status', 'aktif');
     }
 
+    /**
+     * @param  Builder<Konsultasi>  $query
+     * @return Builder<Konsultasi>
+     */
     public function scopeForClient(Builder $query, string $clientId): Builder
     {
         return $query->where('id_client', $clientId);
