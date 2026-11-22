@@ -431,7 +431,7 @@
                                         <button
                                             type="button"
                                             @click="branchSlide = (branchSlide - 1 + totalBranches) % totalBranches"
-                                            class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 flex items-center justify-center transition cursor-pointer shadow-2xs"
+                                            class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-emerald-300 active:scale-90 active:bg-emerald-50 flex items-center justify-center transition-all duration-150 cursor-pointer shadow-2xs"
                                             aria-label="Cabang sebelumnya"
                                         >
                                             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
@@ -439,7 +439,7 @@
                                         <button
                                             type="button"
                                             @click="branchSlide = (branchSlide + 1) % totalBranches"
-                                            class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 flex items-center justify-center transition cursor-pointer shadow-2xs"
+                                            class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-emerald-300 active:scale-90 active:bg-emerald-50 flex items-center justify-center transition-all duration-150 cursor-pointer shadow-2xs"
                                             aria-label="Cabang berikutnya"
                                         >
                                             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
@@ -603,11 +603,75 @@
             <div
                 x-data="{
                     activeStep: 0,
+                    autoSlideTimer: null,
+                    resumeTimer: null,
+                    isPaused: false,
+                    init() {
+                        if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+                            this.startAutoSlide();
+                        }
+                    },
+                    startAutoSlide() {
+                        this.stopAutoSlide();
+                        this.autoSlideTimer = setInterval(() => {
+                            if (!this.isPaused && window.innerWidth < 1024) {
+                                this.nextSlide(true);
+                            }
+                        }, 4500);
+                    },
+                    stopAutoSlide() {
+                        if (this.autoSlideTimer) {
+                            clearInterval(this.autoSlideTimer);
+                            this.autoSlideTimer = null;
+                        }
+                    },
+                    pause() {
+                        this.isPaused = true;
+                        if (this.resumeTimer) clearTimeout(this.resumeTimer);
+                    },
+                    resume() {
+                        this.isPaused = false;
+                    },
+                    resumeDebounced() {
+                        if (this.resumeTimer) clearTimeout(this.resumeTimer);
+                        this.resumeTimer = setTimeout(() => {
+                            this.isPaused = false;
+                        }, 4500);
+                    },
+                    nextSlide(isAuto = false) {
+                        if (!this.$refs.stepTrack) return;
+                        if (this.activeStep >= 3) {
+                            this.$refs.stepTrack.scrollTo({ left: 0, behavior: 'smooth' });
+                        } else {
+                            const cardWidth = this.$refs.stepTrack.firstElementChild ? this.$refs.stepTrack.firstElementChild.offsetWidth + 14 : 290;
+                            this.$refs.stepTrack.scrollBy({ left: cardWidth, behavior: 'smooth' });
+                        }
+                    },
+                    prevSlide() {
+                        if (!this.$refs.stepTrack) return;
+                        if (this.activeStep <= 0) {
+                            const maxScroll = this.$refs.stepTrack.scrollWidth;
+                            this.$refs.stepTrack.scrollTo({ left: maxScroll, behavior: 'smooth' });
+                        } else {
+                            const cardWidth = this.$refs.stepTrack.firstElementChild ? this.$refs.stepTrack.firstElementChild.offsetWidth + 14 : 290;
+                            this.$refs.stepTrack.scrollBy({ left: -cardWidth, behavior: 'smooth' });
+                        }
+                    },
                     scrollLeft() {
-                        this.$refs.stepTrack.scrollBy({ left: -300, behavior: 'smooth' });
+                        this.pause();
+                        this.prevSlide();
+                        this.resumeDebounced();
                     },
                     scrollRight() {
-                        this.$refs.stepTrack.scrollBy({ left: 300, behavior: 'smooth' });
+                        this.pause();
+                        this.nextSlide(false);
+                        this.resumeDebounced();
+                    },
+                    goTo(i) {
+                        this.pause();
+                        const cardWidth = this.$refs.stepTrack.firstElementChild ? this.$refs.stepTrack.firstElementChild.offsetWidth + 14 : 290;
+                        this.$refs.stepTrack.scrollTo({ left: i * cardWidth, behavior: 'smooth' });
+                        this.resumeDebounced();
                     },
                     updateActive(e) {
                         const el = e.target;
@@ -621,7 +685,11 @@
                 <div
                     x-ref="stepTrack"
                     @scroll.debounce.50ms="updateActive($event)"
-                    class="flex lg:grid overflow-x-auto lg:overflow-visible snap-x snap-mandatory lg:grid-cols-4 gap-3.5 sm:gap-5 no-scrollbar pb-2 lg:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0"
+                    @mouseenter="pause()"
+                    @mouseleave="resume()"
+                    @touchstart.passive="pause()"
+                    @touchend.passive="resumeDebounced()"
+                    class="flex lg:grid overflow-x-auto lg:overflow-visible scroll-smooth snap-x snap-mandatory lg:grid-cols-4 gap-3.5 sm:gap-5 no-scrollbar pb-2 lg:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0"
                 >
                     <!-- Langkah 1: Pilih Cabang -->
                     <div class="w-[80vw] max-w-[285px] sm:w-[310px] lg:w-auto lg:max-w-none shrink-0 snap-start p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
@@ -710,7 +778,7 @@
                         <template x-for="i in [0, 1, 2, 3]" :key="i">
                             <button
                                 type="button"
-                                @click="$refs.stepTrack.scrollTo({ left: i * ($refs.stepTrack.firstElementChild.offsetWidth + 14), behavior: 'smooth' })"
+                                @click="goTo(i)"
                                 :class="activeStep === i ? 'w-5 bg-emerald-700' : 'w-2 bg-slate-300 hover:bg-slate-400'"
                                 class="h-1.5 rounded-full transition-all duration-200 cursor-pointer"
                                 :aria-label="'Buka langkah ' + (i + 1)"
@@ -722,7 +790,7 @@
                         <button
                             type="button"
                             @click="scrollLeft()"
-                            class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 flex items-center justify-center transition cursor-pointer shadow-2xs"
+                            class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-emerald-300 active:scale-90 active:bg-emerald-50 flex items-center justify-center transition-all duration-150 cursor-pointer shadow-2xs"
                             aria-label="Langkah sebelumnya"
                         >
                             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
@@ -730,7 +798,7 @@
                         <button
                             type="button"
                             @click="scrollRight()"
-                            class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 flex items-center justify-center transition cursor-pointer shadow-2xs"
+                            class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-emerald-300 active:scale-90 active:bg-emerald-50 flex items-center justify-center transition-all duration-150 cursor-pointer shadow-2xs"
                             aria-label="Langkah berikutnya"
                         >
                             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
@@ -756,11 +824,75 @@
                 <div
                     x-data="{
                         activeStandar: 0,
+                        autoSlideTimer: null,
+                        resumeTimer: null,
+                        isPaused: false,
+                        init() {
+                            if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+                                this.startAutoSlide();
+                            }
+                        },
+                        startAutoSlide() {
+                            this.stopAutoSlide();
+                            this.autoSlideTimer = setInterval(() => {
+                                if (!this.isPaused && window.innerWidth < 1024) {
+                                    this.nextSlide(true);
+                                }
+                            }, 4500);
+                        },
+                        stopAutoSlide() {
+                            if (this.autoSlideTimer) {
+                                clearInterval(this.autoSlideTimer);
+                                this.autoSlideTimer = null;
+                            }
+                        },
+                        pause() {
+                            this.isPaused = true;
+                            if (this.resumeTimer) clearTimeout(this.resumeTimer);
+                        },
+                        resume() {
+                            this.isPaused = false;
+                        },
+                        resumeDebounced() {
+                            if (this.resumeTimer) clearTimeout(this.resumeTimer);
+                            this.resumeTimer = setTimeout(() => {
+                                this.isPaused = false;
+                            }, 4500);
+                        },
+                        nextSlide(isAuto = false) {
+                            if (!this.$refs.standarTrack) return;
+                            if (this.activeStandar >= 3) {
+                                this.$refs.standarTrack.scrollTo({ left: 0, behavior: 'smooth' });
+                            } else {
+                                const cardWidth = this.$refs.standarTrack.firstElementChild ? this.$refs.standarTrack.firstElementChild.offsetWidth + 14 : 290;
+                                this.$refs.standarTrack.scrollBy({ left: cardWidth, behavior: 'smooth' });
+                            }
+                        },
+                        prevSlide() {
+                            if (!this.$refs.standarTrack) return;
+                            if (this.activeStandar <= 0) {
+                                const maxScroll = this.$refs.standarTrack.scrollWidth;
+                                this.$refs.standarTrack.scrollTo({ left: maxScroll, behavior: 'smooth' });
+                            } else {
+                                const cardWidth = this.$refs.standarTrack.firstElementChild ? this.$refs.standarTrack.firstElementChild.offsetWidth + 14 : 290;
+                                this.$refs.standarTrack.scrollBy({ left: -cardWidth, behavior: 'smooth' });
+                            }
+                        },
                         scrollLeft() {
-                            this.$refs.standarTrack.scrollBy({ left: -300, behavior: 'smooth' });
+                            this.pause();
+                            this.prevSlide();
+                            this.resumeDebounced();
                         },
                         scrollRight() {
-                            this.$refs.standarTrack.scrollBy({ left: 300, behavior: 'smooth' });
+                            this.pause();
+                            this.nextSlide(false);
+                            this.resumeDebounced();
+                        },
+                        goTo(i) {
+                            this.pause();
+                            const cardWidth = this.$refs.standarTrack.firstElementChild ? this.$refs.standarTrack.firstElementChild.offsetWidth + 14 : 290;
+                            this.$refs.standarTrack.scrollTo({ left: i * cardWidth, behavior: 'smooth' });
+                            this.resumeDebounced();
                         },
                         updateActive(e) {
                             const el = e.target;
@@ -774,7 +906,11 @@
                     <div
                         x-ref="standarTrack"
                         @scroll.debounce.50ms="updateActive($event)"
-                        class="flex lg:grid overflow-x-auto lg:overflow-visible snap-x snap-mandatory lg:grid-cols-4 gap-3.5 sm:gap-5 text-slate-900 no-scrollbar pb-2 lg:pb-0 -mx-1 px-1 sm:mx-0 sm:px-0"
+                        @mouseenter="pause()"
+                        @mouseleave="resume()"
+                        @touchstart.passive="pause()"
+                        @touchend.passive="resumeDebounced()"
+                        class="flex lg:grid overflow-x-auto lg:overflow-visible scroll-smooth snap-x snap-mandatory lg:grid-cols-4 gap-3.5 sm:gap-5 text-slate-900 no-scrollbar pb-2 lg:pb-0 -mx-1 px-1 sm:mx-0 sm:px-0"
                     >
                     <!-- 1. Telaah Resep Dokter -->
                     <div class="w-[80vw] max-w-[285px] sm:w-[310px] lg:w-auto lg:max-w-none shrink-0 snap-start p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
@@ -856,7 +992,7 @@
                         <template x-for="i in [0, 1, 2, 3]" :key="i">
                             <button
                                 type="button"
-                                @click="$refs.standarTrack.scrollTo({ left: i * ($refs.standarTrack.firstElementChild.offsetWidth + 14), behavior: 'smooth' })"
+                                @click="goTo(i)"
                                 :class="activeStandar === i ? 'w-5 bg-emerald-700' : 'w-2 bg-slate-300 hover:bg-slate-400'"
                                 class="h-1.5 rounded-full transition-all duration-200 cursor-pointer"
                                 :aria-label="'Buka standar ' + (i + 1)"
@@ -868,7 +1004,7 @@
                         <button
                             type="button"
                             @click="scrollLeft()"
-                            class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 flex items-center justify-center transition cursor-pointer shadow-2xs"
+                            class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-emerald-300 active:scale-90 active:bg-emerald-50 flex items-center justify-center transition-all duration-150 cursor-pointer shadow-2xs"
                             aria-label="Standar sebelumnya"
                         >
                             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
@@ -876,7 +1012,7 @@
                         <button
                             type="button"
                             @click="scrollRight()"
-                            class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 flex items-center justify-center transition cursor-pointer shadow-2xs"
+                            class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-emerald-300 active:scale-90 active:bg-emerald-50 flex items-center justify-center transition-all duration-150 cursor-pointer shadow-2xs"
                             aria-label="Standar berikutnya"
                         >
                             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
