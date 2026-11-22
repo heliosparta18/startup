@@ -75,6 +75,10 @@ Route::post('/cabang/switch', function (Request $request) {
         'active_client' => $branch,
     ]);
 
+    if ($request->filled('redirect_to')) {
+        return redirect($request->input('redirect_to'));
+    }
+
     return back();
 })->name('branch.switch');
 

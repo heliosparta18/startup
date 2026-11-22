@@ -262,7 +262,26 @@
 
                     <!-- Kartu Ringkasan Apotek Cabang Resmi -->
                     <div class="lg:col-span-5 flex justify-start lg:justify-center w-full">
-                        <div class="w-full lg:max-w-md bg-white rounded-xl sm:rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-sm space-y-3">
+                        <div
+                            x-data="{
+                                branchSlide: 0,
+                                totalBranches: 2,
+                                touchStartX: 0,
+                                touchEndX: 0,
+                                handleTouchStart(e) {
+                                    this.touchStartX = e.changedTouches[0].screenX;
+                                },
+                                handleTouchEnd(e) {
+                                    this.touchEndX = e.changedTouches[0].screenX;
+                                    if (this.touchStartX - this.touchEndX > 45) {
+                                        this.branchSlide = (this.branchSlide + 1) % this.totalBranches;
+                                    } else if (this.touchEndX - this.touchStartX > 45) {
+                                        this.branchSlide = (this.branchSlide - 1 + this.totalBranches) % this.totalBranches;
+                                    }
+                                }
+                            }"
+                            class="w-full lg:max-w-md bg-white rounded-xl sm:rounded-2xl border border-slate-200/90 p-3.5 sm:p-5 shadow-sm space-y-3"
+                        >
                             <!-- Header Kartu -->
                             <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100">
                                 <div class="flex items-center gap-2 min-w-0">
@@ -277,14 +296,166 @@
                                 </span>
                             </div>
 
-                            <!-- Daftar Cabang Resmi -->
-                            <div class="space-y-2">
+                            <!-- SLIDER CABANG: Tampilan Khusus Mobile & Tablet (Kompak & Geser Manual) -->
+                            <div class="lg:hidden space-y-2.5">
+                                <div class="flex items-center justify-between gap-1 pb-0.5">
+                                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Pilih Lokasi Apotek:</span>
+                                    <div class="inline-flex p-0.5 rounded-lg bg-slate-100 border border-slate-200/70">
+                                        <button
+                                            type="button"
+                                            @click="branchSlide = 0"
+                                            :class="branchSlide === 0 ? 'bg-white text-emerald-800 shadow-2xs font-bold border border-emerald-200/60' : 'text-slate-600 hover:text-slate-900 font-medium'"
+                                            class="px-2.5 py-1 rounded-md text-[10px] transition cursor-pointer min-h-[28px]"
+                                        >
+                                            Banyuwangi Kota
+                                        </button>
+                                        <button
+                                            type="button"
+                                            @click="branchSlide = 1"
+                                            :class="branchSlide === 1 ? 'bg-white text-emerald-800 shadow-2xs font-bold border border-emerald-200/60' : 'text-slate-600 hover:text-slate-900 font-medium'"
+                                            class="px-2.5 py-1 rounded-md text-[10px] transition cursor-pointer min-h-[28px]"
+                                        >
+                                            Rogojampi
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Viewport Slide Touch (Mobile) -->
+                                <div
+                                    class="relative overflow-hidden rounded-xl border border-slate-200/80 bg-white"
+                                    @touchstart.passive="handleTouchStart($event)"
+                                    @touchend.passive="handleTouchEnd($event)"
+                                >
+                                    <div
+                                        class="flex transition-transform duration-300 ease-out"
+                                        :style="'transform: translateX(-' + (branchSlide * 100) + '%)'"
+                                    >
+                                        <!-- Slide 0: Banyuwangi Kota (Default) -->
+                                        <div class="w-full shrink-0 p-1">
+                                            @auth
+                                                <form method="POST" action="{{ route('branch.switch') }}">
+                                                    @csrf
+                                                    <input type="hidden" name="branch" value="banyuwangi-kota">
+                                                    <input type="hidden" name="redirect_to" value="{{ route('dashboard') }}">
+                                                    <button type="submit" class="w-full text-left p-3 rounded-xl bg-slate-50 hover:border-emerald-300 hover:bg-emerald-50/40 transition cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 min-h-[44px]">
+                                                        <div class="flex items-center justify-between gap-2">
+                                                            <div class="flex items-center gap-1.5 min-w-0 flex-wrap">
+                                                                <h4 class="font-bold text-[13px] text-slate-900">Cabang Banyuwangi Kota</h4>
+                                                                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 shrink-0">24 Jam</span>
+                                                            </div>
+                                                            <span class="shrink-0 whitespace-nowrap inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold text-emerald-700 bg-white border border-emerald-200 shadow-2xs">
+                                                                Masuk &rarr;
+                                                            </span>
+                                                        </div>
+                                                        <p class="text-[11px] text-slate-600 mt-1">Jl. Ahmad Yani No. 45, Banyuwangi</p>
+                                                        <p class="text-[11px] text-emerald-700 font-medium mt-0.5">Apoteker: apt. Bambang, S.Farm</p>
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <a href="{{ route('customer.catalog', ['client' => 'banyuwangi-kota']) }}" class="block p-3 rounded-xl bg-slate-50 hover:border-emerald-300 hover:bg-emerald-50/40 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 min-h-[44px]">
+                                                    <div class="flex items-center justify-between gap-2">
+                                                        <div class="flex items-center gap-1.5 min-w-0 flex-wrap">
+                                                            <h4 class="font-bold text-[13px] text-slate-900">Cabang Banyuwangi Kota</h4>
+                                                            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 shrink-0">24 Jam</span>
+                                                        </div>
+                                                        <span class="shrink-0 whitespace-nowrap inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold text-emerald-700 bg-white border border-emerald-200 shadow-2xs">
+                                                            Masuk &rarr;
+                                                        </span>
+                                                    </div>
+                                                    <p class="text-[11px] text-slate-600 mt-1">Jl. Ahmad Yani No. 45, Banyuwangi</p>
+                                                    <p class="text-[11px] text-emerald-700 font-medium mt-0.5">Apoteker: apt. Bambang, S.Farm</p>
+                                                </a>
+                                            @endauth
+                                        </div>
+
+                                        <!-- Slide 1: Rogojampi -->
+                                        <div class="w-full shrink-0 p-1">
+                                            @auth
+                                                <form method="POST" action="{{ route('branch.switch') }}">
+                                                    @csrf
+                                                    <input type="hidden" name="branch" value="rogojampi">
+                                                    <input type="hidden" name="redirect_to" value="{{ route('dashboard') }}">
+                                                    <button type="submit" class="w-full text-left p-3 rounded-xl bg-slate-50 hover:border-emerald-300 hover:bg-emerald-50/40 transition cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 min-h-[44px]">
+                                                        <div class="flex items-center justify-between gap-2">
+                                                            <div class="flex items-center gap-1.5 min-w-0 flex-wrap">
+                                                                <h4 class="font-bold text-[13px] text-slate-900">Cabang Rogojampi</h4>
+                                                                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-200 text-slate-700 shrink-0">07:00 - 22:00</span>
+                                                            </div>
+                                                            <span class="shrink-0 whitespace-nowrap inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold text-emerald-700 bg-white border border-emerald-200 shadow-2xs">
+                                                                Masuk &rarr;
+                                                            </span>
+                                                        </div>
+                                                        <p class="text-[11px] text-slate-600 mt-1">Jl. Raya Rogojampi No. 12, Rogojampi</p>
+                                                        <p class="text-[11px] text-emerald-700 font-medium mt-0.5">Apoteker: apt. Dinda Ayu Shafira, S.Farm.</p>
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <a href="{{ route('customer.catalog', ['client' => 'rogojampi']) }}" class="block p-3 rounded-xl bg-slate-50 hover:border-emerald-300 hover:bg-emerald-50/40 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 min-h-[44px]">
+                                                    <div class="flex items-center justify-between gap-2">
+                                                        <div class="flex items-center gap-1.5 min-w-0 flex-wrap">
+                                                            <h4 class="font-bold text-[13px] text-slate-900">Cabang Rogojampi</h4>
+                                                            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-200 text-slate-700 shrink-0">07:00 - 22:00</span>
+                                                        </div>
+                                                        <span class="shrink-0 whitespace-nowrap inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold text-emerald-700 bg-white border border-emerald-200 shadow-2xs">
+                                                            Masuk &rarr;
+                                                        </span>
+                                                    </div>
+                                                    <p class="text-[11px] text-slate-600 mt-1">Jl. Raya Rogojampi No. 12, Rogojampi</p>
+                                                    <p class="text-[11px] text-emerald-700 font-medium mt-0.5">Apoteker: apt. Dinda Ayu Shafira, S.Farm.</p>
+                                                </a>
+                                            @endauth
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Dots & Navigasi Mobile -->
+                                <div class="flex items-center justify-between pt-0.5 px-0.5">
+                                    <div class="flex items-center gap-1.5">
+                                        <button
+                                            type="button"
+                                            @click="branchSlide = 0"
+                                            :class="branchSlide === 0 ? 'w-5 bg-emerald-700' : 'w-2 bg-slate-300 hover:bg-slate-400'"
+                                            class="h-1.5 rounded-full transition-all duration-200 cursor-pointer"
+                                            aria-label="Pilih Cabang 1: Banyuwangi Kota"
+                                        ></button>
+                                        <button
+                                            type="button"
+                                            @click="branchSlide = 1"
+                                            :class="branchSlide === 1 ? 'w-5 bg-emerald-700' : 'w-2 bg-slate-300 hover:bg-slate-400'"
+                                            class="h-1.5 rounded-full transition-all duration-200 cursor-pointer"
+                                            aria-label="Pilih Cabang 2: Rogojampi"
+                                        ></button>
+                                        <span class="text-[10px] text-slate-500 font-semibold ml-1" x-text="(branchSlide + 1) + '/2 cabang'"></span>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <button
+                                            type="button"
+                                            @click="branchSlide = (branchSlide - 1 + totalBranches) % totalBranches"
+                                            class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 flex items-center justify-center transition cursor-pointer shadow-2xs"
+                                            aria-label="Cabang sebelumnya"
+                                        >
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            @click="branchSlide = (branchSlide + 1) % totalBranches"
+                                            class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 flex items-center justify-center transition cursor-pointer shadow-2xs"
+                                            aria-label="Cabang berikutnya"
+                                        >
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- DAFTAR CABANG: Tampilan Tetap untuk Desktop Layar Lebar (hidden lg:block) -->
+                            <div class="hidden lg:block space-y-2">
                                 <div class="flex items-center justify-between">
                                     <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500 block">Lokasi Pelayanan Obat Resmi:</span>
                                 </div>
 
                                 <div class="space-y-2">
-                                    <!-- Cabang 1: Banyuwangi Kota -->
+                                    <!-- Cabang 1: Banyuwangi Kota (Persis Asli) -->
                                     @auth
                                         <form method="POST" action="{{ route('branch.switch') }}">
                                             @csrf
@@ -320,7 +491,7 @@
                                         </a>
                                     @endauth
 
-                                    <!-- Cabang 2: Rogojampi -->
+                                    <!-- Cabang 2: Rogojampi (Persis Asli) -->
                                     @auth
                                         <form method="POST" action="{{ route('branch.switch') }}">
                                             @csrf
@@ -370,9 +541,38 @@
                     </div>
                 </div>
 
-                <!-- Dukungan Resmi Pemerintah & Regulasi (Statis & Responsif) -->
-                <div class="mt-5 sm:mt-8 rounded-xl sm:rounded-2xl bg-white/80 border border-slate-200/80 p-3 sm:p-4 shadow-2xs">
-                    <div class="flex flex-wrap items-center justify-start gap-x-3.5 sm:gap-x-6 gap-y-1.5 sm:gap-y-2 text-[11px] sm:text-xs font-medium text-slate-600">
+                <!-- Dukungan Resmi Pemerintah & Regulasi (Slide di Mobile/Tablet, Statis di Layar Lebar) -->
+                <div class="mt-5 sm:mt-8 rounded-xl sm:rounded-2xl bg-white/80 border border-slate-200/80 p-2.5 sm:p-4 shadow-2xs overflow-hidden">
+                    <!-- Versi Mobile/Tablet: Running Marquee Slide Rapi -->
+                    <div class="lg:hidden flex items-center gap-2 overflow-hidden">
+                        <span class="text-[9px] font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-100/90 px-2 py-1 rounded-md shrink-0 whitespace-nowrap">
+                            Lisensi:
+                        </span>
+                        <div class="relative overflow-hidden w-full flex-1">
+                            <div class="absolute inset-y-0 left-0 w-3 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none"></div>
+                            <div class="absolute inset-y-0 right-0 w-3 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
+                            <div class="animate-marquee flex items-center gap-3 text-[11px] font-semibold text-slate-700 whitespace-nowrap">
+                                <span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>Kemenkes RI</span>
+                                <span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>BPOM</span>
+                                <span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>Ikatan Apoteker Indonesia (IAI)</span>
+                                <span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>Standar CDOB</span>
+                                <span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>Dinkes Banyuwangi</span>
+                                <span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>QRIS Bank Indonesia</span>
+                                <span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>Mitra PBF Resmi</span>
+                                <!-- Duplikasi untuk perputaran continuous seamless -->
+                                <span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>Kemenkes RI</span>
+                                <span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>BPOM</span>
+                                <span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>Ikatan Apoteker Indonesia (IAI)</span>
+                                <span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>Standar CDOB</span>
+                                <span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>Dinkes Banyuwangi</span>
+                                <span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>QRIS Bank Indonesia</span>
+                                <span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>Mitra PBF Resmi</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Versi Desktop Layar Lebar: 100% Persis Asli Tanpa Berubah -->
+                    <div class="hidden lg:flex flex-wrap items-center justify-start gap-x-3.5 sm:gap-x-6 gap-y-1.5 sm:gap-y-2 text-[11px] sm:text-xs font-medium text-slate-600">
                         <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/90 px-2.5 py-0.5 sm:py-1 rounded-md shrink-0">
                             Lisensi &amp; Regulasi:
                         </span>
@@ -400,84 +600,141 @@
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
-                <!-- Langkah 1: Pilih Cabang -->
-                <div class="p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center gap-2.5 sm:block mb-1.5 sm:mb-0">
-                            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-emerald-50 text-emerald-800 font-extrabold text-[11px] sm:text-xs flex items-center justify-center sm:mb-3.5 border border-emerald-200/60 shrink-0">
-                                01
+            <div
+                x-data="{
+                    activeStep: 0,
+                    scrollLeft() {
+                        this.$refs.stepTrack.scrollBy({ left: -300, behavior: 'smooth' });
+                    },
+                    scrollRight() {
+                        this.$refs.stepTrack.scrollBy({ left: 300, behavior: 'smooth' });
+                    },
+                    updateActive(e) {
+                        const el = e.target;
+                        const cardWidth = el.firstElementChild ? el.firstElementChild.offsetWidth + 14 : 280;
+                        this.activeStep = Math.min(3, Math.max(0, Math.round(el.scrollLeft / cardWidth)));
+                    }
+                }"
+                class="relative"
+            >
+                <!-- Track Slide: Flex Horizontal di Mobile/Tablet (< lg), Grid 4 Kolom di Layar Lebar (>= lg) -->
+                <div
+                    x-ref="stepTrack"
+                    @scroll.debounce.50ms="updateActive($event)"
+                    class="flex lg:grid overflow-x-auto lg:overflow-visible snap-x snap-mandatory lg:grid-cols-4 gap-3.5 sm:gap-5 no-scrollbar pb-2 lg:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0"
+                >
+                    <!-- Langkah 1: Pilih Cabang -->
+                    <div class="w-[80vw] max-w-[285px] sm:w-[310px] lg:w-auto lg:max-w-none shrink-0 snap-start p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-2.5 sm:block mb-1.5 sm:mb-0">
+                                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-emerald-50 text-emerald-800 font-extrabold text-[11px] sm:text-xs flex items-center justify-center sm:mb-3.5 border border-emerald-200/60 shrink-0">
+                                    01
+                                </div>
+                                <h3 class="font-bold text-slate-900 text-[13px] sm:text-sm sm:mb-1.5">Pilih Cabang Apotek</h3>
                             </div>
-                            <h3 class="font-bold text-slate-900 text-[13px] sm:text-sm sm:mb-1.5">Pilih Cabang Apotek</h3>
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                Pilih lokasi apotek terdekat di Banyuwangi Kota atau Rogojampi untuk mengecek ketersediaan stok fisik obat secara akurat.
+                            </p>
                         </div>
-                        <p class="text-xs text-slate-500 leading-relaxed">
-                            Pilih lokasi apotek terdekat di Banyuwangi Kota atau Rogojampi untuk mengecek ketersediaan stok fisik obat secara akurat.
-                        </p>
+                        <div class="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-100">
+                            <span class="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 sm:py-1 rounded-md inline-block">
+                                Stok Fisik Tersedia
+                            </span>
+                        </div>
                     </div>
-                    <div class="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-100">
-                        <span class="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 sm:py-1 rounded-md inline-block">
-                            Stok Fisik Tersedia
-                        </span>
+
+                    <!-- Langkah 2: Cari Obat / Unggah Resep -->
+                    <div class="w-[80vw] max-w-[285px] sm:w-[310px] lg:w-auto lg:max-w-none shrink-0 snap-start p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-2.5 sm:block mb-1.5 sm:mb-0">
+                                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-emerald-50 text-emerald-800 font-extrabold text-[11px] sm:text-xs flex items-center justify-center sm:mb-3.5 border border-emerald-200/60 shrink-0">
+                                    02
+                                </div>
+                                <h3 class="font-bold text-slate-900 text-[13px] sm:text-sm sm:mb-1.5">Pilih Obat / Unggah Resep</h3>
+                            </div>
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                Pilih obat bebas langsung atau unggah foto resep dokter untuk ditelaah keabsahan dan dosisnya oleh apoteker.
+                            </p>
+                        </div>
+                        <div class="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-100">
+                            <span class="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 sm:py-1 rounded-md inline-block">
+                                Pemeriksaan Apoteker
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Langkah 3: Bayar dengan QRIS -->
+                    <div class="w-[80vw] max-w-[285px] sm:w-[310px] lg:w-auto lg:max-w-none shrink-0 snap-start p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-2.5 sm:block mb-1.5 sm:mb-0">
+                                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-emerald-50 text-emerald-800 font-extrabold text-[11px] sm:text-xs flex items-center justify-center sm:mb-3.5 border border-emerald-200/60 shrink-0">
+                                    03
+                                </div>
+                                <h3 class="font-bold text-slate-900 text-[13px] sm:text-sm sm:mb-1.5">Pembayaran Mudah</h3>
+                            </div>
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                Selesaikan transaksi praktis menggunakan pembayaran digital QRIS instan atau bayar tunai di kasir apotek.
+                            </p>
+                        </div>
+                        <div class="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-100">
+                            <span class="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 sm:py-1 rounded-md inline-block">
+                                QRIS &amp; Tunai Kasir
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Langkah 4: Obat Diserahkan -->
+                    <div class="w-[80vw] max-w-[285px] sm:w-[310px] lg:w-auto lg:max-w-none shrink-0 snap-start p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-2.5 sm:block mb-1.5 sm:mb-0">
+                                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-emerald-50 text-emerald-800 font-extrabold text-[11px] sm:text-xs flex items-center justify-center sm:mb-3.5 border border-emerald-200/60 shrink-0">
+                                    04
+                                </div>
+                                <h3 class="font-bold text-slate-900 text-[13px] sm:text-sm sm:mb-1.5">Obat Siap Diserahkan</h3>
+                            </div>
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                Obat disiapkan rapi lengkap dengan etiket aturan pakai resmi dan siap diambil di apotek atau dikirim ke lokasi Anda.
+                            </p>
+                        </div>
+                        <div class="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-100">
+                            <span class="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 sm:py-1 rounded-md inline-block">
+                                Etiket Resmi SIPA
+                            </span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Langkah 2: Cari Obat / Unggah Resep -->
-                <div class="p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center gap-2.5 sm:block mb-1.5 sm:mb-0">
-                            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-emerald-50 text-emerald-800 font-extrabold text-[11px] sm:text-xs flex items-center justify-center sm:mb-3.5 border border-emerald-200/60 shrink-0">
-                                02
-                            </div>
-                            <h3 class="font-bold text-slate-900 text-[13px] sm:text-sm sm:mb-1.5">Pilih Obat / Unggah Resep</h3>
-                        </div>
-                        <p class="text-xs text-slate-500 leading-relaxed">
-                            Pilih obat bebas langsung atau unggah foto resep dokter untuk ditelaah keabsahan dan dosisnya oleh apoteker.
-                        </p>
+                <!-- Navigasi & Dots khusus Layar Mobile / Tablet (< lg) -->
+                <div class="flex lg:hidden items-center justify-between pt-2.5 px-1">
+                    <div class="flex items-center gap-1.5">
+                        <template x-for="i in [0, 1, 2, 3]" :key="i">
+                            <button
+                                type="button"
+                                @click="$refs.stepTrack.scrollTo({ left: i * ($refs.stepTrack.firstElementChild.offsetWidth + 14), behavior: 'smooth' })"
+                                :class="activeStep === i ? 'w-5 bg-emerald-700' : 'w-2 bg-slate-300 hover:bg-slate-400'"
+                                class="h-1.5 rounded-full transition-all duration-200 cursor-pointer"
+                                :aria-label="'Buka langkah ' + (i + 1)"
+                            ></button>
+                        </template>
+                        <span class="text-[11px] text-slate-500 font-semibold ml-1.5" x-text="(activeStep + 1) + '/4 langkah'"></span>
                     </div>
-                    <div class="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-100">
-                        <span class="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 sm:py-1 rounded-md inline-block">
-                            Pemeriksaan Apoteker
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Langkah 3: Bayar dengan QRIS -->
-                <div class="p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center gap-2.5 sm:block mb-1.5 sm:mb-0">
-                            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-emerald-50 text-emerald-800 font-extrabold text-[11px] sm:text-xs flex items-center justify-center sm:mb-3.5 border border-emerald-200/60 shrink-0">
-                                03
-                            </div>
-                            <h3 class="font-bold text-slate-900 text-[13px] sm:text-sm sm:mb-1.5">Pembayaran Mudah</h3>
-                        </div>
-                        <p class="text-xs text-slate-500 leading-relaxed">
-                            Selesaikan transaksi praktis menggunakan pembayaran digital QRIS instan atau bayar tunai di kasir apotek.
-                        </p>
-                    </div>
-                    <div class="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-100">
-                        <span class="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 sm:py-1 rounded-md inline-block">
-                            QRIS &amp; Tunai Kasir
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Langkah 4: Obat Diserahkan -->
-                <div class="p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center gap-2.5 sm:block mb-1.5 sm:mb-0">
-                            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-emerald-50 text-emerald-800 font-extrabold text-[11px] sm:text-xs flex items-center justify-center sm:mb-3.5 border border-emerald-200/60 shrink-0">
-                                04
-                            </div>
-                            <h3 class="font-bold text-slate-900 text-[13px] sm:text-sm sm:mb-1.5">Obat Siap Diserahkan</h3>
-                        </div>
-                        <p class="text-xs text-slate-500 leading-relaxed">
-                            Obat disiapkan rapi lengkap dengan etiket aturan pakai resmi dan siap diambil di apotek atau dikirim ke lokasi Anda.
-                        </p>
-                    </div>
-                    <div class="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-100">
-                        <span class="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 sm:py-1 rounded-md inline-block">
-                            Etiket Resmi SIPA
-                        </span>
+                    <div class="flex items-center gap-1">
+                        <button
+                            type="button"
+                            @click="scrollLeft()"
+                            class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 flex items-center justify-center transition cursor-pointer shadow-2xs"
+                            aria-label="Langkah sebelumnya"
+                        >
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                        </button>
+                        <button
+                            type="button"
+                            @click="scrollRight()"
+                            class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 flex items-center justify-center transition cursor-pointer shadow-2xs"
+                            aria-label="Langkah berikutnya"
+                        >
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -496,9 +753,31 @@
                     </p>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 text-slate-900">
+                <div
+                    x-data="{
+                        activeStandar: 0,
+                        scrollLeft() {
+                            this.$refs.standarTrack.scrollBy({ left: -300, behavior: 'smooth' });
+                        },
+                        scrollRight() {
+                            this.$refs.standarTrack.scrollBy({ left: 300, behavior: 'smooth' });
+                        },
+                        updateActive(e) {
+                            const el = e.target;
+                            const cardWidth = el.firstElementChild ? el.firstElementChild.offsetWidth + 14 : 280;
+                            this.activeStandar = Math.min(3, Math.max(0, Math.round(el.scrollLeft / cardWidth)));
+                        }
+                    }"
+                    class="relative"
+                >
+                    <!-- Track Slide: Flex Horizontal di Mobile/Tablet (< lg), Grid 4 Kolom di Layar Lebar (>= lg) -->
+                    <div
+                        x-ref="standarTrack"
+                        @scroll.debounce.50ms="updateActive($event)"
+                        class="flex lg:grid overflow-x-auto lg:overflow-visible snap-x snap-mandatory lg:grid-cols-4 gap-3.5 sm:gap-5 text-slate-900 no-scrollbar pb-2 lg:pb-0 -mx-1 px-1 sm:mx-0 sm:px-0"
+                    >
                     <!-- 1. Telaah Resep Dokter -->
-                    <div class="p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
+                    <div class="w-[80vw] max-w-[285px] sm:w-[310px] lg:w-auto lg:max-w-none shrink-0 snap-start p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
                         <div>
                             <div class="flex items-center gap-2 sm:block mb-1.5 sm:mb-0">
                                 <svg class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-700 sm:mb-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -516,7 +795,7 @@
                     </div>
 
                     <!-- 2. Jaminan 100% Obat Asli -->
-                    <div class="p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
+                    <div class="w-[80vw] max-w-[285px] sm:w-[310px] lg:w-auto lg:max-w-none shrink-0 snap-start p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
                         <div>
                             <div class="flex items-center gap-2 sm:block mb-1.5 sm:mb-0">
                                 <svg class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-700 sm:mb-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -534,7 +813,7 @@
                     </div>
 
                     <!-- 3. Penyimpanan Standar Rantai Dingin -->
-                    <div class="p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
+                    <div class="w-[80vw] max-w-[285px] sm:w-[310px] lg:w-auto lg:max-w-none shrink-0 snap-start p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
                         <div>
                             <div class="flex items-center gap-2 sm:block mb-1.5 sm:mb-0">
                                 <svg class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-700 sm:mb-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -552,7 +831,7 @@
                     </div>
 
                     <!-- 4. Pelayanan & Pengambilan Fleksibel -->
-                    <div class="p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
+                    <div class="w-[80vw] max-w-[285px] sm:w-[310px] lg:w-auto lg:max-w-none shrink-0 snap-start p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
                         <div>
                             <div class="flex items-center gap-2 sm:block mb-1.5 sm:mb-0">
                                 <svg class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-700 sm:mb-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -569,6 +848,41 @@
                             Pengemasan Privasi Aman
                         </div>
                     </div>
+                </div>
+
+                <!-- Navigasi & Dots khusus Layar Mobile / Tablet (< lg) -->
+                <div class="flex lg:hidden items-center justify-between pt-2.5 px-1">
+                    <div class="flex items-center gap-1.5">
+                        <template x-for="i in [0, 1, 2, 3]" :key="i">
+                            <button
+                                type="button"
+                                @click="$refs.standarTrack.scrollTo({ left: i * ($refs.standarTrack.firstElementChild.offsetWidth + 14), behavior: 'smooth' })"
+                                :class="activeStandar === i ? 'w-5 bg-emerald-700' : 'w-2 bg-slate-300 hover:bg-slate-400'"
+                                class="h-1.5 rounded-full transition-all duration-200 cursor-pointer"
+                                :aria-label="'Buka standar ' + (i + 1)"
+                            ></button>
+                        </template>
+                        <span class="text-[11px] text-slate-500 font-semibold ml-1.5" x-text="(activeStandar + 1) + '/4 standar'"></span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button
+                            type="button"
+                            @click="scrollLeft()"
+                            class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 flex items-center justify-center transition cursor-pointer shadow-2xs"
+                            aria-label="Standar sebelumnya"
+                        >
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                        </button>
+                        <button
+                            type="button"
+                            @click="scrollRight()"
+                            class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 flex items-center justify-center transition cursor-pointer shadow-2xs"
+                            aria-label="Standar berikutnya"
+                        >
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                        </button>
+                    </div>
+                </div>
                 </div>
             </div>
         </section>
