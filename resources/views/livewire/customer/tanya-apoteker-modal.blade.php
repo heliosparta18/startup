@@ -151,7 +151,7 @@
                 </div>
             @else
                 <!-- Active Chat Room (wire:poll for real-time messages) -->
-                <div wire:poll.3s="render" class="flex flex-col h-[82dvh] sm:h-[620px]">
+                <div wire:poll.3s class="flex flex-col h-[82dvh] sm:h-[620px]">
                     <!-- Header Chat Room -->
                     <div class="px-4 py-3 bg-emerald-700 text-white flex items-center justify-between shrink-0 shadow-xs">
                         <div class="flex items-center gap-3 min-w-0">
