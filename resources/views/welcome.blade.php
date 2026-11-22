@@ -260,34 +260,18 @@
 
                     </div>
 
-                    <!-- Kartu Ringkasan Apotek Cabang Resmi -->
+                    <!-- Kartu Ringkasan Apotek Cabang Resmi & Slider 3-in-1 Mobile -->
                     <div class="lg:col-span-5 flex justify-start lg:justify-center w-full">
-                        <div
-                            x-data="{
-                                branchSlide: 0,
-                                totalBranches: 2,
-                                touchStartX: 0,
-                                touchEndX: 0,
-                                handleTouchStart(e) {
-                                    this.touchStartX = e.changedTouches[0].screenX;
-                                },
-                                handleTouchEnd(e) {
-                                    this.touchEndX = e.changedTouches[0].screenX;
-                                    if (this.touchStartX - this.touchEndX > 45) {
-                                        this.branchSlide = (this.branchSlide + 1) % this.totalBranches;
-                                    } else if (this.touchEndX - this.touchStartX > 45) {
-                                        this.branchSlide = (this.branchSlide - 1 + this.totalBranches) % this.totalBranches;
-                                    }
-                                }
-                            }"
-                            class="w-full lg:max-w-md bg-white rounded-xl sm:rounded-2xl border border-slate-200/90 p-3.5 sm:p-5 shadow-sm space-y-3"
-                        >
+                        <!-- ========================================================================= -->
+                        <!-- DESKTOP (>= lg): Tampilan Asli 100% Tidak Berubah (Daftar Cabang Statis)   -->
+                        <!-- ========================================================================= -->
+                        <div class="hidden lg:block w-full max-w-md bg-white rounded-2xl border border-slate-200/90 p-5 shadow-sm space-y-3">
                             <!-- Header Kartu -->
                             <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100">
                                 <div class="flex items-center gap-2 min-w-0">
-                                    <img src="/logo.png" alt="OmniPharma" class="h-7 w-7 sm:h-8 sm:w-8 object-contain shrink-0">
+                                    <img src="/logo.png" alt="OmniPharma" class="h-8 w-8 object-contain shrink-0">
                                     <div class="min-w-0">
-                                        <h3 class="font-extrabold text-slate-900 text-[13px] sm:text-sm leading-tight truncate">Apotek OmniPharma</h3>
+                                        <h3 class="font-extrabold text-slate-900 text-sm leading-tight truncate">Apotek OmniPharma</h3>
                                         <p class="text-[11px] text-slate-500 leading-tight truncate">Jaringan Apotek Berlisensi Resmi</p>
                                     </div>
                                 </div>
@@ -296,166 +280,14 @@
                                 </span>
                             </div>
 
-                            <!-- SLIDER CABANG: Tampilan Khusus Mobile & Tablet (Kompak & Geser Manual) -->
-                            <div class="lg:hidden space-y-2.5">
-                                <div class="flex items-center justify-between gap-1 pb-0.5">
-                                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Pilih Lokasi Apotek:</span>
-                                    <div class="inline-flex p-0.5 rounded-lg bg-slate-100 border border-slate-200/70">
-                                        <button
-                                            type="button"
-                                            @click="branchSlide = 0"
-                                            :class="branchSlide === 0 ? 'bg-white text-emerald-800 shadow-2xs font-bold border border-emerald-200/60' : 'text-slate-600 hover:text-slate-900 font-medium'"
-                                            class="px-2.5 py-1 rounded-md text-[10px] transition cursor-pointer min-h-[28px]"
-                                        >
-                                            Banyuwangi Kota
-                                        </button>
-                                        <button
-                                            type="button"
-                                            @click="branchSlide = 1"
-                                            :class="branchSlide === 1 ? 'bg-white text-emerald-800 shadow-2xs font-bold border border-emerald-200/60' : 'text-slate-600 hover:text-slate-900 font-medium'"
-                                            class="px-2.5 py-1 rounded-md text-[10px] transition cursor-pointer min-h-[28px]"
-                                        >
-                                            Rogojampi
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- Viewport Slide Touch (Mobile) -->
-                                <div
-                                    class="relative overflow-hidden rounded-xl border border-slate-200/80 bg-white"
-                                    @touchstart.passive="handleTouchStart($event)"
-                                    @touchend.passive="handleTouchEnd($event)"
-                                >
-                                    <div
-                                        class="flex transition-transform duration-300 ease-out"
-                                        :style="'transform: translateX(-' + (branchSlide * 100) + '%)'"
-                                    >
-                                        <!-- Slide 0: Banyuwangi Kota (Default) -->
-                                        <div class="w-full shrink-0 p-1">
-                                            @auth
-                                                <form method="POST" action="{{ route('branch.switch') }}">
-                                                    @csrf
-                                                    <input type="hidden" name="branch" value="banyuwangi-kota">
-                                                    <input type="hidden" name="redirect_to" value="{{ route('dashboard') }}">
-                                                    <button type="submit" class="w-full text-left p-3 rounded-xl bg-slate-50 hover:border-emerald-300 hover:bg-emerald-50/40 transition cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 min-h-[44px]">
-                                                        <div class="flex items-center justify-between gap-2">
-                                                            <div class="flex items-center gap-1.5 min-w-0 flex-wrap">
-                                                                <h4 class="font-bold text-[13px] text-slate-900">Cabang Banyuwangi Kota</h4>
-                                                                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 shrink-0">24 Jam</span>
-                                                            </div>
-                                                            <span class="shrink-0 whitespace-nowrap inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold text-emerald-700 bg-white border border-emerald-200 shadow-2xs">
-                                                                Masuk &rarr;
-                                                            </span>
-                                                        </div>
-                                                        <p class="text-[11px] text-slate-600 mt-1">Jl. Ahmad Yani No. 45, Banyuwangi</p>
-                                                        <p class="text-[11px] text-emerald-700 font-medium mt-0.5">Apoteker: apt. Bambang, S.Farm</p>
-                                                    </button>
-                                                </form>
-                                            @else
-                                                <a href="{{ route('customer.catalog', ['client' => 'banyuwangi-kota']) }}" class="block p-3 rounded-xl bg-slate-50 hover:border-emerald-300 hover:bg-emerald-50/40 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 min-h-[44px]">
-                                                    <div class="flex items-center justify-between gap-2">
-                                                        <div class="flex items-center gap-1.5 min-w-0 flex-wrap">
-                                                            <h4 class="font-bold text-[13px] text-slate-900">Cabang Banyuwangi Kota</h4>
-                                                            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 shrink-0">24 Jam</span>
-                                                        </div>
-                                                        <span class="shrink-0 whitespace-nowrap inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold text-emerald-700 bg-white border border-emerald-200 shadow-2xs">
-                                                            Masuk &rarr;
-                                                        </span>
-                                                    </div>
-                                                    <p class="text-[11px] text-slate-600 mt-1">Jl. Ahmad Yani No. 45, Banyuwangi</p>
-                                                    <p class="text-[11px] text-emerald-700 font-medium mt-0.5">Apoteker: apt. Bambang, S.Farm</p>
-                                                </a>
-                                            @endauth
-                                        </div>
-
-                                        <!-- Slide 1: Rogojampi -->
-                                        <div class="w-full shrink-0 p-1">
-                                            @auth
-                                                <form method="POST" action="{{ route('branch.switch') }}">
-                                                    @csrf
-                                                    <input type="hidden" name="branch" value="rogojampi">
-                                                    <input type="hidden" name="redirect_to" value="{{ route('dashboard') }}">
-                                                    <button type="submit" class="w-full text-left p-3 rounded-xl bg-slate-50 hover:border-emerald-300 hover:bg-emerald-50/40 transition cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 min-h-[44px]">
-                                                        <div class="flex items-center justify-between gap-2">
-                                                            <div class="flex items-center gap-1.5 min-w-0 flex-wrap">
-                                                                <h4 class="font-bold text-[13px] text-slate-900">Cabang Rogojampi</h4>
-                                                                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-200 text-slate-700 shrink-0">07:00 - 22:00</span>
-                                                            </div>
-                                                            <span class="shrink-0 whitespace-nowrap inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold text-emerald-700 bg-white border border-emerald-200 shadow-2xs">
-                                                                Masuk &rarr;
-                                                            </span>
-                                                        </div>
-                                                        <p class="text-[11px] text-slate-600 mt-1">Jl. Raya Rogojampi No. 12, Rogojampi</p>
-                                                        <p class="text-[11px] text-emerald-700 font-medium mt-0.5">Apoteker: apt. Dinda Ayu Shafira, S.Farm.</p>
-                                                    </button>
-                                                </form>
-                                            @else
-                                                <a href="{{ route('customer.catalog', ['client' => 'rogojampi']) }}" class="block p-3 rounded-xl bg-slate-50 hover:border-emerald-300 hover:bg-emerald-50/40 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 min-h-[44px]">
-                                                    <div class="flex items-center justify-between gap-2">
-                                                        <div class="flex items-center gap-1.5 min-w-0 flex-wrap">
-                                                            <h4 class="font-bold text-[13px] text-slate-900">Cabang Rogojampi</h4>
-                                                            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-200 text-slate-700 shrink-0">07:00 - 22:00</span>
-                                                        </div>
-                                                        <span class="shrink-0 whitespace-nowrap inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold text-emerald-700 bg-white border border-emerald-200 shadow-2xs">
-                                                            Masuk &rarr;
-                                                        </span>
-                                                    </div>
-                                                    <p class="text-[11px] text-slate-600 mt-1">Jl. Raya Rogojampi No. 12, Rogojampi</p>
-                                                    <p class="text-[11px] text-emerald-700 font-medium mt-0.5">Apoteker: apt. Dinda Ayu Shafira, S.Farm.</p>
-                                                </a>
-                                            @endauth
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Dots & Navigasi Mobile -->
-                                <div class="flex items-center justify-between pt-0.5 px-0.5">
-                                    <div class="flex items-center gap-1.5">
-                                        <button
-                                            type="button"
-                                            @click="branchSlide = 0"
-                                            :class="branchSlide === 0 ? 'w-5 bg-emerald-700' : 'w-2 bg-slate-300 hover:bg-slate-400'"
-                                            class="h-1.5 rounded-full transition-all duration-200 cursor-pointer"
-                                            aria-label="Pilih Cabang 1: Banyuwangi Kota"
-                                        ></button>
-                                        <button
-                                            type="button"
-                                            @click="branchSlide = 1"
-                                            :class="branchSlide === 1 ? 'w-5 bg-emerald-700' : 'w-2 bg-slate-300 hover:bg-slate-400'"
-                                            class="h-1.5 rounded-full transition-all duration-200 cursor-pointer"
-                                            aria-label="Pilih Cabang 2: Rogojampi"
-                                        ></button>
-                                        <span class="text-[10px] text-slate-500 font-semibold ml-1" x-text="(branchSlide + 1) + '/2 cabang'"></span>
-                                    </div>
-                                    <div class="flex items-center gap-1">
-                                        <button
-                                            type="button"
-                                            @click="branchSlide = (branchSlide - 1 + totalBranches) % totalBranches"
-                                            class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-emerald-300 active:scale-90 active:bg-emerald-50 flex items-center justify-center transition-all duration-150 cursor-pointer shadow-2xs"
-                                            aria-label="Cabang sebelumnya"
-                                        >
-                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
-                                        </button>
-                                        <button
-                                            type="button"
-                                            @click="branchSlide = (branchSlide + 1) % totalBranches"
-                                            class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-emerald-300 active:scale-90 active:bg-emerald-50 flex items-center justify-center transition-all duration-150 cursor-pointer shadow-2xs"
-                                            aria-label="Cabang berikutnya"
-                                        >
-                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- DAFTAR CABANG: Tampilan Tetap untuk Desktop Layar Lebar (hidden lg:block) -->
-                            <div class="hidden lg:block space-y-2">
+                            <!-- Daftar Cabang Desktop -->
+                            <div class="space-y-2">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500 block">Lokasi Pelayanan Obat Resmi:</span>
+                                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">Lokasi Pelayanan Obat Resmi:</span>
                                 </div>
 
                                 <div class="space-y-2">
-                                    <!-- Cabang 1: Banyuwangi Kota (Persis Asli) -->
+                                    <!-- Cabang 1: Banyuwangi Kota -->
                                     @auth
                                         <form method="POST" action="{{ route('branch.switch') }}">
                                             @csrf
@@ -464,7 +296,7 @@
                                             <button type="submit" class="w-full text-left p-3 rounded-xl bg-slate-50 border border-slate-200/80 hover:border-emerald-300 hover:bg-emerald-50/30 transition cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 min-h-[44px]">
                                                 <div class="flex items-center justify-between gap-2">
                                                     <div class="flex items-center gap-1.5 min-w-0 flex-wrap">
-                                                        <h4 class="font-bold text-[13px] sm:text-xs text-slate-900">Cabang Banyuwangi Kota</h4>
+                                                        <h4 class="font-bold text-xs text-slate-900">Cabang Banyuwangi Kota</h4>
                                                         <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 shrink-0">24 Jam</span>
                                                     </div>
                                                     <span class="shrink-0 whitespace-nowrap inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold text-emerald-700 bg-white border border-emerald-200">
@@ -479,7 +311,7 @@
                                         <a href="{{ route('login') }}" class="block p-3 rounded-xl bg-slate-50 border border-slate-200/80 hover:border-emerald-300 hover:bg-emerald-50/30 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 min-h-[44px]">
                                             <div class="flex items-center justify-between gap-2">
                                                 <div class="flex items-center gap-1.5 min-w-0 flex-wrap">
-                                                    <h4 class="font-bold text-[13px] sm:text-xs text-slate-900">Cabang Banyuwangi Kota</h4>
+                                                    <h4 class="font-bold text-xs text-slate-900">Cabang Banyuwangi Kota</h4>
                                                     <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 shrink-0">24 Jam</span>
                                                 </div>
                                                 <span class="shrink-0 whitespace-nowrap inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold text-emerald-700 bg-white border border-emerald-200">
@@ -491,7 +323,7 @@
                                         </a>
                                     @endauth
 
-                                    <!-- Cabang 2: Rogojampi (Persis Asli) -->
+                                    <!-- Cabang 2: Rogojampi -->
                                     @auth
                                         <form method="POST" action="{{ route('branch.switch') }}">
                                             @csrf
@@ -500,7 +332,7 @@
                                             <button type="submit" class="w-full text-left p-3 rounded-xl bg-slate-50 border border-slate-200/80 hover:border-emerald-300 hover:bg-emerald-50/30 transition cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 min-h-[44px]">
                                                 <div class="flex items-center justify-between gap-2">
                                                     <div class="flex items-center gap-1.5 min-w-0 flex-wrap">
-                                                        <h4 class="font-bold text-[13px] sm:text-xs text-slate-900">Cabang Rogojampi</h4>
+                                                        <h4 class="font-bold text-xs text-slate-900">Cabang Rogojampi</h4>
                                                         <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-200 text-slate-700 shrink-0">07:00 - 22:00</span>
                                                     </div>
                                                     <span class="shrink-0 whitespace-nowrap inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold text-emerald-700 bg-white border border-emerald-200">
@@ -515,7 +347,7 @@
                                         <a href="{{ route('login') }}" class="block p-3 rounded-xl bg-slate-50 border border-slate-200/80 hover:border-emerald-300 hover:bg-emerald-50/30 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 min-h-[44px]">
                                             <div class="flex items-center justify-between gap-2">
                                                 <div class="flex items-center gap-1.5 min-w-0 flex-wrap">
-                                                    <h4 class="font-bold text-[13px] sm:text-xs text-slate-900">Cabang Rogojampi</h4>
+                                                    <h4 class="font-bold text-xs text-slate-900">Cabang Rogojampi</h4>
                                                     <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-200 text-slate-700 shrink-0">07:00 - 22:00</span>
                                                 </div>
                                                 <span class="shrink-0 whitespace-nowrap inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold text-emerald-700 bg-white border border-emerald-200">
@@ -529,13 +361,400 @@
                                 </div>
                             </div>
 
-                            <!-- Footer Mini Info -->
+                            <!-- Footer Mini Info Desktop -->
                             <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2 text-[11px] text-slate-500">
                                 <span class="flex items-center gap-1">
                                     <svg class="w-3.5 h-3.5 text-emerald-700 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
                                     Obat 100% Asli
                                 </span>
                                 <span>Distributor Resmi PBF</span>
+                            </div>
+                        </div>
+
+                        <!-- ========================================================================= -->
+                        <!-- MOBILE & TABLET (< lg): KOTAK 3-IN-1 SLIDE (Cabang, Alur, Standar)         -->
+                        <!-- Pengguna HP tidak perlu scroll ke bawah, cukup geser/swipe antar slide     -->
+                        <!-- ========================================================================= -->
+                        <div
+                            x-data="{
+                                mainSlide: 0,
+                                totalSlides: 3,
+                                autoTimer: null,
+                                resumeTimer: null,
+                                isPaused: false,
+                                touchStartX: 0,
+                                touchEndX: 0,
+                                init() {
+                                    this.startAuto();
+                                },
+                                startAuto() {
+                                    this.stopAuto();
+                                    this.autoTimer = setInterval(() => {
+                                        if (!this.isPaused) {
+                                            this.mainSlide = (this.mainSlide + 1) % this.totalSlides;
+                                        }
+                                    }, 4500);
+                                },
+                                stopAuto() {
+                                    if (this.autoTimer) {
+                                        clearInterval(this.autoTimer);
+                                        this.autoTimer = null;
+                                    }
+                                },
+                                pause() {
+                                    this.isPaused = true;
+                                    if (this.resumeTimer) clearTimeout(this.resumeTimer);
+                                },
+                                resume() {
+                                    this.isPaused = false;
+                                },
+                                resumeDebounced() {
+                                    if (this.resumeTimer) clearTimeout(this.resumeTimer);
+                                    this.resumeTimer = setTimeout(() => {
+                                        this.isPaused = false;
+                                    }, 4500);
+                                },
+                                prev() {
+                                    this.pause();
+                                    this.mainSlide = (this.mainSlide - 1 + this.totalSlides) % this.totalSlides;
+                                    this.resumeDebounced();
+                                },
+                                next() {
+                                    this.pause();
+                                    this.mainSlide = (this.mainSlide + 1) % this.totalSlides;
+                                    this.resumeDebounced();
+                                },
+                                goTo(i) {
+                                    this.pause();
+                                    this.mainSlide = i;
+                                    this.resumeDebounced();
+                                },
+                                handleTouchStart(e) {
+                                    this.pause();
+                                    this.touchStartX = e.changedTouches[0].screenX;
+                                },
+                                handleTouchEnd(e) {
+                                    this.touchEndX = e.changedTouches[0].screenX;
+                                    if (this.touchStartX - this.touchEndX > 40) {
+                                        this.mainSlide = (this.mainSlide + 1) % this.totalSlides;
+                                    } else if (this.touchEndX - this.touchStartX > 40) {
+                                        this.mainSlide = (this.mainSlide - 1 + this.totalSlides) % this.totalSlides;
+                                    }
+                                    this.resumeDebounced();
+                                }
+                            }"
+                            @mouseenter="pause()"
+                            @mouseleave="resume()"
+                            @touchstart.passive="handleTouchStart($event)"
+                            @touchend.passive="handleTouchEnd($event)"
+                            class="lg:hidden w-full bg-white rounded-2xl border border-slate-200/90 p-3.5 sm:p-4 shadow-sm space-y-3 relative overflow-hidden"
+                        >
+                            <!-- Switcher 3 Kotak Tab Navigasi -->
+                            <div class="grid grid-cols-3 gap-1 p-1 rounded-xl bg-slate-100 border border-slate-200/70 text-center">
+                                <button
+                                    type="button"
+                                    @click="goTo(0)"
+                                    :class="mainSlide === 0 ? 'bg-white text-emerald-800 shadow-2xs font-extrabold border border-emerald-200/70' : 'text-slate-600 hover:text-slate-900 font-semibold'"
+                                    class="py-1 px-1 rounded-lg text-[10.5px] sm:text-xs transition-all cursor-pointer truncate min-h-[30px]"
+                                >
+                                    1. Cabang
+                                </button>
+                                <button
+                                    type="button"
+                                    @click="goTo(1)"
+                                    :class="mainSlide === 1 ? 'bg-white text-emerald-800 shadow-2xs font-extrabold border border-emerald-200/70' : 'text-slate-600 hover:text-slate-900 font-semibold'"
+                                    class="py-1 px-1 rounded-lg text-[10.5px] sm:text-xs transition-all cursor-pointer truncate min-h-[30px]"
+                                >
+                                    2. Alur Pasien
+                                </button>
+                                <button
+                                    type="button"
+                                    @click="goTo(2)"
+                                    :class="mainSlide === 2 ? 'bg-white text-emerald-800 shadow-2xs font-extrabold border border-emerald-200/70' : 'text-slate-600 hover:text-slate-900 font-semibold'"
+                                    class="py-1 px-1 rounded-lg text-[10.5px] sm:text-xs transition-all cursor-pointer truncate min-h-[30px]"
+                                >
+                                    3. Standar
+                                </button>
+                            </div>
+
+                            <!-- Viewport Slide (Geser 3 Kotak) -->
+                            <div class="relative overflow-hidden">
+                                <div
+                                    class="flex transition-transform duration-300 ease-out"
+                                    :style="'transform: translateX(-' + (mainSlide * 100) + '%)'"
+                                >
+                                    <!-- ========================================================= -->
+                                    <!-- KOTAK 1: CABANG APOTEK                                    -->
+                                    <!-- ========================================================= -->
+                                    <div class="w-full shrink-0 space-y-2.5">
+                                        <div class="flex items-center justify-between pb-1.5 border-b border-slate-100">
+                                            <div class="flex items-center gap-2 min-w-0">
+                                                <img src="/logo.png" alt="OmniPharma" class="h-6 w-6 object-contain shrink-0">
+                                                <div>
+                                                    <h3 class="font-extrabold text-slate-900 text-xs leading-tight">Pilih Cabang Apotek Resmi</h3>
+                                                    <p class="text-[10px] text-slate-500 leading-tight">Akses stok fisik &amp; farmasi berizin</p>
+                                                </div>
+                                            </div>
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200/70 shrink-0">
+                                                2 Cabang
+                                            </span>
+                                        </div>
+
+                                        <!-- Cabang 1: Banyuwangi Kota -->
+                                        @auth
+                                            <form method="POST" action="{{ route('branch.switch') }}">
+                                                @csrf
+                                                <input type="hidden" name="branch" value="banyuwangi-kota">
+                                                <input type="hidden" name="redirect_to" value="{{ route('dashboard') }}">
+                                                <button type="submit" class="w-full text-left p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 hover:border-emerald-300 hover:bg-emerald-50/40 transition cursor-pointer min-h-[44px]">
+                                                    <div class="flex items-center justify-between gap-2">
+                                                        <div class="flex items-center gap-1.5 min-w-0">
+                                                            <h4 class="font-bold text-xs text-slate-900 truncate">Cabang Banyuwangi Kota</h4>
+                                                            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 shrink-0">24 Jam</span>
+                                                        </div>
+                                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold text-emerald-700 bg-white border border-emerald-200 shadow-2xs shrink-0">
+                                                            Masuk &rarr;
+                                                        </span>
+                                                    </div>
+                                                    <p class="text-[10px] text-slate-500 mt-0.5 truncate">Jl. Ahmad Yani No. 45, Banyuwangi</p>
+                                                    <p class="text-[10px] text-emerald-700 font-medium truncate">Apoteker: apt. Bambang, S.Farm</p>
+                                                </button>
+                                            </form>
+                                        @else
+                                            <a href="{{ route('customer.catalog', ['client' => 'banyuwangi-kota']) }}" class="block p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 hover:border-emerald-300 hover:bg-emerald-50/40 transition min-h-[44px]">
+                                                <div class="flex items-center justify-between gap-2">
+                                                    <div class="flex items-center gap-1.5 min-w-0">
+                                                        <h4 class="font-bold text-xs text-slate-900 truncate">Cabang Banyuwangi Kota</h4>
+                                                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 shrink-0">24 Jam</span>
+                                                    </div>
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold text-emerald-700 bg-white border border-emerald-200 shadow-2xs shrink-0">
+                                                        Masuk &rarr;
+                                                    </span>
+                                                </div>
+                                                <p class="text-[10px] text-slate-500 mt-0.5 truncate">Jl. Ahmad Yani No. 45, Banyuwangi</p>
+                                                <p class="text-[10px] text-emerald-700 font-medium truncate">Apoteker: apt. Bambang, S.Farm</p>
+                                            </a>
+                                        @endauth
+
+                                        <!-- Cabang 2: Rogojampi -->
+                                        @auth
+                                            <form method="POST" action="{{ route('branch.switch') }}">
+                                                @csrf
+                                                <input type="hidden" name="branch" value="rogojampi">
+                                                <input type="hidden" name="redirect_to" value="{{ route('dashboard') }}">
+                                                <button type="submit" class="w-full text-left p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 hover:border-emerald-300 hover:bg-emerald-50/40 transition cursor-pointer min-h-[44px]">
+                                                    <div class="flex items-center justify-between gap-2">
+                                                        <div class="flex items-center gap-1.5 min-w-0">
+                                                            <h4 class="font-bold text-xs text-slate-900 truncate">Cabang Rogojampi</h4>
+                                                            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-200 text-slate-700 shrink-0">07:00 - 22:00</span>
+                                                        </div>
+                                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold text-emerald-700 bg-white border border-emerald-200 shadow-2xs shrink-0">
+                                                            Masuk &rarr;
+                                                        </span>
+                                                    </div>
+                                                    <p class="text-[10px] text-slate-500 mt-0.5 truncate">Jl. Raya Rogojampi No. 12, Rogojampi</p>
+                                                    <p class="text-[10px] text-emerald-700 font-medium truncate">Apoteker: apt. Dinda Ayu Shafira, S.Farm.</p>
+                                                </button>
+                                            </form>
+                                        @else
+                                            <a href="{{ route('customer.catalog', ['client' => 'rogojampi']) }}" class="block p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 hover:border-emerald-300 hover:bg-emerald-50/40 transition min-h-[44px]">
+                                                <div class="flex items-center justify-between gap-2">
+                                                    <div class="flex items-center gap-1.5 min-w-0">
+                                                        <h4 class="font-bold text-xs text-slate-900 truncate">Cabang Rogojampi</h4>
+                                                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-200 text-slate-700 shrink-0">07:00 - 22:00</span>
+                                                    </div>
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold text-emerald-700 bg-white border border-emerald-200 shadow-2xs shrink-0">
+                                                        Masuk &rarr;
+                                                    </span>
+                                                </div>
+                                                <p class="text-[10px] text-slate-500 mt-0.5 truncate">Jl. Raya Rogojampi No. 12, Rogojampi</p>
+                                                <p class="text-[10px] text-emerald-700 font-medium truncate">Apoteker: apt. Dinda Ayu Shafira, S.Farm.</p>
+                                            </a>
+                                        @endauth
+                                    </div>
+
+                                    <!-- ========================================================= -->
+                                    <!-- KOTAK 2: ALUR PELAYANAN PASIEN                            -->
+                                    <!-- ========================================================= -->
+                                    <div class="w-full shrink-0 space-y-2">
+                                        <div class="flex items-center justify-between pb-1.5 border-b border-slate-100">
+                                            <div>
+                                                <h3 class="font-extrabold text-slate-900 text-xs leading-tight">Alur Pelayanan Pasien</h3>
+                                                <p class="text-[10px] text-slate-500 leading-tight">4 Langkah Tebus &amp; Beli Obat Praktis</p>
+                                            </div>
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200/70 shrink-0">
+                                                4 Langkah
+                                            </span>
+                                        </div>
+
+                                        <!-- Grid 2x2 Langkah Kompak -->
+                                        <div class="grid grid-cols-2 gap-2 text-left">
+                                            <!-- 01 -->
+                                            <div class="p-2 rounded-xl bg-slate-50 border border-slate-200/80 flex flex-col justify-between">
+                                                <div>
+                                                    <div class="flex items-center gap-1.5 mb-1">
+                                                        <span class="w-5 h-5 rounded-md bg-emerald-100 text-emerald-800 font-black text-[10px] flex items-center justify-center shrink-0">01</span>
+                                                        <h4 class="font-bold text-slate-900 text-[11px] leading-tight truncate">Pilih Cabang</h4>
+                                                    </div>
+                                                    <p class="text-[10px] text-slate-500 leading-tight line-clamp-2">Cek stok fisik di Banyuwangi atau Rogojampi.</p>
+                                                </div>
+                                                <div class="mt-1.5 pt-1 border-t border-slate-200/60">
+                                                    <span class="text-[9px] font-semibold text-emerald-700">Stok Fisik Ada</span>
+                                                </div>
+                                            </div>
+
+                                            <!-- 02 -->
+                                            <div class="p-2 rounded-xl bg-slate-50 border border-slate-200/80 flex flex-col justify-between">
+                                                <div>
+                                                    <div class="flex items-center gap-1.5 mb-1">
+                                                        <span class="w-5 h-5 rounded-md bg-emerald-100 text-emerald-800 font-black text-[10px] flex items-center justify-center shrink-0">02</span>
+                                                        <h4 class="font-bold text-slate-900 text-[11px] leading-tight truncate">Pilih / Unggah</h4>
+                                                    </div>
+                                                    <p class="text-[10px] text-slate-500 leading-tight line-clamp-2">Pilih obat atau foto resep dokter langsung.</p>
+                                                </div>
+                                                <div class="mt-1.5 pt-1 border-t border-slate-200/60">
+                                                    <span class="text-[9px] font-semibold text-emerald-700">Telaah Apoteker</span>
+                                                </div>
+                                            </div>
+
+                                            <!-- 03 -->
+                                            <div class="p-2 rounded-xl bg-slate-50 border border-slate-200/80 flex flex-col justify-between">
+                                                <div>
+                                                    <div class="flex items-center gap-1.5 mb-1">
+                                                        <span class="w-5 h-5 rounded-md bg-emerald-100 text-emerald-800 font-black text-[10px] flex items-center justify-center shrink-0">03</span>
+                                                        <h4 class="font-bold text-slate-900 text-[11px] leading-tight truncate">Bayar Mudah</h4>
+                                                    </div>
+                                                    <p class="text-[10px] text-slate-500 leading-tight line-clamp-2">Selesaikan via QRIS instan / kasir apotek.</p>
+                                                </div>
+                                                <div class="mt-1.5 pt-1 border-t border-slate-200/60">
+                                                    <span class="text-[9px] font-semibold text-emerald-700">QRIS &amp; Kasir</span>
+                                                </div>
+                                            </div>
+
+                                            <!-- 04 -->
+                                            <div class="p-2 rounded-xl bg-slate-50 border border-slate-200/80 flex flex-col justify-between">
+                                                <div>
+                                                    <div class="flex items-center gap-1.5 mb-1">
+                                                        <span class="w-5 h-5 rounded-md bg-emerald-100 text-emerald-800 font-black text-[10px] flex items-center justify-center shrink-0">04</span>
+                                                        <h4 class="font-bold text-slate-900 text-[11px] leading-tight truncate">Diserahkan</h4>
+                                                    </div>
+                                                    <p class="text-[10px] text-slate-500 leading-tight line-clamp-2">Obat beretiket resmi, ambil / diantar.</p>
+                                                </div>
+                                                <div class="mt-1.5 pt-1 border-t border-slate-200/60">
+                                                    <span class="text-[9px] font-semibold text-emerald-700">Etiket SIPA</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- ========================================================= -->
+                                    <!-- KOTAK 3: STANDAR PELAYANAN KEFARMASIAN                    -->
+                                    <!-- ========================================================= -->
+                                    <div class="w-full shrink-0 space-y-2">
+                                        <div class="flex items-center justify-between pb-1.5 border-b border-slate-100">
+                                            <div>
+                                                <h3 class="font-extrabold text-slate-900 text-xs leading-tight">Standar Pelayanan Farmasi</h3>
+                                                <p class="text-[10px] text-slate-500 leading-tight">Resmi Izin SIA &amp; Pengawasan SIPA</p>
+                                            </div>
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200/70 shrink-0">
+                                                4 Standar
+                                            </span>
+                                        </div>
+
+                                        <!-- Grid 2x2 Standar Kompak -->
+                                        <div class="grid grid-cols-2 gap-2 text-left">
+                                            <!-- 1 -->
+                                            <div class="p-2 rounded-xl bg-slate-50 border border-slate-200/80 flex flex-col justify-between">
+                                                <div>
+                                                    <div class="flex items-center gap-1.5 mb-1">
+                                                        <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                                        <h4 class="font-bold text-slate-900 text-[11px] leading-tight truncate">Telaah Resep</h4>
+                                                    </div>
+                                                    <p class="text-[10px] text-slate-500 leading-tight line-clamp-2">Pemeriksaan SIP, dosis &amp; interaksi obat.</p>
+                                                </div>
+                                                <div class="mt-1.5 pt-1 border-t border-slate-200/60">
+                                                    <span class="text-[9px] font-semibold text-emerald-700">Apoteker SIPA</span>
+                                                </div>
+                                            </div>
+
+                                            <!-- 2 -->
+                                            <div class="p-2 rounded-xl bg-slate-50 border border-slate-200/80 flex flex-col justify-between">
+                                                <div>
+                                                    <div class="flex items-center gap-1.5 mb-1">
+                                                        <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                                                        <h4 class="font-bold text-slate-900 text-[11px] leading-tight truncate">Obat Asli 100%</h4>
+                                                    </div>
+                                                    <p class="text-[10px] text-slate-500 leading-tight line-clamp-2">Distribusi resmi PBF berizin BPOM &amp; Kemenkes.</p>
+                                                </div>
+                                                <div class="mt-1.5 pt-1 border-t border-slate-200/60">
+                                                    <span class="text-[9px] font-semibold text-emerald-700">PBF Resmi BPOM</span>
+                                                </div>
+                                            </div>
+
+                                            <!-- 3 -->
+                                            <div class="p-2 rounded-xl bg-slate-50 border border-slate-200/80 flex flex-col justify-between">
+                                                <div>
+                                                    <div class="flex items-center gap-1.5 mb-1">
+                                                        <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                                                        <h4 class="font-bold text-slate-900 text-[11px] leading-tight truncate">Suhu CDOB</h4>
+                                                    </div>
+                                                    <p class="text-[10px] text-slate-500 leading-tight line-clamp-2">Kontrol suhu ruang &amp; rantai dingin agar obat stabil.</p>
+                                                </div>
+                                                <div class="mt-1.5 pt-1 border-t border-slate-200/60">
+                                                    <span class="text-[9px] font-semibold text-emerald-700">Rantai Dingin</span>
+                                                </div>
+                                            </div>
+
+                                            <!-- 4 -->
+                                            <div class="p-2 rounded-xl bg-slate-50 border border-slate-200/80 flex flex-col justify-between">
+                                                <div>
+                                                    <div class="flex items-center gap-1.5 mb-1">
+                                                        <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                                        <h4 class="font-bold text-slate-900 text-[11px] leading-tight truncate">Ambil / Antar</h4>
+                                                    </div>
+                                                    <p class="text-[10px] text-slate-500 leading-tight line-clamp-2">Ambil di apotek / diantar dengan privasi aman.</p>
+                                                </div>
+                                                <div class="mt-1.5 pt-1 border-t border-slate-200/60">
+                                                    <span class="text-[9px] font-semibold text-emerald-700">Privasi Terjaga</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Footer Mini Info & Navigasi Mobile -->
+                            <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-1 text-[11px] text-slate-500">
+                                <div class="flex items-center gap-1.5 min-w-0">
+                                    <template x-for="idx in [0, 1, 2]" :key="idx">
+                                        <button
+                                            type="button"
+                                            @click="goTo(idx)"
+                                            :class="mainSlide === idx ? 'w-5 bg-emerald-700' : 'w-2 bg-slate-300 hover:bg-slate-400'"
+                                            class="h-1.5 rounded-full transition-all duration-200 cursor-pointer shrink-0"
+                                            :aria-label="'Buka slide ' + (idx + 1)"
+                                        ></button>
+                                    </template>
+                                    <span class="text-[10px] text-slate-500 font-bold ml-0.5 truncate" x-text="mainSlide === 0 ? '1/3: Cabang Apotek' : (mainSlide === 1 ? '2/3: Alur Pasien' : '3/3: Standar Farmasi')"></span>
+                                </div>
+                                <div class="flex items-center gap-1 shrink-0">
+                                    <button
+                                        type="button"
+                                        @click="prev()"
+                                        class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-emerald-300 active:scale-90 active:bg-emerald-50 flex items-center justify-center transition-all duration-150 cursor-pointer shadow-2xs"
+                                        aria-label="Slide sebelumnya"
+                                    >
+                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        @click="next()"
+                                        class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-emerald-300 active:scale-90 active:bg-emerald-50 flex items-center justify-center transition-all duration-150 cursor-pointer shadow-2xs"
+                                        aria-label="Slide berikutnya"
+                                    >
+                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -588,8 +807,8 @@
             </div>
         </section>
 
-        <!-- PANDUAN: Alur Pelayanan Pasien di Apotek -->
-        <section id="cara-tebus" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- PANDUAN: Alur Pelayanan Pasien di Apotek (Khusus Desktop, karena Mobile sudah terintegrasi di Kotak Slide 3-in-1 di atas) -->
+        <section id="cara-tebus" class="hidden lg:block max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-left lg:text-center max-w-2xl lg:mx-auto mb-5 sm:mb-10">
                 <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700">Pelayanan Resep &amp; Obat</span>
                 <h2 class="text-xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">
@@ -808,8 +1027,8 @@
             </div>
         </section>
 
-        <!-- INFORMASI KEUNGGULAN LAYANAN APOTEK -->
-        <section id="keunggulan" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- INFORMASI KEUNGGULAN LAYANAN APOTEK (Khusus Desktop, karena Mobile sudah terintegrasi di Kotak Slide 3-in-1 di atas) -->
+        <section id="keunggulan" class="hidden lg:block max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="rounded-2xl sm:rounded-3xl bg-slate-50/80 border border-slate-200/90 p-4 sm:p-8 lg:p-10 shadow-xs relative overflow-hidden">
                 <div class="max-w-2xl mb-5 sm:mb-8">
                     <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700">Komitmen Layanan Farmasi</span>
