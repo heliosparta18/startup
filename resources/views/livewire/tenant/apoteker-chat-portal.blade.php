@@ -36,7 +36,7 @@
             x-transition:leave-end="opacity-0 scale-75 translate-y-4"
             @click.outside="$wire.closeChat()"
             class="w-full max-w-5xl h-[100dvh] sm:h-[85vh] max-h-[850px] flex flex-col md:flex-row rounded-none sm:rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden"
-            wire:poll.3s="render"
+            wire:poll.3s
         >
             <!-- Panel Kiri: Daftar Percakapan Pasien (WhatsApp Style) -->
             <div
