@@ -7,7 +7,7 @@
     'showSplash' => true,
 ])
 <!DOCTYPE html>
-<html lang="id" class="light scroll-smooth">
+<html lang="id" class="scroll-smooth overflow-x-hidden max-w-full">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -235,7 +235,7 @@
             x-transition:leave="transition-opacity ease-linear duration-200"
             x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
-            class="fixed inset-0 bg-slate-950/50 backdrop-blur-[2px]"
+            class="fixed inset-0 bg-black/55 backdrop-blur-[2px]"
             @click="mobileNav = false"
             aria-hidden="true"
         ></div>

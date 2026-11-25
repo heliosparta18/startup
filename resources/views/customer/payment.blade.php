@@ -324,10 +324,10 @@
                             src="{{ $qris['qr_image_url'] }}"
                             alt="QRIS {{ $isMidtransSandbox ? 'Midtrans Sandbox' : 'Sandbox' }}"
                             x-on:error="qrError = true"
-                            class="w-48 h-48 sm:w-52 sm:h-52 aspect-square rounded-xl shadow-xs bg-white p-2 object-contain border border-slate-200"
+                            class="w-48 h-48 sm:w-52 sm:h-52 aspect-square rounded-xl shadow-xs bg-white omni-qr-surface p-2 object-contain border border-slate-200"
                         >
                         <!-- Fallback QR SVG jika internet/QR generator eksternal offline -->
-                        <div x-show="qrError" x-cloak class="w-48 h-48 sm:w-52 sm:h-52 rounded-xl bg-white p-4 border border-slate-200 flex flex-col items-center justify-center text-slate-700">
+                        <div x-show="qrError" x-cloak class="w-48 h-48 sm:w-52 sm:h-52 rounded-xl bg-white omni-qr-surface p-4 border border-slate-200 flex flex-col items-center justify-center text-slate-700">
                             <svg class="w-24 h-24 text-slate-800 mb-2" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm10 0h2v2h-2v-2zm4 0h2v2h-2v-2zm-4 4h2v2h-2v-2zm4 0h2v2h-2v-2zm-2-2h2v2h-2v-2zm-2-4h2v2h-2v-2zm4 0h2v2h-2v-2z"/>
                             </svg>

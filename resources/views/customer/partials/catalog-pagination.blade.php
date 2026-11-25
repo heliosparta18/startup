@@ -75,7 +75,7 @@ $scrollIntoViewJsSnippet = ($scrollTo !== false)
             <div class="hidden lg:flex items-center flex-nowrap justify-end gap-1 shrink-0 max-w-full overflow-x-auto no-scrollbar">
                 {{-- Previous Page Link --}}
                 @if ($paginator->onFirstPage())
-                    <span aria-disabled="true" aria-label="{{ __('pagination.previous') }}" class="inline-flex items-center justify-center min-w-[36px] xl:min-w-[40px] min-h-[38px] xl:min-h-[40px] px-2 rounded-xl bg-slate-50 text-slate-400 border border-slate-200 cursor-not-allowed shrink-0">
+                    <span aria-disabled="true" aria-label="{{ __('pagination.previous') }}" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] px-2 rounded-xl bg-slate-50 text-slate-400 border border-slate-200 cursor-not-allowed shrink-0">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                             <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
                         </svg>
@@ -86,7 +86,7 @@ $scrollIntoViewJsSnippet = ($scrollTo !== false)
                         wire:click="previousPage('{{ $paginator->getPageName() }}')"
                         x-on:click="{{ $scrollIntoViewJsSnippet }}"
                         dusk="previousPage{{ $paginator->getPageName() == 'page' ? '' : '.' . $paginator->getPageName() }}.after"
-                        class="inline-flex items-center justify-center min-w-[36px] xl:min-w-[40px] min-h-[38px] xl:min-h-[40px] px-2 rounded-xl bg-white text-slate-700 border border-slate-200 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-300 transition-colors cursor-pointer shadow-2xs focus-visible:outline-2 focus-visible:outline-emerald-700 shrink-0"
+                        class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] px-2 rounded-xl bg-white text-slate-700 border border-slate-200 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-300 transition-colors cursor-pointer shadow-2xs focus-visible:outline-2 focus-visible:outline-emerald-700 shrink-0"
                         aria-label="{{ __('pagination.previous') }}"
                     >
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
@@ -98,7 +98,7 @@ $scrollIntoViewJsSnippet = ($scrollTo !== false)
                 {{-- Pagination Elements --}}
                 @foreach ($elements as $element)
                     @if (is_string($element))
-                        <span aria-disabled="true" class="inline-flex items-center justify-center min-w-[30px] xl:min-w-[36px] min-h-[38px] xl:min-h-[40px] px-1.5 text-xs font-semibold text-slate-500 bg-white border border-slate-200 rounded-xl select-none shrink-0">
+                        <span aria-disabled="true" class="inline-flex items-center justify-center min-w-[36px] min-h-[44px] px-2 text-xs font-semibold text-slate-500 bg-white border border-slate-200 rounded-xl select-none shrink-0">
                             {{ $element }}
                         </span>
                     @endif
@@ -107,7 +107,7 @@ $scrollIntoViewJsSnippet = ($scrollTo !== false)
                         @foreach ($element as $page => $url)
                             <span wire:key="paginator-{{ $paginator->getPageName() }}-page{{ $page }}" class="shrink-0">
                                 @if ($page == $paginator->currentPage())
-                                    <span aria-current="page" class="inline-flex items-center justify-center min-w-[36px] xl:min-w-[40px] min-h-[38px] xl:min-h-[40px] px-2 xl:px-2.5 rounded-xl bg-emerald-700 text-white border border-emerald-700 text-xs font-extrabold shadow-2xs select-none whitespace-nowrap">
+                                    <span aria-current="page" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] px-2.5 rounded-xl bg-emerald-700 text-white border border-emerald-700 text-xs font-extrabold shadow-2xs select-none whitespace-nowrap">
                                         {{ $page }}
                                     </span>
                                 @else
@@ -115,7 +115,7 @@ $scrollIntoViewJsSnippet = ($scrollTo !== false)
                                         type="button"
                                         wire:click="gotoPage({{ $page }}, '{{ $paginator->getPageName() }}')"
                                         x-on:click="{{ $scrollIntoViewJsSnippet }}"
-                                        class="inline-flex items-center justify-center min-w-[36px] xl:min-w-[40px] min-h-[38px] xl:min-h-[40px] px-2 xl:px-2.5 rounded-xl bg-white text-slate-700 border border-slate-200 text-xs font-semibold hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-300 transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-emerald-700 whitespace-nowrap"
+                                        class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] px-2.5 rounded-xl bg-white text-slate-700 border border-slate-200 text-xs font-semibold hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-300 transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-emerald-700 whitespace-nowrap"
                                         aria-label="{{ __('Go to page :page', ['page' => $page]) }}"
                                     >
                                         {{ $page }}
@@ -133,7 +133,7 @@ $scrollIntoViewJsSnippet = ($scrollTo !== false)
                         wire:click="nextPage('{{ $paginator->getPageName() }}')"
                         x-on:click="{{ $scrollIntoViewJsSnippet }}"
                         dusk="nextPage{{ $paginator->getPageName() == 'page' ? '' : '.' . $paginator->getPageName() }}.after"
-                        class="inline-flex items-center justify-center min-w-[36px] xl:min-w-[40px] min-h-[38px] xl:min-h-[40px] px-2 rounded-xl bg-white text-slate-700 border border-slate-200 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-300 transition-colors cursor-pointer shadow-2xs focus-visible:outline-2 focus-visible:outline-emerald-700 shrink-0"
+                        class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] px-2 rounded-xl bg-white text-slate-700 border border-slate-200 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-300 transition-colors cursor-pointer shadow-2xs focus-visible:outline-2 focus-visible:outline-emerald-700 shrink-0"
                         aria-label="{{ __('pagination.next') }}"
                     >
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
@@ -141,7 +141,7 @@ $scrollIntoViewJsSnippet = ($scrollTo !== false)
                         </svg>
                     </button>
                 @else
-                    <span aria-disabled="true" aria-label="{{ __('pagination.next') }}" class="inline-flex items-center justify-center min-w-[36px] xl:min-w-[40px] min-h-[38px] xl:min-h-[40px] px-2 rounded-xl bg-slate-50 text-slate-400 border border-slate-200 cursor-not-allowed shrink-0">
+                    <span aria-disabled="true" aria-label="{{ __('pagination.next') }}" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] px-2 rounded-xl bg-slate-50 text-slate-400 border border-slate-200 cursor-not-allowed shrink-0">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                             <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
                         </svg>

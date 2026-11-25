@@ -127,7 +127,7 @@
             {{-- 1. Sliding Green Circular Indicator (Layer z-5: glides over slot backgrounds, under SVG icons) --}}
             <div
                 x-ref="activeCircleIndicator"
-                class="absolute top-0 left-0 pointer-events-none rounded-full ring-2 ring-emerald-600/40 bg-emerald-50 dark:bg-emerald-950/40 dark:ring-emerald-500/50 z-5"
+                class="absolute top-0 left-0 pointer-events-none rounded-full ring-2 ring-emerald-600/40 bg-emerald-50 dark:bg-[#07291f] dark:ring-emerald-500/50 z-5"
                 :class="initialized ? 'transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)]' : 'transition-none'"
                 :style="circleStyle"
                 aria-hidden="true"
@@ -165,7 +165,7 @@
                     <div
                         x-ref="icon_{{ $loop->index }}"
                         class="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-colors duration-200 relative"
-                        :class="activeCat === '{{ $cat['name'] }}' ? 'bg-transparent' : 'bg-[#F0F7FF] dark:bg-slate-800/80 group-hover:bg-emerald-50/50'"
+                        :class="activeCat === '{{ $cat['name'] }}' ? 'bg-transparent' : 'bg-[#F0F7FF] dark:bg-[#1c1c1f] group-hover:bg-emerald-50/50 dark:group-hover:bg-[#07291f]'"
                     >
                         <img
                             src="{{ $catIcon['svg_url'] }}"
@@ -182,14 +182,14 @@
                     <div class="flex items-center gap-1 relative z-10">
                         <span
                             class="text-xs whitespace-nowrap tracking-tight transition-colors"
-                            :class="activeCat === '{{ $cat['name'] }}' ? 'font-extrabold text-emerald-700 dark:text-emerald-400' : 'font-semibold text-slate-700 dark:text-slate-300 group-hover:text-emerald-800'"
+                            :class="activeCat === '{{ $cat['name'] }}' ? 'font-extrabold text-emerald-700 dark:text-emerald-400' : 'font-semibold text-slate-700 dark:text-zinc-300 group-hover:text-emerald-800 dark:group-hover:text-emerald-300'"
                         >
                             {{ $cat['name'] }}
                         </span>
                         @if ($catCount > 0)
                             <span
                                 class="text-[10px] font-bold px-1.5 py-0.2 rounded-full transition-colors"
-                                :class="activeCat === '{{ $cat['name'] }}' ? 'bg-emerald-700 text-white dark:bg-emerald-600' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'"
+                                :class="activeCat === '{{ $cat['name'] }}' ? 'bg-emerald-700 text-white dark:bg-emerald-700' : 'bg-slate-100 text-slate-600 dark:bg-[#262626] dark:text-zinc-200'"
                             >
                                 {{ $catCount }}
                             </span>

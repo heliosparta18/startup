@@ -22,7 +22,7 @@
 >
     {{-- Translucent Backdrop Scrim --}}
     <div
-        class="fixed inset-0 bg-slate-950/45 backdrop-blur-[2px]"
+        class="fixed inset-0 bg-black/55 backdrop-blur-[2px]"
         @click="mobileNav = false"
         aria-hidden="true"
     ></div>

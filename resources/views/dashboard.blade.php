@@ -13,34 +13,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script>
-        window.omniGetTheme = function() {
-            try {
-                const saved = localStorage.getItem('omni_theme') || localStorage.getItem('theme') || localStorage.getItem('flux.appearance');
-                return saved === 'dark' ? 'dark' : 'light';
-            } catch (e) {
-                return 'light';
-            }
-        };
-        window.omniApplyTheme = function(mode) {
-            const theme = mode === 'dark' ? 'dark' : 'light';
-            document.documentElement.classList.remove('light', 'dark');
-            document.documentElement.classList.add(theme);
-            document.documentElement.style.colorScheme = theme;
-            try {
-                localStorage.setItem('omni_theme', theme);
-                localStorage.setItem('theme', theme);
-                localStorage.setItem('flux.appearance', theme);
-            } catch (e) {}
-            return theme;
-        };
-        window.omniSetTheme = function(mode) {
-            const applied = window.omniApplyTheme(mode);
-            window.dispatchEvent(new CustomEvent('omni-theme-changed', { detail: { theme: applied } }));
-            return applied;
-        };
-        window.omniApplyTheme(window.omniGetTheme());
-    </script>
+    @include('partials.omni-theme-script')
     <style>
         [x-cloak] { display: none !important; }
     </style>
@@ -869,7 +842,7 @@
                             type="button"
                             @click="prevSlide()"
                             aria-label="Banner sebelumnya"
-                            class="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-slate-900 shadow-md border border-slate-200 flex items-center justify-center transition-all opacity-90 lg:opacity-0 lg:group-hover:opacity-100 focus:opacity-100 cursor-pointer focus-visible:outline-2 focus-visible:outline-emerald-700"
+                            class="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white/90 hover:bg-white dark:bg-[#1c1c1f]/90 dark:hover:bg-[#262626] text-slate-900 dark:text-zinc-50 shadow-md border border-slate-200 dark:border-zinc-500 flex items-center justify-center transition-all opacity-90 lg:opacity-0 lg:group-hover:opacity-100 focus:opacity-100 cursor-pointer focus-visible:outline-2 focus-visible:outline-emerald-700"
                         >
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
@@ -880,7 +853,7 @@
                             type="button"
                             @click="nextSlide()"
                             aria-label="Banner berikutnya"
-                            class="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-slate-900 shadow-md border border-slate-200 flex items-center justify-center transition-all opacity-90 lg:opacity-0 lg:group-hover:opacity-100 focus:opacity-100 cursor-pointer focus-visible:outline-2 focus-visible:outline-emerald-700"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white/90 hover:bg-white dark:bg-[#1c1c1f]/90 dark:hover:bg-[#262626] text-slate-900 dark:text-zinc-50 shadow-md border border-slate-200 dark:border-zinc-500 flex items-center justify-center transition-all opacity-90 lg:opacity-0 lg:group-hover:opacity-100 focus:opacity-100 cursor-pointer focus-visible:outline-2 focus-visible:outline-emerald-700"
                         >
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
@@ -888,7 +861,7 @@
                         </button>
 
                         {{-- Pagination Dots --}}
-                        <div class="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-slate-900/45 backdrop-blur-xs">
+                        <div class="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-black/55 backdrop-blur-xs">
                             @foreach ($dashboardBanners as $idx => $banner)
                                 <button
                                     type="button"
@@ -1016,7 +989,7 @@
             <div
                 x-show="modalUnggah"
                 x-cloak
-                class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto"
+                class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-xs overflow-y-auto"
                 @keydown.escape.window="modalUnggah = false"
                 role="dialog"
                 aria-modal="true"

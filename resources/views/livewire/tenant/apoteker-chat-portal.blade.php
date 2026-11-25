@@ -20,7 +20,7 @@
     <div
         x-show="isOpen"
         x-cloak
-        class="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 bg-slate-900/60 backdrop-blur-xs"
+        class="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-xs"
         role="dialog"
         aria-modal="true"
         aria-labelledby="apoteker-portal-chat-title"
@@ -119,7 +119,7 @@
                                         {{ ucfirst($item->status) }}
                                     </span>
                                     @if($unreadCount > 0)
-                                        <span class="px-1.5 py-0.2 rounded-full bg-emerald-600 text-white text-[9px] font-bold">
+                                        <span class="px-1.5 py-0.2 rounded-full bg-emerald-700 text-white text-[9px] font-bold">
                                             {{ $unreadCount }} baru
                                         </span>
                                     @endif

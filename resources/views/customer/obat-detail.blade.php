@@ -88,7 +88,7 @@
                                 <span>Obat Keras (Wajib Resep)</span>
                             </div>
                         @elseif ($isBebasTerbatas)
-                            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-sky-600 text-white shadow-xs border border-sky-700" title="Obat Bebas Terbatas">
+                            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-sky-700 text-white shadow-xs border border-sky-800" title="Obat Bebas Terbatas">
                                 <span class="w-3 h-3 rounded-full bg-sky-300 border border-white"></span>
                                 <span>Bebas Terbatas</span>
                             </div>

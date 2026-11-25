@@ -13,13 +13,13 @@
                 setTimeout(() => $el.remove(), 150);
             }, 400);
         "
-        class="animate-welcome-overlay fixed inset-0 z-[999999] pointer-events-none flex flex-col items-start sm:items-center justify-center bg-white dark:bg-slate-950 select-none px-5 sm:px-6 text-left sm:text-center transition-opacity duration-150"
+        class="animate-welcome-overlay fixed inset-0 z-[999999] pointer-events-none flex flex-col items-start sm:items-center justify-center bg-white dark:bg-[#09090b] select-none px-5 sm:px-6 text-left sm:text-center transition-opacity duration-150"
         aria-live="polite"
         role="status"
     >
         <div class="animate-welcome-text pointer-events-auto flex flex-col items-start sm:items-center justify-center w-full max-w-md sm:max-w-4xl sm:mx-auto">
             <!-- Brand Badge -->
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 mb-5 text-xs sm:text-sm font-bold tracking-wider uppercase shadow-2xs">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 dark:bg-[#07291f] text-emerald-800 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-500/40 mb-5 text-xs sm:text-sm font-bold tracking-wider uppercase shadow-2xs">
                 <img src="/logo.png" alt="Logo" class="w-4 h-4 object-contain">
                 <span>OmniPharma Network</span>
             </div>
@@ -29,14 +29,14 @@
                 Welcome, <span class="text-emerald-800 dark:text-emerald-300">{{ $welcomeUser }}</span>
             </h1>
 
-            <p class="mt-4 text-xs sm:text-sm font-semibold uppercase tracking-widest text-slate-600 dark:text-slate-300">
+            <p class="mt-4 text-xs sm:text-sm font-semibold uppercase tracking-widest text-slate-600 dark:text-zinc-300">
                 Menyiapkan Dashboard Apotek Anda...
             </p>
 
             <button
                 type="button"
                 @click="visible = false"
-                class="mt-6 inline-flex w-full sm:w-auto items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 transition min-h-[44px] cursor-pointer"
+                class="mt-6 inline-flex w-full sm:w-auto items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl border border-slate-200 dark:border-zinc-500 bg-slate-50 dark:bg-[#141416] hover:bg-slate-100 dark:hover:bg-[#262626] text-xs sm:text-sm font-semibold text-slate-700 dark:text-zinc-100 transition min-h-[44px] cursor-pointer"
             >
                 Lewati Sambutan &rarr;
             </button>

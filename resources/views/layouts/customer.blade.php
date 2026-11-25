@@ -160,6 +160,8 @@
         }
     }"
 >
+    <x-welcome-splash />
+
     <!-- Floating Notification Toasts (Cart Updated & Chat Coming Soon) -->
     <div
         class="fixed top-20 right-4 z-50 flex flex-col gap-2.5 max-w-sm w-[calc(100vw-2rem)] sm:w-auto pointer-events-none"
@@ -374,7 +376,7 @@
                         <div
                             x-show="open"
                             x-cloak
-                            class="absolute right-0 mt-2 w-64 rounded-xl bg-white p-2 shadow-md border border-slate-200 z-50 text-xs"
+                            class="absolute right-0 mt-2 w-72 max-w-[calc(100vw-2rem)] max-h-[78vh] overflow-y-auto rounded-xl bg-white p-2 shadow-md border border-slate-200 z-50 text-xs"
                             role="menu"
                             aria-orientation="vertical"
                             aria-labelledby="customer-layout-user-menu-button"
@@ -385,14 +387,7 @@
                             </div>
 
                             <div class="space-y-1">
-                                <a
-                                    href="{{ route('profile.edit') }}"
-                                    class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-slate-800 hover:text-slate-900 hover:bg-slate-100 font-semibold transition-colors min-h-[44px]"
-                                    role="menuitem"
-                                >
-                                    <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                                    <span>Profile &amp; Akses Akun</span>
-                                </a>
+                                @include('partials.profile-role-menu', ['branchSlug' => $activeBranchSlug, 'hideActionsOnMobile' => true])
 
                                 <div
                                     class="px-3 py-2 rounded-lg bg-slate-50 border border-slate-200/80"

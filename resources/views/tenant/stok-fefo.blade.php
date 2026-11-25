@@ -304,7 +304,7 @@
         </div>
 
         <!-- Modal Tambah / Atur Stok Obat Cabang -->
-        <div x-show="addModal" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-950/60 p-0 sm:p-4 backdrop-blur-xs">
+        <div x-show="addModal" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 p-0 sm:p-4 backdrop-blur-xs">
             <div @click.away="addModal = false" class="omni-bottom-sheet-panel w-full max-w-md max-h-[90dvh] overflow-y-auto rounded-t-[20px] sm:rounded-3xl bg-white p-5 sm:p-8 shadow-2xl border border-slate-200 space-y-4">
                 <div class="sm:hidden mx-auto w-10 h-1 rounded-full bg-slate-300 -mt-1 mb-1" aria-hidden="true"></div>
                 <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -342,7 +342,7 @@
         </div>
 
         <!-- Modal Edit Batch Stok -->
-        <div x-show="editModal" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-950/60 p-0 sm:p-4 backdrop-blur-xs">
+        <div x-show="editModal" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 p-0 sm:p-4 backdrop-blur-xs">
             <div @click.away="editModal = false" class="omni-bottom-sheet-panel w-full max-w-md max-h-[90dvh] overflow-y-auto rounded-t-[20px] sm:rounded-3xl bg-white p-5 sm:p-8 shadow-2xl border border-slate-200 space-y-4">
                 <div class="sm:hidden mx-auto w-10 h-1 rounded-full bg-slate-300 -mt-1 mb-1" aria-hidden="true"></div>
                 <div class="flex items-center justify-between border-b border-slate-100 pb-3">

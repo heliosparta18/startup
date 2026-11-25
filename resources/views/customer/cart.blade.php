@@ -369,8 +369,8 @@
                 <div class="space-y-2.5">
                     <a
                         :href="checkoutUrlWithItems"
-                        :class="selectedIds.length === 0 ? 'opacity-50 pointer-events-none bg-slate-300' : 'bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 cursor-pointer'"
-                        class="w-full min-h-[46px] py-3 px-4 text-white font-bold rounded-xl text-center text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-xs"
+                        :class="selectedIds.length === 0 ? 'pointer-events-none bg-slate-200 text-slate-600 dark:bg-[#262626] dark:text-zinc-400' : 'bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white cursor-pointer'"
+                        class="w-full min-h-[46px] py-3 px-4 font-bold rounded-xl text-center text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-xs"
                     >
                         <span>Lanjut ke Checkout (<span x-text="selectedIds.length"></span> Jenis)</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
@@ -407,8 +407,8 @@
             </div>
             <a
                 :href="checkoutUrlWithItems"
-                :class="selectedIds.length === 0 ? 'opacity-50 pointer-events-none bg-slate-300' : 'bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900'"
-                class="min-h-[44px] inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2 text-xs font-extrabold text-white shadow-xs transition shrink-0"
+                :class="selectedIds.length === 0 ? 'pointer-events-none bg-slate-200 text-slate-600 dark:bg-[#262626] dark:text-zinc-400' : 'bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white'"
+                class="min-h-[44px] inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2 text-xs font-extrabold shadow-xs transition shrink-0"
             >
                 <span>Checkout (<span x-text="selectedIds.length"></span>)</span>
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>

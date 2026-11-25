@@ -19,7 +19,7 @@
     <div
         x-show="isOpen"
         x-cloak
-        class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-900/60 backdrop-blur-xs"
+        class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-xs"
         role="dialog"
         aria-modal="true"
         aria-labelledby="tanya-apoteker-title"

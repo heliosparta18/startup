@@ -128,13 +128,13 @@
                 wire:click="selectSubCategory('')"
                 @click="setActiveSub('', $event)"
                 class="relative z-10 w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs transition-colors duration-200 cursor-pointer min-h-[44px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
-                :class="activeSub === '' ? 'text-white font-bold' : 'text-slate-800 font-semibold hover:bg-slate-50/80'"
+                :class="activeSub === '' ? 'text-white font-bold' : 'text-slate-800 font-semibold hover:bg-slate-50/80 dark:hover:bg-[#262626]'"
                 :aria-pressed="activeSub === '' ? 'true' : 'false'"
             >
                 <span class="flex items-center gap-2.5 min-w-0">
                     <span
                         class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all duration-200"
-                        :class="activeSub === '' ? 'bg-white text-emerald-700 shadow-2xs' : 'bg-[#F0F7FF] text-emerald-800'"
+                        :class="activeSub === '' ? 'bg-white text-emerald-700 shadow-2xs' : 'bg-[#F0F7FF] dark:bg-[#1c1c1f] text-emerald-800 dark:text-emerald-400'"
                         aria-hidden="true"
                     >
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -163,13 +163,13 @@
                     wire:click='selectSubCategory(@json($subkat->nama_subkategori))'
                     @click="setActiveSub(@js($subkat->nama_subkategori), $event)"
                     class="relative z-10 w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs transition-colors duration-200 cursor-pointer min-h-[44px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
-                    :class="activeSub === @js($subkat->nama_subkategori) ? 'text-white font-bold' : 'text-slate-800 font-medium hover:bg-slate-50/80 hover:text-emerald-900'"
+                    :class="activeSub === @js($subkat->nama_subkategori) ? 'text-white font-bold' : 'text-slate-800 font-medium hover:bg-slate-50/80 hover:text-emerald-900 dark:hover:bg-[#262626] dark:hover:text-emerald-300'"
                     :aria-pressed="activeSub === @js($subkat->nama_subkategori) ? 'true' : 'false'"
                 >
                     <span class="flex items-center gap-2.5 min-w-0">
                         <span
                             class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 overflow-hidden p-1 transition-all duration-200"
-                            :class="activeSub === @js($subkat->nama_subkategori) ? 'bg-white shadow-2xs' : 'bg-[#F0F7FF]'"
+                            :class="activeSub === @js($subkat->nama_subkategori) ? 'bg-white shadow-2xs' : 'bg-[#F0F7FF] dark:bg-[#1c1c1f]'"
                             aria-hidden="true"
                         >
                             <img
