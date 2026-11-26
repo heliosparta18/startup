@@ -6,6 +6,7 @@ use App\Models\Client;
 use App\Models\KategoriObat;
 use App\Models\Obat;
 use App\Models\StokClient;
+use App\Models\User;
 use App\Modules\Catalog\Services\StockFefoService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -121,5 +122,56 @@ class FefoStockRotationTest extends TestCase
 
         $this->assertFalse((bool) $batchAman->is_critical_ed);
         $this->assertFalse((bool) $batchAman->is_near_ed);
+    }
+
+    public function test_stok_fefo_route_and_service_paginate_and_filter_batches(): void
+    {
+        $client = Client::factory()->create([
+            'nama_client' => 'Cabang Banyuwangi Kota',
+            'slug' => 'banyuwangi-kota',
+        ]);
+        $kategori = KategoriObat::factory()->create();
+
+        for ($i = 1; $i <= 30; $i++) {
+            $obat = Obat::factory()->create([
+                'nama_obat' => $i === 1 ? 'Paracetamol Kritis' : "Obat Batch {$i}",
+                'batch_number' => sprintf('BTC-%03d', $i),
+                'id_kategori' => $kategori->id_kategori,
+                'expired' => now()->addDays($i === 1 ? 3 : 40 + $i)->toDateString(),
+            ]);
+
+            StokClient::factory()->create([
+                'id_client' => $client->id_client,
+                'id_obat' => $obat->id_obat,
+                'jumlah_stok' => $i === 2 ? 0 : ($i === 3 ? 5 : 25),
+            ]);
+        }
+
+        $service = app(StockFefoService::class);
+        $pageOne = $service->paginateBatchesByFefo($client->id_client, '', '', 25);
+        $this->assertSame(30, $pageOne->total());
+        $this->assertCount(25, $pageOne->items());
+        $this->assertTrue((bool) $pageOne->items()[0]->is_critical_ed);
+
+        $criticalOnly = $service->paginateBatchesByFefo($client->id_client, 'critical', '', 25);
+        $this->assertSame(1, $criticalOnly->total());
+
+        $emptyOnly = $service->paginateBatchesByFefo($client->id_client, 'empty', '', 25);
+        $this->assertSame(1, $emptyOnly->total());
+
+        $searchMatch = $service->paginateBatchesByFefo($client->id_client, '', 'BTC-003', 25);
+        $this->assertSame(1, $searchMatch->total());
+
+        $apoteker = User::factory()->create([
+            'role' => 'apoteker',
+            'status' => 'active',
+        ]);
+
+        $this->actingAs($apoteker)
+            ->get(route('tenant.stok.fefo', ['client' => $client->slug]))
+            ->assertOk()
+            ->assertSee('Total 30 Batch Terdata')
+            ->assertSee('PERINGATAN KRITIS: 1 Batch')
+            ->assertSee('page=2');
     }
 }

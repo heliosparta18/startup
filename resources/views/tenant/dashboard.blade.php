@@ -364,7 +364,7 @@
                         </div>
                         <div class="pt-2 border-t border-slate-200/80">
                             @if($curStatus === 'menunggu_verifikasi')
-                                <a href="{{ route('tenant.resep.antrean', ['client' => $client]) }}" class="w-full min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-xs transition">
+                                <a href="{{ route('tenant.resep.antrean', ['client' => $client]) }}" class="w-full min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center rounded-xl bg-amber-700 hover:bg-amber-800 text-white font-bold text-xs shadow-xs transition">
                                     Telaah Resep
                                 </a>
                             @else
@@ -455,7 +455,7 @@
                                 </td>
                                 <td class="p-3.5 text-right">
                                     @if($curStatus === 'menunggu_verifikasi')
-                                        <a href="{{ route('tenant.resep.antrean', ['client' => $client]) }}" class="min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-xs transition">
+                                        <a href="{{ route('tenant.resep.antrean', ['client' => $client]) }}" class="min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center rounded-xl bg-amber-700 hover:bg-amber-800 text-white font-bold text-xs shadow-xs transition">
                                             Telaah Resep
                                         </a>
                                     @else

@@ -23,15 +23,15 @@
     --color-zinc-900: #171717;
     --color-zinc-950: #0a0a0a;
 
-    --color-accent: var(--color-emerald-600);
+    --color-accent: var(--color-emerald-700);
     --color-accent-content: var(--color-emerald-600);
     --color-accent-foreground: var(--color-white);
 }
 
 @layer theme {
     .dark {
-        --color-accent: var(--color-emerald-500);
-        --color-accent-content: var(--color-emerald-500);
+        --color-accent: var(--color-emerald-700);
+        --color-accent-content: var(--color-emerald-400);
         --color-accent-foreground: var(--color-white);
     }
 }
@@ -157,7 +157,7 @@ select:focus[data-flux-control] {
         background-color: #141416 !important;
     }
 
-    html.dark:not([data-force-light="true"]) .bg-white.border:not([class*="border-"]) {
+    html.dark:not([data-force-light="true"]) .bg-white.border:not([class*="border-slate-"]):not([class*="border-emerald-"]):not([class*="border-amber-"]):not([class*="border-rose-"]):not([class*="border-red-"]):not([class*="border-sky-"]):not([class*="border-indigo-"]):not([class*="border-zinc-"]) {
         border-color: #333338;
     }
 
@@ -237,6 +237,8 @@ select:focus[data-flux-control] {
     }
 
     html.dark:not([data-force-light="true"]) .border-slate-200,
+    html.dark:not([data-force-light="true"]) .border-slate-200\/60,
+    html.dark:not([data-force-light="true"]) .border-slate-200\/70,
     html.dark:not([data-force-light="true"]) .border-slate-200\/80,
     html.dark:not([data-force-light="true"]) .border-slate-200\/90 {
         border-color: #333338 !important;
@@ -277,6 +279,10 @@ select:focus[data-flux-control] {
 
     html.dark:not([data-force-light="true"]) .text-slate-500,
     html.dark:not([data-force-light="true"]) .text-slate-400 {
+        color: #a3a3a3 !important;
+    }
+
+    html.dark:not([data-force-light="true"]) .placeholder\:text-slate-400::placeholder {
         color: #a3a3a3 !important;
     }
 
@@ -433,6 +439,10 @@ select:focus[data-flux-control] {
         background-color: #262626 !important;
     }
 
+    html.dark:not([data-force-light="true"]) .hover\:bg-slate-800:hover {
+        background-color: #3f3f46 !important;
+    }
+
     html.dark:not([data-force-light="true"]) .active\:bg-slate-300:active {
         background-color: #2e2e32 !important;
     }
@@ -485,6 +495,53 @@ select:focus[data-flux-control] {
     html.dark:not([data-force-light="true"]) .hover\:border-emerald-600:hover {
         border-color: rgba(16, 185, 129, 0.55) !important;
     }
+
+    html.dark:not([data-force-light="true"]) nav[aria-label="Pagination Navigation"] p,
+    html.dark:not([data-force-light="true"]) nav[aria-label="Pagination Navigation"] p span {
+        color: #d4d4d4 !important;
+    }
+
+    html.dark:not([data-force-light="true"]) nav[aria-label="Pagination Navigation"] a {
+        background-color: #1c1c1f !important;
+        border-color: #333338 !important;
+        color: #fafafa !important;
+    }
+
+    html.dark:not([data-force-light="true"]) nav[aria-label="Pagination Navigation"] a:hover {
+        background-color: #262626 !important;
+        color: #ffffff !important;
+    }
+
+    html.dark:not([data-force-light="true"]) nav[aria-label="Pagination Navigation"] a:active {
+        background-color: #2e2e32 !important;
+        color: #ffffff !important;
+    }
+
+    html.dark:not([data-force-light="true"]) nav[aria-label="Pagination Navigation"] a:focus {
+        border-color: #10b981 !important;
+    }
+
+    html.dark:not([data-force-light="true"]) nav[aria-label="Pagination Navigation"] span[aria-disabled="true"] > span,
+    html.dark:not([data-force-light="true"]) nav[aria-label="Pagination Navigation"] span.cursor-not-allowed {
+        background-color: #111113 !important;
+        border-color: #27272a !important;
+        color: #a3a3a3 !important;
+    }
+
+    html.dark:not([data-force-light="true"]) nav[aria-label="Pagination Navigation"] span[aria-current="page"] > span {
+        background-color: #047857 !important;
+        border-color: #10b981 !important;
+        color: #ffffff !important;
+    }
+}
+
+nav[aria-label="Pagination Navigation"] a,
+nav[aria-label="Pagination Navigation"] span[aria-disabled="true"] > span,
+nav[aria-label="Pagination Navigation"] span[aria-current="page"] > span,
+nav[aria-label="Pagination Navigation"] span.cursor-not-allowed {
+    min-height: 44px;
+    min-width: 44px;
+    justify-content: center;
 }
 
 /* Mobile Web Standards & Responsive Bottom-Bar / Bottom-Sheet Helpers */

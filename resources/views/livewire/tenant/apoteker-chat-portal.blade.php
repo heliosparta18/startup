@@ -79,7 +79,7 @@
                             type="search"
                             wire:model.live.debounce.300ms="searchQuery"
                             placeholder="Cari nama pasien..."
-                            class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-300 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 text-xs bg-white min-h-[40px] transition"
+                            class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-300 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 text-xs bg-white min-h-[44px] transition"
                         >
                     </div>
                 </div>
