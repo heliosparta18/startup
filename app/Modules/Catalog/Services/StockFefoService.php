@@ -4,6 +4,7 @@ namespace App\Modules\Catalog\Services;
 
 use App\Models\Client;
 use App\Models\StokClient;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
 class StockFefoService
@@ -38,14 +39,70 @@ class StockFefoService
 
         return $query->get()
             ->each(function (StokClient $batch): void {
-                $expiredDate = $batch->obat->expired ?? $batch->tanggal_kadaluarsa;
-                if ($expiredDate) {
-                    $sisaHari = (int) now()->diffInDays($expiredDate, false);
-                    $batch->sisa_hari_ed = $sisaHari;
-                    $batch->is_near_ed = $sisaHari <= 30; // Indikator H-30
-                    $batch->is_critical_ed = $sisaHari <= 7; // Indikator H-7
-                }
+                $this->enrichBatchExpiry($batch);
             });
+    }
+
+    /**
+     * Paginasi batch stok FEFO di level SQL agar tidak memuat ribuan model sekaligus.
+     *
+     * @return LengthAwarePaginator<int, StokClient>
+     */
+    public function paginateBatchesByFefo(string $clientId, string $filter = '', string $search = '', int $perPage = 25): LengthAwarePaginator
+    {
+        $resolvedClient = Client::findByIdentifier($clientId);
+        $actualClientId = $resolvedClient ? $resolvedClient->id_client : $clientId;
+
+        $query = StokClient::query()
+            ->with('obat')
+            ->select('stok_client.*')
+            ->join('obat', 'stok_client.id_obat', '=', 'obat.id_obat')
+            ->where('stok_client.id_client', $actualClientId);
+
+        $search = trim($search);
+        if ($search !== '') {
+            $like = '%'.mb_strtolower($search).'%';
+            $query->where(function ($q) use ($like): void {
+                $q->whereRaw('LOWER(obat.nama_obat) LIKE ?', [$like])
+                    ->orWhereRaw("LOWER(COALESCE(obat.batch_number, '')) LIKE ?", [$like]);
+            });
+        }
+
+        if ($filter === 'critical') {
+            $query->where('stok_client.jumlah_stok', '>', 0)
+                ->whereNotNull('obat.expired')
+                ->where('obat.expired', '<=', now()->addDays(7)->endOfDay()->toDateTimeString());
+        } elseif ($filter === 'near_ed') {
+            $query->where('stok_client.jumlah_stok', '>', 0)
+                ->whereNotNull('obat.expired')
+                ->where('obat.expired', '<=', now()->addDays(30)->endOfDay()->toDateTimeString());
+        } elseif ($filter === 'low') {
+            $query->where('stok_client.jumlah_stok', '>', 0)
+                ->where('stok_client.jumlah_stok', '<=', 10);
+        } elseif ($filter === 'empty') {
+            $query->where('stok_client.jumlah_stok', '<=', 0);
+        }
+
+        $paginator = $query->orderBy('obat.expired', 'asc')
+            ->paginate($perPage)
+            ->withQueryString();
+
+        $paginator->getCollection()->each(function (StokClient $batch): void {
+            $this->enrichBatchExpiry($batch);
+        });
+
+        return $paginator;
+    }
+
+    private function enrichBatchExpiry(StokClient $batch): void
+    {
+        $expiredDate = $batch->obat->expired ?? $batch->tanggal_kadaluarsa;
+        if ($expiredDate) {
+            $sisaHari = (int) now()->diffInDays($expiredDate, false);
+            $batch->sisa_hari_ed = $sisaHari;
+            $batch->is_near_ed = $sisaHari <= 30; // Indikator H-30
+            $batch->is_critical_ed = $sisaHari <= 7; // Indikator H-7
+        }
     }
 
     /**

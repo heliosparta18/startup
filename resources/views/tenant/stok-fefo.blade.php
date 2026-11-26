@@ -73,20 +73,22 @@
         @endif
 
         @php
-            $criticalBatches = $fefoBatches->filter(fn($b) => $b->is_critical_ed);
-            $nearBatches = $fefoBatches->filter(fn($b) => $b->is_near_ed && ! $b->is_critical_ed);
+            $criticalCount = $fefoSummary['critical_count'] ?? $fefoBatches->filter(fn($b) => $b->is_critical_ed)->count();
+            $nearCount = isset($fefoSummary['near_count'])
+                ? max(0, (int) $fefoSummary['near_count'] - (int) $criticalCount)
+                : $fefoBatches->filter(fn($b) => $b->is_near_ed && ! $b->is_critical_ed)->count();
         @endphp
 
-        @if ($criticalBatches->isNotEmpty())
+        @if ($criticalCount > 0)
             <div class="rounded-2xl border border-rose-300 bg-rose-50 p-4 sm:p-5 text-rose-900 shadow-xs">
-                <h2 class="text-sm font-black tracking-tight">PERINGATAN KRITIS: {{ $criticalBatches->count() }} Batch Mendekati/Melewati Kedaluwarsa (&le; 7 Hari)</h2>
+                <h2 class="text-sm font-black tracking-tight">PERINGATAN KRITIS: {{ number_format($criticalCount) }} Batch Mendekati/Melewati Kedaluwarsa (&le; 7 Hari)</h2>
                 <p class="text-xs mt-1 text-rose-800">Gunakan tombol Karantina (0) pada batch yang sudah tidak layak edar.</p>
             </div>
         @endif
 
-        @if ($nearBatches->isNotEmpty())
+        @if ($nearCount > 0)
             <div class="rounded-2xl border border-amber-300 bg-amber-50 p-4 sm:p-5 text-amber-900 shadow-xs">
-                <h2 class="text-sm font-black tracking-tight">PERINGATAN DINI: {{ $nearBatches->count() }} Batch Waspada Kedaluwarsa (&le; 30 Hari)</h2>
+                <h2 class="text-sm font-black tracking-tight">PERINGATAN DINI: {{ number_format($nearCount) }} Batch Waspada Kedaluwarsa (&le; 30 Hari)</h2>
                 <p class="text-xs mt-1 text-amber-800">Prioritaskan pengeluaran batch di urutan teratas terlebih dahulu.</p>
             </div>
         @endif
@@ -130,7 +132,7 @@
                     <p class="text-xs text-slate-500 mt-0.5">Disortir otomatis berdasarkan tanggal kedaluwarsa tercepat</p>
                 </div>
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                    Total {{ $fefoBatches->count() }} Batch Terdata
+                    Total {{ number_format($fefoBatches->total()) }} Batch Terdata
                 </span>
             </div>
 
@@ -152,8 +154,9 @@
                         <div class="flex items-start justify-between gap-2">
                             <div class="min-w-0">
                                 <div class="flex flex-wrap items-center gap-1.5 mb-1">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-black {{ $index === 0 ? 'bg-emerald-700 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200' }}">
-                                        #{{ $index + 1 }} FEFO
+                                    @php $fefoRank = ($fefoBatches->firstItem() ?? 1) + $index; @endphp
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-black {{ $fefoRank === 1 ? 'bg-emerald-700 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200' }}">
+                                        #{{ $fefoRank }} FEFO
                                     </span>
                                     <span class="font-mono font-bold text-slate-700 text-[11px]">{{ $batch->obat?->batch_number ?? 'BTC-'.substr((string) $batch->id, 0, 6) }}</span>
                                 </div>
@@ -227,8 +230,9 @@
                             @endphp
                             <tr class="hover:bg-slate-50/80 transition {{ $batch->is_critical_ed ? 'bg-rose-50/40' : ($batch->is_near_ed ? 'bg-amber-50/30' : '') }}">
                                 <td class="py-3.5 px-4 text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-black {{ $index === 0 ? 'bg-emerald-700 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200' }}">
-                                        #{{ $index + 1 }} FEFO
+                                    @php $fefoRank = ($fefoBatches->firstItem() ?? 1) + $index; @endphp
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-black {{ $fefoRank === 1 ? 'bg-emerald-700 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200' }}">
+                                        #{{ $fefoRank }} FEFO
                                     </span>
                                 </td>
                                 <td class="py-3.5 px-4 font-mono font-bold text-slate-900">
@@ -301,10 +305,16 @@
                     </tbody>
                 </table>
             </div>
+
+            @if($fefoBatches->hasPages())
+                <div class="p-4 border-t border-slate-100">
+                    {{ $fefoBatches->links() }}
+                </div>
+            @endif
         </div>
 
         <!-- Modal Tambah / Atur Stok Obat Cabang -->
-        <div x-show="addModal" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-950/60 p-0 sm:p-4 backdrop-blur-xs">
+        <div x-show="addModal" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 p-0 sm:p-4 backdrop-blur-xs">
             <div @click.away="addModal = false" class="omni-bottom-sheet-panel w-full max-w-md max-h-[90dvh] overflow-y-auto rounded-t-[20px] sm:rounded-3xl bg-white p-5 sm:p-8 shadow-2xl border border-slate-200 space-y-4">
                 <div class="sm:hidden mx-auto w-10 h-1 rounded-full bg-slate-300 -mt-1 mb-1" aria-hidden="true"></div>
                 <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -342,7 +352,7 @@
         </div>
 
         <!-- Modal Edit Batch Stok -->
-        <div x-show="editModal" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-950/60 p-0 sm:p-4 backdrop-blur-xs">
+        <div x-show="editModal" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 p-0 sm:p-4 backdrop-blur-xs">
             <div @click.away="editModal = false" class="omni-bottom-sheet-panel w-full max-w-md max-h-[90dvh] overflow-y-auto rounded-t-[20px] sm:rounded-3xl bg-white p-5 sm:p-8 shadow-2xl border border-slate-200 space-y-4">
                 <div class="sm:hidden mx-auto w-10 h-1 rounded-full bg-slate-300 -mt-1 mb-1" aria-hidden="true"></div>
                 <div class="flex items-center justify-between border-b border-slate-100 pb-3">

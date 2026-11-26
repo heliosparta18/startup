@@ -285,7 +285,7 @@
         <div
             x-show="modalUnggah"
             x-cloak
-            class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto"
+            class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-xs overflow-y-auto"
             @keydown.escape.window="modalUnggah = false"
             role="dialog"
             aria-modal="true"

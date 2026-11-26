@@ -20,7 +20,7 @@
     <div
         x-show="isOpen"
         x-cloak
-        class="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 bg-slate-900/60 backdrop-blur-xs"
+        class="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-xs"
         role="dialog"
         aria-modal="true"
         aria-labelledby="apoteker-portal-chat-title"
@@ -79,7 +79,7 @@
                             type="search"
                             wire:model.live.debounce.300ms="searchQuery"
                             placeholder="Cari nama pasien..."
-                            class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-300 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 text-xs bg-white min-h-[40px] transition"
+                            class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-300 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 text-xs bg-white min-h-[44px] transition"
                         >
                     </div>
                 </div>
@@ -119,7 +119,7 @@
                                         {{ ucfirst($item->status) }}
                                     </span>
                                     @if($unreadCount > 0)
-                                        <span class="px-1.5 py-0.2 rounded-full bg-emerald-600 text-white text-[9px] font-bold">
+                                        <span class="px-1.5 py-0.2 rounded-full bg-emerald-700 text-white text-[9px] font-bold">
                                             {{ $unreadCount }} baru
                                         </span>
                                     @endif

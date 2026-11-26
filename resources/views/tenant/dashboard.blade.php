@@ -364,7 +364,7 @@
                         </div>
                         <div class="pt-2 border-t border-slate-200/80">
                             @if($curStatus === 'menunggu_verifikasi')
-                                <a href="{{ route('tenant.resep.antrean', ['client' => $client]) }}" class="w-full min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-xs transition">
+                                <a href="{{ route('tenant.resep.antrean', ['client' => $client]) }}" class="w-full min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center rounded-xl bg-amber-700 hover:bg-amber-800 text-white font-bold text-xs shadow-xs transition">
                                     Telaah Resep
                                 </a>
                             @else
@@ -455,7 +455,7 @@
                                 </td>
                                 <td class="p-3.5 text-right">
                                     @if($curStatus === 'menunggu_verifikasi')
-                                        <a href="{{ route('tenant.resep.antrean', ['client' => $client]) }}" class="min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-xs transition">
+                                        <a href="{{ route('tenant.resep.antrean', ['client' => $client]) }}" class="min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center rounded-xl bg-amber-700 hover:bg-amber-800 text-white font-bold text-xs shadow-xs transition">
                                             Telaah Resep
                                         </a>
                                     @else
@@ -495,7 +495,7 @@
 
         @if ($resepPending)
             <!-- Modal Perbesar Resep -->
-            <div x-show="modalResepBesar" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-950/60 p-0 sm:p-4 backdrop-blur-xs">
+            <div x-show="modalResepBesar" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 p-0 sm:p-4 backdrop-blur-xs">
                 <div @click.away="modalResepBesar = false" class="omni-bottom-sheet-panel w-full max-w-2xl max-h-[90dvh] overflow-y-auto rounded-t-[20px] sm:rounded-3xl bg-white p-5 sm:p-8 shadow-2xl border border-slate-200 space-y-4">
                     <div class="sm:hidden mx-auto w-10 h-1 rounded-full bg-slate-300 -mt-1 mb-1" aria-hidden="true"></div>
                     <div class="flex items-center justify-between border-b border-slate-100 pb-3">

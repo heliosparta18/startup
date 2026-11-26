@@ -25,7 +25,7 @@
 
                 <a
                     href="{{ route('dashboard') }}"
-                    class="self-start sm:self-auto min-h-[42px] sm:min-h-[44px] inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white text-xs font-bold transition shadow-xs shrink-0 cursor-pointer"
+                    class="self-start sm:self-auto min-h-[44px] inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white text-xs font-bold transition shadow-xs shrink-0 cursor-pointer"
                 >
                     <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                     <span>Belanja Obat Lagi</span>
@@ -110,7 +110,7 @@
                         type="button"
                         @click="activeStatus = 'semua'"
                         :class="activeStatus === 'semua' ? 'bg-emerald-700 text-white border-emerald-700 shadow-2xs font-extrabold' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 font-semibold'"
-                        class="min-h-[36px] px-3.5 py-1.5 rounded-full border transition shrink-0 cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
+                        class="min-h-[44px] px-3.5 py-2 rounded-full border transition shrink-0 cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
                     >
                         <span>Semua</span>
                         <span class="text-[11px] opacity-85">({{ $statusCounts['semua'] }})</span>
@@ -120,8 +120,8 @@
                         <button
                             type="button"
                             @click="activeStatus = 'menunggu_pembayaran'"
-                            :class="activeStatus === 'menunggu_pembayaran' ? 'bg-amber-600 text-white border-amber-600 shadow-2xs font-extrabold' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 font-semibold'"
-                            class="min-h-[36px] px-3.5 py-1.5 rounded-full border transition shrink-0 cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
+                            :class="activeStatus === 'menunggu_pembayaran' ? 'bg-amber-700 text-white border-amber-700 shadow-2xs font-extrabold' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 font-semibold'"
+                            class="min-h-[44px] px-3.5 py-2 rounded-full border transition shrink-0 cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
                         >
                             <span>Menunggu Pembayaran</span>
                             <span class="text-[11px] opacity-85">({{ $statusCounts['menunggu_pembayaran'] }})</span>
@@ -132,8 +132,8 @@
                         <button
                             type="button"
                             @click="activeStatus = 'diproses'"
-                            :class="activeStatus === 'diproses' ? 'bg-sky-600 text-white border-sky-600 shadow-2xs font-extrabold' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 font-semibold'"
-                            class="min-h-[36px] px-3.5 py-1.5 rounded-full border transition shrink-0 cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
+                            :class="activeStatus === 'diproses' ? 'bg-sky-700 text-white border-sky-700 shadow-2xs font-extrabold' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 font-semibold'"
+                            class="min-h-[44px] px-3.5 py-2 rounded-full border transition shrink-0 cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
                         >
                             <span>Diproses</span>
                             <span class="text-[11px] opacity-85">({{ $statusCounts['diproses'] }})</span>
@@ -145,7 +145,7 @@
                             type="button"
                             @click="activeStatus = 'selesai'"
                             :class="activeStatus === 'selesai' ? 'bg-emerald-700 text-white border-emerald-700 shadow-2xs font-extrabold' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 font-semibold'"
-                            class="min-h-[36px] px-3.5 py-1.5 rounded-full border transition shrink-0 cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
+                            class="min-h-[44px] px-3.5 py-2 rounded-full border transition shrink-0 cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
                         >
                             <span>Selesai</span>
                             <span class="text-[11px] opacity-85">({{ $statusCounts['selesai'] }})</span>
@@ -157,7 +157,7 @@
                             type="button"
                             @click="activeStatus = 'dibatalkan'"
                             :class="activeStatus === 'dibatalkan' ? 'bg-rose-600 text-white border-rose-600 shadow-2xs font-extrabold' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 font-semibold'"
-                            class="min-h-[36px] px-3.5 py-1.5 rounded-full border transition shrink-0 cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
+                            class="min-h-[44px] px-3.5 py-2 rounded-full border transition shrink-0 cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
                         >
                             <span>Dibatalkan</span>
                             <span class="text-[11px] opacity-85">({{ $statusCounts['dibatalkan'] }})</span>
@@ -291,7 +291,7 @@
                                 @if($isUnpaid)
                                     <a
                                         href="{{ $payLink }}"
-                                        class="flex-1 sm:flex-initial min-h-[44px] inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white text-xs font-bold transition shadow-xs text-center cursor-pointer"
+                                        class="flex-1 sm:flex-initial min-h-[44px] inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-700 hover:bg-amber-800 active:bg-amber-900 text-white text-xs font-bold transition shadow-xs text-center cursor-pointer"
                                     >
                                         <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
                                         <span>Bayar QRIS</span>

@@ -321,7 +321,7 @@ new #[Title('Security settings')] class extends Component {
                                                 icon="trash"
                                                 icon:variant="outline"
                                                 wire:click="confirmDelete({{ $passkey['id'] }})"
-                                                class="min-h-[32px] min-w-[32px] p-1 self-end sm:self-center text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/50"
+                                                class="min-h-[44px] min-w-[44px] p-2 self-end sm:self-center text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/50"
                                             />
                                         </div>
                                     @empty
@@ -329,7 +329,7 @@ new #[Title('Security settings')] class extends Component {
                                             <div class="mx-auto mb-1 flex size-7 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800">
                                                 <flux:icon.key class="size-3.5 text-zinc-400 dark:text-zinc-500" />
                                             </div>
-                                            <p class="font-bold text-xs text-slate-800 dark:text-slate-200">{{ __('No passkeys yet') }}</p>
+                                            <p class="font-bold text-xs text-slate-800 dark:text-zinc-200">{{ __('No passkeys yet') }}</p>
                                             <flux:text class="text-[10px] text-slate-500 mt-0.5">{{ __('Add a passkey to sign in without a password') }}</flux:text>
                                         </div>
                                     @endforelse

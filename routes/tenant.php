@@ -232,37 +232,20 @@ Route::get('/resep', function (string $client) {
 })->name('resep.antrean');
 
 Route::get('/stok-fefo', function (string $client, Request $request, StockFefoService $fefoService) {
-    $filter = (string) $request->query('filter', 'all');
+    $filter = (string) $request->query('filter', '');
     $search = trim((string) $request->query('q', ''));
-    $includeEmpty = in_array($filter, ['empty', 'all'], true);
 
-    $fefoBatches = $fefoService->getBatchesByFefo($client, null, $includeEmpty);
-
-    if ($search !== '') {
-        $needle = mb_strtolower($search);
-        $fefoBatches = $fefoBatches->filter(function (StokClient $batch) use ($needle): bool {
-            $nama = mb_strtolower((string) ($batch->obat->nama_obat ?? ''));
-            $batchNo = mb_strtolower((string) ($batch->obat->batch_number ?? ''));
-
-            return str_contains($nama, $needle) || str_contains($batchNo, $needle);
-        })->values();
-    }
-
-    if ($filter === 'critical') {
-        $fefoBatches = $fefoBatches->filter(fn (StokClient $b) => $b->is_critical_ed)->values();
-    } elseif ($filter === 'near_ed') {
-        $fefoBatches = $fefoBatches->filter(fn (StokClient $b) => $b->is_near_ed)->values();
-    } elseif ($filter === 'low') {
-        $fefoBatches = $fefoBatches->filter(fn (StokClient $b) => $b->jumlah_stok > 0 && $b->jumlah_stok <= 10)->values();
-    } elseif ($filter === 'empty') {
-        $fefoBatches = $fefoBatches->filter(fn (StokClient $b) => $b->jumlah_stok <= 0)->values();
-    }
-
-    $allObats = Obat::orderBy('nama_obat', 'asc')->get();
+    $fefoBatches = $fefoService->paginateBatchesByFefo($client, $filter, $search, 25);
+    $fefoSummary = $fefoService->getExpirySummary($client);
+    $allObats = DB::table('obat')
+        ->select(['id_obat', 'nama_obat', 'merek'])
+        ->orderBy('nama_obat', 'asc')
+        ->get();
 
     return view('tenant.stok-fefo', [
         'client' => $client,
         'fefoBatches' => $fefoBatches,
+        'fefoSummary' => $fefoSummary,
         'allObats' => $allObats,
         'filter' => $filter,
         'search' => $search,

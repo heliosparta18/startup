@@ -46,10 +46,10 @@ export function showToast(message, type = 'info') {
     const toast = document.createElement('div');
     toast.className = `transform transition-all duration-300 ease-out translate-y-2 opacity-0 pointer-events-auto flex items-center gap-3 px-4 py-3.5 rounded-xl shadow-lg text-white font-medium text-xs sm:text-sm ${
         type === 'success'
-            ? 'bg-emerald-600 border border-emerald-500 shadow-emerald-500/20'
+            ? 'bg-emerald-700 border border-emerald-600 shadow-emerald-950/30'
             : type === 'error'
-            ? 'bg-rose-600 border border-rose-500 shadow-rose-500/20'
-            : 'bg-slate-800 border border-slate-700 shadow-slate-900/20'
+            ? 'bg-rose-700 border border-rose-600 shadow-rose-950/30'
+            : 'bg-zinc-900 border border-zinc-700 shadow-black/30'
     }`;
 
     const icon = type === 'success'
