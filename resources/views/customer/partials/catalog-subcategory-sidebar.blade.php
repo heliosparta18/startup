@@ -145,7 +145,7 @@
                 </span>
                 <span
                     class="text-[11px] px-2 py-0.5 rounded-full font-bold shrink-0 transition-colors duration-200"
-                    :class="activeSub === '' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700'"
+                    :class="activeSub === '' ? 'bg-emerald-950/60 text-white' : 'bg-slate-100 text-slate-700'"
                 >
                     {{ $obats->total() }}
                 </span>
@@ -186,7 +186,7 @@
                     @if (isset($subkat->obat_count))
                         <span
                             class="text-[11px] px-2 py-0.5 rounded-full font-bold shrink-0 transition-colors duration-200"
-                            :class="activeSub === @js($subkat->nama_subkategori) ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'"
+                            :class="activeSub === @js($subkat->nama_subkategori) ? 'bg-emerald-950/60 text-white' : 'bg-slate-100 text-slate-600'"
                         >
                             {{ $subkat->obat_count }}
                         </span>
